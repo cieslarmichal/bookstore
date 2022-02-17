@@ -1,9 +1,12 @@
 import { Service } from 'typedi';
 import { BookDto } from '../dtos';
+import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
 
 @Service()
 export class BookService {
+  constructor(private readonly bookRepository: BookRepository) {}
+
   async createBook(bookData: CreateBookData): Promise<BookDto> {
     console.log('Creating book...');
 

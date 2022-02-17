@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   Column,
+  Unique,
 } from 'typeorm';
 
 export const BOOK_TABLE_NAME = 'books';
@@ -18,6 +19,7 @@ export const BOOK_TABLE_NAME = 'books';
 @Entity({
   name: BOOK_TABLE_NAME,
 })
+@Unique('index_title_author', ['title', 'author'])
 export class Book {
   @IsOptional()
   @IsUUID('4')
@@ -36,7 +38,7 @@ export class Book {
 
   @IsOptional()
   @IsString()
-  @Column()
+  @Column({ type: 'text', unique: true })
   public title: string;
 
   @IsOptional()
