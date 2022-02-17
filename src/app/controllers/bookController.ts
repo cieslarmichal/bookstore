@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 export class BookController {
   createBook(req: Request, res: Response): void {
-    console.log(req.body);
+    res.status(201).send(req.body);
   }
 
   findBook(req: Request, res: Response): void {
