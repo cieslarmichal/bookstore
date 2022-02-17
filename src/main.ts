@@ -1,10 +1,10 @@
 import express from 'express';
 import 'reflect-metadata';
-import { bookRouter } from './app/routes/book';
-
+import bodyParser from 'body-parser';
 import { createConnection } from 'typeorm';
-
 import { Book } from './app/domain/book/entities/book';
+import { BookController } from './app/controllers/book/bookController';
+import Container from 'typedi';
 
 (async () => {
   await createConnection({
@@ -24,7 +24,11 @@ import { Book } from './app/domain/book/entities/book';
 const app = express();
 
 app.use(express.json());
-app.use('/v1/books', bookRouter);
+app.use(bodyParser.json());
+
+const bookController = Container.get(BookController);
+
+app.use('/v1', bookController.router);
 
 const PORT = 3000;
 

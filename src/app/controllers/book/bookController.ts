@@ -1,14 +1,22 @@
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { BookService } from 'src/app/domain/book/services/bookService';
 import { Service } from 'typedi';
 import { BookRequestValidator } from './bookRequestValidator';
 
 @Service()
 export class BookController {
+  public path = '/books';
+  public router = express.Router();
+
   constructor(
     private readonly bookService: BookService,
     private readonly bookRequestValidator: BookRequestValidator,
-  ) {}
+  ) {
+    this.router.post(this.path, this.createBook);
+    this.router.get(this.path, this.findBook);
+    this.router.put(this.path, this.updateBook);
+    this.router.delete(this.path, this.deleteBook);
+  }
 
   createBook(request: Request, response: Response): void {
     const validationError =
