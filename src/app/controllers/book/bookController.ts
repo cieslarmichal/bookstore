@@ -10,20 +10,53 @@ export class BookController {
     private readonly bookRequestValidator: BookRequestValidator,
   ) {}
 
-  createBook(req: Request, res: Response): void {
-    this.bookService.createBook(req.body);
-    res.status(201).send(req.body);
+  createBook(request: Request, response: Response): void {
+    const validationError =
+      this.bookRequestValidator.checkForValidationErrorInCreateBookRequest(
+        request,
+      );
+
+    if (validationError) {
+      response.status(400).send(validationError);
+      return;
+    }
+
+    const bookDto = this.bookService.createBook(request.body);
+
+    response.status(201).send(bookDto);
   }
 
-  findBook(req: Request, res: Response): void {
-    console.log(req.body);
+  findBook(request: Request, response: Response): void {
+    const id = request.params.id;
+
+    const bookDto = this.bookService.findBook(id);
+
+    response.send(bookDto);
   }
 
-  updateBook(req: Request, res: Response): void {
-    console.log(req.body);
+  updateBook(request: Request, response: Response): void {
+    const validationError =
+      this.bookRequestValidator.checkForValidationErrorInUpdateBookRequest(
+        request,
+      );
+
+    if (validationError) {
+      response.status(400).send(validationError);
+      return;
+    }
+
+    const id = request.params.id;
+
+    const bookDto = this.bookService.updateBook(id, request.body);
+
+    response.send(bookDto);
   }
 
-  deleteBook(req: Request, res: Response): void {
-    console.log(req.body);
+  deleteBook(request: Request, response: Response): void {
+    const id = request.params.id;
+
+    this.bookService.removeBook(id);
+
+    response.send();
   }
 }

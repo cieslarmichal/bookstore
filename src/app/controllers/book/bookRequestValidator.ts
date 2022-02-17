@@ -2,13 +2,15 @@ import Joi from 'joi';
 import { Service } from 'typedi';
 import { Request } from 'express';
 
-type ErrorDescription = string;
+export class ValidationError {
+  constructor(public error: string) {}
+}
 
 @Service()
 export class BookRequestValidator {
   checkForValidationErrorInCreateBookRequest(
     req: Request,
-  ): ErrorDescription | null {
+  ): ValidationError | null {
     const schema = Joi.object().keys({
       title: Joi.string().required(),
       author: Joi.string().required(),
@@ -22,7 +24,7 @@ export class BookRequestValidator {
     const { error } = schema.validate(req);
 
     if (error) {
-      return error.details[0].message;
+      return new ValidationError(error.details[0].message);
     }
 
     return null;
@@ -30,7 +32,7 @@ export class BookRequestValidator {
 
   checkForValidationErrorInUpdateBookRequest(
     req: Request,
-  ): ErrorDescription | null {
+  ): ValidationError | null {
     const schema = Joi.object().keys({
       description: Joi.string().optional(),
       price: Joi.number().required(),
@@ -39,7 +41,7 @@ export class BookRequestValidator {
     const { error } = schema.validate(req);
 
     if (error) {
-      return error.details[0].message;
+      return new ValidationError(error.details[0].message);
     }
 
     return null;
