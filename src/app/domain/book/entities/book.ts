@@ -36,29 +36,29 @@ export class Book {
 
   @IsOptional()
   @IsString()
-  @Column({ type: 'text' })
+  @Column()
   public title: string;
 
   @IsOptional()
   @IsString()
-  @Column({ type: 'text' })
+  @Column()
   public author: string;
 
   @IsOptional()
   @IsNumber()
-  @Column({ type: 'number' })
+  @Column()
   public releaseYear: number;
 
   @IsOptional()
   @IsString()
-  @Column({ type: 'text' })
-  public language: string | null;
+  @Column()
+  public language: string;
 
   // kindle/paperback/hardcover
   @IsOptional()
   @IsString()
-  @Column({ type: 'text', nullable: true })
-  public format: string | null;
+  @Column()
+  public format: string;
 
   @IsOptional()
   @IsString()
@@ -67,6 +67,6 @@ export class Book {
 
   @IsOptional()
   @IsNumber()
-  @Column({ type: 'number' })
+  @Column()
   public price: number;
 }
