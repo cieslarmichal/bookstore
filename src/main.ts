@@ -1,4 +1,5 @@
 import express from 'express';
+import 'reflect-metadata';
 import { bookRouter } from './app/routes/book';
 
 const app = express();

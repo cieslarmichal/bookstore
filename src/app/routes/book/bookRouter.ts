@@ -1,9 +1,12 @@
 import express, { Request, Response } from 'express';
-import { bookController } from '../../controllers/book';
+import Container from 'typedi';
+import { BookController } from '../../controllers/book';
 
 export const router = express.Router({
   strict: true,
 });
+
+const bookController = Container.get(BookController);
 
 router.post('/', (req: Request, res: Response) => {
   bookController.createBook(req, res);
