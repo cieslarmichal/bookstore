@@ -1,3 +1,4 @@
-export interface UpdateBookData {
-  readonly title: string;
+export class UpdateBookData {
+  public description?: string;
+  public price: number;
 }
