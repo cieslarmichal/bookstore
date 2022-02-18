@@ -8,7 +8,7 @@ export class BookController {
   public path = '/books';
   public router = express.Router();
 
-  constructor(
+  public constructor(
     private readonly bookService: BookService,
     private readonly bookRequestValidator: BookRequestValidator,
   ) {
@@ -18,7 +18,7 @@ export class BookController {
     this.router.delete(this.path, this.deleteBook);
   }
 
-  createBook(request: Request, response: Response): void {
+  public createBook(request: Request, response: Response): void {
     const validationError =
       this.bookRequestValidator.checkForValidationErrorInCreateBookRequest(
         request,

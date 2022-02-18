@@ -4,6 +4,7 @@ import {
   IsDate,
   IsString,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
 import {
   Entity,
@@ -13,6 +14,7 @@ import {
   Column,
   Unique,
 } from 'typeorm';
+import { BookFormat, BookLanguage } from '../types';
 
 export const BOOK_TABLE_NAME = 'books';
 
@@ -52,14 +54,14 @@ export class Book {
   public releaseYear: number;
 
   @IsOptional()
-  @IsString()
+  @IsEnum(BookLanguage)
   @Column()
-  public language: string;
+  public language: BookLanguage;
 
   @IsOptional()
-  @IsString()
+  @IsEnum(BookFormat)
   @Column()
-  public format: string;
+  public format: BookFormat;
 
   @IsOptional()
   @IsString()

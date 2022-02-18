@@ -1,4 +1,5 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { BookFormat, BookLanguage } from '../../types';
 
 export class CreateBookData {
   @IsString()
@@ -10,11 +11,11 @@ export class CreateBookData {
   @IsNumber()
   public releaseYear: number;
 
-  @IsString()
-  public language: string;
+  @IsEnum(BookLanguage)
+  public language: BookLanguage;
 
-  @IsString()
-  public format: string;
+  @IsEnum(BookFormat)
+  public format: BookFormat;
 
   @IsString()
   @IsOptional()
