@@ -1,17 +1,18 @@
 import express, { Request, Response } from 'express';
 import { BookService } from 'src/app/domain/book/services/bookService';
+import {
+  CreateBookData,
+  UpdateBookData,
+} from 'src/app/domain/book/services/types';
+import { ClassFromRecordValidator } from 'src/app/shared';
 import { Service } from 'typedi';
-import { BookRequestValidator } from './bookRequestValidator';
 
 @Service()
 export class BookController {
   public path = '/books';
   public router = express.Router();
 
-  public constructor(
-    private readonly bookService: BookService,
-    private readonly bookRequestValidator: BookRequestValidator,
-  ) {
+  public constructor(private readonly bookService: BookService) {
     this.router.post(this.path, this.createBook);
     this.router.get(this.path, this.findBook);
     this.router.put(this.path, this.updateBook);
@@ -19,17 +20,12 @@ export class BookController {
   }
 
   public createBook(request: Request, response: Response): void {
-    const validationError =
-      this.bookRequestValidator.checkForValidationErrorInCreateBookRequest(
-        request,
-      );
+    const createBookData = ClassFromRecordValidator.validateDto(
+      CreateBookData,
+      request.body,
+    );
 
-    if (validationError) {
-      response.status(400).send(validationError);
-      return;
-    }
-
-    const bookDto = this.bookService.createBook(request.body);
+    const bookDto = this.bookService.createBook(createBookData);
 
     response.status(201).send(bookDto);
   }
@@ -43,19 +39,14 @@ export class BookController {
   }
 
   public updateBook(request: Request, response: Response): void {
-    const validationError =
-      this.bookRequestValidator.checkForValidationErrorInUpdateBookRequest(
-        request,
-      );
-
-    if (validationError) {
-      response.status(400).send(validationError);
-      return;
-    }
+    const updateBookData = ClassFromRecordValidator.validateDto(
+      UpdateBookData,
+      request.body,
+    );
 
     const id = request.params.id;
 
-    const bookDto = this.bookService.updateBook(id, request.body);
+    const bookDto = this.bookService.updateBook(id, updateBookData);
 
     response.send(bookDto);
   }
