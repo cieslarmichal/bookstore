@@ -4,7 +4,7 @@ import {
   CreateBookData,
   UpdateBookData,
 } from 'src/app/domain/book/services/types';
-import { ClassFromRecordValidator } from 'src/app/shared';
+import { RecordToInstanceTransformer } from 'src/app/shared';
 import { Service } from 'typedi';
 
 @Service()
@@ -20,7 +20,7 @@ export class BookController {
   }
 
   public createBook(request: Request, response: Response): void {
-    const createBookData = ClassFromRecordValidator.validateDto(
+    const createBookData = RecordToInstanceTransformer.transform(
       CreateBookData,
       request.body,
     );
@@ -39,7 +39,7 @@ export class BookController {
   }
 
   public updateBook(request: Request, response: Response): void {
-    const updateBookData = ClassFromRecordValidator.validateDto(
+    const updateBookData = RecordToInstanceTransformer.transform(
       UpdateBookData,
       request.body,
     );

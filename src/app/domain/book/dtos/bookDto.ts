@@ -5,6 +5,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { RecordToInstanceTransformer } from 'src/app/shared';
 import { BookFormat, BookLanguage } from '../types';
 
 export class BookDto {
@@ -32,4 +33,6 @@ export class BookDto {
 
   @IsNumber()
   public readonly price: number;
+
+  public static create = RecordToInstanceTransformer.transformFactory(BookDto);
 }

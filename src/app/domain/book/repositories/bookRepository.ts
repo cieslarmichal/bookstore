@@ -6,7 +6,7 @@ import { Book } from '../entities/book';
 @Service()
 @EntityRepository()
 export class BookRepository {
-  async createOne(bookData: Partial<Book>): Promise<BookDto> {
+  public async createOne(bookData: Partial<Book>): Promise<BookDto> {
     const repo = getRepository(Book);
 
     const { title, author } = bookData;
@@ -26,7 +26,9 @@ export class BookRepository {
     return savedBook;
   }
 
-  async findOne(conditions: FindConditions<Book>): Promise<BookDto | null> {
+  public async findOne(
+    conditions: FindConditions<Book>,
+  ): Promise<BookDto | null> {
     const repo = getRepository(Book);
 
     const book = await repo.findOne(conditions);
@@ -38,11 +40,11 @@ export class BookRepository {
     return book;
   }
 
-  async findOneById(id: string): Promise<BookDto | null> {
+  public async findOneById(id: string): Promise<BookDto | null> {
     return this.findOne({ id });
   }
 
-  async findMany(conditions: FindConditions<Book>): Promise<BookDto[]> {
+  public async findMany(conditions: FindConditions<Book>): Promise<BookDto[]> {
     const repo = getRepository(Book);
 
     const books = await repo.find(conditions);
@@ -50,7 +52,10 @@ export class BookRepository {
     return books;
   }
 
-  async updateOne(id: string, bookData: Partial<Book>): Promise<BookDto> {
+  public async updateOne(
+    id: string,
+    bookData: Partial<Book>,
+  ): Promise<BookDto> {
     const repo = getRepository(Book);
 
     const book = await this.findOneById(id);
@@ -64,7 +69,7 @@ export class BookRepository {
     return this.findOneById(id);
   }
 
-  async removeOne(id: string): Promise<void> {
+  public async removeOne(id: string): Promise<void> {
     const repo = getRepository(Book);
 
     const book = await this.findOneById(id);

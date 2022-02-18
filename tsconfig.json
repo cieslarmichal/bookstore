@@ -25,6 +25,5 @@
     "esModuleInterop": true,
     "strictPropertyInitialization": false,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
   }
 }

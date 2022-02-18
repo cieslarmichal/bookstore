@@ -1,2 +1,2 @@
 export * from './errors';
-export * from './classFromRecordValidator';
+export * from './instancePropertiesValidator';
