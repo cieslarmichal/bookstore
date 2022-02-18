@@ -7,54 +7,63 @@ import {
 import { RecordToInstanceTransformer } from 'src/app/shared';
 import { Service } from 'typedi';
 
+const BOOKS_PATH = '/books';
+
 @Service()
 export class BookController {
-  public path = '/books';
-  public router = express.Router();
+  public readonly router = express.Router();
 
   public constructor(private readonly bookService: BookService) {
-    this.router.post(this.path, this.createBook);
-    this.router.get(this.path, this.findBook);
-    this.router.put(this.path, this.updateBook);
-    this.router.delete(this.path, this.deleteBook);
+    this.router.post(BOOKS_PATH, (request: Request, response: Response) =>
+      this.createBook(request, response),
+    );
+    this.router.get(BOOKS_PATH, (request: Request, response: Response) =>
+      this.findBook(request, response),
+    );
+    this.router.put(BOOKS_PATH, (request: Request, response: Response) =>
+      this.updateBook(request, response),
+    );
+    this.router.delete(BOOKS_PATH, (request: Request, response: Response) =>
+      this.deleteBook(request, response),
+    );
   }
 
-  public createBook(request: Request, response: Response): void {
+  public async createBook(request: Request, response: Response): Promise<void> {
     const createBookData = RecordToInstanceTransformer.transform(
-      CreateBookData,
       request.body,
+      CreateBookData,
     );
 
-    const bookDto = this.bookService.createBook(createBookData);
+    const bookDto = await this.bookService.createBook(createBookData);
 
     response.status(201).send(bookDto);
   }
 
-  public findBook(request: Request, response: Response): void {
+  public async findBook(request: Request, response: Response): Promise<void> {
     const id = request.params.id;
 
-    const bookDto = this.bookService.findBook(id);
+    const bookDto = await this.bookService.findBook(id);
 
     response.send(bookDto);
   }
 
-  public updateBook(request: Request, response: Response): void {
+  public async updateBook(request: Request, response: Response): Promise<void> {
     const updateBookData = RecordToInstanceTransformer.transform(
-      UpdateBookData,
       request.body,
+      UpdateBookData,
     );
 
     const id = request.params.id;
 
-    const bookDto = this.bookService.updateBook(id, updateBookData);
+    const bookDto = await this.bookService.updateBook(id, updateBookData);
 
     response.send(bookDto);
   }
 
-  public deleteBook(request: Request, response: Response): void {
+  public async deleteBook(request: Request, response: Response): Promise<void> {
     const id = request.params.id;
 
-    this.bookService.removeBook(id);
+    await this.bookService.removeBook(id);
 
     response.send();
   }

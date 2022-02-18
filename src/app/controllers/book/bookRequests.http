@@ -3,5 +3,10 @@ POST http://localhost:3000/v1/books
 Content-Type: application/json
 
 {
-    "title": "Crime and Punishment"
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "releaseYear": 1866,
+    "language": "en",
+    "format": "paperback",
+    "price": 30
 }
