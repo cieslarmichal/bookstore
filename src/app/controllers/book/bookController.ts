@@ -4,11 +4,12 @@ import {
   CreateBookData,
   UpdateBookData,
 } from 'src/app/domain/book/services/types';
-import { RecordToInstanceTransformer } from 'src/app/shared';
+import { RecordToInstanceTransformer, ResponseSender } from 'src/app/shared';
 import { Service } from 'typedi';
 import asyncHandler from 'express-async-handler';
 
 const BOOKS_PATH = '/books';
+const BOOKS_PATH_WITH_ID = '/books/:id';
 
 @Service()
 export class BookController {
@@ -22,19 +23,19 @@ export class BookController {
       ),
     );
     this.router.get(
-      BOOKS_PATH,
+      BOOKS_PATH_WITH_ID,
       asyncHandler((request: Request, response: Response) =>
         this.findBook(request, response),
       ),
     );
-    this.router.put(
-      BOOKS_PATH,
+    this.router.patch(
+      BOOKS_PATH_WITH_ID,
       asyncHandler((request: Request, response: Response) =>
         this.updateBook(request, response),
       ),
     );
     this.router.delete(
-      BOOKS_PATH,
+      BOOKS_PATH_WITH_ID,
       asyncHandler((request: Request, response: Response) =>
         this.deleteBook(request, response),
       ),
@@ -49,7 +50,7 @@ export class BookController {
 
     const bookDto = await this.bookService.createBook(createBookData);
 
-    response.status(201).send(bookDto);
+    ResponseSender.sendJsonDataWithCode(response, bookDto, 201);
   }
 
   public async findBook(request: Request, response: Response): Promise<void> {
@@ -57,7 +58,7 @@ export class BookController {
 
     const bookDto = await this.bookService.findBook(id);
 
-    response.send(bookDto);
+    ResponseSender.sendJsonData(response, bookDto);
   }
 
   public async updateBook(request: Request, response: Response): Promise<void> {
@@ -70,7 +71,7 @@ export class BookController {
 
     const bookDto = await this.bookService.updateBook(id, updateBookData);
 
-    response.send(bookDto);
+    ResponseSender.sendJsonData(response, bookDto);
   }
 
   public async deleteBook(request: Request, response: Response): Promise<void> {
@@ -78,6 +79,6 @@ export class BookController {
 
     await this.bookService.removeBook(id);
 
-    response.send();
+    ResponseSender.sendEmpty(response);
   }
 }

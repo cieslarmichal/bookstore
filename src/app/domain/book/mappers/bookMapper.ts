@@ -1,4 +1,4 @@
-import { Mapper } from 'src/app/shared/mapper/mapper';
+import { Mapper } from 'src/app/shared/mapper';
 import { Service } from 'typedi';
 import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
