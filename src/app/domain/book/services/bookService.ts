@@ -10,13 +10,21 @@ export class BookService {
   public async createBook(bookData: CreateBookData): Promise<BookDto> {
     console.log('Creating book...');
 
+    const book = await this.bookRepository.createOne(bookData);
+
     console.log('Book created.');
 
-    return new BookDto();
+    return book;
   }
 
   public async findBook(bookId: string): Promise<BookDto> {
-    return new BookDto();
+    const book = await this.bookRepository.findOneById(bookId);
+
+    if (!book) {
+      throw new Error(`Book with id ${bookId} not found`);
+    }
+
+    return book;
   }
 
   public async updateBook(
@@ -25,13 +33,17 @@ export class BookService {
   ): Promise<BookDto> {
     console.log(`Updating book with id ${bookId}...`);
 
+    const book = await this.bookRepository.updateOne(bookId, bookData);
+
     console.log(`Book with id ${bookId} updated.`);
 
-    return new BookDto();
+    return book;
   }
 
   public async removeBook(bookId: string): Promise<void> {
     console.log(`Removing book with id ${bookId}...`);
+
+    await this.bookRepository.removeOne(bookId);
 
     console.log(`Book with id ${bookId} removed.`);
   }

@@ -28,7 +28,7 @@ export class BookMapper implements Mapper<Book, BookDto> {
       releaseYear,
       language,
       format,
-      description,
+      description: description || null,
       price,
     });
   }
