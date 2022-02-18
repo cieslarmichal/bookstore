@@ -20,7 +20,7 @@ export const BOOK_TABLE_NAME = 'books';
 @Entity({
   name: BOOK_TABLE_NAME,
 })
-@Unique('index_title_author', ['title', 'author'])
+@Unique('unique_index_title_author', ['title', 'author'])
 export class Book {
   @IsOptional()
   @PrimaryGeneratedColumn('increment')
@@ -37,7 +37,7 @@ export class Book {
   public updatedAt: Date;
 
   @IsString()
-  @Column({ type: 'text', unique: true })
+  @Column()
   public title: string;
 
   @IsString()
