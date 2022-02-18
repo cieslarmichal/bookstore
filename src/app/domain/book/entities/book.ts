@@ -1,5 +1,4 @@
 import {
-  IsUUID,
   IsOptional,
   IsDate,
   IsString,
@@ -24,8 +23,7 @@ export const BOOK_TABLE_NAME = 'books';
 @Unique('index_title_author', ['title', 'author'])
 export class Book {
   @IsOptional()
-  @IsUUID('4')
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   public id: string;
 
   @IsOptional()
@@ -38,27 +36,22 @@ export class Book {
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
 
-  @IsOptional()
   @IsString()
   @Column({ type: 'text', unique: true })
   public title: string;
 
-  @IsOptional()
   @IsString()
   @Column()
   public author: string;
 
-  @IsOptional()
   @IsNumber()
   @Column()
   public releaseYear: number;
 
-  @IsOptional()
   @IsEnum(BookLanguage)
   @Column()
   public language: BookLanguage;
 
-  @IsOptional()
   @IsEnum(BookFormat)
   @Column()
   public format: BookFormat;
@@ -68,7 +61,6 @@ export class Book {
   @Column({ type: 'text', nullable: true })
   public description: string | null;
 
-  @IsOptional()
   @IsNumber()
   @Column()
   public price: number;

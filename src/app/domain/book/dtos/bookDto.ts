@@ -4,13 +4,12 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
 import { RecordToInstanceTransformer } from 'src/app/shared';
 import { BookFormat, BookLanguage } from '../types';
 
 export class BookDto {
-  @IsUUID('4')
+  @IsNumber()
   public readonly id: string;
 
   @IsDate()

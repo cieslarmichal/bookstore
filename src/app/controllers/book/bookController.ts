@@ -6,6 +6,7 @@ import {
 } from 'src/app/domain/book/services/types';
 import { RecordToInstanceTransformer } from 'src/app/shared';
 import { Service } from 'typedi';
+import asyncHandler from 'express-async-handler';
 
 const BOOKS_PATH = '/books';
 
@@ -14,17 +15,29 @@ export class BookController {
   public readonly router = express.Router();
 
   public constructor(private readonly bookService: BookService) {
-    this.router.post(BOOKS_PATH, (request: Request, response: Response) =>
-      this.createBook(request, response),
+    this.router.post(
+      BOOKS_PATH,
+      asyncHandler((request: Request, response: Response) =>
+        this.createBook(request, response),
+      ),
     );
-    this.router.get(BOOKS_PATH, (request: Request, response: Response) =>
-      this.findBook(request, response),
+    this.router.get(
+      BOOKS_PATH,
+      asyncHandler((request: Request, response: Response) =>
+        this.findBook(request, response),
+      ),
     );
-    this.router.put(BOOKS_PATH, (request: Request, response: Response) =>
-      this.updateBook(request, response),
+    this.router.put(
+      BOOKS_PATH,
+      asyncHandler((request: Request, response: Response) =>
+        this.updateBook(request, response),
+      ),
     );
-    this.router.delete(BOOKS_PATH, (request: Request, response: Response) =>
-      this.deleteBook(request, response),
+    this.router.delete(
+      BOOKS_PATH,
+      asyncHandler((request: Request, response: Response) =>
+        this.deleteBook(request, response),
+      ),
     );
   }
 

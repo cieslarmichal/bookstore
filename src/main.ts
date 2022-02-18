@@ -4,9 +4,7 @@ import { createConnection } from 'typeorm';
 import { Book } from './app/domain/book/entities/book';
 import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
-import { errorMiddleware } from './app/middlewares/errorMiddleware';
-import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
-import bodyParser from 'body-parser';
+import { errorMiddleware } from './app/middlewares';
 
 (async () => {
   await createConnection({
@@ -25,14 +23,8 @@ import bodyParser from 'body-parser';
 
 const app = express();
 
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: false,
-  }),
-);
-app.use(bodyParser.json());
-app.use(jsonMiddleware);
 
 const bookController = Container.get(BookController);
 
