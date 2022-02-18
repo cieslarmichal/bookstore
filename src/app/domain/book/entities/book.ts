@@ -56,7 +56,6 @@ export class Book {
   @Column()
   public language: string;
 
-  // kindle/paperback/hardcover
   @IsOptional()
   @IsString()
   @Column()
