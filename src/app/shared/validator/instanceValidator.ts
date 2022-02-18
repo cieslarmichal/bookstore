@@ -5,6 +5,7 @@ export class InstanceValidator {
   public static validate<T>(objInstance: T): void {
     const validationErrors = validateSync(objInstance as any, {
       whitelist: true,
+      forbidNonWhitelisted: true,
     });
 
     if (validationErrors.length > 0) {
