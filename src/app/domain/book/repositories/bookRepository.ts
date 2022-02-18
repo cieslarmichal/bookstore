@@ -2,16 +2,19 @@ import { Service } from 'typedi';
 import { EntityRepository, FindConditions, getRepository } from 'typeorm';
 import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
+import { BookMapper } from '../mappers/bookMapper';
 
 @Service()
 @EntityRepository()
 export class BookRepository {
+  public constructor(private readonly bookMapper: BookMapper) {}
+
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
     const repo = getRepository(Book);
 
     const { title, author } = bookData;
 
-    const existingBook = this.findOne({ title, author });
+    const existingBook = await this.findOne({ title, author });
 
     if (existingBook) {
       throw new Error(
@@ -23,7 +26,7 @@ export class BookRepository {
 
     const savedBook = await repo.save(book);
 
-    return savedBook;
+    return this.bookMapper.mapEntityToDto(savedBook);
   }
 
   public async findOne(
@@ -37,7 +40,7 @@ export class BookRepository {
       return null;
     }
 
-    return book;
+    return this.bookMapper.mapEntityToDto(book);
   }
 
   public async findOneById(id: string): Promise<BookDto | null> {
@@ -49,7 +52,7 @@ export class BookRepository {
 
     const books = await repo.find(conditions);
 
-    return books;
+    return books.map((book) => this.bookMapper.mapEntityToDto(book));
   }
 
   public async updateOne(
@@ -66,7 +69,7 @@ export class BookRepository {
 
     await repo.update({ id }, bookData);
 
-    return this.findOneById(id);
+    return this.findOneById(id) as Promise<BookDto>;
   }
 
   public async removeOne(id: string): Promise<void> {

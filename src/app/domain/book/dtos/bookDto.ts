@@ -1,4 +1,5 @@
 import {
+  IsDate,
   IsEnum,
   IsNumber,
   IsOptional,
@@ -11,6 +12,12 @@ import { BookFormat, BookLanguage } from '../types';
 export class BookDto {
   @IsUUID('4')
   public readonly id: string;
+
+  @IsDate()
+  public readonly createdAt: Date;
+
+  @IsDate()
+  public readonly updatedAt: Date;
 
   @IsString()
   public readonly title: string;
@@ -29,10 +36,11 @@ export class BookDto {
 
   @IsString()
   @IsOptional()
-  public readonly description?: string;
+  public readonly description?: string | null;
 
   @IsNumber()
   public readonly price: number;
 
-  public static create = RecordToInstanceTransformer.transformFactory(BookDto);
+  public static readonly create =
+    RecordToInstanceTransformer.transformFactory(BookDto);
 }
