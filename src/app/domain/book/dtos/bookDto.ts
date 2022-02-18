@@ -1,28 +1,35 @@
-import { IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { BookFormat, BookLanguage } from '../types';
 
 export class BookDto {
   @IsUUID('4')
-  readonly id: string;
+  public readonly id: string;
 
   @IsString()
-  readonly title: string;
+  public readonly title: string;
 
   @IsString()
-  readonly author: string;
+  public readonly author: string;
 
   @IsNumber()
-  public releaseYear: number;
+  public readonly releaseYear: number;
 
   @IsEnum(BookLanguage)
-  public language: BookLanguage;
+  public readonly language: BookLanguage;
 
   @IsEnum(BookFormat)
-  public format: BookFormat;
+  public readonly format: BookFormat;
 
   @IsString()
   @IsOptional()
-  public description?: string;
+  public readonly description?: string;
 
   @IsNumber()
-  public price: number;
+  public readonly price: number;
 }

@@ -34,7 +34,7 @@ export class BookController {
     response.status(201).send(bookDto);
   }
 
-  findBook(request: Request, response: Response): void {
+  public findBook(request: Request, response: Response): void {
     const id = request.params.id;
 
     const bookDto = this.bookService.findBook(id);
@@ -42,7 +42,7 @@ export class BookController {
     response.send(bookDto);
   }
 
-  updateBook(request: Request, response: Response): void {
+  public updateBook(request: Request, response: Response): void {
     const validationError =
       this.bookRequestValidator.checkForValidationErrorInUpdateBookRequest(
         request,
@@ -60,7 +60,7 @@ export class BookController {
     response.send(bookDto);
   }
 
-  deleteBook(request: Request, response: Response): void {
+  public deleteBook(request: Request, response: Response): void {
     const id = request.params.id;
 
     this.bookService.removeBook(id);

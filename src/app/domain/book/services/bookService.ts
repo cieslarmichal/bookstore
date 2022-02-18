@@ -5,9 +5,9 @@ import { CreateBookData, UpdateBookData } from './types';
 
 @Service()
 export class BookService {
-  constructor(private readonly bookRepository: BookRepository) {}
+  public constructor(private readonly bookRepository: BookRepository) {}
 
-  async createBook(bookData: CreateBookData): Promise<BookDto> {
+  public async createBook(bookData: CreateBookData): Promise<BookDto> {
     console.log('Creating book...');
 
     console.log('Book created.');
@@ -15,11 +15,14 @@ export class BookService {
     return new BookDto();
   }
 
-  async findBook(bookId: string): Promise<BookDto> {
+  public async findBook(bookId: string): Promise<BookDto> {
     return new BookDto();
   }
 
-  async updateBook(bookId: string, bookData: UpdateBookData): Promise<BookDto> {
+  public async updateBook(
+    bookId: string,
+    bookData: UpdateBookData,
+  ): Promise<BookDto> {
     console.log(`Updating book with id ${bookId}...`);
 
     console.log(`Book with id ${bookId} updated.`);
@@ -27,7 +30,7 @@ export class BookService {
     return new BookDto();
   }
 
-  async removeBook(bookId: string): Promise<void> {
+  public async removeBook(bookId: string): Promise<void> {
     console.log(`Removing book with id ${bookId}...`);
 
     console.log(`Book with id ${bookId} removed.`);
