@@ -6,5 +6,10 @@ export function errorMiddleware(
   res: Response,
   next: NextFunction,
 ) {
-  res.status(500).send(`Unexpected error: ${error.message}`);
+  if (error.name == 'ValidationError') {
+    res.status(400);
+  } else {
+    res.status(500);
+  }
+  res.send({ error: error.message });
 }

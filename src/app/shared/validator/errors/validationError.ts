@@ -5,5 +5,7 @@ export class ValidationError extends Error {
         validationErrors,
       )}.`,
     );
+
+    this.name = 'ValidationError';
   }
 }

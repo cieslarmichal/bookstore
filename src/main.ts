@@ -1,10 +1,12 @@
 import express from 'express';
 import 'reflect-metadata';
-import bodyParser from 'body-parser';
 import { createConnection } from 'typeorm';
 import { Book } from './app/domain/book/entities/book';
 import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
+import { errorMiddleware } from './app/middlewares/errorMiddleware';
+import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
+import bodyParser from 'body-parser';
 
 (async () => {
   await createConnection({
@@ -24,11 +26,19 @@ import Container from 'typedi';
 const app = express();
 
 app.use(express.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  }),
+);
 app.use(bodyParser.json());
+app.use(jsonMiddleware);
 
 const bookController = Container.get(BookController);
 
 app.use('/v1', bookController.router);
+
+app.use(errorMiddleware);
 
 const PORT = 3000;
 
