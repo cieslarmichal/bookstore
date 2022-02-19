@@ -1,11 +1,7 @@
 import { Response } from 'express';
 
 export class ResponseSender {
-  public static sendJsonDataWithCode(
-    response: Response,
-    data: any,
-    statusCode: number,
-  ): void {
+  public static sendJsonDataWithCode(response: Response, data: any, statusCode: number): void {
     const json = this.transformDataToJson(data);
 
     response.setHeader('Content-Type', 'application/json');

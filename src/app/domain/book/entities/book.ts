@@ -1,18 +1,5 @@
-import {
-  IsOptional,
-  IsDate,
-  IsString,
-  IsNumber,
-  IsEnum,
-} from 'class-validator';
-import {
-  Entity,
-  CreateDateColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  Column,
-  Unique,
-} from 'typeorm';
+import { IsOptional, IsDate, IsString, IsNumber, IsEnum } from 'class-validator';
+import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, Unique } from 'typeorm';
 import { BookFormat, BookLanguage } from '../types';
 
 export const BOOK_TABLE_NAME = 'books';

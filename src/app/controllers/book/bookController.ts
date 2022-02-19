@@ -1,9 +1,6 @@
 import express, { Request, Response } from 'express';
 import { BookService } from 'src/app/domain/book/services/bookService';
-import {
-  CreateBookData,
-  UpdateBookData,
-} from 'src/app/domain/book/services/types';
+import { CreateBookData, UpdateBookData } from 'src/app/domain/book/services/types';
 import { RecordToInstanceTransformer, ResponseSender } from 'src/app/shared';
 import { Service } from 'typedi';
 import asyncHandler from 'express-async-handler';
@@ -18,35 +15,24 @@ export class BookController {
   public constructor(private readonly bookService: BookService) {
     this.router.post(
       BOOKS_PATH,
-      asyncHandler((request: Request, response: Response) =>
-        this.createBook(request, response),
-      ),
+      asyncHandler((request: Request, response: Response) => this.createBook(request, response)),
     );
     this.router.get(
       BOOKS_PATH_WITH_ID,
-      asyncHandler((request: Request, response: Response) =>
-        this.findBook(request, response),
-      ),
+      asyncHandler((request: Request, response: Response) => this.findBook(request, response)),
     );
     this.router.patch(
       BOOKS_PATH_WITH_ID,
-      asyncHandler((request: Request, response: Response) =>
-        this.updateBook(request, response),
-      ),
+      asyncHandler((request: Request, response: Response) => this.updateBook(request, response)),
     );
     this.router.delete(
       BOOKS_PATH_WITH_ID,
-      asyncHandler((request: Request, response: Response) =>
-        this.deleteBook(request, response),
-      ),
+      asyncHandler((request: Request, response: Response) => this.deleteBook(request, response)),
     );
   }
 
   public async createBook(request: Request, response: Response): Promise<void> {
-    const createBookData = RecordToInstanceTransformer.transform(
-      request.body,
-      CreateBookData,
-    );
+    const createBookData = RecordToInstanceTransformer.transform(request.body, CreateBookData);
 
     const bookDto = await this.bookService.createBook(createBookData);
 
@@ -62,10 +48,7 @@ export class BookController {
   }
 
   public async updateBook(request: Request, response: Response): Promise<void> {
-    const updateBookData = RecordToInstanceTransformer.transform(
-      request.body,
-      UpdateBookData,
-    );
+    const updateBookData = RecordToInstanceTransformer.transform(request.body, UpdateBookData);
 
     const id = request.params.id;
 

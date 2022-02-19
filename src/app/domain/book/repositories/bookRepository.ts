@@ -17,9 +17,7 @@ export class BookRepository {
     const existingBook = await this.findOne({ title, author });
 
     if (existingBook) {
-      throw new Error(
-        `Book with title ${title} and author ${author} already exist`,
-      );
+      throw new Error(`Book with title ${title} and author ${author} already exist`);
     }
 
     const book = repo.create(bookData);
@@ -29,9 +27,7 @@ export class BookRepository {
     return this.bookMapper.mapEntityToDto(savedBook);
   }
 
-  public async findOne(
-    conditions: FindConditions<Book>,
-  ): Promise<BookDto | null> {
+  public async findOne(conditions: FindConditions<Book>): Promise<BookDto | null> {
     const repo = getRepository(Book);
 
     const book = await repo.findOne(conditions);
@@ -55,10 +51,7 @@ export class BookRepository {
     return books.map((book) => this.bookMapper.mapEntityToDto(book));
   }
 
-  public async updateOne(
-    id: string,
-    bookData: Partial<Book>,
-  ): Promise<BookDto> {
+  public async updateOne(id: string, bookData: Partial<Book>): Promise<BookDto> {
     const repo = getRepository(Book);
 
     const book = await this.findOneById(id);
