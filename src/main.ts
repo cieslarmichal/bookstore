@@ -1,31 +1,21 @@
 import 'reflect-metadata';
 import express from 'express';
 import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
-import { createConnection, useContainer } from 'typeorm';
-import { Book } from './app/domain/book/entities/book';
+import { useContainer } from 'typeorm';
 import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
 import { errorMiddleware } from './app/middlewares';
+import dotenv from 'dotenv';
+import path from 'path';
+import { PostgresConnectionManager } from './app/shared/db/postgresConnectionManager';
 
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const envFileName = process.env.NODE_ENV === 'test' ? '.env.testing' : '.env';
+
+dotenv.config({ path: path.resolve(__dirname, `../${envFileName}`) });
 
 useContainer(ContainerFromExtensions);
 
-(async () => {
-  await createConnection({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'bookstore',
-    entities: [Book],
-    synchronize: true,
-  });
-
-  console.log('Connected to postgres database on port 5432');
-})();
+PostgresConnectionManager.connect();
 
 const app = express();
 

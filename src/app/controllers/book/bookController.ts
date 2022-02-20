@@ -40,7 +40,7 @@ export class BookController {
   }
 
   public async findBook(request: Request, response: Response): Promise<void> {
-    const id = request.params.id;
+    const id = parseInt(request.params.id);
 
     const bookDto = await this.bookService.findBook(id);
 
@@ -50,7 +50,7 @@ export class BookController {
   public async updateBook(request: Request, response: Response): Promise<void> {
     const updateBookData = RecordToInstanceTransformer.transform(request.body, UpdateBookData);
 
-    const id = request.params.id;
+    const id = parseInt(request.params.id);
 
     const bookDto = await this.bookService.updateBook(id, updateBookData);
 
@@ -58,7 +58,7 @@ export class BookController {
   }
 
   public async deleteBook(request: Request, response: Response): Promise<void> {
-    const id = request.params.id;
+    const id = parseInt(request.params.id);
 
     await this.bookService.removeBook(id);
 
