@@ -7,6 +7,9 @@ import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
 import { errorMiddleware } from './app/middlewares';
 
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+
 useContainer(ContainerFromExtensions);
 
 (async () => {
