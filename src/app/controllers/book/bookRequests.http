@@ -10,3 +10,18 @@ Content-Type: application/json
     "format": "paperback",
     "price": 30
 }
+
+### Get book with given id
+GET http://localhost:3000/v1/books/1
+
+### Update book
+PATCH http://localhost:3000/v1/books/1
+Content-Type: application/json
+
+{
+    "description": "great book",
+    "price": 50
+}
+
+### Delete book with given id
+DELETE  http://localhost:3000/v1/books/1

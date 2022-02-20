@@ -6,7 +6,7 @@ import { Service } from 'typedi';
 import asyncHandler from 'express-async-handler';
 
 const BOOKS_PATH = '/books';
-const BOOKS_PATH_WITH_ID = '/books/:id';
+const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
 
 @Service()
 export class BookController {
