@@ -1,14 +1,20 @@
-import { EntityManager, getConnection } from 'typeorm';
+import 'reflect-metadata';
+import { getConnection, useContainer } from 'typeorm';
+import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
 import { ConfigLoader } from '../../config';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { PostgresConnectionManager } from '../../shared';
 import request from 'supertest';
+import { BookService } from '../../domain/book/services/bookService';
+import Container from 'typedi';
+
+useContainer(ContainerFromExtensions);
 
 const baseUrl = '/v1/books';
 
 describe(`BookController (${baseUrl})`, () => {
+  let bookService: BookService;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let entityManager: EntityManager;
   let server: Express.Application;
 
   beforeAll(async () => {
@@ -16,9 +22,9 @@ describe(`BookController (${baseUrl})`, () => {
 
     await PostgresConnectionManager.connect();
 
-    bookTestDataGenerator = new BookTestDataGenerator();
+    bookService = Container.get(BookService);
 
-    entityManager = await getConnection().manager;
+    bookTestDataGenerator = new BookTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -41,7 +47,7 @@ describe(`BookController (${baseUrl})`, () => {
     it('return bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const title = 'Lord of the Rings';
+      const { title } = bookTestDataGenerator.generateData();
 
       const response = await request(server).post(baseUrl).send({
         title,
@@ -79,146 +85,122 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(400);
     });
 
-    it('return not found when book with given id does not exist', async () => {
+    it('return not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
-      const bookId = '777';
+      const { id } = bookTestDataGenerator.generateData();
 
-      const response = await request(server).get(`${baseUrl}/${bookId}`);
+      const response = await request(server).get(`${baseUrl}/${id}`);
 
       expect(response.statusCode).toBe(404);
     });
 
-    it('accepts a request when the resourceId param and userId query are uuid', async () => {
+    it('accepts a request and returns ok when bookId is a number and have corresponding book', async () => {
       expect.assertions(1);
 
-      const userId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const resourceId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await httpHelper.request({
-        method: HttpMethod.GET,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
-      });
+      const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
 
-      expect(response.statusCode).toBe(HttpStatus.OK);
+      const response = await request(server).get(`${baseUrl}/${book.id}`);
+
+      expect(response.statusCode).toBe(200);
     });
   });
 
-  describe('Update user resource', () => {
-    it('throws an error when the resourceId param is not a uuid', async () => {
+  describe('Update book', () => {
+    it('returns bad request when provided not allowed properties in body', async () => {
       expect.assertions(1);
 
-      const userId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const resourceId = '123';
-      const body = { title: 'title', thumbnailUrl: 'thumbnailUrl', content: 'content' };
+      const { id, title } = bookTestDataGenerator.generateData();
 
-      const response = await httpHelper.request({
-        method: HttpMethod.PUT,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
-        data: body,
+      const response = await request(server).patch(`${baseUrl}/${id}`).send({
+        title,
       });
 
-      expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.statusCode).toBe(400);
     });
 
-    it('throws an error when the userId query is not a uuid', async () => {
+    it('returns bad request when the bookId param is not a number', async () => {
       expect.assertions(1);
 
-      const userId = '123';
-      const resourceId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const body = { title: 'title', thumbnailUrl: 'thumbnailUrl', content: 'content' };
+      const bookId = 'abc';
 
-      const response = await httpHelper.request({
-        method: HttpMethod.PUT,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
-        data: body,
+      const { price } = bookTestDataGenerator.generateData();
+
+      const response = await request(server).patch(`${baseUrl}/${bookId}`).send({
+        price,
       });
 
-      expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.statusCode).toBe(400);
     });
 
-    it('throws when any of body fields is not string', async () => {
+    it('return not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
-      const userId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const resourceId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const body = { title: 'title', thumbnailUrl: 'thumbnailUrl', content: true };
+      const { id, price } = bookTestDataGenerator.generateData();
 
-      const response = await httpHelper.request({
-        method: HttpMethod.PUT,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
-        data: body,
+      const response = await request(server).patch(`${baseUrl}/${id}`).send({
+        price,
       });
 
-      expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.statusCode).toBe(404);
     });
 
-    it('accepts a request when the resourceId param and userId query are uuid', async () => {
+    it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
       expect.assertions(1);
 
-      const userId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const resourceId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const body = { title: 'title', thumbnailUrl: 'thumbnailUrl', content: 'content' };
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await httpHelper.request({
-        method: HttpMethod.PUT,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
-        data: body,
+      const { price: newPrice } = bookTestDataGenerator.generateData();
+
+      const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
+
+      const response = await request(server).patch(`${baseUrl}/${book.id}`).send({
+        newPrice,
       });
 
-      expect(response.statusCode).toBe(HttpStatus.OK);
+      expect(response.statusCode).toBe(200);
     });
   });
 
-  describe('Remove user resource', () => {
-    it('throws an error when the resourceId param is not a uuid', async () => {
+  describe('Remove book', () => {
+    it('returns bad request when the bookId param is not a number', async () => {
       expect.assertions(1);
 
-      const userId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const resourceId = '123';
+      const bookId = 'abc';
 
-      const response = await httpHelper.request({
-        method: HttpMethod.DELETE,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
+      const { price } = bookTestDataGenerator.generateData();
+
+      const response = await request(server).delete(`${baseUrl}/${bookId}`).send({
+        price,
       });
 
-      expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.statusCode).toBe(400);
     });
 
-    it('throws an error when the userId query is not a uuid', async () => {
+    it('return not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
-      const userId = '123';
-      const resourceId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
+      const { id, price } = bookTestDataGenerator.generateData();
 
-      const response = await httpHelper.request({
-        method: HttpMethod.DELETE,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
+      const response = await request(server).delete(`${baseUrl}/${id}`).send({
+        price,
       });
 
-      expect(response.statusCode).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.statusCode).toBe(404);
     });
 
-    it('accepts a request when the resourceId param and userId query are uuid', async () => {
+    it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
       expect.assertions(1);
 
-      const userId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
-      const resourceId = 'e46c11a8-8893-412d-bc8b-60753a98e45c';
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await httpHelper.request({
-        method: HttpMethod.DELETE,
-        url: `${baseUrl}/${resourceId}?${userIdField}=${userId}`,
-        token: authToken,
-      });
+      const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
 
-      expect(response.statusCode).toBe(HttpStatus.NO_CONTENT);
+      const response = await request(server).delete(`${baseUrl}/${book.id}`);
+
+      expect(response.statusCode).toBe(200);
     });
   });
 });

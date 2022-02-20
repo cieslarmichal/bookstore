@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { BookService } from 'src/app/domain/book/services/bookService';
-import { CreateBookData, UpdateBookData } from 'src/app/domain/book/services/types';
-import { RecordToInstanceTransformer, ResponseSender } from 'src/app/shared';
+import { BookService } from '../../domain/book/services/bookService';
+import { CreateBookData, UpdateBookData } from '../../domain/book/services/types';
+import { RecordToInstanceTransformer, ResponseSender } from '../../shared';
 import { Service } from 'typedi';
 import asyncHandler from 'express-async-handler';
 

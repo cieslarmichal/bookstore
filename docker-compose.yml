@@ -1,11 +1,20 @@
 version: "3.9"
 
 services:
-  postgres:
+  db:
     image: postgres:latest
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_DB=bookstore
     ports:
-    - "${DB_PORT}:5432"
+    - "5432:5432"
+    
+  db-test:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=bookstoretest
+    ports:
+    - "6000:5432"
