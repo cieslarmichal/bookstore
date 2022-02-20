@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import Container from 'typedi';
 import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
-import { createConnection, getConnection, useContainer } from 'typeorm';
-import { Book } from '../entities/book';
+import { getConnection, useContainer } from 'typeorm';
 import { BookRepository } from '../repositories/bookRepository';
 import { BookService } from './bookService';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
+import { ConfigLoader } from '../../../config';
+import { PostgresConnectionManager } from '../../../shared';
 
 useContainer(ContainerFromExtensions);
 
@@ -15,19 +16,9 @@ describe('BookService', () => {
   let bookTestDataGenerator: BookTestDataGenerator;
 
   beforeAll(async () => {
-    await createConnection({
-      type: 'postgres',
-      host: 'localhost',
-      port: 6000,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'bookstoretest',
-      entities: [Book],
-      synchronize: true,
-    }).catch((error) => {
-      console.error(`Couldn't connect to the database!`);
-      console.error(error);
-    });
+    ConfigLoader.loadConfig();
+
+    await PostgresConnectionManager.connect();
 
     bookService = Container.get(BookService);
     bookRepository = Container.get(BookRepository);

@@ -26,6 +26,6 @@ app.use('/v1', bookController.router);
 app.use(errorMiddleware);
 
 async function bootstrap() {
-  await app.listen(process.env.HTTP_PORT, () => console.log(`Listening on port ${process.env.HTTP_PORT}`));
+  app.listen(process.env.HTTP_PORT, () => console.log(`Listening on port ${process.env.HTTP_PORT}`));
 }
 bootstrap();
