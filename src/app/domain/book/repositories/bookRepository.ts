@@ -19,7 +19,7 @@ export class BookRepository {
     const existingBook = await this.findOne({ title, author });
 
     if (existingBook) {
-      throw new Error(`Book with title ${title} and author ${author} already exist`);
+      throw new Error(`Book with title ${title} and author ${author} already exists`);
     }
 
     const book = this.entityManager.create(Book, bookData);

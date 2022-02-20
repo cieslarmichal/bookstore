@@ -33,19 +33,20 @@ describe('BookService', () => {
   });
 
   afterAll(async () => {
-    const entities = getConnection().entityMetadatas;
-
-    for (const entity of entities) {
-      const repository = getConnection().getRepository(entity.name); // Get repository
-      await repository.clear(); // Clear each entity table's content
-    }
-
     await getConnection().close();
+  });
+
+  beforeEach(async () => {
+    const entities = getConnection().entityMetadatas;
+    for (const entity of entities) {
+      const repository = await getConnection().getRepository(entity.name);
+      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
+    }
   });
 
   describe('Create book', () => {
     it('creates a book in database', async () => {
-      expect.assertions(4);
+      expect.assertions(1);
 
       const createdBookDto = await bookService.createBook({
         title: 'title',
