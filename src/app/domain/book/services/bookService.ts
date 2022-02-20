@@ -1,7 +1,9 @@
+import { NotFoundError } from '../../../shared';
 import { Service } from 'typedi';
 import { BookDto } from '../dtos';
 import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
+
 @Service()
 export class BookService {
   public constructor(private readonly bookRepository: BookRepository) {}
@@ -20,7 +22,7 @@ export class BookService {
     const book = await this.bookRepository.findOneById(bookId);
 
     if (!book) {
-      throw new Error(`Book with id ${bookId} not found`);
+      throw new NotFoundError(`Book with id ${bookId} not found`);
     }
 
     return book;

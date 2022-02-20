@@ -4,6 +4,7 @@ import { CreateBookData, UpdateBookData } from '../../domain/book/services/types
 import { RecordToInstanceTransformer, ResponseSender } from '../../shared';
 import { Service } from 'typedi';
 import asyncHandler from 'express-async-handler';
+import { BadRequestError } from '../..//shared/http/errors/badRequestError';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
@@ -42,6 +43,10 @@ export class BookController {
   public async findBook(request: Request, response: Response): Promise<void> {
     const id = parseInt(request.params.id);
 
+    if (isNaN(id)) {
+      throw new BadRequestError(`Book id ${id} is not a number`);
+    }
+
     const bookDto = await this.bookService.findBook(id);
 
     ResponseSender.sendJsonData(response, bookDto);
@@ -52,6 +57,11 @@ export class BookController {
 
     const id = parseInt(request.params.id);
 
+    if (isNaN(id)) {
+      throw new BadRequestError(`Book id ${id} is not a number`);
+    }
+    console.log(id);
+
     const bookDto = await this.bookService.updateBook(id, updateBookData);
 
     ResponseSender.sendJsonData(response, bookDto);
@@ -59,6 +69,10 @@ export class BookController {
 
   public async deleteBook(request: Request, response: Response): Promise<void> {
     const id = parseInt(request.params.id);
+
+    if (isNaN(id)) {
+      throw new BadRequestError(`Book id ${id} is not a number`);
+    }
 
     await this.bookService.removeBook(id);
 

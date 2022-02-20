@@ -4,6 +4,7 @@ import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
 import { InjectManager } from 'typeorm-typedi-extensions';
+import { NotFoundError } from '../../../shared';
 
 @EntityRepository()
 @Service()
@@ -53,7 +54,7 @@ export class BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new Error(`Book with id ${id} not found`);
+      throw new NotFoundError(`Book with id ${id} not found`);
     }
 
     await this.entityManager.update(Book, { id }, bookData);
@@ -65,7 +66,7 @@ export class BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new Error(`Book with id ${id} not found`);
+      throw new NotFoundError(`Book with id ${id} not found`);
     }
 
     await this.entityManager.delete(Book, { id });
