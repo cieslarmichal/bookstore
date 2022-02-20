@@ -5,13 +5,10 @@ import { useContainer } from 'typeorm';
 import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
 import { errorMiddleware } from './app/middlewares';
-import dotenv from 'dotenv';
-import path from 'path';
-import { PostgresConnectionManager } from './app/shared/db/postgresConnectionManager';
+import { PostgresConnectionManager } from './app/shared/db';
+import { ConfigLoader } from './app/config';
 
-const envFileName = process.env.NODE_ENV === 'test' ? '.env.testing' : '.env';
-
-dotenv.config({ path: path.resolve(__dirname, `../${envFileName}`) });
+ConfigLoader.loadConfig();
 
 useContainer(ContainerFromExtensions);
 
@@ -28,9 +25,7 @@ app.use('/v1', bookController.router);
 
 app.use(errorMiddleware);
 
-const PORT = 3000;
-
 async function bootstrap() {
-  await app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+  await app.listen(process.env.HTTP_PORT, () => console.log(`Listening on port ${process.env.HTTP_PORT}`));
 }
 bootstrap();
