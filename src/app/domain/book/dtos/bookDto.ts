@@ -4,7 +4,7 @@ import { BookFormat, BookLanguage } from '../types';
 
 export class BookDto {
   @IsNumber()
-  public readonly id: string;
+  public readonly id: number;
 
   @IsDate()
   public readonly createdAt: Date;

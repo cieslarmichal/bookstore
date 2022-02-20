@@ -36,7 +36,7 @@ describe('BookService', () => {
     await getConnection().close();
   });
 
-  beforeEach(async () => {
+  afterEach(async () => {
     const entities = getConnection().entityMetadatas;
     for (const entity of entities) {
       const repository = await getConnection().getRepository(entity.name);

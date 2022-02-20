@@ -16,7 +16,7 @@ export class BookService {
     return book;
   }
 
-  public async findBook(bookId: string): Promise<BookDto> {
+  public async findBook(bookId: number): Promise<BookDto> {
     const book = await this.bookRepository.findOneById(bookId);
 
     if (!book) {
@@ -26,7 +26,7 @@ export class BookService {
     return book;
   }
 
-  public async updateBook(bookId: string, bookData: UpdateBookData): Promise<BookDto> {
+  public async updateBook(bookId: number, bookData: UpdateBookData): Promise<BookDto> {
     console.log(`Updating book with id ${bookId}...`);
 
     const book = await this.bookRepository.updateOne(bookId, bookData);
@@ -36,7 +36,7 @@ export class BookService {
     return book;
   }
 
-  public async removeBook(bookId: string): Promise<void> {
+  public async removeBook(bookId: number): Promise<void> {
     console.log(`Removing book with id ${bookId}...`);
 
     await this.bookRepository.removeOne(bookId);

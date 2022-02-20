@@ -11,7 +11,7 @@ export const BOOK_TABLE_NAME = 'books';
 export class Book {
   @IsOptional()
   @PrimaryGeneratedColumn('increment')
-  public id: string;
+  public id: number;
 
   @IsOptional()
   @IsDate()
