@@ -1,10 +1,8 @@
 import { Book } from '../entities/book';
-import { Faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { BookFormat, BookLanguage } from '../types';
 
 export class BookTestDataGenerator {
-  private faker = new Faker();
-
   public generateData(): Book {
     return {
       id: this.generateId(),
@@ -21,42 +19,42 @@ export class BookTestDataGenerator {
   }
 
   public generateId(): number {
-    return this.faker.datatype.number();
+    return faker.datatype.number();
   }
 
   public generateCreatedAt(): Date {
-    return this.faker.date.recent(3);
+    return faker.date.recent(3);
   }
 
   public generateUpdatedAt(): Date {
-    return this.faker.date.recent(1);
+    return faker.date.recent(1);
   }
 
   public generateTitle(): string {
-    return this.faker.lorem.text(10);
+    return faker.lorem.text(10);
   }
 
   public generateAuthor(): string {
-    return this.faker.name.firstName() + ' ' + this.faker.name.lastName();
+    return faker.name.firstName() + ' ' + faker.name.lastName();
   }
 
   public generateReleaseYear(): number {
-    return this.faker.datatype.number({ min: 1000, max: 2100 });
+    return faker.datatype.number({ min: 1000, max: 2100 });
   }
 
   public generateLanguage(): BookLanguage {
-    return this.faker.helpers.randomize([BookLanguage.en, BookLanguage.pl]);
+    return faker.helpers.randomize([BookLanguage.en, BookLanguage.pl]);
   }
 
   public generateFormat(): BookFormat {
-    return this.faker.helpers.randomize([BookFormat.hardcover, BookFormat.paperback, BookFormat.paperback]);
+    return faker.helpers.randomize([BookFormat.hardcover, BookFormat.paperback, BookFormat.paperback]);
   }
 
   public generateDescription(): string {
-    return this.faker.lorem.text(50);
+    return faker.lorem.text(50);
   }
 
   public generatePrice(): number {
-    return this.faker.datatype.number({ min: 1, max: 1000 });
+    return faker.datatype.number({ min: 1, max: 1000 });
   }
 }
