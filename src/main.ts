@@ -14,18 +14,20 @@ useContainer(ContainerFromExtensions);
 
 PostgresConnectionManager.connect();
 
-const app = express();
+const server = express();
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+server.use(express.urlencoded({ extended: false }));
+server.use(express.json());
 
 const bookController = Container.get(BookController);
 
-app.use('/v1', bookController.router);
+server.use('/v1', bookController.router);
 
-app.use(errorMiddleware);
+server.use(errorMiddleware);
 
 async function bootstrap() {
-  app.listen(process.env.HTTP_PORT, () => console.log(`Listening on port ${process.env.HTTP_PORT}`));
+  server.listen(process.env.HTTP_PORT, () => console.log(`Listening on port ${process.env.HTTP_PORT}`));
 }
 bootstrap();
+
+module.exports = server;
