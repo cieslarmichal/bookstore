@@ -4,14 +4,13 @@ import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
 import { InjectManager } from 'typeorm-typedi-extensions';
-import { Inject } from 'typedi';
 
 @EntityRepository()
 @Service()
 export class BookRepository {
   public constructor(
     @InjectManager() private readonly entityManager: EntityManager,
-    @Inject() private readonly bookMapper: BookMapper,
+    private readonly bookMapper: BookMapper,
   ) {}
 
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
