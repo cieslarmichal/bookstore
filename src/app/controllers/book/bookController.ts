@@ -60,7 +60,6 @@ export class BookController {
     if (isNaN(id)) {
       throw new BadRequestError(`Book id ${id} is not a number`);
     }
-    console.log(id);
 
     const bookDto = await this.bookService.updateBook(id, updateBookData);
 

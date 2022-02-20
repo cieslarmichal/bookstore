@@ -160,7 +160,7 @@ describe(`BookController (${baseUrl})`, () => {
       const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
 
       const response = await request(server).patch(`${baseUrl}/${book.id}`).send({
-        newPrice,
+        price: newPrice,
       });
 
       expect(response.statusCode).toBe(200);
