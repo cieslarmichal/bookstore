@@ -1,5 +1,7 @@
+import 'reflect-metadata';
 import Container from 'typedi';
-import { createConnection, getConnection } from 'typeorm';
+import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
+import { createConnection, useContainer } from 'typeorm';
 import { Book } from '../entities/book';
 import { BookRepository } from '../repositories/bookRepository';
 import { BookFormat, BookLanguage } from '../types';
@@ -10,31 +12,31 @@ describe('BookService', () => {
   let bookRepository: BookRepository;
 
   beforeAll(async () => {
+    useContainer(ContainerFromExtensions);
+  });
+
+  beforeEach(async () => {
     (async () => {
       await createConnection({
         type: 'postgres',
         host: 'localhost',
-        port: 5432,
+        port: 6000,
         username: 'postgres',
         password: 'postgres',
         database: 'bookstoretest',
         entities: [Book],
         synchronize: true,
+      }).catch((error) => {
+        console.error(`Couldn't connect to the database!`);
+        console.error(error);
       });
-
-      console.log('Connected to postgres database on port 5432');
     })();
-  });
 
-  beforeEach(async () => {
     bookService = Container.get(BookService);
     bookRepository = Container.get(BookRepository);
   });
 
-  afterAll(async () => {
-    const connection = await getConnection();
-    await connection.close();
-  });
+  afterAll(async () => {});
 
   describe('Create book', () => {
     it('creates a book in database', async () => {

@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  postgres:
+  db:
     image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
@@ -9,3 +9,11 @@ services:
       - POSTGRES_DB=bookstore
     ports:
     - "5432:5432"
+  db-test:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=bookstoretest
+    ports:
+    - "6000:5432"

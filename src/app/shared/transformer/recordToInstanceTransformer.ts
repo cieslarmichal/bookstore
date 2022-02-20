@@ -4,7 +4,7 @@ import { InstanceValidator } from '../validator';
 export class RecordToInstanceTransformer {
   public static transform<T>(record: Record<any, any>, Constructor: new () => T): T {
     const instance = plainToInstance(Constructor, record);
-    console.log(instance);
+
     InstanceValidator.validate<T>(instance);
 
     return instance;

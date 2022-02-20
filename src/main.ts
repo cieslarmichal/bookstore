@@ -1,10 +1,13 @@
-import express from 'express';
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
+import express from 'express';
+import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
+import { createConnection, useContainer } from 'typeorm';
 import { Book } from './app/domain/book/entities/book';
 import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
 import { errorMiddleware } from './app/middlewares';
+
+useContainer(ContainerFromExtensions);
 
 (async () => {
   await createConnection({

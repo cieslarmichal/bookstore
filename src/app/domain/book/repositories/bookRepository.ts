@@ -1,17 +1,20 @@
 import { Service } from 'typedi';
-import { EntityRepository, FindConditions, getRepository } from 'typeorm';
+import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
+import { InjectManager } from 'typeorm-typedi-extensions';
+import { Inject } from 'typedi';
 
-@Service()
 @EntityRepository()
+@Service()
 export class BookRepository {
-  public constructor(private readonly bookMapper: BookMapper) {}
+  public constructor(
+    @InjectManager() private readonly entityManager: EntityManager,
+    @Inject() private readonly bookMapper: BookMapper,
+  ) {}
 
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
-    const repo = getRepository(Book);
-
     const { title, author } = bookData;
 
     const existingBook = await this.findOne({ title, author });
@@ -20,17 +23,15 @@ export class BookRepository {
       throw new Error(`Book with title ${title} and author ${author} already exist`);
     }
 
-    const book = repo.create(bookData);
+    const book = this.entityManager.create(Book, bookData);
 
-    const savedBook = await repo.save(book);
+    const savedBook = await this.entityManager.save(book);
 
     return this.bookMapper.mapEntityToDto(savedBook);
   }
 
   public async findOne(conditions: FindConditions<Book>): Promise<BookDto | null> {
-    const repo = getRepository(Book);
-
-    const book = await repo.findOne(conditions);
+    const book = await this.entityManager.findOne(Book, conditions);
 
     if (!book) {
       return null;
@@ -44,36 +45,30 @@ export class BookRepository {
   }
 
   public async findMany(conditions: FindConditions<Book>): Promise<BookDto[]> {
-    const repo = getRepository(Book);
-
-    const books = await repo.find(conditions);
+    const books = await this.entityManager.find(Book, conditions);
 
     return books.map((book) => this.bookMapper.mapEntityToDto(book));
   }
 
   public async updateOne(id: string, bookData: Partial<Book>): Promise<BookDto> {
-    const repo = getRepository(Book);
-
     const book = await this.findOneById(id);
 
     if (!book) {
       throw new Error(`Book with id ${id} not found`);
     }
 
-    await repo.update({ id }, bookData);
+    await this.entityManager.update(Book, { id }, bookData);
 
     return this.findOneById(id) as Promise<BookDto>;
   }
 
   public async removeOne(id: string): Promise<void> {
-    const repo = getRepository(Book);
-
     const book = await this.findOneById(id);
 
     if (!book) {
       throw new Error(`Book with id ${id} not found`);
     }
 
-    await repo.delete({ id });
+    await this.entityManager.delete(Book, { id });
   }
 }
