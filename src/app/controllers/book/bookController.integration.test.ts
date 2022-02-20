@@ -7,6 +7,7 @@ import { PostgresConnectionManager } from '../../shared';
 import request from 'supertest';
 import { BookService } from '../../domain/book/services/bookService';
 import Container from 'typedi';
+import http from 'http';
 
 useContainer(ContainerFromExtensions);
 
@@ -15,7 +16,7 @@ const baseUrl = '/v1/books';
 describe(`BookController (${baseUrl})`, () => {
   let bookService: BookService;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let server: Express.Application;
+  let server: http.Server;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -36,9 +37,11 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   afterEach(async () => {
+    server.close();
+
     const entities = getConnection().entityMetadatas;
     for (const entity of entities) {
-      const repository = await getConnection().getRepository(entity.name);
+      const repository = getConnection().getRepository(entity.name);
       await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
     }
   });
