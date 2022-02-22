@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import express from 'express';
 import { BookController } from './app/controllers/book/bookController';
 import Container from 'typedi';
-import { errorMiddleware } from './app/middlewares';
+import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
 import { PostgresConnectionManager } from './app/shared/db';
 import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
 import { useContainer } from 'typeorm';
@@ -31,6 +31,7 @@ export class App {
     const bookController = Container.get(BookController);
 
     this.app.use('/v1', bookController.router);
+    this.app.use(routeNotFoundMiddleware);
     this.app.use(errorMiddleware);
   }
 
@@ -38,7 +39,7 @@ export class App {
     const httpPort = process.env.HTTP_PORT;
 
     this.server = this.app.listen(httpPort, () => {
-      console.log(`server running on port ${httpPort}`);
+      console.log(`Server running on port ${httpPort}`);
     });
   }
 

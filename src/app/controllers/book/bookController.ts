@@ -44,7 +44,7 @@ export class BookController {
     const id = parseInt(request.params.id);
 
     if (isNaN(id)) {
-      throw new BadRequestError(`Book id ${id} is not a number`);
+      throw new BadRequestError(`Book id '${request.params.id}' is not a number`);
     }
 
     const bookDto = await this.bookService.findBook(id);
@@ -58,7 +58,7 @@ export class BookController {
     const id = parseInt(request.params.id);
 
     if (isNaN(id)) {
-      throw new BadRequestError(`Book id ${id} is not a number`);
+      throw new BadRequestError(`Book id '${request.params.id}' is not a number`);
     }
 
     const bookDto = await this.bookService.updateBook(id, updateBookData);
@@ -70,7 +70,7 @@ export class BookController {
     const id = parseInt(request.params.id);
 
     if (isNaN(id)) {
-      throw new BadRequestError(`Book id ${id} is not a number`);
+      throw new BadRequestError(`Book id '${request.params.id}' is not a number`);
     }
 
     await this.bookService.removeBook(id);
