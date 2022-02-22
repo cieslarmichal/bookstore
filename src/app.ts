@@ -11,7 +11,7 @@ import http from 'http';
 
 export class App {
   private app: express.Application;
-  private server: http.Server;
+  public server: http.Server;
 
   public constructor() {
     this.app = express();
