@@ -4,6 +4,9 @@ import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
 import { ConfigLoader } from './app/config';
 import http from 'http';
 import { createDIContainer } from './container';
+import { BookModule } from './app/domain/book/bookModule';
+import { DbModule } from './app/shared/db/dbModule';
+import { ControllersModule } from './app/controllers/controllersModule';
 
 export class App {
   private app: express.Application;
@@ -20,7 +23,11 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
-    const container = await createDIContainer();
+    const dbModule = new DbModule();
+    const bookModule = new BookModule();
+    const controllersModule = new ControllersModule();
+
+    const container = await createDIContainer([dbModule, bookModule, controllersModule]);
 
     const bookController = container.resolve('bookController');
     console.log(bookController);

@@ -1,31 +1,14 @@
-import { createContainer, InjectionMode, asClass, asValue } from 'awilix';
-import { BookController } from './app/controllers/book/bookController';
-import { BookMapper } from './app/domain/book/mappers/bookMapper';
-import { BookRepository } from './app/domain/book/repositories/bookRepository';
-import { BookService } from './app/domain/book/services/bookService';
-import { createDbConnection } from './app/shared';
+import { createContainer, InjectionMode } from 'awilix';
+import { LoadableModule } from './app/shared';
 
-export async function createDIContainer() {
+export async function createDIContainer(modules: Array<LoadableModule>) {
   const container = createContainer({
     injectionMode: InjectionMode.CLASSIC,
   });
 
-  const dbConnection = await createDbConnection();
-
-  const DITokens = {
-    entityManager: 'entityManager',
-    bookMapper: 'bookMapper',
-    bookRepository: 'bookRepository',
-    bookService: 'bookService',
-    bookController: 'bookController',
-  };
-  container.register({
-    [DITokens.entityManager]: asValue(dbConnection.manager),
-    [DITokens.bookMapper]: asClass(BookMapper),
-    [DITokens.bookRepository]: asClass(BookRepository),
-    [DITokens.bookService]: asClass(BookService),
-    [DITokens.bookController]: asClass(BookController),
-  });
+  for (const module of modules) {
+    await module.loadDependenciesIntoDIContainer(container);
+  }
 
   return container;
 }
