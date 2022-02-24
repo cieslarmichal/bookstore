@@ -3,7 +3,7 @@ import express from 'express';
 import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
 import { ConfigLoader } from './app/config';
 import http from 'http';
-import { createDIContainer } from './container';
+import { createDIContainer } from './app/shared';
 import { BookModule } from './app/domain/book/bookModule';
 import { DbModule } from './app/shared/db/dbModule';
 import { ControllersModule } from './app/controllers/controllersModule';
@@ -23,11 +23,7 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
-    const dbModule = new DbModule();
-    const bookModule = new BookModule();
-    const controllersModule = new ControllersModule();
-
-    const container = await createDIContainer([dbModule, bookModule, controllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
 
     const bookController = container.resolve('bookController');
     console.log(bookController);
