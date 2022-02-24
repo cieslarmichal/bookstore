@@ -5,7 +5,7 @@ import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/book
 import request from 'supertest';
 import { BookService } from '../../domain/book/services/bookService';
 import { App } from '../../../app';
-import { createDependencyInjectionContainer } from '../../../container';
+import { createDIContainer } from '../../../container';
 
 const baseUrl = '/v1/books';
 
@@ -17,7 +17,7 @@ describe(`BookController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDependencyInjectionContainer();
+    const container = await createDIContainer();
 
     bookService = container.resolve('bookService');
 

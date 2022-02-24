@@ -4,7 +4,7 @@ import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDependencyInjectionContainer } from '../../../../container';
+import { createDIContainer } from '../../../../container';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
@@ -14,7 +14,7 @@ describe('BookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDependencyInjectionContainer();
+    const container = await createDIContainer();
 
     bookMapper = container.resolve('bookMapper');
     entityManager = container.resolve('entityManager');

@@ -3,7 +3,7 @@ import express from 'express';
 import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
 import { ConfigLoader } from './app/config';
 import http from 'http';
-import { createDependencyInjectionContainer } from './container';
+import { createDIContainer } from './container';
 
 export class App {
   private app: express.Application;
@@ -20,7 +20,7 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
-    const container = await createDependencyInjectionContainer();
+    const container = await createDIContainer();
 
     const bookController = container.resolve('bookController');
     console.log(bookController);

@@ -5,9 +5,9 @@ import { BookRepository } from './app/domain/book/repositories/bookRepository';
 import { BookService } from './app/domain/book/services/bookService';
 import { createDbConnection } from './app/shared';
 
-export async function createDependencyInjectionContainer() {
+export async function createDIContainer() {
   const container = createContainer({
-    injectionMode: InjectionMode.PROXY,
+    injectionMode: InjectionMode.CLASSIC,
   });
 
   const dbConnection = await createDbConnection();

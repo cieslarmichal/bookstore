@@ -6,9 +6,7 @@ import { NotFoundError } from '../../../shared';
 
 @EntityRepository()
 export class BookRepository {
-  public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {
-    console.log('AAAAAAAAAAAAAAAAAAAAAA');
-  }
+  public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
     const { title, author } = bookData;

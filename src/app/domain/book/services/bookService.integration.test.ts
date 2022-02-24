@@ -4,7 +4,7 @@ import { BookRepository } from '../repositories/bookRepository';
 import { BookService } from './bookService';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDependencyInjectionContainer } from '../../../../container';
+import { createDIContainer } from '../../../../container';
 
 describe('BookService', () => {
   let bookService: BookService;
@@ -14,7 +14,7 @@ describe('BookService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDependencyInjectionContainer();
+    const container = await createDIContainer();
 
     bookService = container.resolve('bookService');
     bookRepository = container.resolve('bookRepository');
