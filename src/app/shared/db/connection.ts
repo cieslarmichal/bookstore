@@ -1,7 +1,14 @@
 import { Book } from '../../domain/book/entities/book';
-import { createConnection } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 
 export function createDbConnection() {
+  try {
+    const currentConnection = getConnection();
+    if (currentConnection) {
+      return currentConnection;
+    }
+  } catch {}
+
   return createConnection({
     type: 'postgres',
     host: process.env.DB_HOST,
