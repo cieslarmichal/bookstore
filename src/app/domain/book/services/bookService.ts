@@ -1,10 +1,8 @@
 import { NotFoundError } from '../../../shared';
-import { Service } from 'typedi';
 import { BookDto } from '../dtos';
 import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
 
-@Service()
 export class BookService {
   public constructor(private readonly bookRepository: BookRepository) {}
 

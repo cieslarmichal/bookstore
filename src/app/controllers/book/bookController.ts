@@ -2,14 +2,12 @@ import express, { Request, Response } from 'express';
 import { BookService } from '../../domain/book/services/bookService';
 import { CreateBookData, UpdateBookData } from '../../domain/book/services/types';
 import { RecordToInstanceTransformer, ResponseSender } from '../../shared';
-import { Service } from 'typedi';
 import asyncHandler from 'express-async-handler';
 import { BadRequestError } from '../..//shared/http/errors/badRequestError';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
 
-@Service()
 export class BookController {
   public readonly router = express.Router();
 

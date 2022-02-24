@@ -1,18 +1,14 @@
-import { Service } from 'typedi';
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
-import { InjectManager } from 'typeorm-typedi-extensions';
 import { NotFoundError } from '../../../shared';
 
 @EntityRepository()
-@Service()
 export class BookRepository {
-  public constructor(
-    @InjectManager() private readonly entityManager: EntityManager,
-    private readonly bookMapper: BookMapper,
-  ) {}
+  public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {
+    console.log('AAAAAAAAAAAAAAAAAAAAAA');
+  }
 
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
     const { title, author } = bookData;

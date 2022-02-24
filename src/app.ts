@@ -1,13 +1,9 @@
 import 'reflect-metadata';
 import express from 'express';
-import { BookController } from './app/controllers/book/bookController';
-import Container from 'typedi';
 import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
-import { PostgresConnectionManager } from './app/shared/db';
-import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
-import { useContainer } from 'typeorm';
 import { ConfigLoader } from './app/config';
 import http from 'http';
+import { createDependencyInjectionContainer } from './container';
 
 export class App {
   private app: express.Application;
@@ -18,17 +14,16 @@ export class App {
     this.setup();
   }
 
-  private setup() {
+  private async setup() {
     ConfigLoader.loadConfig();
-
-    useContainer(ContainerFromExtensions);
-
-    PostgresConnectionManager.connect();
 
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
-    const bookController = Container.get(BookController);
+    const container = await createDependencyInjectionContainer();
+
+    const bookController = container.resolve('bookController');
+    console.log(bookController);
 
     this.app.use('/v1', bookController.router);
     this.app.use(routeNotFoundMiddleware);

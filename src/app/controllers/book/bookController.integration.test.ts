@@ -1,15 +1,11 @@
 import 'reflect-metadata';
-import { getConnection, useContainer } from 'typeorm';
-import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
+import { getConnection } from 'typeorm';
 import { ConfigLoader } from '../../config';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
-import { PostgresConnectionManager } from '../../shared';
 import request from 'supertest';
 import { BookService } from '../../domain/book/services/bookService';
-import Container from 'typedi';
 import { App } from '../../../app';
-
-useContainer(ContainerFromExtensions);
+import { createDependencyInjectionContainer } from '../../../container';
 
 const baseUrl = '/v1/books';
 
@@ -21,9 +17,9 @@ describe(`BookController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    await PostgresConnectionManager.connect();
+    const container = await createDependencyInjectionContainer();
 
-    bookService = Container.get(BookService);
+    bookService = container.resolve('bookService');
 
     bookTestDataGenerator = new BookTestDataGenerator();
   });

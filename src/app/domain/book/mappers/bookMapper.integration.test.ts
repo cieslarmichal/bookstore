@@ -1,14 +1,10 @@
 import 'reflect-metadata';
-import Container from 'typedi';
-import { Container as ContainerFromExtensions } from 'typeorm-typedi-extensions';
-import { EntityManager, getConnection, useContainer } from 'typeorm';
+import { EntityManager, getConnection } from 'typeorm';
 import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { PostgresConnectionManager } from '../../../shared';
-
-useContainer(ContainerFromExtensions);
+import { createDependencyInjectionContainer } from '../../../../container';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
@@ -18,13 +14,14 @@ describe('BookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    await PostgresConnectionManager.connect();
+    const container = await createDependencyInjectionContainer();
 
-    bookMapper = Container.get(BookMapper);
+    bookMapper = container.resolve('bookMapper');
+    entityManager = container.resolve('entityManager');
 
     bookTestDataGenerator = new BookTestDataGenerator();
 
-    entityManager = await getConnection().manager;
+    entityManager = getConnection().manager;
   });
 
   afterAll(async () => {
