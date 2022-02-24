@@ -1,188 +1,191 @@
-// import 'reflect-metadata';
-// import { getConnection } from 'typeorm';
-// import { BookRepository } from '../repositories/bookRepository';
-// import { BookService } from './bookService';
-// import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
-// import { ConfigLoader } from '../../../config';
-// import { createDIContainer } from '../../../../container';
+import 'reflect-metadata';
+import { getConnection } from 'typeorm';
+import { BookRepository } from '../repositories/bookRepository';
+import { BookService } from './bookService';
+import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
+import { ConfigLoader } from '../../../config';
+import { createDIContainer } from '../../../shared';
+import { DbModule } from '../../../shared';
+import { BookModule } from '../bookModule';
+import { ControllersModule } from '../../../controllers/controllersModule';
 
-// describe('BookService', () => {
-//   let bookService: BookService;
-//   let bookRepository: BookRepository;
-//   let bookTestDataGenerator: BookTestDataGenerator;
+describe('BookService', () => {
+  let bookService: BookService;
+  let bookRepository: BookRepository;
+  let bookTestDataGenerator: BookTestDataGenerator;
 
-//   beforeAll(async () => {
-//     ConfigLoader.loadConfig();
+  beforeAll(async () => {
+    ConfigLoader.loadConfig();
 
-//     const container = await createDIContainer();
+    const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
 
-//     bookService = container.resolve('bookService');
-//     bookRepository = container.resolve('bookRepository');
+    bookService = container.resolve('bookService');
+    bookRepository = container.resolve('bookRepository');
 
-//     bookTestDataGenerator = new BookTestDataGenerator();
-//   });
+    bookTestDataGenerator = new BookTestDataGenerator();
+  });
 
-//   afterAll(async () => {
-//     await getConnection().close();
-//   });
+  afterAll(async () => {
+    await getConnection().close();
+  });
 
-//   afterEach(async () => {
-//     const entities = getConnection().entityMetadatas;
-//     for (const entity of entities) {
-//       const repository = await getConnection().getRepository(entity.name);
-//       await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
-//     }
-//   });
+  afterEach(async () => {
+    const entities = getConnection().entityMetadatas;
+    for (const entity of entities) {
+      const repository = await getConnection().getRepository(entity.name);
+      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
+    }
+  });
 
-//   describe('Create book', () => {
-//     it('creates book in database', async () => {
-//       expect.assertions(1);
+  describe('Create book', () => {
+    it('creates book in database', async () => {
+      expect.assertions(1);
 
-//       const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-//       const createdBookDto = await bookService.createBook({
-//         title,
-//         author,
-//         releaseYear,
-//         language,
-//         format,
-//         price,
-//       });
+      const createdBookDto = await bookService.createBook({
+        title,
+        author,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//       const bookDto = await bookRepository.findOneById(createdBookDto.id);
+      const bookDto = await bookRepository.findOneById(createdBookDto.id);
 
-//       expect(bookDto).not.toBeNull();
-//     });
+      expect(bookDto).not.toBeNull();
+    });
 
-//     it('should not create book and throw if book with the same title and author already exists', async () => {
-//       expect.assertions(1);
+    it('should not create book and throw if book with the same title and author already exists', async () => {
+      expect.assertions(1);
 
-//       const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-//       await bookRepository.createOne({
-//         title,
-//         author,
-//         releaseYear,
-//         language,
-//         format,
-//         price,
-//       });
+      await bookRepository.createOne({
+        title,
+        author,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//       try {
-//         await bookService.createBook({
-//           title,
-//           author,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
-//       } catch (error) {
-//         expect(error).toBeInstanceOf(Error);
-//       }
-//     });
-//   });
+      try {
+        await bookService.createBook({
+          title,
+          author,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+  });
 
-//   describe('Find book', () => {
-//     it('finds book by id in database', async () => {
-//       expect.assertions(1);
+  describe('Find book', () => {
+    it('finds book by id in database', async () => {
+      expect.assertions(1);
 
-//       const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-//       const book = await bookRepository.createOne({
-//         title,
-//         author,
-//         releaseYear,
-//         language,
-//         format,
-//         price,
-//       });
+      const book = await bookRepository.createOne({
+        title,
+        author,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//       const foundBook = await bookService.findBook(book.id);
+      const foundBook = await bookService.findBook(book.id);
 
-//       expect(foundBook).not.toBeNull();
-//     });
+      expect(foundBook).not.toBeNull();
+    });
 
-//     it('should throw if book with given id does not exist in db', async () => {
-//       expect.assertions(1);
+    it('should throw if book with given id does not exist in db', async () => {
+      expect.assertions(1);
 
-//       const { id } = bookTestDataGenerator.generateData();
+      const { id } = bookTestDataGenerator.generateData();
 
-//       try {
-//         await bookService.findBook(id);
-//       } catch (error) {
-//         expect(error).toBeInstanceOf(Error);
-//       }
-//     });
-//   });
+      try {
+        await bookService.findBook(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+  });
 
-//   describe('Update book', () => {
-//     it('updates book in database', async () => {
-//       expect.assertions(2);
+  describe('Update book', () => {
+    it('updates book in database', async () => {
+      expect.assertions(2);
 
-//       const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-//       const { price: newPrice } = bookTestDataGenerator.generateData();
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { price: newPrice } = bookTestDataGenerator.generateData();
 
-//       const book = await bookRepository.createOne({
-//         title,
-//         author,
-//         releaseYear,
-//         language,
-//         format,
-//         price,
-//       });
+      const book = await bookRepository.createOne({
+        title,
+        author,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//       const updatedBook = await bookService.updateBook(book.id, { price: newPrice });
+      const updatedBook = await bookService.updateBook(book.id, { price: newPrice });
 
-//       expect(updatedBook).not.toBeNull();
-//       expect(updatedBook.price).toBe(newPrice);
-//     });
+      expect(updatedBook).not.toBeNull();
+      expect(updatedBook.price).toBe(newPrice);
+    });
 
-//     it('should not update book and throw if book with given id does not exist', async () => {
-//       expect.assertions(1);
+    it('should not update book and throw if book with given id does not exist', async () => {
+      expect.assertions(1);
 
-//       const { id, price } = bookTestDataGenerator.generateData();
+      const { id, price } = bookTestDataGenerator.generateData();
 
-//       try {
-//         await bookService.updateBook(id, { price });
-//       } catch (error) {
-//         expect(error).toBeInstanceOf(Error);
-//       }
-//     });
-//   });
+      try {
+        await bookService.updateBook(id, { price });
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+  });
 
-//   describe('Remove book', () => {
-//     it('removes book from database', async () => {
-//       expect.assertions(1);
+  describe('Remove book', () => {
+    it('removes book from database', async () => {
+      expect.assertions(1);
 
-//       const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-//       const book = await bookRepository.createOne({
-//         title,
-//         author,
-//         releaseYear,
-//         language,
-//         format,
-//         price,
-//       });
+      const book = await bookRepository.createOne({
+        title,
+        author,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//       await bookService.removeBook(book.id);
+      await bookService.removeBook(book.id);
 
-//       const bookDto = await bookRepository.findOneById(book.id);
+      const bookDto = await bookRepository.findOneById(book.id);
 
-//       expect(bookDto).toBeNull();
-//     });
+      expect(bookDto).toBeNull();
+    });
 
-//     it('should throw if book with given id does not exist', async () => {
-//       expect.assertions(1);
+    it('should throw if book with given id does not exist', async () => {
+      expect.assertions(1);
 
-//       const { id } = bookTestDataGenerator.generateData();
+      const { id } = bookTestDataGenerator.generateData();
 
-//       try {
-//         await bookService.removeBook(id);
-//       } catch (error) {
-//         expect(error).toBeInstanceOf(Error);
-//       }
-//     });
-//   });
-// });
+      try {
+        await bookService.removeBook(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+  });
+});

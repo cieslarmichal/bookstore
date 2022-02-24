@@ -26,7 +26,6 @@ export class App {
     const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
 
     const bookController = container.resolve('bookController');
-    console.log(bookController);
 
     this.app.use('/v1', bookController.router);
     this.app.use(routeNotFoundMiddleware);
