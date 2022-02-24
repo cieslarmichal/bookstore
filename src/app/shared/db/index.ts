@@ -1,1 +1,1 @@
-export * from './postgresConnectionManager';
+export * from './connection';
