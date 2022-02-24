@@ -3,12 +3,10 @@ import { createConnection, getConnection } from 'typeorm';
 
 export function createDbConnection() {
   try {
-    const currentConnection = getConnection();
-    if (currentConnection) {
-      return currentConnection;
-    }
+    return getConnection();
   } catch {}
 
+  // TODO: add singleton class
   return createConnection({
     type: 'postgres',
     host: process.env.DB_HOST,
