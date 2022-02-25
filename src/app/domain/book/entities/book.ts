@@ -53,6 +53,7 @@ export class Book {
   public author: Author;
 
   @IsOptional()
+  @IsNumber()
   @Column()
   public authorId: number;
 }

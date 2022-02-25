@@ -15,9 +15,6 @@ export class BookDto {
   @IsString()
   public readonly title: string;
 
-  @IsString()
-  public readonly author: string;
-
   @IsNumber()
   public readonly releaseYear: number;
 
@@ -33,6 +30,9 @@ export class BookDto {
 
   @IsNumber()
   public readonly price: number;
+
+  @IsNumber()
+  public readonly authorId: number;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(BookDto);
 }
