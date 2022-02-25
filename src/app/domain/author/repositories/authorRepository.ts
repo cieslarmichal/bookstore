@@ -5,7 +5,7 @@ import { AuthorMapper } from '../mappers/authorMapper';
 import { NotFoundError } from '../../../shared';
 
 @EntityRepository()
-export class BookRepository {
+export class AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
   public async createOne(authorData: Partial<Author>): Promise<AuthorDto> {
