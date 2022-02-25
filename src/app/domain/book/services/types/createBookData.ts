@@ -5,8 +5,8 @@ export class CreateBookData {
   @IsString()
   public title: string;
 
-  @IsString()
-  public author: string;
+  @IsNumber()
+  public authorId: number;
 
   @IsNumber()
   public releaseYear: number;
