@@ -1,5 +1,6 @@
 import { IsOptional, IsDate, IsString, IsNumber, IsEnum } from 'class-validator';
-import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, Unique } from 'typeorm';
+import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, Unique, ManyToOne } from 'typeorm';
+import { Author } from '../../author/entities/author';
 import { BookFormat, BookLanguage } from '../types';
 
 export const BOOK_TABLE_NAME = 'books';
@@ -7,7 +8,7 @@ export const BOOK_TABLE_NAME = 'books';
 @Entity({
   name: BOOK_TABLE_NAME,
 })
-@Unique('unique_index_title_author', ['title', 'author'])
+@Unique('unique_index_title_author', ['title', 'authorId'])
 export class Book {
   @IsOptional()
   @PrimaryGeneratedColumn('increment')
@@ -26,10 +27,6 @@ export class Book {
   @IsString()
   @Column()
   public title: string;
-
-  @IsString()
-  @Column()
-  public author: string;
 
   @IsNumber()
   @Column()
@@ -51,4 +48,11 @@ export class Book {
   @IsNumber()
   @Column()
   public price: number;
+
+  @ManyToOne(() => Author, (author) => author.books)
+  public author: Author;
+
+  @IsOptional()
+  @Column()
+  public authorId: number;
 }
