@@ -5,6 +5,7 @@ import { ConfigLoader } from './app/config';
 import http from 'http';
 import { createDIContainer } from './app/shared';
 import { BookModule } from './app/domain/book/bookModule';
+import { AuthorModule } from './app/domain/author/authorModule';
 import { DbModule } from './app/shared/db/dbModule';
 import { ControllersModule } from './app/controllers/controllersModule';
 
@@ -23,7 +24,7 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
-    const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
     const bookController = container.resolve('bookController');
 

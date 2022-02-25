@@ -5,7 +5,7 @@ import { AuthorMapper } from './mappers/authorMapper';
 import { AuthorRepository } from './repositories/authorRepository';
 import { AuthorService } from './services/authorService';
 
-export class BookModule extends LoadableModule {
+export class AuthorModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
       [AUTHOR_MAPPER]: asClass(AuthorMapper),
