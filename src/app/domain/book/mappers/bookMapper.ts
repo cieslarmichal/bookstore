@@ -11,7 +11,7 @@ export class BookMapper implements Mapper<Book, BookDto> {
       createdAt,
       updatedAt,
       title,
-      authorId: authorId,
+      authorId,
       releaseYear,
       language,
       format,
