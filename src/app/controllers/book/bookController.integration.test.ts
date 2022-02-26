@@ -1,6 +1,7 @@
 import { getConnection } from 'typeorm';
 import { ConfigLoader } from '../../config';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
+import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
 import { BookService } from '../../domain/book/services/bookService';
 import { App } from '../../../app';
@@ -8,22 +9,28 @@ import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
 import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
+import { AuthorModule } from '../../domain/author/authorModule';
+import { AuthorService } from '../../domain/author/services/authorService';
 
 const baseUrl = '/v1/books';
 
 describe(`BookController (${baseUrl})`, () => {
   let bookService: BookService;
+  let authorService: AuthorService;
   let bookTestDataGenerator: BookTestDataGenerator;
+  let authorTestDataGenerator: AuthorTestDataGenerator;
   let app: App;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
     bookService = container.resolve('bookService');
+    authorService = container.resolve('authorService');
 
     bookTestDataGenerator = new BookTestDataGenerator();
+    authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -58,14 +65,35 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(400);
     });
 
-    it('accepts a request and returns created when all required body properties are provided', async () => {
+    it('return internal server error when non existing authorId is provided', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const response = await request(app.server).post(baseUrl).send({
         title,
-        author,
+        authorId,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      expect(response.statusCode).toBe(500);
+    });
+
+    it('accepts a request and returns created when all required body properties are provided and author with given id exists', async () => {
+      expect.assertions(1);
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const response = await request(app.server).post(baseUrl).send({
+        title,
+        authorId: author.id,
         releaseYear,
         language,
         format,
@@ -100,9 +128,13 @@ describe(`BookController (${baseUrl})`, () => {
     it('accepts a request and returns ok when bookId is a number and have corresponding book', async () => {
       expect.assertions(1);
 
-      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, authorId, releaseYear, language, format, price });
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
 
       const response = await request(app.server).get(`${baseUrl}/${book.id}`);
 
@@ -152,11 +184,15 @@ describe(`BookController (${baseUrl})`, () => {
     it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
       expect.assertions(1);
 
-      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, authorId, releaseYear, language, format, price });
+      const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
 
       const response = await request(app.server).patch(`${baseUrl}/${book.id}`).send({
         price: newPrice,
@@ -196,9 +232,13 @@ describe(`BookController (${baseUrl})`, () => {
     it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
       expect.assertions(1);
 
-      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, authorId, releaseYear, language, format, price });
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
 
       const response = await request(app.server).delete(`${baseUrl}/${book.id}`);
 
