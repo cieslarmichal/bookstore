@@ -1,5 +1,5 @@
 ### Create book
-POST http://localhost:3000/v1/books
+POST http://localhost:3000/books
 Content-Type: application/json
 
 {
@@ -12,10 +12,10 @@ Content-Type: application/json
 }
 
 ### Get book with given id
-GET http://localhost:3000/v1/books/1
+GET http://localhost:3000/books/1
 
 ### Update book
-PATCH http://localhost:3000/v1/books/1
+PATCH http://localhost:3000/books/1
 Content-Type: application/json
 
 {
@@ -24,4 +24,4 @@ Content-Type: application/json
 }
 
 ### Delete book with given id
-DELETE  http://localhost:3000/v1/books/1
+DELETE  http://localhost:3000/books/1
