@@ -8,21 +8,28 @@ import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { ControllersModule } from '../../../controllers/controllersModule';
+import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
+import { AuthorService } from '../../author/services/authorService';
+import { AuthorModule } from '../../author/authorModule';
 
 describe('BookService', () => {
   let bookService: BookService;
+  let authorService: AuthorService;
   let bookRepository: BookRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
+  let authorTestDataGenerator: AuthorTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
     bookService = container.resolve('bookService');
+    authorService = container.resolve('authorService');
     bookRepository = container.resolve('bookRepository');
 
     bookTestDataGenerator = new BookTestDataGenerator();
+    authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -32,7 +39,7 @@ describe('BookService', () => {
   afterEach(async () => {
     const entities = getConnection().entityMetadatas;
     for (const entity of entities) {
-      const repository = await getConnection().getRepository(entity.name);
+      const repository = getConnection().getRepository(entity.name);
       await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
     }
   });
@@ -41,11 +48,15 @@ describe('BookService', () => {
     it('creates book in database', async () => {
       expect.assertions(1);
 
-      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBookDto = await bookService.createBook({
         title,
-        authorId,
+        authorId: author.id,
         releaseYear,
         language,
         format,
@@ -60,11 +71,15 @@ describe('BookService', () => {
     it('should not create book and throw if book with the same title and author already exists', async () => {
       expect.assertions(1);
 
-      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       await bookRepository.createOne({
         title,
-        authorId,
+        authorId: author.id,
         releaseYear,
         language,
         format,
@@ -74,7 +89,7 @@ describe('BookService', () => {
       try {
         await bookService.createBook({
           title,
-          authorId,
+          authorId: author.id,
           releaseYear,
           language,
           format,
@@ -90,11 +105,15 @@ describe('BookService', () => {
     it('finds book by id in database', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
-        author,
+        authorId: author.id,
         releaseYear,
         language,
         format,
@@ -123,12 +142,17 @@ describe('BookService', () => {
     it('updates book in database', async () => {
       expect.assertions(2);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
-        author,
+        authorId: author.id,
         releaseYear,
         language,
         format,
@@ -158,11 +182,15 @@ describe('BookService', () => {
     it('removes book from database', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorService.createAuthor({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
-        author,
+        authorId: author.id,
         releaseYear,
         language,
         format,

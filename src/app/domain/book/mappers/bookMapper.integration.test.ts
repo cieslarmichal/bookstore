@@ -3,26 +3,31 @@ import { EntityManager, getConnection } from 'typeorm';
 import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
+import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { ConfigLoader } from '../../../config';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { ControllersModule } from '../../../controllers/controllersModule';
+import { Author } from '../../author/entities/author';
+import { AuthorModule } from '../../author/authorModule';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
   let bookTestDataGenerator: BookTestDataGenerator;
+  let authorTestDataGenerator: AuthorTestDataGenerator;
   let entityManager: EntityManager;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
     bookMapper = container.resolve('bookMapper');
     entityManager = container.resolve('entityManager');
 
     bookTestDataGenerator = new BookTestDataGenerator();
+    authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -32,7 +37,7 @@ describe('BookMapper', () => {
   afterEach(async () => {
     const entities = getConnection().entityMetadatas;
     for (const entity of entities) {
-      const repository = await getConnection().getRepository(entity.name);
+      const repository = getConnection().getRepository(entity.name);
       await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
     }
   });
@@ -41,15 +46,24 @@ describe('BookMapper', () => {
     it('map book from entity to dto', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const createdAuthor = entityManager.create(Author, {
+        firstName,
+        lastName,
+      });
+
+      const savedAuthor = await entityManager.save(createdAuthor);
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
-        author,
         releaseYear,
         language,
         format,
         price,
+        authorId: savedAuthor.id,
       });
 
       const savedBook = await entityManager.save(createdBook);
@@ -61,7 +75,7 @@ describe('BookMapper', () => {
         createdAt: savedBook.createdAt,
         updatedAt: savedBook.updatedAt,
         title: savedBook.title,
-        author: savedBook.author,
+        authorId: savedAuthor.id,
         releaseYear: savedBook.releaseYear,
         language: savedBook.language,
         format: savedBook.format,
@@ -73,11 +87,20 @@ describe('BookMapper', () => {
     it('maps a book with optional field from entity to dto', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, description, price } = bookTestDataGenerator.generateData();
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const createdAuthor = entityManager.create(Author, {
+        firstName,
+        lastName,
+      });
+
+      const savedAuthor = await entityManager.save(createdAuthor);
+
+      const { title, releaseYear, language, format, description, price } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
-        author,
+        authorId: savedAuthor.id,
         releaseYear,
         language,
         format,
@@ -94,7 +117,7 @@ describe('BookMapper', () => {
         createdAt: savedBook.createdAt,
         updatedAt: savedBook.updatedAt,
         title: savedBook.title,
-        author: savedBook.author,
+        authorId: savedAuthor.id,
         releaseYear: savedBook.releaseYear,
         language: savedBook.language,
         format: savedBook.format,
