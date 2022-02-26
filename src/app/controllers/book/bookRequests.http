@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "title": "Crime and Punishment",
-    "author": "Fyodor Dostoevsky",
+    "authorId": 2,
     "releaseYear": 1866,
     "language": "en",
     "format": "paperback",

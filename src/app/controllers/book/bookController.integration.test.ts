@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { getConnection } from 'typeorm';
 import { ConfigLoader } from '../../config';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
