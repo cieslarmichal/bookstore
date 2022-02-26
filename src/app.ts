@@ -29,8 +29,8 @@ export class App {
     const bookController = container.resolve('bookController');
     const authorController = container.resolve('authorController');
 
-    this.app.use('/v1', bookController.router);
-    this.app.use('/v1', authorController.router);
+    this.app.use('/', bookController.router);
+    this.app.use('/', authorController.router);
 
     this.app.use(routeNotFoundMiddleware);
     this.app.use(errorMiddleware);

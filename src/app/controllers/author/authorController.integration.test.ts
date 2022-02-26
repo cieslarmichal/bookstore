@@ -10,7 +10,7 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 
-const baseUrl = '/v1/authors';
+const baseUrl = '/authors';
 
 describe(`AuthorController (${baseUrl})`, () => {
   let authorService: AuthorService;
