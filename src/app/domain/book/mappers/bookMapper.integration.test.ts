@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { EntityManager, getConnection } from 'typeorm';
 import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';

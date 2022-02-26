@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { getConnection } from 'typeorm';
 import { BookRepository } from '../repositories/bookRepository';
 import { BookService } from './bookService';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import express from 'express';
 import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
 import { ConfigLoader } from './app/config';
