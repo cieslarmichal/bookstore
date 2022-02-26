@@ -49,8 +49,9 @@ export class Book {
   @Column()
   public price: number;
 
+  @IsOptional()
   @ManyToOne(() => Author, (author) => author.books)
-  public author: Author;
+  public author: Author | null;
 
   @IsOptional()
   @IsNumber()

@@ -101,9 +101,9 @@ describe(`BookController (${baseUrl})`, () => {
     it('accepts a request and returns ok when bookId is a number and have corresponding book', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
+      const book = await bookService.createBook({ title, authorId, releaseYear, language, format, price });
 
       const response = await request(app.server).get(`${baseUrl}/${book.id}`);
 
@@ -153,11 +153,11 @@ describe(`BookController (${baseUrl})`, () => {
     it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
+      const book = await bookService.createBook({ title, authorId, releaseYear, language, format, price });
 
       const response = await request(app.server).patch(`${baseUrl}/${book.id}`).send({
         price: newPrice,
@@ -197,9 +197,9 @@ describe(`BookController (${baseUrl})`, () => {
     it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, author, releaseYear, language, format, price });
+      const book = await bookService.createBook({ title, authorId, releaseYear, language, format, price });
 
       const response = await request(app.server).delete(`${baseUrl}/${book.id}`);
 

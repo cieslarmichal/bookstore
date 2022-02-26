@@ -41,11 +41,11 @@ describe('BookService', () => {
     it('creates book in database', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBookDto = await bookService.createBook({
         title,
-        author,
+        authorId,
         releaseYear,
         language,
         format,
@@ -60,11 +60,11 @@ describe('BookService', () => {
     it('should not create book and throw if book with the same title and author already exists', async () => {
       expect.assertions(1);
 
-      const { title, author, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       await bookRepository.createOne({
         title,
-        author,
+        authorId,
         releaseYear,
         language,
         format,
@@ -74,7 +74,7 @@ describe('BookService', () => {
       try {
         await bookService.createBook({
           title,
-          author,
+          authorId,
           releaseYear,
           language,
           format,

@@ -9,12 +9,13 @@ export class BookTestDataGenerator {
       createdAt: this.generateCreatedAt(),
       updatedAt: this.generateUpdatedAt(),
       title: this.generateTitle(),
-      author: this.generateAuthor(),
+      authorId: this.generateAuthorId(),
       releaseYear: this.generateReleaseYear(),
       language: this.generateLanguage(),
       format: this.generateFormat(),
       description: this.generateDescription(),
       price: this.generatePrice(),
+      author: null,
     };
   }
 
@@ -34,8 +35,8 @@ export class BookTestDataGenerator {
     return faker.lorem.text(10);
   }
 
-  public generateAuthor(): string {
-    return faker.name.firstName() + ' ' + faker.name.lastName();
+  public generateAuthorId(): number {
+    return faker.datatype.number();
   }
 
   public generateReleaseYear(): number {

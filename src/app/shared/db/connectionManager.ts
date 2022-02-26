@@ -1,4 +1,5 @@
 import { Book } from '../../domain/book/entities/book';
+import { Author } from '../../domain/author/entities/author';
 import { Connection, createConnection } from 'typeorm';
 
 export class ConnectionManager {
@@ -18,7 +19,7 @@ export class ConnectionManager {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Book],
+      entities: [Book, Author],
       synchronize: true,
     });
 

@@ -27,8 +27,11 @@ export class App {
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
     const bookController = container.resolve('bookController');
+    const authorController = container.resolve('authorController');
 
     this.app.use('/v1', bookController.router);
+    this.app.use('/v1', authorController.router);
+
     this.app.use(routeNotFoundMiddleware);
     this.app.use(errorMiddleware);
   }

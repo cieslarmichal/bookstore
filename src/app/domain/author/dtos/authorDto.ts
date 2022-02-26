@@ -25,6 +25,7 @@ export class AuthorDto {
 
   @Type(() => BookDto)
   @ValidateNested({ each: true })
+  @IsOptional()
   public readonly books: BookDto[] | null;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(AuthorDto);
