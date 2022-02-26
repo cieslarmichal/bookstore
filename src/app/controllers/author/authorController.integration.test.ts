@@ -27,10 +27,6 @@ describe(`AuthorController (${baseUrl})`, () => {
     authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
-  afterAll(async () => {
-    await getConnection().close();
-  });
-
   beforeEach(async () => {
     app = new App();
     app.run();

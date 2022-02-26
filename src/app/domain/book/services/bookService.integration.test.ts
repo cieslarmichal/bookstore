@@ -31,10 +31,6 @@ describe('BookService', () => {
     authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
-  afterAll(async () => {
-    await getConnection().close();
-  });
-
   afterEach(async () => {
     const entities = getConnection().entityMetadatas;
     for (const entity of entities) {
