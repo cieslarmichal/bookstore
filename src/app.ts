@@ -1,5 +1,5 @@
 import express from 'express';
-import { errorMiddleware, routeNotFoundMiddleware } from './app/middlewares';
+import { errorMiddleware } from './app/middlewares';
 import { ConfigLoader } from './app/config';
 import { createDIContainer } from './app/shared';
 import { BookModule } from './app/domain/book/bookModule';
@@ -31,7 +31,6 @@ export class App {
     this.expressApp.use('/', bookController.router);
     this.expressApp.use('/', authorController.router);
 
-    this.expressApp.use(routeNotFoundMiddleware);
     this.expressApp.use(errorMiddleware);
   }
 }
