@@ -11,6 +11,7 @@ import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorService } from '../../domain/author/services/authorService';
+import { Server } from '../../../server';
 
 const baseUrl = '/books';
 
@@ -19,7 +20,7 @@ describe(`BookController (${baseUrl})`, () => {
   let authorService: AuthorService;
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
-  let app: App;
+  let server: Server;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -34,12 +35,15 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    app = new App();
-    app.run();
+    const app = new App();
+
+    server = new Server(app.expressApp);
+
+    server.listen();
   });
 
   afterEach(async () => {
-    app.stop();
+    server.close();
 
     const entities = getConnection().entityMetadatas;
     for (const entity of entities) {
@@ -54,7 +58,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).post(baseUrl).send({
+      const response = await request(server.server).post(baseUrl).send({
         title,
       });
 
@@ -66,7 +70,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).post(baseUrl).send({
+      const response = await request(server.server).post(baseUrl).send({
         title,
         authorId,
         releaseYear,
@@ -87,7 +91,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).post(baseUrl).send({
+      const response = await request(server.server).post(baseUrl).send({
         title,
         authorId: author.id,
         releaseYear,
@@ -106,7 +110,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const bookId = 'abc';
 
-      const response = await request(app.server).get(`${baseUrl}/${bookId}`);
+      const response = await request(server.server).get(`${baseUrl}/${bookId}`);
 
       expect(response.statusCode).toBe(400);
     });
@@ -116,7 +120,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).get(`${baseUrl}/${id}`);
+      const response = await request(server.server).get(`${baseUrl}/${id}`);
 
       expect(response.statusCode).toBe(404);
     });
@@ -132,7 +136,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(app.server).get(`${baseUrl}/${book.id}`);
+      const response = await request(server.server).get(`${baseUrl}/${book.id}`);
 
       expect(response.statusCode).toBe(200);
     });
@@ -144,7 +148,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id, title } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).patch(`${baseUrl}/${id}`).send({
+      const response = await request(server.server).patch(`${baseUrl}/${id}`).send({
         title,
       });
 
@@ -158,7 +162,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { price } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).patch(`${baseUrl}/${bookId}`).send({
+      const response = await request(server.server).patch(`${baseUrl}/${bookId}`).send({
         price,
       });
 
@@ -170,7 +174,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).patch(`${baseUrl}/${id}`).send({
+      const response = await request(server.server).patch(`${baseUrl}/${id}`).send({
         price,
       });
 
@@ -190,7 +194,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(app.server).patch(`${baseUrl}/${book.id}`).send({
+      const response = await request(server.server).patch(`${baseUrl}/${book.id}`).send({
         price: newPrice,
       });
 
@@ -206,7 +210,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { price } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).delete(`${baseUrl}/${bookId}`).send({
+      const response = await request(server.server).delete(`${baseUrl}/${bookId}`).send({
         price,
       });
 
@@ -218,7 +222,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(app.server).delete(`${baseUrl}/${id}`).send({
+      const response = await request(server.server).delete(`${baseUrl}/${id}`).send({
         price,
       });
 
@@ -236,7 +240,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(app.server).delete(`${baseUrl}/${book.id}`);
+      const response = await request(server.server).delete(`${baseUrl}/${book.id}`);
 
       expect(response.statusCode).toBe(200);
     });
