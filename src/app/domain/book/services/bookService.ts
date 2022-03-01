@@ -1,5 +1,5 @@
-import { NotFoundError } from '../../../shared';
 import { BookDto } from '../dtos';
+import { BookNotFound } from '../errors';
 import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
 
@@ -20,7 +20,7 @@ export class BookService {
     const book = await this.bookRepository.findOneById(bookId);
 
     if (!book) {
-      throw new NotFoundError(`Book with id ${bookId} not found`);
+      throw new BookNotFound({ id: bookId.toString() });
     }
 
     return book;

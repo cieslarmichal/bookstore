@@ -9,6 +9,7 @@ import { ControllersModule } from '../../../controllers/controllersModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorRepository } from '../../author/repositories/authorRepository';
+import { BookAlreadyExists, BookNotFound } from '../errors';
 
 describe('BookService', () => {
   let bookService: BookService;
@@ -86,7 +87,7 @@ describe('BookService', () => {
           price,
         });
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(BookAlreadyExists);
       }
     });
   });
@@ -123,7 +124,7 @@ describe('BookService', () => {
       try {
         await bookService.findBook(id);
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(BookNotFound);
       }
     });
   });
@@ -163,7 +164,7 @@ describe('BookService', () => {
       try {
         await bookService.updateBook(id, { price });
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(BookNotFound);
       }
     });
   });
@@ -202,7 +203,7 @@ describe('BookService', () => {
       try {
         await bookService.removeBook(id);
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(BookNotFound);
       }
     });
   });

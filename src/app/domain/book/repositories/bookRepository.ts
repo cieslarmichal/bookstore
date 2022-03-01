@@ -2,19 +2,19 @@ import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
-import { NotFoundError } from '../../../shared';
+import { BookAlreadyExists, BookNotFound } from '../errors';
 
 @EntityRepository()
 export class BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
-    const { title, author } = bookData;
+    const { title, authorId } = bookData;
 
-    const existingBook = await this.findOne({ title, author });
+    const existingBook = await this.findOne({ title, authorId });
 
     if (existingBook) {
-      throw new Error(`Book with title ${title} and author ${author} already exists`);
+      throw new BookAlreadyExists({ title: title as string, authorId: authorId?.toString() as string });
     }
 
     const book = this.entityManager.create(Book, bookData);
@@ -48,7 +48,7 @@ export class BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new NotFoundError(`Book with id ${id} not found`);
+      throw new BookNotFound({ id: id.toString() });
     }
 
     await this.entityManager.update(Book, { id }, bookData);
@@ -60,7 +60,7 @@ export class BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new NotFoundError(`Book with id ${id} not found`);
+      throw new BookNotFound({ id: id.toString() });
     }
 
     await this.entityManager.delete(Book, { id });
