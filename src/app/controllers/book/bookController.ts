@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
 import { BookService } from '../../domain/book/services/bookService';
 import { CreateBookData, UpdateBookData } from '../../domain/book/services/types';
-import { RecordToInstanceTransformer, ResponseSender } from '../../shared';
+import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
-import { BadRequestError } from '../..//shared/http/errors/badRequestError';
+import { StatusCodes } from 'http-status-codes';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
@@ -35,19 +35,17 @@ export class BookController {
 
     const bookDto = await this.bookService.createBook(createBookData);
 
-    ResponseSender.sendJsonDataWithCode(response, bookDto, 201);
+    response.setHeader('Content-Type', 'application/json');
+    response.status(StatusCodes.CREATED).send(bookDto);
   }
 
   public async findBook(request: Request, response: Response): Promise<void> {
     const id = parseInt(request.params.id);
 
-    if (isNaN(id)) {
-      throw new BadRequestError(`Book id '${request.params.id}' is not a number`);
-    }
-
     const bookDto = await this.bookService.findBook(id);
 
-    ResponseSender.sendJsonData(response, bookDto);
+    response.setHeader('Content-Type', 'application/json');
+    response.status(StatusCodes.OK).send(bookDto);
   }
 
   public async updateBook(request: Request, response: Response): Promise<void> {
@@ -55,24 +53,17 @@ export class BookController {
 
     const id = parseInt(request.params.id);
 
-    if (isNaN(id)) {
-      throw new BadRequestError(`Book id '${request.params.id}' is not a number`);
-    }
-
     const bookDto = await this.bookService.updateBook(id, updateBookData);
 
-    ResponseSender.sendJsonData(response, bookDto);
+    response.setHeader('Content-Type', 'application/json');
+    response.status(StatusCodes.OK).send(bookDto);
   }
 
   public async deleteBook(request: Request, response: Response): Promise<void> {
     const id = parseInt(request.params.id);
 
-    if (isNaN(id)) {
-      throw new BadRequestError(`Book id '${request.params.id}' is not a number`);
-    }
-
     await this.bookService.removeBook(id);
 
-    ResponseSender.sendEmpty(response);
+    response.status(StatusCodes.OK).send();
   }
 }

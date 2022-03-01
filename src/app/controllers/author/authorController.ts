@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
 import { AuthorService } from '../../domain/author/services/authorService';
 import { CreateAuthorData, UpdateAuthorData } from '../../domain/author/services/types';
-import { RecordToInstanceTransformer, ResponseSender } from '../../shared';
+import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
-import { BadRequestError } from '../../shared/http/errors/badRequestError';
+import { StatusCodes } from 'http-status-codes';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -35,19 +35,17 @@ export class AuthorController {
 
     const authorDto = await this.authorService.createAuthor(createAuthorData);
 
-    ResponseSender.sendJsonDataWithCode(response, authorDto, 201);
+    response.setHeader('Content-Type', 'application/json');
+    response.status(StatusCodes.CREATED).send(authorDto);
   }
 
   public async findAuthor(request: Request, response: Response): Promise<void> {
     const id = parseInt(request.params.id);
 
-    if (isNaN(id)) {
-      throw new BadRequestError(`Author id '${request.params.id}' is not a number`);
-    }
-
     const authorDto = await this.authorService.findAuthor(id);
 
-    ResponseSender.sendJsonData(response, authorDto);
+    response.setHeader('Content-Type', 'application/json');
+    response.status(StatusCodes.OK).send(authorDto);
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<void> {
@@ -55,24 +53,17 @@ export class AuthorController {
 
     const id = parseInt(request.params.id);
 
-    if (isNaN(id)) {
-      throw new BadRequestError(`Author id '${request.params.id}' is not a number`);
-    }
-
     const authorDto = await this.authorService.updateAuthor(id, updateAuthorData);
 
-    ResponseSender.sendJsonData(response, authorDto);
+    response.setHeader('Content-Type', 'application/json');
+    response.status(StatusCodes.OK).send(authorDto);
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<void> {
     const id = parseInt(request.params.id);
 
-    if (isNaN(id)) {
-      throw new BadRequestError(`Author id '${request.params.id}' is not a number`);
-    }
-
     await this.authorService.removeAuthor(id);
 
-    ResponseSender.sendEmpty(response);
+    response.status(StatusCodes.OK).send();
   }
 }
