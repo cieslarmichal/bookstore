@@ -7,6 +7,7 @@ import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGen
 import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
+import { AuthorNotFound } from '../errors';
 
 describe('AuthorService', () => {
   let authorService: AuthorService;
@@ -40,20 +41,6 @@ describe('AuthorService', () => {
 
       expect(authorDto).not.toBeNull();
     });
-
-    it('should not create author and throw if author with the same title and author already exists', async () => {
-      expect.assertions(1);
-
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      await authorService.createAuthor({ firstName, lastName });
-
-      try {
-        await authorService.createAuthor({ firstName, lastName });
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-      }
-    });
   });
 
   describe('Find author', () => {
@@ -77,7 +64,7 @@ describe('AuthorService', () => {
       try {
         await authorService.findAuthor(id);
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(AuthorNotFound);
       }
     });
   });
@@ -104,7 +91,7 @@ describe('AuthorService', () => {
       try {
         await authorService.updateAuthor(id, { about });
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(AuthorNotFound);
       }
     });
   });
@@ -132,7 +119,7 @@ describe('AuthorService', () => {
       try {
         await authorService.removeAuthor(id);
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(AuthorNotFound);
       }
     });
   });

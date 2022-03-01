@@ -2,21 +2,13 @@ import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { AuthorDto } from '../dtos';
 import { Author } from '../entities/author';
 import { AuthorMapper } from '../mappers/authorMapper';
-import { NotFoundError } from '../../../shared';
+import { AuthorNotFound } from '../errors';
 
 @EntityRepository()
 export class AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
   public async createOne(authorData: Partial<Author>): Promise<AuthorDto> {
-    const { firstName, lastName } = authorData;
-
-    const existingAuthor = await this.findOne({ firstName, lastName });
-
-    if (existingAuthor) {
-      throw new Error(`Author with name ${firstName} ${lastName} already exists`);
-    }
-
     const author = this.entityManager.create(Author, authorData);
 
     const savedAuthor = await this.entityManager.save(author);
@@ -48,7 +40,7 @@ export class AuthorRepository {
     const author = await this.findOneById(id);
 
     if (!author) {
-      throw new NotFoundError(`Author with id ${id} not found`);
+      throw new AuthorNotFound({ id: id.toString() });
     }
 
     await this.entityManager.update(Author, { id }, authorData);
@@ -60,7 +52,7 @@ export class AuthorRepository {
     const author = await this.findOneById(id);
 
     if (!author) {
-      throw new NotFoundError(`Author with id ${id} not found`);
+      throw new AuthorNotFound({ id: id.toString() });
     }
 
     await this.entityManager.delete(Author, { id });

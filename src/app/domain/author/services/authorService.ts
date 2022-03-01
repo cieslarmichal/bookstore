@@ -1,5 +1,5 @@
-import { NotFoundError } from '../../../shared';
 import { AuthorDto } from '../dtos';
+import { AuthorNotFound } from '../errors';
 import { AuthorRepository } from '../repositories/authorRepository';
 import { CreateAuthorData, UpdateAuthorData } from './types';
 
@@ -20,7 +20,7 @@ export class AuthorService {
     const author = await this.authorRepository.findOneById(authorId);
 
     if (!author) {
-      throw new NotFoundError(`Author with id ${authorId} not found`);
+      throw new AuthorNotFound({ id: authorId.toString() });
     }
 
     return author;
