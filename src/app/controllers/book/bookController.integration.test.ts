@@ -2,22 +2,22 @@ import { ConfigLoader } from '../../config';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
-import { BookService } from '../../domain/book/services/bookService';
 import { App } from '../../../app';
 import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
 import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
 import { AuthorModule } from '../../domain/author/authorModule';
-import { AuthorService } from '../../domain/author/services/authorService';
 import { Server } from '../../../server';
 import { dbManager } from '../../shared';
+import { BookRepository } from '../../domain/book/repositories/bookRepository';
+import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
 
 const baseUrl = '/books';
 
 describe(`BookController (${baseUrl})`, () => {
-  let bookService: BookService;
-  let authorService: AuthorService;
+  let bookRepository: BookRepository;
+  let authorRepository: AuthorRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let server: Server;
@@ -27,8 +27,8 @@ describe(`BookController (${baseUrl})`, () => {
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
-    bookService = container.resolve('bookService');
-    authorService = container.resolve('authorService');
+    bookRepository = container.resolve('bookRepository');
+    authorRepository = container.resolve('authorRepository');
 
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
@@ -83,7 +83,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
@@ -126,11 +126,11 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
       const response = await request(server.server).get(`${baseUrl}/${book.id}`);
 
@@ -182,13 +182,13 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
       const response = await request(server.server).patch(`${baseUrl}/${book.id}`).send({
         price: newPrice,
@@ -230,11 +230,11 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookService.createBook({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
       const response = await request(server.server).delete(`${baseUrl}/${book.id}`);
 

@@ -7,12 +7,12 @@ import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { ControllersModule } from '../../../controllers/controllersModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
-import { AuthorService } from '../../author/services/authorService';
 import { AuthorModule } from '../../author/authorModule';
+import { AuthorRepository } from '../../author/repositories/authorRepository';
 
 describe('BookService', () => {
   let bookService: BookService;
-  let authorService: AuthorService;
+  let authorRepository: AuthorRepository;
   let bookRepository: BookRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
@@ -23,7 +23,7 @@ describe('BookService', () => {
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
     bookService = container.resolve('bookService');
-    authorService = container.resolve('authorService');
+    authorRepository = container.resolve('authorRepository');
     bookRepository = container.resolve('bookRepository');
 
     bookTestDataGenerator = new BookTestDataGenerator();
@@ -40,7 +40,7 @@ describe('BookService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
@@ -63,7 +63,7 @@ describe('BookService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
@@ -97,7 +97,7 @@ describe('BookService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
@@ -134,7 +134,7 @@ describe('BookService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
@@ -174,7 +174,7 @@ describe('BookService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 

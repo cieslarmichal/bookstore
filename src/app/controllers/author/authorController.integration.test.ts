@@ -1,7 +1,6 @@
 import { ConfigLoader } from '../../config';
 import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
-import { AuthorService } from '../../domain/author/services/authorService';
 import { App } from '../../../app';
 import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
@@ -10,11 +9,12 @@ import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { dbManager } from '../../shared';
+import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
 
 const baseUrl = '/authors';
 
 describe(`AuthorController (${baseUrl})`, () => {
-  let authorService: AuthorService;
+  let authorRepository: AuthorRepository;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let server: Server;
 
@@ -23,7 +23,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
-    authorService = container.resolve('authorService');
+    authorRepository = container.resolve('authorRepository');
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
   });
@@ -95,7 +95,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const response = await request(server.server).get(`${baseUrl}/${author.id}`);
 
@@ -149,7 +149,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { about } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const response = await request(server.server).patch(`${baseUrl}/${author.id}`).send({
         about,
@@ -185,7 +185,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const response = await request(server.server).delete(`${baseUrl}/${author.id}`);
 
