@@ -1,9 +1,8 @@
-import { getConnection } from 'typeorm';
 import { BookRepository } from '../repositories/bookRepository';
 import { BookService } from './bookService';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { ControllersModule } from '../../../controllers/controllersModule';
@@ -32,11 +31,7 @@ describe('BookService', () => {
   });
 
   afterEach(async () => {
-    const entities = getConnection().entityMetadatas;
-    for (const entity of entities) {
-      const repository = getConnection().getRepository(entity.name);
-      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
-    }
+    await dbManager.removeDataFromTables();
   });
 
   describe('Create book', () => {

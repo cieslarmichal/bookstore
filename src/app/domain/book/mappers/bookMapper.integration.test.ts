@@ -1,10 +1,10 @@
-import { EntityManager, getConnection } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { ControllersModule } from '../../../controllers/controllersModule';
@@ -30,11 +30,7 @@ describe('BookMapper', () => {
   });
 
   afterEach(async () => {
-    const entities = getConnection().entityMetadatas;
-    for (const entity of entities) {
-      const repository = getConnection().getRepository(entity.name);
-      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
-    }
+    await dbManager.removeDataFromTables();
   });
 
   describe('Map book', () => {

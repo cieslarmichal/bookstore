@@ -1,7 +1,6 @@
-import { getConnection } from 'typeorm';
 import { AuthorRepository } from '../repositories/authorRepository';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { ControllersModule } from '../../../controllers/controllersModule';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
@@ -26,11 +25,7 @@ describe('AuthorService', () => {
   });
 
   afterEach(async () => {
-    const entities = getConnection().entityMetadatas;
-    for (const entity of entities) {
-      const repository = getConnection().getRepository(entity.name);
-      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
-    }
+    await dbManager.removeDataFromTables();
   });
 
   describe('Create author', () => {

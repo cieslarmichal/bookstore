@@ -1,4 +1,3 @@
-import { getConnection } from 'typeorm';
 import { ConfigLoader } from '../../config';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
@@ -12,6 +11,7 @@ import { ControllersModule } from '../controllersModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorService } from '../../domain/author/services/authorService';
 import { Server } from '../../../server';
+import { dbManager } from '../../shared';
 
 const baseUrl = '/books';
 
@@ -45,11 +45,7 @@ describe(`BookController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    const entities = getConnection().entityMetadatas;
-    for (const entity of entities) {
-      const repository = getConnection().getRepository(entity.name);
-      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
-    }
+    await dbManager.removeDataFromTables();
   });
 
   describe('Create book', () => {
