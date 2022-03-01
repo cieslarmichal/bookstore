@@ -4,6 +4,7 @@ import { CreateBookData, UpdateBookData } from '../../domain/book/services/types
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+import { bookErrorMiddleware } from './middlewares';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
@@ -28,6 +29,7 @@ export class BookController {
       BOOKS_PATH_WITH_ID,
       asyncHandler((request: Request, response: Response) => this.deleteBook(request, response)),
     );
+    this.router.use(bookErrorMiddleware);
   }
 
   public async createBook(request: Request, response: Response): Promise<void> {

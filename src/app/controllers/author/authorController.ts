@@ -4,7 +4,7 @@ import { CreateAuthorData, UpdateAuthorData } from '../../domain/author/services
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { authorErrorMiddleware } from './middlewares/authorErrorMiddleware';
+import { authorErrorMiddleware } from './middlewares';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
