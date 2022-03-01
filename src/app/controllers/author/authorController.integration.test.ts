@@ -10,6 +10,7 @@ import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { dbManager } from '../../shared';
 import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
+import { StatusCodes } from 'http-status-codes';
 
 const baseUrl = '/authors';
 
@@ -43,7 +44,7 @@ describe(`AuthorController (${baseUrl})`, () => {
   });
 
   describe('Create author', () => {
-    it('return bad request when not all required properties in body are provided', async () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
       const { firstName } = authorTestDataGenerator.generateData();
@@ -52,7 +53,7 @@ describe(`AuthorController (${baseUrl})`, () => {
         firstName,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('accepts a request and returns created when all required body properties are provided', async () => {
@@ -65,29 +66,29 @@ describe(`AuthorController (${baseUrl})`, () => {
         lastName,
       });
 
-      expect(response.statusCode).toBe(201);
+      expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
   describe('Find author', () => {
-    it('return bad request the authorId param is not a number', async () => {
+    it('returns bad request the authorId param is not a number', async () => {
       expect.assertions(1);
 
       const authorId = 'abc';
 
       const response = await request(server.server).get(`${baseUrl}/${authorId}`);
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('return not found when author with given authorId does not exist', async () => {
+    it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
       const { id } = authorTestDataGenerator.generateData();
 
       const response = await request(server.server).get(`${baseUrl}/${id}`);
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('accepts a request and returns ok when authorId is a number and have corresponding author', async () => {
@@ -99,7 +100,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const response = await request(server.server).get(`${baseUrl}/${author.id}`);
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
@@ -113,7 +114,7 @@ describe(`AuthorController (${baseUrl})`, () => {
         firstName,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns bad request when the authorId param is not a number', async () => {
@@ -127,10 +128,10 @@ describe(`AuthorController (${baseUrl})`, () => {
         about,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('return not found when author with given authorId does not exist', async () => {
+    it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
       const { id, about } = authorTestDataGenerator.generateData();
@@ -139,7 +140,7 @@ describe(`AuthorController (${baseUrl})`, () => {
         about,
       });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('accepts a request and returns ok when authorId is a number and corresponds to existing author', async () => {
@@ -155,7 +156,7 @@ describe(`AuthorController (${baseUrl})`, () => {
         about,
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
@@ -170,14 +171,14 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(400);
     });
 
-    it('return not found when author with given authorId does not exist', async () => {
+    it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
       const { id } = authorTestDataGenerator.generateData();
 
       const response = await request(server.server).delete(`${baseUrl}/${id}`).send();
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('accepts a request and returns ok when authorId is a number and corresponds to existing author', async () => {
@@ -189,7 +190,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const response = await request(server.server).delete(`${baseUrl}/${author.id}`);
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 });

@@ -12,6 +12,7 @@ import { Server } from '../../../server';
 import { dbManager } from '../../shared';
 import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
+import { StatusCodes } from 'http-status-codes';
 
 const baseUrl = '/books';
 
@@ -49,7 +50,7 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   describe('Create book', () => {
-    it('return bad request when not all required properties in body are provided', async () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
       const { title } = bookTestDataGenerator.generateData();
@@ -58,10 +59,10 @@ describe(`BookController (${baseUrl})`, () => {
         title,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('return internal server error when non existing authorId is provided', async () => {
+    it('returns bad request when non existing authorId is provided', async () => {
       expect.assertions(1);
 
       const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
@@ -75,7 +76,30 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(500);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns unprocessable entity when book with given title and authorId already exists', async () => {
+      expect.assertions(1);
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+
+      const response = await request(server.server).post(baseUrl).send({
+        title,
+        authorId: author.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
 
     it('accepts a request and returns created when all required body properties are provided and author with given id exists', async () => {
@@ -96,29 +120,29 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(201);
+      expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
   describe('Find book', () => {
-    it('return bad request the bookId param is not a number', async () => {
+    it('returns bad request the bookId param is not a number', async () => {
       expect.assertions(1);
 
       const bookId = 'abc';
 
       const response = await request(server.server).get(`${baseUrl}/${bookId}`);
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('return not found when book with given bookId does not exist', async () => {
+    it('returns not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
       const { id } = bookTestDataGenerator.generateData();
 
       const response = await request(server.server).get(`${baseUrl}/${id}`);
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('accepts a request and returns ok when bookId is a number and have corresponding book', async () => {
@@ -134,7 +158,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const response = await request(server.server).get(`${baseUrl}/${book.id}`);
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
@@ -148,7 +172,7 @@ describe(`BookController (${baseUrl})`, () => {
         title,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns bad request when the bookId param is not a number', async () => {
@@ -162,10 +186,10 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('return not found when book with given bookId does not exist', async () => {
+    it('returns not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
       const { id, price } = bookTestDataGenerator.generateData();
@@ -174,7 +198,7 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
@@ -194,7 +218,7 @@ describe(`BookController (${baseUrl})`, () => {
         price: newPrice,
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
@@ -210,10 +234,10 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('return not found when book with given bookId does not exist', async () => {
+    it('returns not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
       const { id, price } = bookTestDataGenerator.generateData();
@@ -222,7 +246,7 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
@@ -238,7 +262,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const response = await request(server.server).delete(`${baseUrl}/${book.id}`);
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 });
