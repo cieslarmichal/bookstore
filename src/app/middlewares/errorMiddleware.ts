@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import { ResponseSender } from '../shared';
+import { StatusCodes } from 'http-status-codes';
 
 export function errorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
-  let statusCode = 500;
+  let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
 
   if (error.name === 'ValidationError' || error.name === 'BadRequestError') {
-    statusCode = 400;
+    statusCode = StatusCodes.BAD_REQUEST;
   } else if (error.name === 'NotFoundError') {
-    statusCode = 404;
+    statusCode = StatusCodes.NOT_FOUND;
   }
 
-  ResponseSender.sendJsonDataWithCode(response, { error: error.message }, statusCode);
+  response.setHeader('Content-Type', 'application/json');
+  response.status(statusCode).send({ error: error.message });
 }

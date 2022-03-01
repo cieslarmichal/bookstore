@@ -4,6 +4,7 @@ import { CreateAuthorData, UpdateAuthorData } from '../../domain/author/services
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+import { authorErrorMiddleware } from './middlewares/authorErrorMiddleware';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -28,6 +29,7 @@ export class AuthorController {
       AUTHORS_PATH_WITH_ID,
       asyncHandler((request: Request, response: Response) => this.deleteAuthor(request, response)),
     );
+    this.router.use(authorErrorMiddleware);
   }
 
   public async createAuthor(request: Request, response: Response): Promise<void> {
