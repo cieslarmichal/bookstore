@@ -6,6 +6,7 @@ import { BookModule } from './app/domain/book/bookModule';
 import { AuthorModule } from './app/domain/author/authorModule';
 import { DbModule } from './app/shared/db/dbModule';
 import { ControllersModule } from './app/controllers/controllersModule';
+import helmet from 'helmet';
 
 export class App {
   public expressApp: express.Application;
@@ -20,6 +21,7 @@ export class App {
 
     this.expressApp.use(express.json());
     this.expressApp.use(express.urlencoded({ extended: false }));
+    this.expressApp.use(helmet());
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
 
