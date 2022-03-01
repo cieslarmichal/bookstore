@@ -2,7 +2,6 @@ import { AuthorRepository } from '../repositories/authorRepository';
 import { ConfigLoader } from '../../../config';
 import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
-import { ControllersModule } from '../../../controllers/controllersModule';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
@@ -17,7 +16,7 @@ describe('AuthorService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
 
     authorService = container.resolve('authorService');
     authorRepository = container.resolve('authorRepository');

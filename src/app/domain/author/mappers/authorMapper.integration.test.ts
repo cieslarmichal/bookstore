@@ -5,7 +5,6 @@ import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGen
 import { ConfigLoader } from '../../../config';
 import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
-import { ControllersModule } from '../../../controllers/controllersModule';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 
@@ -17,7 +16,7 @@ describe('AuthorMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
 
     authorMapper = container.resolve('authorMapper');
     entityManager = container.resolve('entityManager');

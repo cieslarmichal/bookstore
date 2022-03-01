@@ -7,7 +7,6 @@ import { ConfigLoader } from '../../../config';
 import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
-import { ControllersModule } from '../../../controllers/controllersModule';
 import { Author } from '../../author/entities/author';
 import { AuthorModule } from '../../author/authorModule';
 
@@ -20,7 +19,7 @@ describe('BookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
 
     bookMapper = container.resolve('bookMapper');
     entityManager = container.resolve('entityManager');

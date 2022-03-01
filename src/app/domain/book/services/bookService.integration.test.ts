@@ -5,7 +5,6 @@ import { ConfigLoader } from '../../../config';
 import { createDIContainer, dbManager } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
-import { ControllersModule } from '../../../controllers/controllersModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorRepository } from '../../author/repositories/authorRepository';
@@ -21,7 +20,7 @@ describe('BookService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
 
     bookService = container.resolve('bookService');
     authorRepository = container.resolve('authorRepository');
