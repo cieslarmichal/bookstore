@@ -37,14 +37,12 @@ export class BookController {
 
     const bookDto = await this.bookService.createBook(createBookData);
 
-    response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.CREATED).send(bookDto);
   }
 
   public async findBook(request: Request, response: Response): Promise<void> {
     const bookDto = await this.bookService.findBook(request.params.id);
 
-    response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(bookDto);
   }
 
@@ -53,7 +51,6 @@ export class BookController {
 
     const bookDto = await this.bookService.updateBook(request.params.id, updateBookData);
 
-    response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(bookDto);
   }
 

@@ -37,14 +37,12 @@ export class AuthorController {
 
     const authorDto = await this.authorService.createAuthor(createAuthorData);
 
-    response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.CREATED).send(authorDto);
   }
 
   public async findAuthor(request: Request, response: Response): Promise<void> {
     const authorDto = await this.authorService.findAuthor(request.params.id);
 
-    response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(authorDto);
   }
 
@@ -53,7 +51,6 @@ export class AuthorController {
 
     const authorDto = await this.authorService.updateAuthor(request.params.id, updateAuthorData);
 
-    response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(authorDto);
   }
 

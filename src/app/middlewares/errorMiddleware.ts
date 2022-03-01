@@ -9,6 +9,5 @@ export function errorMiddleware(error: Error, request: Request, response: Respon
     statusCode = StatusCodes.BAD_REQUEST;
   }
 
-  response.setHeader('Content-Type', 'application/json');
   response.status(statusCode).send({ error: error.message });
 }
