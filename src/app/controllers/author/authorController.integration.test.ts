@@ -8,9 +8,9 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { dbManager } from '../../shared';
 import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
 import { StatusCodes } from 'http-status-codes';
+import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 
 const baseUrl = '/authors';
 
@@ -40,7 +40,7 @@ describe(`AuthorController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await dbManager.removeDataFromTables();
+    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Create author', () => {

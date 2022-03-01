@@ -1,12 +1,13 @@
 import { AuthorRepository } from '../repositories/authorRepository';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer, dbManager } from '../../../shared';
+import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 import { AuthorNotFound } from '../errors';
+import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 
 describe('AuthorService', () => {
   let authorService: AuthorService;
@@ -25,7 +26,7 @@ describe('AuthorService', () => {
   });
 
   afterEach(async () => {
-    await dbManager.removeDataFromTables();
+    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Create author', () => {

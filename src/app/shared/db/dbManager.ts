@@ -27,14 +27,6 @@ class DbManager {
   public async closeConnection(): Promise<void> {
     await this.connection.close();
   }
-
-  public async removeDataFromTables(): Promise<void> {
-    const entities = this.connection.entityMetadatas;
-    for (const entity of entities) {
-      const repository = this.connection.getRepository(entity.name);
-      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
-    }
-  }
 }
 
 export const dbManager = new DbManager();

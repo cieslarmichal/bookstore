@@ -9,10 +9,10 @@ import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { Server } from '../../../server';
-import { dbManager } from '../../shared';
 import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
 import { StatusCodes } from 'http-status-codes';
+import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 
 const baseUrl = '/books';
 
@@ -46,7 +46,7 @@ describe(`BookController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await dbManager.removeDataFromTables();
+    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Create book', () => {

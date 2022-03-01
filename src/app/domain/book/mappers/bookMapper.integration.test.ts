@@ -4,11 +4,12 @@ import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer, dbManager } from '../../../shared';
+import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { Author } from '../../author/entities/author';
 import { AuthorModule } from '../../author/authorModule';
+import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
@@ -29,7 +30,7 @@ describe('BookMapper', () => {
   });
 
   afterEach(async () => {
-    await dbManager.removeDataFromTables();
+    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Map book', () => {

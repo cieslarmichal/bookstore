@@ -3,10 +3,11 @@ import { Author } from '../entities/author';
 import { AuthorMapper } from './authorMapper';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer, dbManager } from '../../../shared';
+import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
+import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 
 describe('AuthorMapper', () => {
   let authorMapper: AuthorMapper;
@@ -25,7 +26,7 @@ describe('AuthorMapper', () => {
   });
 
   afterEach(async () => {
-    await dbManager.removeDataFromTables();
+    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Map author', () => {

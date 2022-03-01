@@ -2,13 +2,14 @@ import { BookRepository } from '../repositories/bookRepository';
 import { BookService } from './bookService';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../config';
-import { createDIContainer, dbManager } from '../../../shared';
+import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorRepository } from '../../author/repositories/authorRepository';
 import { BookAlreadyExists, BookNotFound } from '../errors';
+import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 
 describe('BookService', () => {
   let bookService: BookService;
@@ -31,7 +32,7 @@ describe('BookService', () => {
   });
 
   afterEach(async () => {
-    await dbManager.removeDataFromTables();
+    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Create book', () => {
