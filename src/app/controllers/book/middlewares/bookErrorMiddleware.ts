@@ -11,5 +11,5 @@ export function bookErrorMiddleware(error: Error, request: Request, response: Re
     response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
   }
 
-  next();
+  next(error);
 }

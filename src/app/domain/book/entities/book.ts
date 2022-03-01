@@ -1,4 +1,4 @@
-import { IsOptional, IsDate, IsString, IsNumber, IsEnum } from 'class-validator';
+import { IsOptional, IsDate, IsString, IsNumber, IsEnum, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, Unique, ManyToOne } from 'typeorm';
 import { Author } from '../../author/entities/author';
 import { BookFormat, BookLanguage } from '../types';
@@ -11,8 +11,9 @@ export const BOOK_TABLE_NAME = 'books';
 @Unique('unique_index_title_author', ['title', 'authorId'])
 export class Book {
   @IsOptional()
-  @PrimaryGeneratedColumn('increment')
-  public id: number;
+  @IsUUID('4')
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
   @IsOptional()
   @IsDate()
@@ -54,7 +55,7 @@ export class Book {
   public author: Author | null;
 
   @IsOptional()
-  @IsNumber()
+  @IsUUID('4')
   @Column()
-  public authorId: number;
+  public authorId: string;
 }

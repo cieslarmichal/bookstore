@@ -1,11 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../shared';
 import { BookDto } from '../../book/dtos';
 
 export class AuthorDto {
-  @IsNumber()
-  public readonly id: number;
+  @IsUUID('4')
+  public readonly id: string;
 
   @IsDate()
   public readonly createdAt: Date;

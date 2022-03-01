@@ -42,9 +42,7 @@ export class BookController {
   }
 
   public async findBook(request: Request, response: Response): Promise<void> {
-    const id = parseInt(request.params.id);
-
-    const bookDto = await this.bookService.findBook(id);
+    const bookDto = await this.bookService.findBook(request.params.id);
 
     response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(bookDto);
@@ -53,18 +51,14 @@ export class BookController {
   public async updateBook(request: Request, response: Response): Promise<void> {
     const updateBookData = RecordToInstanceTransformer.transform(request.body, UpdateBookData);
 
-    const id = parseInt(request.params.id);
-
-    const bookDto = await this.bookService.updateBook(id, updateBookData);
+    const bookDto = await this.bookService.updateBook(request.params.id, updateBookData);
 
     response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(bookDto);
   }
 
   public async deleteBook(request: Request, response: Response): Promise<void> {
-    const id = parseInt(request.params.id);
-
-    await this.bookService.removeBook(id);
+    await this.bookService.removeBook(request.params.id);
 
     response.status(StatusCodes.OK).send();
   }

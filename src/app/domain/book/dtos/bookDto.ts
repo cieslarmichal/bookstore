@@ -1,10 +1,10 @@
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../shared';
 import { BookFormat, BookLanguage } from '../types';
 
 export class BookDto {
-  @IsNumber()
-  public readonly id: number;
+  @IsUUID('4')
+  public readonly id: string;
 
   @IsDate()
   public readonly createdAt: Date;
@@ -31,8 +31,8 @@ export class BookDto {
   @IsNumber()
   public readonly price: number;
 
-  @IsNumber()
-  public readonly authorId: number;
+  @IsUUID('4')
+  public readonly authorId: string;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(BookDto);
 }

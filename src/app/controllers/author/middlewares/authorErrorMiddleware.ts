@@ -8,5 +8,5 @@ export function authorErrorMiddleware(error: Error, request: Request, response: 
     response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
   }
 
-  next();
+  next(error);
 }

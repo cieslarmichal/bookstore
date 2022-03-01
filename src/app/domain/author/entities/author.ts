@@ -1,5 +1,5 @@
-import { IsOptional, IsDate, IsString } from 'class-validator';
-import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, Unique, OneToMany } from 'typeorm';
+import { IsOptional, IsDate, IsString, IsUUID } from 'class-validator';
+import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
 import { Book } from '../../book/entities/book';
 
 export const AUTHOR_TABLE_NAME = 'authors';
@@ -7,11 +7,11 @@ export const AUTHOR_TABLE_NAME = 'authors';
 @Entity({
   name: AUTHOR_TABLE_NAME,
 })
-@Unique('unique_index_first_name_last_name', ['firstName', 'lastName'])
 export class Author {
   @IsOptional()
-  @PrimaryGeneratedColumn('increment')
-  public id: number;
+  @IsUUID('4')
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 
   @IsOptional()
   @IsDate()

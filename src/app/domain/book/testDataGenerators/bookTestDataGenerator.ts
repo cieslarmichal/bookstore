@@ -19,8 +19,8 @@ export class BookTestDataGenerator {
     };
   }
 
-  public generateId(): number {
-    return faker.datatype.number();
+  public generateId(): string {
+    return faker.datatype.uuid();
   }
 
   public generateCreatedAt(): Date {
@@ -35,8 +35,8 @@ export class BookTestDataGenerator {
     return faker.lorem.text(10);
   }
 
-  public generateAuthorId(): number {
-    return faker.datatype.number();
+  public generateAuthorId(): string {
+    return faker.datatype.uuid();
   }
 
   public generateReleaseYear(): number {

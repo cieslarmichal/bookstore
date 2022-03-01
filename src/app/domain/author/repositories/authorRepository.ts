@@ -26,7 +26,7 @@ export class AuthorRepository {
     return this.authorMapper.mapEntityToDto(author);
   }
 
-  public async findOneById(id: number): Promise<AuthorDto | null> {
+  public async findOneById(id: string): Promise<AuthorDto | null> {
     return this.findOne({ id });
   }
 
@@ -36,7 +36,7 @@ export class AuthorRepository {
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
   }
 
-  public async updateOne(id: number, authorData: Partial<Author>): Promise<AuthorDto> {
+  public async updateOne(id: string, authorData: Partial<Author>): Promise<AuthorDto> {
     const author = await this.findOneById(id);
 
     if (!author) {
@@ -48,7 +48,7 @@ export class AuthorRepository {
     return this.findOneById(id) as Promise<AuthorDto>;
   }
 
-  public async removeOne(id: number): Promise<void> {
+  public async removeOne(id: string): Promise<void> {
     const author = await this.findOneById(id);
 
     if (!author) {

@@ -16,7 +16,7 @@ export class AuthorService {
     return author;
   }
 
-  public async findAuthor(authorId: number): Promise<AuthorDto> {
+  public async findAuthor(authorId: string): Promise<AuthorDto> {
     const author = await this.authorRepository.findOneById(authorId);
 
     if (!author) {
@@ -26,7 +26,7 @@ export class AuthorService {
     return author;
   }
 
-  public async updateAuthor(authorId: number, authorData: UpdateAuthorData): Promise<AuthorDto> {
+  public async updateAuthor(authorId: string, authorData: UpdateAuthorData): Promise<AuthorDto> {
     console.log(`Updating author with id ${authorId}...`);
 
     const author = await this.authorRepository.updateOne(authorId, authorData);
@@ -36,7 +36,7 @@ export class AuthorService {
     return author;
   }
 
-  public async removeAuthor(authorId: number): Promise<void> {
+  public async removeAuthor(authorId: string): Promise<void> {
     console.log(`Removing author with id ${authorId}...`);
 
     await this.authorRepository.removeOne(authorId);

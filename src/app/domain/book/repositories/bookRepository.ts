@@ -14,7 +14,7 @@ export class BookRepository {
     const existingBook = await this.findOne({ title, authorId });
 
     if (existingBook) {
-      throw new BookAlreadyExists({ title: title as string, authorId: authorId?.toString() as string });
+      throw new BookAlreadyExists({ title: title as string, authorId: authorId as string });
     }
 
     const book = this.entityManager.create(Book, bookData);
@@ -34,7 +34,7 @@ export class BookRepository {
     return this.bookMapper.mapEntityToDto(book);
   }
 
-  public async findOneById(id: number): Promise<BookDto | null> {
+  public async findOneById(id: string): Promise<BookDto | null> {
     return this.findOne({ id });
   }
 
@@ -44,7 +44,7 @@ export class BookRepository {
     return books.map((book) => this.bookMapper.mapEntityToDto(book));
   }
 
-  public async updateOne(id: number, bookData: Partial<Book>): Promise<BookDto> {
+  public async updateOne(id: string, bookData: Partial<Book>): Promise<BookDto> {
     const book = await this.findOneById(id);
 
     if (!book) {
@@ -56,7 +56,7 @@ export class BookRepository {
     return this.findOneById(id) as Promise<BookDto>;
   }
 
-  public async removeOne(id: number): Promise<void> {
+  public async removeOne(id: string): Promise<void> {
     const book = await this.findOneById(id);
 
     if (!book) {

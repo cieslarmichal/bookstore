@@ -13,8 +13,8 @@ export class AuthorTestDataGenerator {
     };
   }
 
-  public generateId(): number {
-    return faker.datatype.number();
+  public generateId(): string {
+    return faker.datatype.uuid();
   }
 
   public generateCreatedAt(): Date {

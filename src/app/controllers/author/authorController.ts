@@ -42,9 +42,7 @@ export class AuthorController {
   }
 
   public async findAuthor(request: Request, response: Response): Promise<void> {
-    const id = parseInt(request.params.id);
-
-    const authorDto = await this.authorService.findAuthor(id);
+    const authorDto = await this.authorService.findAuthor(request.params.id);
 
     response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(authorDto);
@@ -53,18 +51,14 @@ export class AuthorController {
   public async updateAuthor(request: Request, response: Response): Promise<void> {
     const updateAuthorData = RecordToInstanceTransformer.transform(request.body, UpdateAuthorData);
 
-    const id = parseInt(request.params.id);
-
-    const authorDto = await this.authorService.updateAuthor(id, updateAuthorData);
+    const authorDto = await this.authorService.updateAuthor(request.params.id, updateAuthorData);
 
     response.setHeader('Content-Type', 'application/json');
     response.status(StatusCodes.OK).send(authorDto);
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<void> {
-    const id = parseInt(request.params.id);
-
-    await this.authorService.removeAuthor(id);
+    await this.authorService.removeAuthor(request.params.id);
 
     response.status(StatusCodes.OK).send();
   }
