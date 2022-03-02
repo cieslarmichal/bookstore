@@ -9,9 +9,7 @@ export class InstanceValidator {
     });
 
     if (validationErrors.length > 0) {
-      console.log(objInstance);
-      console.log(validationErrors);
-      throw new ValidationError();
+      throw new ValidationError(validationErrors);
     }
   }
 }

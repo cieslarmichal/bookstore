@@ -1,11 +1,11 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../types';
 
 export class CreateBookData {
   @IsString()
   public title: string;
 
-  @IsNumber()
+  @IsUUID('4')
   public authorId: string;
 
   @IsNumber()

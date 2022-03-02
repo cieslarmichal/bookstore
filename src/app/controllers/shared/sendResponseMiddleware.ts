@@ -6,6 +6,7 @@ export function sendResponseMiddleware(request: Request, response: Response, nex
 
   if (!controllerResponse) {
     next();
+    return;
   }
 
   response.status(controllerResponse.statusCode);

@@ -15,7 +15,8 @@ export class UpdateBookBodyDto {
   public readonly description?: string | null;
 
   @IsNumber()
-  public readonly price: number;
+  @IsOptional()
+  public readonly price?: number;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(UpdateBookBodyDto);
 }

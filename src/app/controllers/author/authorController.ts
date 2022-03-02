@@ -9,9 +9,11 @@ import {
   CreateAuthorBodyDto,
   CreateAuthorResponseData,
   CreateAuthorResponseDto,
+  FindAuthorResponseData,
   FindAuthorResponseDto,
   RemoveAuthorResponseDto,
   UpdateAuthorBodyDto,
+  UpdateAuthorResponseData,
   UpdateAuthorResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/controllerResponse';
@@ -75,7 +77,7 @@ export class AuthorController {
   public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const authorDto = await this.authorService.findAuthor(request.params.id);
 
-    const responseData = new CreateAuthorResponseData(authorDto);
+    const responseData = new FindAuthorResponseData(authorDto);
 
     return new FindAuthorResponseDto(responseData, StatusCodes.OK);
   }
@@ -87,7 +89,7 @@ export class AuthorController {
 
     const authorDto = await this.authorService.updateAuthor(request.params.id, updateAuthorData);
 
-    const responseData = new CreateAuthorResponseData(authorDto);
+    const responseData = new UpdateAuthorResponseData(authorDto);
 
     return new UpdateAuthorResponseDto(responseData, StatusCodes.OK);
   }
