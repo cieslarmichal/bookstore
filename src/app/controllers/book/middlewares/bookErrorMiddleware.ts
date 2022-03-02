@@ -5,8 +5,10 @@ import { BookAlreadyExists, BookNotFound } from '../../../domain/book/errors';
 export function bookErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
   if (error instanceof BookAlreadyExists) {
     response.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ error: error.message });
+    return;
   } else if (error instanceof BookNotFound) {
     response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
+    return;
   }
 
   next(error);
