@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ControllerResponse } from '../../shared/controllerResponse';
+import { ControllerResponse } from './controllerResponse';
 
 export function sendResponseMiddleware(request: Request, response: Response, next: NextFunction) {
   const controllerResponse: ControllerResponse = response.locals.controllerResponse;
@@ -10,9 +10,10 @@ export function sendResponseMiddleware(request: Request, response: Response, nex
 
   response.status(controllerResponse.statusCode);
 
-  if (controllerResponse.data) {
-    response.send({ data: controllerResponse.data });
-  } else {
+  if (!controllerResponse.data) {
     response.send();
+    return;
   }
+
+  response.send({ data: controllerResponse.data });
 }

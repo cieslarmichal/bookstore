@@ -20,7 +20,7 @@ export class AuthorService {
     const author = await this.authorRepository.findOneById(authorId);
 
     if (!author) {
-      throw new AuthorNotFound({ id: authorId.toString() });
+      throw new AuthorNotFound({ id: authorId });
     }
 
     return author;

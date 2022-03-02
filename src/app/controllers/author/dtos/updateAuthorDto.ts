@@ -1,4 +1,4 @@
-import { Allow, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from 'src/app/shared';
 import { AuthorDto } from './authorDto';
 
@@ -18,18 +18,9 @@ export class UpdateAuthorBodyDto {
 }
 
 export class UpdateAuthorResponseData {
-  @Allow()
-  public readonly author: AuthorDto;
-
-  public static readonly create = RecordToInstanceTransformer.transformFactory(UpdateAuthorResponseData);
+  public constructor(public readonly author: AuthorDto) {}
 }
 
 export class UpdateAuthorResponseDto {
-  @Allow()
-  public readonly data: UpdateAuthorResponseData;
-
-  @IsNumber()
-  public readonly statusCode: number;
-
-  public static readonly create = RecordToInstanceTransformer.transformFactory(UpdateAuthorResponseDto);
+  public constructor(public readonly data: UpdateAuthorResponseData, public readonly statusCode: number) {}
 }

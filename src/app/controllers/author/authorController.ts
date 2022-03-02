@@ -4,20 +4,18 @@ import { CreateAuthorData, UpdateAuthorData } from '../../domain/author/services
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { authorErrorMiddleware, sendResponseMiddleware } from './middlewares';
+import { authorErrorMiddleware } from './middlewares';
 import {
-  AuthorDto,
   CreateAuthorBodyDto,
   CreateAuthorResponseData,
   CreateAuthorResponseDto,
-  FindAuthorResponseData,
   FindAuthorResponseDto,
   RemoveAuthorResponseDto,
   UpdateAuthorBodyDto,
-  UpdateAuthorResponseData,
   UpdateAuthorResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/controllerResponse';
+import { sendResponseMiddleware } from '../shared';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -30,30 +28,32 @@ export class AuthorController {
       AUTHORS_PATH,
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAuthorResponse = await this.createAuthor(request, response);
-
         response.locals.controllerResponse = createAuthorResponse;
         next();
       }),
     );
     this.router.get(
       AUTHORS_PATH_WITH_ID,
-      asyncHandler(async (request: Request, response: Response) => {
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorResponse = await this.findAuthor(request, response);
         response.locals.controllerResponse = findAuthorResponse;
+        next();
       }),
     );
     this.router.patch(
       AUTHORS_PATH_WITH_ID,
-      asyncHandler(async (request: Request, response: Response) => {
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateAuthorResponse = await this.updateAuthor(request, response);
         response.locals.controllerResponse = updateAuthorResponse;
+        next();
       }),
     );
     this.router.delete(
       AUTHORS_PATH_WITH_ID,
-      asyncHandler(async (request: Request, response: Response) => {
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAuthorResponse = await this.deleteAuthor(request, response);
         response.locals.controllerResponse = deleteAuthorResponse;
+        next();
       }),
     );
     this.router.use(sendResponseMiddleware);
@@ -67,27 +67,17 @@ export class AuthorController {
 
     const authorDto = await this.authorService.createAuthor(createAuthorData);
 
-    const controllerAuthorDto = AuthorDto.create({
-      id: authorDto.id,
-      createdAt: authorDto.createdAt,
-      updatedAt: authorDto.updatedAt,
-      firstName: authorDto.firstName,
-      lastName: authorDto.lastName,
-      about: authorDto.about,
-      books: authorDto.books,
-    });
+    const responseData = new CreateAuthorResponseData(authorDto);
 
-    const responseData = CreateAuthorResponseData.create({ author: controllerAuthorDto });
-
-    return CreateAuthorResponseDto.create({ data: responseData, statusCode: StatusCodes.CREATED });
+    return new CreateAuthorResponseDto(responseData, StatusCodes.CREATED);
   }
 
   public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const authorDto = await this.authorService.findAuthor(request.params.id);
 
-    const responseData = FindAuthorResponseData.create({ author: authorDto });
+    const responseData = new CreateAuthorResponseData(authorDto);
 
-    return FindAuthorResponseDto.create({ data: responseData, statusCode: StatusCodes.OK });
+    return new FindAuthorResponseDto(responseData, StatusCodes.OK);
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
@@ -97,14 +87,14 @@ export class AuthorController {
 
     const authorDto = await this.authorService.updateAuthor(request.params.id, updateAuthorData);
 
-    const responseData = UpdateAuthorResponseData.create({ author: authorDto });
+    const responseData = new CreateAuthorResponseData(authorDto);
 
-    return UpdateAuthorResponseDto.create({ data: responseData, statusCode: StatusCodes.OK });
+    return new UpdateAuthorResponseDto(responseData, StatusCodes.OK);
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     await this.authorService.removeAuthor(request.params.id);
 
-    return RemoveAuthorResponseDto.create({ statusCode: StatusCodes.OK });
+    return new RemoveAuthorResponseDto(StatusCodes.OK);
   }
 }

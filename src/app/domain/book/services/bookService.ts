@@ -20,7 +20,7 @@ export class BookService {
     const book = await this.bookRepository.findOneById(bookId);
 
     if (!book) {
-      throw new BookNotFound({ id: bookId.toString() });
+      throw new BookNotFound({ id: bookId });
     }
 
     return book;

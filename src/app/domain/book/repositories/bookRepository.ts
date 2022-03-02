@@ -48,7 +48,7 @@ export class BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new BookNotFound({ id: id.toString() });
+      throw new BookNotFound({ id });
     }
 
     await this.entityManager.update(Book, { id }, bookData);
@@ -60,7 +60,7 @@ export class BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new BookNotFound({ id: id.toString() });
+      throw new BookNotFound({ id });
     }
 
     await this.entityManager.delete(Book, { id });

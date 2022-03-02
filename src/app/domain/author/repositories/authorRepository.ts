@@ -40,7 +40,7 @@ export class AuthorRepository {
     const author = await this.findOneById(id);
 
     if (!author) {
-      throw new AuthorNotFound({ id: id.toString() });
+      throw new AuthorNotFound({ id });
     }
 
     await this.entityManager.update(Author, { id }, authorData);
@@ -52,7 +52,7 @@ export class AuthorRepository {
     const author = await this.findOneById(id);
 
     if (!author) {
-      throw new AuthorNotFound({ id: id.toString() });
+      throw new AuthorNotFound({ id });
     }
 
     await this.entityManager.delete(Author, { id });
