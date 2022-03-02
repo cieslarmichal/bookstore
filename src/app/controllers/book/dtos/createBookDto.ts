@@ -1,6 +1,5 @@
 import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
-import { RecordToInstanceTransformer } from 'src/app/shared';
 import { BookDto } from './bookDto';
 
 export class CreateBookBodyDto {
@@ -25,8 +24,6 @@ export class CreateBookBodyDto {
 
   @IsUUID('4')
   public readonly authorId: string;
-
-  public static readonly create = RecordToInstanceTransformer.transformFactory(CreateBookBodyDto);
 }
 
 export class CreateBookResponseData {

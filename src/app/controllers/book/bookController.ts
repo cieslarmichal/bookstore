@@ -10,10 +10,13 @@ import {
   CreateBookBodyDto,
   CreateBookResponseData,
   CreateBookResponseDto,
+  FindBookParamDto,
   FindBookResponseData,
   FindBookResponseDto,
+  RemoveBookParamDto,
   RemoveBookResponseDto,
   UpdateBookBodyDto,
+  UpdateBookParamDto,
   UpdateBookResponseData,
   UpdateBookResponseDto,
 } from './dtos';
@@ -74,7 +77,9 @@ export class BookController {
   }
 
   public async findBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const bookDto = await this.bookService.findBook(request.params.id);
+    const { id } = RecordToInstanceTransformer.transform(request.params, FindBookParamDto);
+
+    const bookDto = await this.bookService.findBook(id);
 
     const responseData = new FindBookResponseData(bookDto);
 
@@ -82,11 +87,13 @@ export class BookController {
   }
 
   public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {
+    const { id } = RecordToInstanceTransformer.transform(request.params, UpdateBookParamDto);
+
     const updateBookBodyDto = RecordToInstanceTransformer.transform(request.body, UpdateBookBodyDto);
 
     const updateBookData = RecordToInstanceTransformer.transform(updateBookBodyDto, UpdateBookData);
 
-    const bookDto = await this.bookService.updateBook(request.params.id, updateBookData);
+    const bookDto = await this.bookService.updateBook(id, updateBookData);
 
     const responseData = new UpdateBookResponseData(bookDto);
 
@@ -94,7 +101,9 @@ export class BookController {
   }
 
   public async deleteBook(request: Request, response: Response): Promise<ControllerResponse> {
-    await this.bookService.removeBook(request.params.id);
+    const { id } = RecordToInstanceTransformer.transform(request.params, RemoveBookParamDto);
+
+    await this.bookService.removeBook(id);
 
     return new RemoveBookResponseDto(StatusCodes.OK);
   }

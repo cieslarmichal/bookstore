@@ -9,10 +9,13 @@ import {
   CreateAuthorBodyDto,
   CreateAuthorResponseData,
   CreateAuthorResponseDto,
+  FindAuthorParamDto,
   FindAuthorResponseData,
   FindAuthorResponseDto,
+  RemoveAuthorParamDto,
   RemoveAuthorResponseDto,
   UpdateAuthorBodyDto,
+  UpdateAuthorParamDto,
   UpdateAuthorResponseData,
   UpdateAuthorResponseDto,
 } from './dtos';
@@ -75,7 +78,9 @@ export class AuthorController {
   }
 
   public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
-    const authorDto = await this.authorService.findAuthor(request.params.id);
+    const { id } = RecordToInstanceTransformer.transform(request.params, FindAuthorParamDto);
+
+    const authorDto = await this.authorService.findAuthor(id);
 
     const responseData = new FindAuthorResponseData(authorDto);
 
@@ -83,11 +88,13 @@ export class AuthorController {
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+    const { id } = RecordToInstanceTransformer.transform(request.params, UpdateAuthorParamDto);
+
     const updateAuthorBodyDto = RecordToInstanceTransformer.transform(request.body, UpdateAuthorBodyDto);
 
     const updateAuthorData = RecordToInstanceTransformer.transform(updateAuthorBodyDto, UpdateAuthorData);
 
-    const authorDto = await this.authorService.updateAuthor(request.params.id, updateAuthorData);
+    const authorDto = await this.authorService.updateAuthor(id, updateAuthorData);
 
     const responseData = new UpdateAuthorResponseData(authorDto);
 
@@ -95,7 +102,9 @@ export class AuthorController {
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
-    await this.authorService.removeAuthor(request.params.id);
+    const { id } = RecordToInstanceTransformer.transform(request.params, RemoveAuthorParamDto);
+
+    await this.authorService.removeAuthor(id);
 
     return new RemoveAuthorResponseDto(StatusCodes.OK);
   }

@@ -1,5 +1,4 @@
 import { IsOptional, IsString } from 'class-validator';
-import { RecordToInstanceTransformer } from 'src/app/shared';
 import { AuthorDto } from './authorDto';
 
 export class CreateAuthorBodyDto {
@@ -12,8 +11,6 @@ export class CreateAuthorBodyDto {
   @IsString()
   @IsOptional()
   public readonly about?: string | null;
-
-  public static readonly create = RecordToInstanceTransformer.transformFactory(CreateAuthorBodyDto);
 }
 
 export class CreateAuthorResponseData {
