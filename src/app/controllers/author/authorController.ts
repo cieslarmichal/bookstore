@@ -17,6 +17,7 @@ import {
   UpdateAuthorResponseData,
   UpdateAuthorResponseDto,
 } from './dtos';
+import { ControllerResponse } from '../shared/controllerResponse';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -31,7 +32,6 @@ export class AuthorController {
         const createAuthorResponse = await this.createAuthor(request, response);
 
         response.locals.controllerResponse = createAuthorResponse;
-        console.log(response.locals.controllerResponse);
         next();
       }),
     );
@@ -60,7 +60,7 @@ export class AuthorController {
     this.router.use(authorErrorMiddleware);
   }
 
-  public async createAuthor(request: Request, response: Response): Promise<CreateAuthorResponseDto> {
+  public async createAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const createAuthorBodyDto = RecordToInstanceTransformer.transform(request.body, CreateAuthorBodyDto);
 
     const createAuthorData = RecordToInstanceTransformer.transform(createAuthorBodyDto, CreateAuthorData);
@@ -82,7 +82,7 @@ export class AuthorController {
     return CreateAuthorResponseDto.create({ data: responseData, statusCode: StatusCodes.CREATED });
   }
 
-  public async findAuthor(request: Request, response: Response): Promise<FindAuthorResponseDto> {
+  public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const authorDto = await this.authorService.findAuthor(request.params.id);
 
     const responseData = FindAuthorResponseData.create({ author: authorDto });
@@ -90,7 +90,7 @@ export class AuthorController {
     return FindAuthorResponseDto.create({ data: responseData, statusCode: StatusCodes.OK });
   }
 
-  public async updateAuthor(request: Request, response: Response): Promise<UpdateAuthorResponseDto> {
+  public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const updateAuthorBodyDto = RecordToInstanceTransformer.transform(request.body, UpdateAuthorBodyDto);
 
     const updateAuthorData = RecordToInstanceTransformer.transform(updateAuthorBodyDto, UpdateAuthorData);
@@ -102,7 +102,7 @@ export class AuthorController {
     return UpdateAuthorResponseDto.create({ data: responseData, statusCode: StatusCodes.OK });
   }
 
-  public async deleteAuthor(request: Request, response: Response): Promise<RemoveAuthorResponseDto> {
+  public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     await this.authorService.removeAuthor(request.params.id);
 
     return RemoveAuthorResponseDto.create({ statusCode: StatusCodes.OK });

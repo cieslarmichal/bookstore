@@ -1,4 +1,4 @@
-import { Allow, IsOptional, IsString } from 'class-validator';
+import { Allow, IsNumber, IsOptional, IsString } from 'class-validator';
 import { RecordToInstanceTransformer } from 'src/app/shared';
 import { AuthorDto } from './authorDto';
 
@@ -27,7 +27,7 @@ export class CreateAuthorResponseDto {
   @Allow()
   public readonly data: CreateAuthorResponseData;
 
-  @Allow()
+  @IsNumber()
   public readonly statusCode: number;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(CreateAuthorResponseDto);
