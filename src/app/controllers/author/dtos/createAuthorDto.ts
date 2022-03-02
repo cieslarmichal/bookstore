@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { Allow, IsOptional, IsString } from 'class-validator';
 import { RecordToInstanceTransformer } from 'src/app/shared';
 import { AuthorDto } from './authorDto';
 
@@ -16,6 +16,19 @@ export class CreateAuthorBodyDto {
   public static readonly create = RecordToInstanceTransformer.transformFactory(CreateAuthorBodyDto);
 }
 
-export class CreateAuthorResponseDto {
+export class CreateAuthorResponseData {
+  @Allow()
   public readonly author: AuthorDto;
+
+  public static readonly create = RecordToInstanceTransformer.transformFactory(CreateAuthorResponseData);
+}
+
+export class CreateAuthorResponseDto {
+  @Allow()
+  public readonly data: CreateAuthorResponseData;
+
+  @Allow()
+  public readonly statusCode: number;
+
+  public static readonly create = RecordToInstanceTransformer.transformFactory(CreateAuthorResponseDto);
 }

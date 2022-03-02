@@ -1,6 +1,5 @@
 import { IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from 'src/app/shared';
-import { AuthorDto } from './authorDto';
 
 export class RemoveAuthorParamDto {
   @IsUUID('4')
@@ -10,5 +9,7 @@ export class RemoveAuthorParamDto {
 }
 
 export class RemoveAuthorResponseDto {
-  public readonly author: AuthorDto;
+  public readonly statusCode: number;
+
+  public static readonly create = RecordToInstanceTransformer.transformFactory(RemoveAuthorResponseDto);
 }

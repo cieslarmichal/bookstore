@@ -9,6 +9,15 @@ export class FindAuthorParamDto {
   public static readonly create = RecordToInstanceTransformer.transformFactory(FindAuthorParamDto);
 }
 
-export class FindAuthorResponseDto {
+export class FindAuthorResponseData {
   public readonly author: AuthorDto;
+
+  public static readonly create = RecordToInstanceTransformer.transformFactory(FindAuthorResponseData);
+}
+
+export class FindAuthorResponseDto {
+  public readonly data: FindAuthorResponseData;
+  public readonly statusCode: number;
+
+  public static readonly create = RecordToInstanceTransformer.transformFactory(FindAuthorResponseDto);
 }
