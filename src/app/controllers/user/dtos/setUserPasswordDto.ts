@@ -3,7 +3,7 @@ import { UserDto } from './userDto';
 
 export class SetUserPasswordBodyDto {
   @IsUUID('4')
-  public readonly id: string;
+  public readonly userId: string;
 
   @IsString()
   public readonly password: string;

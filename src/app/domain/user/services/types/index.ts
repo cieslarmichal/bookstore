@@ -1,2 +1,2 @@
-export * from './createUserData';
+export * from './registerUserData';
 export * from './loginUserData';

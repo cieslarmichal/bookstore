@@ -1,7 +1,7 @@
 import { IsEnum, IsString } from 'class-validator';
 import { UserRole } from '../../types';
 
-export class CreateUserData {
+export class RegisterUserData {
   @IsString()
   public readonly email: string;
 
