@@ -3,7 +3,7 @@ import { UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
 import { CreateUserData, LoginUserData } from './types';
 
-type AccessToken = string;
+export type AccessToken = string;
 
 export class UserService {
   public constructor(private readonly userRepository: UserRepository) {}
