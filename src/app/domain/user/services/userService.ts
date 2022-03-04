@@ -1,17 +1,25 @@
 import { UserDto } from '../dtos';
 import { UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
-import { CreateUserData } from './types';
+import { CreateUserData, LoginUserData } from './types';
+
+type AccessToken = string;
 
 export class UserService {
   public constructor(private readonly userRepository: UserRepository) {}
 
-  public async createUser(userData: CreateUserData): Promise<UserDto> {
-    console.log('Creating user...');
+  public async loginUser(userData: LoginUserData): Promise<AccessToken> {
+    console.log(`Logging user ${userData.email}...`);
+
+    console.log(`User with id ${id} logged in.`);
+  }
+
+  public async registerUser(userData: CreateUserData): Promise<UserDto> {
+    console.log(`Registering user ${userData.email}...`);
 
     const user = await this.userRepository.createOne(userData);
 
-    console.log('User created.');
+    console.log('User registered.');
 
     return user;
   }
