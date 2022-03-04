@@ -58,6 +58,22 @@ export class UserService {
     return user;
   }
 
+  public async setPassword(userId: string, newPassword: string): Promise<UserDto> {
+    console.log(`Setting password for user with id ${userId}...`);
+
+    const user = await this.userRepository.findOne({ id: userId });
+
+    if (!user) {
+      throw new UserNotFound({ id: userId });
+    }
+
+    const updatedUser = await this.userRepository.updateOne(userId, { password: newPassword });
+
+    console.log(`Password for user with id ${userId} set.`);
+
+    return accessToken;
+  }
+
   public async findUser(userId: string): Promise<UserDto> {
     const user = await this.userRepository.findOneById(userId);
 
