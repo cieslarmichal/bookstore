@@ -14,6 +14,26 @@ export class UserService {
     private readonly tokenService: TokenService,
   ) {}
 
+  public async registerUser(userData: CreateUserData): Promise<UserDto> {
+    const { email, password, role } = userData;
+
+    console.log(`Registering user ${email}...`);
+
+    const existingUser = await this.userRepository.findOne({ email });
+
+    if (existingUser) {
+      throw new UserAlreadyExists({ email });
+    }
+
+    const hashedPassword = await this.hashService.hash(password);
+
+    const user = await this.userRepository.createOne({ email, password: hashedPassword, role });
+
+    console.log(`User ${email} registered.`);
+
+    return user;
+  }
+
   public async loginUser(userData: LoginUserData): Promise<AccessToken> {
     const { email, password } = userData;
 
@@ -38,26 +58,6 @@ export class UserService {
     return accessToken;
   }
 
-  public async registerUser(userData: CreateUserData): Promise<UserDto> {
-    const { email, password, role } = userData;
-
-    console.log(`Registering user ${email}...`);
-
-    const existingUser = await this.userRepository.findOne({ email });
-
-    if (existingUser) {
-      throw new UserAlreadyExists({ email });
-    }
-
-    const hashedPassword = await this.hashService.hash(password);
-
-    const user = await this.userRepository.createOne({ email, password: hashedPassword, role });
-
-    console.log(`User ${email} registered.`);
-
-    return user;
-  }
-
   public async setPassword(userId: string, newPassword: string): Promise<UserDto> {
     console.log(`Setting password for user with id ${userId}...`);
 
@@ -67,11 +67,13 @@ export class UserService {
       throw new UserNotFound({ id: userId });
     }
 
-    const updatedUser = await this.userRepository.updateOne(userId, { password: newPassword });
+    const hashedPassword = await this.hashService.hash(newPassword);
+
+    const updatedUser = await this.userRepository.updateOne(userId, { password: hashedPassword });
 
     console.log(`Password for user with id ${userId} set.`);
 
-    return accessToken;
+    return updatedUser;
   }
 
   public async findUser(userId: string): Promise<UserDto> {

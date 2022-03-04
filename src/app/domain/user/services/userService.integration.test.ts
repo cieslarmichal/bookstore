@@ -6,11 +6,15 @@ import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { UserModule } from '../userModule';
 import { UserAlreadyExists, UserNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TokenService } from './tokenService';
+import { HashService } from './hashService';
+import { UserDto } from '../dtos';
 
 describe('UserService', () => {
   let userService: UserService;
   let userRepository: UserRepository;
+  let tokenService: TokenService;
+  let hashService: HashService;
   let userTestDataGenerator: UserTestDataGenerator;
 
   beforeAll(async () => {
@@ -20,21 +24,21 @@ describe('UserService', () => {
 
     userService = container.resolve('userService');
     userRepository = container.resolve('userRepository');
+    tokenService = container.resolve('tokenService');
+    hashService = container.resolve('hashService');
 
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
-  });
+  afterEach(async () => {});
 
-  describe('Create user', () => {
+  describe('Register user', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
       const { email, password, role } = userTestDataGenerator.generateData();
 
-      const createdUserDto = await userService.createUser({
+      const createdUserDto = await userService.registerUser({
         email,
         password,
         role,
@@ -57,13 +61,114 @@ describe('UserService', () => {
       });
 
       try {
-        await userService.createUser({
+        await userService.registerUser({
           email,
           password,
           role,
         });
       } catch (error) {
         expect(error).toBeInstanceOf(UserAlreadyExists);
+      }
+    });
+  });
+
+  describe('Login user', () => {
+    it('should return access token', async () => {
+      expect.assertions(2);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const hashedPassword = await hashService.hash(password);
+
+      const user = await userRepository.createOne({
+        email,
+        password: hashedPassword,
+        role,
+      });
+
+      const accessToken = await userService.loginUser({
+        email,
+        password,
+      });
+
+      const data = await tokenService.verifyToken(accessToken);
+
+      expect(data.id).toBe(user.id);
+      expect(data.role).toBe(user.role);
+    });
+
+    it('should throw if user with given email does not exist', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userTestDataGenerator.generateData();
+
+      try {
+        await userService.loginUser({
+          email,
+          password,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
+      }
+    });
+
+    it('should throw if user password does not match db password', async () => {
+      expect.assertions(1);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const { password: otherPassword } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({
+        email,
+        password,
+        role,
+      });
+
+      try {
+        await userService.loginUser({
+          email,
+          password: otherPassword,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
+      }
+    });
+  });
+
+  describe('Set password', () => {
+    it(`should update user's password in db`, async () => {
+      expect.assertions(2);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const hashedPassword = await hashService.hash(password);
+
+      const user = await userRepository.createOne({
+        email,
+        password: hashedPassword,
+        role,
+      });
+
+      const { password: newPassword } = userTestDataGenerator.generateData();
+
+      await userService.setPassword(user.id, newPassword);
+
+      const updatedUser = (await userRepository.findOneById(user.id)) as UserDto;
+
+      expect(updatedUser).not.toBeNull();
+      expect(await hashService.compare(newPassword, updatedUser.password)).toBe(true);
+    });
+
+    it('should throw if user with given email does not exist', async () => {
+      expect.assertions(1);
+
+      const { id, password } = userTestDataGenerator.generateData();
+
+      try {
+        await userService.setPassword(id, password);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
       }
     });
   });

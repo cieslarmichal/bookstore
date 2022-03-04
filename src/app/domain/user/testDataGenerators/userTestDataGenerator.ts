@@ -27,7 +27,7 @@ export class UserTestDataGenerator {
   }
 
   public generateEmail(): string {
-    return faker.lorem.text(10);
+    return faker.internet.email();
   }
 
   public generatePassword(): string {
