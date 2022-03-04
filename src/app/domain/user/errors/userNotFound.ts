@@ -1,11 +1,15 @@
 import { DomainError } from '../../shared/domainError';
 
-type UserNotFoundContext = {
+type UserNotFoundIdContext = {
   readonly id: string;
 };
 
-export class UserNotFound extends DomainError<UserNotFoundContext> {
-  public constructor(context: UserNotFoundContext) {
+type UserNotFoundEmailContext = {
+  readonly email: string;
+};
+
+export class UserNotFound extends DomainError<UserNotFoundIdContext | UserNotFoundEmailContext> {
+  public constructor(context: UserNotFoundIdContext | UserNotFoundEmailContext) {
     super('User not found.', context);
   }
 }

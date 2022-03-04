@@ -1,5 +1,5 @@
 import { UserDto } from '../dtos';
-import { UserNotFound } from '../errors';
+import { UserAlreadyExists, UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
 import { HashService } from './hashService';
 import { TokenService } from './tokenService';
@@ -15,17 +15,45 @@ export class UserService {
   ) {}
 
   public async loginUser(userData: LoginUserData): Promise<AccessToken> {
-    console.log(`Logging user ${userData.email}...`);
+    const { email, password } = userData;
 
-    console.log(`User with id ${id} logged in.`);
+    console.log(`Logging user ${email}...`);
+
+    const user = await this.userRepository.findOne({ email });
+
+    if (!user) {
+      throw new UserNotFound({ email });
+    }
+
+    const passwordIsValid = await this.hashService.compare(password, user.password);
+
+    if (!passwordIsValid) {
+      throw new UserNotFound({ email });
+    }
+
+    const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
+
+    console.log(`User ${email} logged in.`);
+
+    return accessToken;
   }
 
   public async registerUser(userData: CreateUserData): Promise<UserDto> {
-    console.log(`Registering user ${userData.email}...`);
+    const { email, password, role } = userData;
 
-    const user = await this.userRepository.createOne({});
+    console.log(`Registering user ${email}...`);
 
-    console.log('User registered.');
+    const existingUser = await this.userRepository.findOne({ email });
+
+    if (existingUser) {
+      throw new UserAlreadyExists({ email });
+    }
+
+    const hashedPassword = await this.hashService.hash(password);
+
+    const user = await this.userRepository.createOne({ email, password: hashedPassword, role });
+
+    console.log(`User ${email} registered.`);
 
     return user;
   }

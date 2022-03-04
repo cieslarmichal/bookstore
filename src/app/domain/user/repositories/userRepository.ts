@@ -2,21 +2,13 @@ import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { UserDto } from '../dtos';
 import { User } from '../entities/user';
 import { UserMapper } from '../mappers/userMapper';
-import { UserAlreadyExists, UserNotFound } from '../errors';
+import { UserNotFound } from '../errors';
 
 @EntityRepository()
 export class UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}
 
   public async createOne(userData: Partial<User>): Promise<UserDto> {
-    const { email } = userData;
-
-    const existingUser = await this.findOne({ email });
-
-    if (existingUser) {
-      throw new UserAlreadyExists({ email: email as string });
-    }
-
     const user = this.entityManager.create(User, userData);
 
     const savedUser = await this.entityManager.save(user);
