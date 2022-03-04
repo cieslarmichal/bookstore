@@ -15,9 +15,6 @@ export class UserDto {
   @IsString()
   public readonly email: string;
 
-  @IsString()
-  public readonly password: string;
-
   @IsEnum(UserRole)
   public readonly role: UserRole;
 

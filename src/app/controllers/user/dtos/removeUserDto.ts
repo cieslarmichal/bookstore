@@ -1,10 +1,10 @@
 import { IsUUID } from 'class-validator';
 
-export class RemoveBookParamDto {
+export class RemoveUserParamDto {
   @IsUUID('4')
   public readonly id: string;
 }
 
-export class RemoveBookResponseDto {
+export class RemoveUserResponseDto {
   public constructor(public readonly statusCode: number) {}
 }
