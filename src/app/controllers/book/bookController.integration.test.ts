@@ -62,7 +62,7 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns bad request when non existing authorId is provided', async () => {
+    it('returns internal server error when non existing authorId is provided', async () => {
       expect.assertions(1);
 
       const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
@@ -76,7 +76,7 @@ describe(`BookController (${baseUrl})`, () => {
         price,
       });
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.statusCode).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
     });
 
     it('returns unprocessable entity when book with given title and authorId already exists', async () => {

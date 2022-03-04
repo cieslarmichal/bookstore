@@ -1,6 +1,6 @@
-import { ValidationError } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { ValidationError } from '../shared';
 
 export function errorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
   let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
