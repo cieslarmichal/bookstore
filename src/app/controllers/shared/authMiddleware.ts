@@ -9,20 +9,22 @@ export class AuthMiddleware {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Invalid access token' });
+      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Authorization header not provided' });
       return;
     }
 
     const token = this.parseToken(authHeader as string);
 
     if (!token) {
-      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Invalid access token' });
+      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Bearer authorization is not set' });
+      return;
     }
 
-    const authPayload = await this.tokenService.verifyToken(token as string);
-
-    if (authPayload.id && authPayload.role) {
+    try {
+      await this.tokenService.verifyToken(token as string);
+    } catch (error) {
       response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Invalid access token' });
+      return;
     }
 
     next();

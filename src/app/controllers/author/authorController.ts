@@ -20,7 +20,7 @@ import {
   UpdateAuthorResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/controllerResponse';
-import { sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, sendResponseMiddleware } from '../shared';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -28,9 +28,10 @@ const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
 export class AuthorController {
   public readonly router = express.Router();
 
-  public constructor(private readonly authorService: AuthorService) {
+  public constructor(private readonly authorService: AuthorService, authMiddleware: AuthMiddleware) {
     this.router.post(
       AUTHORS_PATH,
+      authMiddleware.verifyToken.bind(authMiddleware),
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAuthorResponse = await this.createAuthor(request, response);
         response.locals.controllerResponse = createAuthorResponse;

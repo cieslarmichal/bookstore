@@ -2,7 +2,8 @@ import { asClass, AwilixContainer } from 'awilix';
 import { LoadableModule } from '../shared';
 import { AuthorController } from './author/authorController';
 import { BookController } from './book/bookController';
-import { AUTHOR_CONTROLLER, BOOK_CONTROLLER, USER_CONTROLLER } from './controllersInjectionSymbols';
+import { AUTHOR_CONTROLLER, AUTH_MIDDLEWARE, BOOK_CONTROLLER, USER_CONTROLLER } from './controllersInjectionSymbols';
+import { AuthMiddleware } from './shared';
 import { UserController } from './user/userController';
 
 export class ControllersModule extends LoadableModule {
@@ -11,6 +12,7 @@ export class ControllersModule extends LoadableModule {
       [BOOK_CONTROLLER]: asClass(BookController),
       [AUTHOR_CONTROLLER]: asClass(AuthorController),
       [USER_CONTROLLER]: asClass(UserController),
+      [AUTH_MIDDLEWARE]: asClass(AuthMiddleware),
     });
   }
 }
