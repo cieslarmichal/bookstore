@@ -21,7 +21,8 @@ export class AuthMiddleware {
     }
 
     try {
-      await this.tokenService.verifyToken(token as string);
+      const payload = await this.tokenService.verifyToken(token as string);
+      response.locals.tokenPayload = payload;
     } catch (error) {
       response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Invalid access token' });
       return;

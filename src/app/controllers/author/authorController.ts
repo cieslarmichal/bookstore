@@ -29,9 +29,11 @@ export class AuthorController {
   public readonly router = express.Router();
 
   public constructor(private readonly authorService: AuthorService, authMiddleware: AuthMiddleware) {
+    const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
+
     this.router.post(
       AUTHORS_PATH,
-      authMiddleware.verifyToken.bind(authMiddleware),
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAuthorResponse = await this.createAuthor(request, response);
         response.locals.controllerResponse = createAuthorResponse;
@@ -40,6 +42,7 @@ export class AuthorController {
     );
     this.router.get(
       AUTHORS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorResponse = await this.findAuthor(request, response);
         response.locals.controllerResponse = findAuthorResponse;
@@ -48,6 +51,7 @@ export class AuthorController {
     );
     this.router.patch(
       AUTHORS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateAuthorResponse = await this.updateAuthor(request, response);
         response.locals.controllerResponse = updateAuthorResponse;
@@ -56,6 +60,7 @@ export class AuthorController {
     );
     this.router.delete(
       AUTHORS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAuthorResponse = await this.deleteAuthor(request, response);
         response.locals.controllerResponse = deleteAuthorResponse;

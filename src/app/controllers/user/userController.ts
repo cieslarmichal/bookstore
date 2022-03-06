@@ -5,7 +5,7 @@ import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { userErrorMiddleware } from './middlewares';
-import { ControllerResponse, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../shared';
 import {
   RegisterUserBodyDto,
   RegisterUserResponseData,
@@ -32,7 +32,9 @@ const SET_PASSWORD_PATH = `${USERS_PATH}/set-password`;
 export class UserController {
   public readonly router = express.Router();
 
-  public constructor(private readonly userService: UserService) {
+  public constructor(private readonly userService: UserService, authMiddleware: AuthMiddleware) {
+    const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
+
     this.router.post(
       REGISTER_PATH,
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
@@ -51,6 +53,7 @@ export class UserController {
     );
     this.router.post(
       SET_PASSWORD_PATH,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const setUserPasswordResponse = await this.setUserPassword(request, response);
         response.locals.controllerResponse = setUserPasswordResponse;
@@ -59,6 +62,7 @@ export class UserController {
     );
     this.router.get(
       USERS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findUserResponse = await this.findUser(request, response);
         response.locals.controllerResponse = findUserResponse;
@@ -67,6 +71,7 @@ export class UserController {
     );
     this.router.delete(
       USERS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteUserResponse = await this.deleteUser(request, response);
         response.locals.controllerResponse = deleteUserResponse;

@@ -5,7 +5,7 @@ import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookErrorMiddleware } from './middlewares';
-import { ControllerResponse, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../shared';
 import {
   CreateBookBodyDto,
   CreateBookResponseData,
@@ -27,9 +27,12 @@ const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
 export class BookController {
   public readonly router = express.Router();
 
-  public constructor(private readonly bookService: BookService) {
+  public constructor(private readonly bookService: BookService, authMiddleware: AuthMiddleware) {
+    const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
+
     this.router.post(
       BOOKS_PATH,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createBookResponse = await this.createBook(request, response);
         response.locals.controllerResponse = createBookResponse;
@@ -38,6 +41,7 @@ export class BookController {
     );
     this.router.get(
       BOOKS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBookResponse = await this.findBook(request, response);
         response.locals.controllerResponse = findBookResponse;
@@ -46,6 +50,7 @@ export class BookController {
     );
     this.router.patch(
       BOOKS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateBookResponse = await this.updateBook(request, response);
         response.locals.controllerResponse = updateBookResponse;
@@ -54,6 +59,7 @@ export class BookController {
     );
     this.router.delete(
       BOOKS_PATH_WITH_ID,
+      [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteBookResponse = await this.deleteBook(request, response);
         response.locals.controllerResponse = deleteBookResponse;
