@@ -125,7 +125,7 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   describe('Find book', () => {
-    it('returns bad request the bookId param is not a number', async () => {
+    it('returns bad request the bookId param is not uuid', async () => {
       expect.assertions(1);
 
       const bookId = 'abc';
@@ -145,7 +145,7 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when bookId is a number and have corresponding book', async () => {
+    it('accepts a request and returns ok when bookId is uuid and have corresponding book', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -175,7 +175,7 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns bad request when the bookId param is not a number', async () => {
+    it('returns bad request when the bookId param is not uuid', async () => {
       expect.assertions(1);
 
       const bookId = 'abc';
@@ -201,7 +201,7 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
+    it('accepts a request and returns ok when bookId is uuid and corresponds to existing book', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -223,16 +223,12 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   describe('Remove book', () => {
-    it('returns bad request when the bookId param is not a number', async () => {
+    it('returns bad request when the bookId param is not uuid', async () => {
       expect.assertions(1);
 
       const bookId = 'abc';
 
-      const { price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.server).delete(`${baseUrl}/${bookId}`).send({
-        price,
-      });
+      const response = await request(server.server).delete(`${baseUrl}/${bookId}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -240,16 +236,14 @@ describe(`BookController (${baseUrl})`, () => {
     it('returns not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
-      const { id, price } = bookTestDataGenerator.generateData();
+      const { id } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server).delete(`${baseUrl}/${id}`).send({
-        price,
-      });
+      const response = await request(server.server).delete(`${baseUrl}/${id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
+    it('accepts a request and returns no content when bookId is uuid and corresponds to existing book', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -260,9 +254,9 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server).delete(`${baseUrl}/${book.id}`);
+      const response = await request(server.server).delete(`${baseUrl}/${book.id}`).send();
 
-      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
   });
 });

@@ -19,14 +19,13 @@ import {
   RemoveUserParamDto,
   RemoveUserResponseDto,
   SetUserPasswordBodyDto,
-  SetUserPasswordResponseData,
   SetUserPasswordResponseDto,
 } from './dtos';
 
 const USERS_PATH = '/users';
 const USERS_PATH_WITH_ID = `${USERS_PATH}/:id`;
 const REGISTER_PATH = `${USERS_PATH}/register`;
-const LOGIN_PATH = `${USERS_PATH}/register`;
+const LOGIN_PATH = `${USERS_PATH}/login`;
 const SET_PASSWORD_PATH = `${USERS_PATH}/set-password`;
 
 export class UserController {
@@ -106,11 +105,9 @@ export class UserController {
 
     const { userId, password } = setUserPasswordBodyDto;
 
-    const userDto = await this.userService.setPassword(userId, password);
+    await this.userService.setPassword(userId, password);
 
-    const responseData = new SetUserPasswordResponseData(userDto);
-
-    return new SetUserPasswordResponseDto(responseData, StatusCodes.CREATED);
+    return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
   }
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
@@ -128,6 +125,6 @@ export class UserController {
 
     await this.userService.removeUser(id);
 
-    return new RemoveUserResponseDto(StatusCodes.OK);
+    return new RemoveUserResponseDto(StatusCodes.NO_CONTENT);
   }
 }

@@ -105,6 +105,6 @@ export class BookController {
 
     await this.bookService.removeBook(id);
 
-    return new RemoveBookResponseDto(StatusCodes.OK);
+    return new RemoveBookResponseDto(StatusCodes.NO_CONTENT);
   }
 }

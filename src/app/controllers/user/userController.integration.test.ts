@@ -1,38 +1,37 @@
 import { ConfigLoader } from '../../config';
-import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
-import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
+import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
-import { BookModule } from '../../domain/book/bookModule';
+import { UserModule } from '../../domain/user/userModule';
 import { ControllersModule } from '../controllersModule';
-import { AuthorModule } from '../../domain/author/authorModule';
 import { Server } from '../../../server';
-import { BookRepository } from '../../domain/book/repositories/bookRepository';
-import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
+import { UserRepository } from '../../domain/user/repositories/userRepository';
 import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
+import { HashService } from 'src/app/domain/user/services/hashService';
 
-const baseUrl = '/books';
+const baseUrl = '/users';
+const registerUrl = `${baseUrl}/register`;
+const loginUrl = `${baseUrl}/login`;
+const setPasswordUrl = `${baseUrl}/set-password`;
 
-describe(`BookController (${baseUrl})`, () => {
-  let bookRepository: BookRepository;
-  let authorRepository: AuthorRepository;
-  let bookTestDataGenerator: BookTestDataGenerator;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
+describe(`UserController (${baseUrl})`, () => {
+  let userRepository: UserRepository;
+  let hashService: HashService;
+  let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, UserModule, ControllersModule]);
 
-    bookRepository = container.resolve('bookRepository');
-    authorRepository = container.resolve('authorRepository');
+    userRepository = container.resolve('userRepository');
+    hashService = container.resolve('hashService');
 
-    bookTestDataGenerator = new BookTestDataGenerator();
-    authorTestDataGenerator = new AuthorTestDataGenerator();
+    userTestDataGenerator = new UserTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -49,220 +48,201 @@ describe(`BookController (${baseUrl})`, () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Create book', () => {
+  describe('Register user', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { title } = bookTestDataGenerator.generateData();
+      const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).send({
-        title,
+      const response = await request(server.server).post(registerUrl).send({
+        email,
       });
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns internal server error when non existing authorId is provided', async () => {
+    it('returns unprocessable entity when user with given email already exists', async () => {
       expect.assertions(1);
 
-      const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { email, password, role } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).send({
-        title,
-        authorId,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+      await userRepository.createOne({ email, password, role });
 
-      expect(response.statusCode).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
-    });
-
-    it('returns unprocessable entity when book with given title and authorId already exists', async () => {
-      expect.assertions(1);
-
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
-
-      const response = await request(server.server).post(baseUrl).send({
-        title,
-        authorId: author.id,
-        releaseYear,
-        language,
-        format,
-        price,
+      const response = await request(server.server).post(registerUrl).send({
+        email,
+        password,
+        role,
       });
 
       expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
 
-    it('accepts a request and returns created when all required body properties are provided and author with given id exists', async () => {
+    it('returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { email, password, role } = userTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.server).post(baseUrl).send({
-        title,
-        authorId: author.id,
-        releaseYear,
-        language,
-        format,
-        price,
+      const response = await request(server.server).post(registerUrl).send({
+        email,
+        password,
+        role,
       });
 
       expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
-  describe('Find book', () => {
-    it('returns bad request the bookId param is not a number', async () => {
+  describe('Login user', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const bookId = 'abc';
+      const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).get(`${baseUrl}/${bookId}`);
+      const response = await request(server.server).post(loginUrl).send({
+        email,
+      });
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when book with given bookId does not exist', async () => {
+    it('returns not found when user with given email does not exist', async () => {
       expect.assertions(1);
 
-      const { id } = bookTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
+
+      const response = await request(server.server).post(loginUrl).send({
+        email,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns ok when existing credentials are provided', async () => {
+      expect.assertions(1);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const hashedPassword = await hashService.hash(password);
+
+      await userRepository.createOne({ email, password: hashedPassword, role });
+
+      const response = await request(server.server).post(loginUrl).send({
+        email,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.OK);
+    });
+  });
+
+  describe('Set password', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { password } = userTestDataGenerator.generateData();
+
+      const response = await request(server.server).post(setPasswordUrl).send({
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns not found when user with given id does not exist', async () => {
+      expect.assertions(1);
+
+      const { id: userId, password } = userTestDataGenerator.generateData();
+
+      const response = await request(server.server).post(setPasswordUrl).send({
+        userId,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns no content when all required fields provided and user with given id exists', async () => {
+      expect.assertions(1);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const response = await request(server.server).post(setPasswordUrl).send({
+        userId: user.id,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+    });
+  });
+
+  describe('Find user', () => {
+    it('returns bad request the userId param is not uuid', async () => {
+      expect.assertions(1);
+
+      const userId = 'abc';
+
+      const response = await request(server.server).get(`${baseUrl}/${userId}`);
+
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns not found when user with given userId does not exist', async () => {
+      expect.assertions(1);
+
+      const { id } = userTestDataGenerator.generateData();
 
       const response = await request(server.server).get(`${baseUrl}/${id}`);
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when bookId is a number and have corresponding book', async () => {
+    it('accepts a request and returns ok when userId is uuid and have corresponding user', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { email, password, role } = userTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const user = await userRepository.createOne({ email, password, role });
 
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
-
-      const response = await request(server.server).get(`${baseUrl}/${book.id}`);
+      const response = await request(server.server).get(`${baseUrl}/${user.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
-  describe('Update book', () => {
-    it('returns bad request when provided not allowed properties in body', async () => {
+  describe('Remove user', () => {
+    it('returns bad request when the userId param is not uuid', async () => {
       expect.assertions(1);
 
-      const { id, title } = bookTestDataGenerator.generateData();
+      const userId = 'abc';
 
-      const response = await request(server.server).patch(`${baseUrl}/${id}`).send({
-        title,
-      });
+      const response = await request(server.server).delete(`${baseUrl}/${userId}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns bad request when the bookId param is not a number', async () => {
+    it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      const bookId = 'abc';
+      const { id } = userTestDataGenerator.generateData();
 
-      const { price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.server).patch(`${baseUrl}/${bookId}`).send({
-        price,
-      });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
-    });
-
-    it('returns not found when book with given bookId does not exist', async () => {
-      expect.assertions(1);
-
-      const { id, price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.server).patch(`${baseUrl}/${id}`).send({
-        price,
-      });
+      const response = await request(server.server).delete(`${baseUrl}/${id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
+    it('accepts a request and returns no content when userId is uuid and corresponds to existing user', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { email, password, role } = userTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const user = await userRepository.createOne({ email, password, role });
 
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const response = await request(server.server).delete(`${baseUrl}/${user.id}`);
 
-      const { price: newPrice } = bookTestDataGenerator.generateData();
-
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
-
-      const response = await request(server.server).patch(`${baseUrl}/${book.id}`).send({
-        price: newPrice,
-      });
-
-      expect(response.statusCode).toBe(StatusCodes.OK);
-    });
-  });
-
-  describe('Remove book', () => {
-    it('returns bad request when the bookId param is not a number', async () => {
-      expect.assertions(1);
-
-      const bookId = 'abc';
-
-      const { price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.server).delete(`${baseUrl}/${bookId}`).send({
-        price,
-      });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
-    });
-
-    it('returns not found when book with given bookId does not exist', async () => {
-      expect.assertions(1);
-
-      const { id, price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.server).delete(`${baseUrl}/${id}`).send({
-        price,
-      });
-
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
-    });
-
-    it('accepts a request and returns ok when bookId is a number and corresponds to existing book', async () => {
-      expect.assertions(1);
-
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
-
-      const response = await request(server.server).delete(`${baseUrl}/${book.id}`);
-
-      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
   });
 });

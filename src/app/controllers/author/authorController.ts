@@ -106,6 +106,6 @@ export class AuthorController {
 
     await this.authorService.removeAuthor(id);
 
-    return new RemoveAuthorResponseDto(StatusCodes.OK);
+    return new RemoveAuthorResponseDto(StatusCodes.NO_CONTENT);
   }
 }

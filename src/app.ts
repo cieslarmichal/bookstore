@@ -8,6 +8,7 @@ import { DbModule } from './app/shared/db/dbModule';
 import { ControllersModule } from './app/controllers/controllersModule';
 import helmet from 'helmet';
 import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
+import { UserModule } from './app/domain/user/userModule';
 
 export class App {
   public expressApp: express.Application;
@@ -25,13 +26,15 @@ export class App {
     this.expressApp.use(express.urlencoded({ extended: false }));
     this.expressApp.use(jsonMiddleware);
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
 
     const bookController = container.resolve('bookController');
     const authorController = container.resolve('authorController');
+    const userController = container.resolve('userController');
 
     this.expressApp.use('/', bookController.router);
     this.expressApp.use('/', authorController.router);
+    this.expressApp.use('/', userController.router);
 
     this.expressApp.use(errorMiddleware);
   }

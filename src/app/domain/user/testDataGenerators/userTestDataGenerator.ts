@@ -31,7 +31,7 @@ export class UserTestDataGenerator {
   }
 
   public generatePassword(): string {
-    return faker.datatype.uuid();
+    return faker.internet.password(24);
   }
 
   public generateRole(): UserRole {

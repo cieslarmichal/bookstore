@@ -3,7 +3,7 @@ import { UserAlreadyExists, UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
 import { HashService } from './hashService';
 import { TokenService } from './tokenService';
-import { CreateUserData, LoginUserData } from './types';
+import { RegisterUserData, LoginUserData } from './types';
 
 export type AccessToken = string;
 
@@ -14,7 +14,7 @@ export class UserService {
     private readonly tokenService: TokenService,
   ) {}
 
-  public async registerUser(userData: CreateUserData): Promise<UserDto> {
+  public async registerUser(userData: RegisterUserData): Promise<UserDto> {
     const { email, password, role } = userData;
 
     console.log(`Registering user ${email}...`);
