@@ -22,6 +22,7 @@ import {
   SetUserPasswordResponseDto,
   UserDto,
 } from './dtos';
+import { UserRole } from 'src/app/domain/user/types';
 
 const USERS_PATH = '/users';
 const USERS_PATH_WITH_ID = `${USERS_PATH}/:id`;
@@ -119,6 +120,16 @@ export class UserController {
 
     const { userId, password } = setUserPasswordBodyDto;
 
+    const { authPayload } = response.locals;
+
+    if (!authPayload) {
+      throw new Error('Auth payload is not set.');
+    }
+
+    if (authPayload.userId !== userId && authPayload.role === UserRole.user) {
+      throw new Error('Cannot set password for other users.');
+    }
+
     await this.userService.setPassword(userId, password);
 
     return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
@@ -126,6 +137,16 @@ export class UserController {
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
     const { id } = RecordToInstanceTransformer.transform(request.params, FindUserParamDto);
+
+    const { authPayload } = response.locals;
+
+    if (!authPayload) {
+      throw new Error('Auth payload is not set.');
+    }
+
+    if (authPayload.userId !== id && authPayload.role === UserRole.user) {
+      throw new Error('Cannot find other users.');
+    }
 
     const userDto = await this.userService.findUser(id);
 
@@ -143,6 +164,16 @@ export class UserController {
 
   public async deleteUser(request: Request, response: Response): Promise<ControllerResponse> {
     const { id } = RecordToInstanceTransformer.transform(request.params, RemoveUserParamDto);
+
+    const { authPayload } = response.locals;
+
+    if (!authPayload) {
+      throw new Error('Auth payload is not set.');
+    }
+
+    if (authPayload.userId !== id && authPayload.role === UserRole.user) {
+      throw new Error('Cannot delete other users.');
+    }
 
     await this.userService.removeUser(id);
 
