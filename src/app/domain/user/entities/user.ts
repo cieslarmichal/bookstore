@@ -32,6 +32,6 @@ export class User {
   public password: string;
 
   @IsEnum(UserRole)
-  @Column()
+  @Column({ default: UserRole.user })
   public role: UserRole;
 }

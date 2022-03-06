@@ -64,14 +64,13 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when user with given email already exists', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
-      await userRepository.createOne({ email, password, role });
+      await userRepository.createOne({ email, password });
 
       const response = await request(server.server).post(registerUrl).send({
         email,
         password,
-        role,
       });
 
       expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
@@ -80,12 +79,11 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const response = await request(server.server).post(registerUrl).send({
         email,
         password,
-        role,
       });
 
       expect(response.statusCode).toBe(StatusCodes.CREATED);
@@ -121,11 +119,11 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns ok when existing credentials are provided', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const hashedPassword = await hashService.hash(password);
 
-      await userRepository.createOne({ email, password: hashedPassword, role });
+      await userRepository.createOne({ email, password: hashedPassword });
 
       const response = await request(server.server).post(loginUrl).send({
         email,
@@ -165,9 +163,9 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns no content when all required fields provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
-      const user = await userRepository.createOne({ email, password, role });
+      const user = await userRepository.createOne({ email, password });
 
       const response = await request(server.server).post(setPasswordUrl).send({
         userId: user.id,
@@ -202,9 +200,9 @@ describe(`UserController (${baseUrl})`, () => {
     it('accepts a request and returns ok when userId is uuid and have corresponding user', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
-      const user = await userRepository.createOne({ email, password, role });
+      const user = await userRepository.createOne({ email, password });
 
       const response = await request(server.server).get(`${baseUrl}/${user.id}`);
 
@@ -236,9 +234,9 @@ describe(`UserController (${baseUrl})`, () => {
     it('accepts a request and returns no content when userId is uuid and corresponds to existing user', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
-      const user = await userRepository.createOne({ email, password, role });
+      const user = await userRepository.createOne({ email, password });
 
       const response = await request(server.server).delete(`${baseUrl}/${user.id}`);
 

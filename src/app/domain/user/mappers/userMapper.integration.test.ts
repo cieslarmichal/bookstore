@@ -32,12 +32,11 @@ describe('UserMapper', () => {
     it('map user from entity to dto', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const createdUser = entityManager.create(User, {
         email,
         password,
-        role,
       });
 
       const savedUser = await entityManager.save(createdUser);

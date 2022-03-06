@@ -35,6 +35,6 @@ export class UserTestDataGenerator {
   }
 
   public generateRole(): UserRole {
-    return faker.helpers.randomize([UserRole.user, UserRole.admin]);
+    return UserRole.user;
   }
 }

@@ -9,6 +9,7 @@ import { UserAlreadyExists, UserNotFound } from '../errors';
 import { TokenService } from './tokenService';
 import { HashService } from './hashService';
 import { UserDto } from '../dtos';
+import { UserRole } from '../types';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -36,12 +37,11 @@ describe('UserService', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const createdUserDto = await userService.registerUser({
         email,
         password,
-        role,
       });
 
       const userDto = await userRepository.findOneById(createdUserDto.id);
@@ -52,19 +52,17 @@ describe('UserService', () => {
     it('should not create user and throw if user with the same email already exists', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       await userRepository.createOne({
         email,
         password,
-        role,
       });
 
       try {
         await userService.registerUser({
           email,
           password,
-          role,
         });
       } catch (error) {
         expect(error).toBeInstanceOf(UserAlreadyExists);
@@ -76,14 +74,13 @@ describe('UserService', () => {
     it('should return access token', async () => {
       expect.assertions(2);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const hashedPassword = await hashService.hash(password);
 
       const user = await userRepository.createOne({
         email,
         password: hashedPassword,
-        role,
       });
 
       const accessToken = await userService.loginUser({
@@ -94,7 +91,7 @@ describe('UserService', () => {
       const data = await tokenService.verifyToken(accessToken);
 
       expect(data.id).toBe(user.id);
-      expect(data.role).toBe(user.role);
+      expect(data.role).toBe(UserRole.user);
     });
 
     it('should throw if user with given email does not exist', async () => {
@@ -115,14 +112,13 @@ describe('UserService', () => {
     it('should throw if user password does not match db password', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const { password: otherPassword } = userTestDataGenerator.generateData();
 
       await userRepository.createOne({
         email,
         password,
-        role,
       });
 
       try {
@@ -140,14 +136,13 @@ describe('UserService', () => {
     it(`should update user's password in db`, async () => {
       expect.assertions(2);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const hashedPassword = await hashService.hash(password);
 
       const user = await userRepository.createOne({
         email,
         password: hashedPassword,
-        role,
       });
 
       const { password: newPassword } = userTestDataGenerator.generateData();
@@ -177,12 +172,11 @@ describe('UserService', () => {
     it('finds user by id in database', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const user = await userRepository.createOne({
         email,
         password,
-        role,
       });
 
       const foundUser = await userService.findUser(user.id);
@@ -207,12 +201,11 @@ describe('UserService', () => {
     it('removes user from database', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      const { email, password } = userTestDataGenerator.generateData();
 
       const user = await userRepository.createOne({
         email,
         password,
-        role,
       });
 
       await userService.removeUser(user.id);

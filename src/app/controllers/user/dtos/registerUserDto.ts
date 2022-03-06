@@ -1,5 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
-import { UserRole } from '../../../domain/user/types';
+import { IsString } from 'class-validator';
 import { UserDto } from './userDto';
 
 export class RegisterUserBodyDto {
@@ -8,9 +7,6 @@ export class RegisterUserBodyDto {
 
   @IsString()
   public readonly password: string;
-
-  @IsEnum(UserRole)
-  public readonly role: UserRole;
 }
 
 export class RegisterUserResponseData {

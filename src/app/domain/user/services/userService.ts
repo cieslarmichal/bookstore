@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   public async registerUser(userData: RegisterUserData): Promise<UserDto> {
-    const { email, password, role } = userData;
+    const { email, password } = userData;
 
     console.log(`Registering user ${email}...`);
 
@@ -27,7 +27,7 @@ export class UserService {
 
     const hashedPassword = await this.hashService.hash(password);
 
-    const user = await this.userRepository.createOne({ email, password: hashedPassword, role });
+    const user = await this.userRepository.createOne({ email, password: hashedPassword });
 
     console.log(`User ${email} registered.`);
 
