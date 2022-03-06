@@ -20,6 +20,7 @@ import {
   RemoveUserResponseDto,
   SetUserPasswordBodyDto,
   SetUserPasswordResponseDto,
+  UserDto,
 } from './dtos';
 
 const USERS_PATH = '/users';
@@ -83,7 +84,15 @@ export class UserController {
 
     const userDto = await this.userService.registerUser(registerUserData);
 
-    const responseData = new RegisterUserResponseData(userDto);
+    const controllerUserDto = UserDto.create({
+      id: userDto.id,
+      createdAt: userDto.createdAt,
+      updatedAt: userDto.updatedAt,
+      email: userDto.email,
+      role: userDto.role,
+    });
+
+    const responseData = new RegisterUserResponseData(controllerUserDto);
 
     return new RegisterUserResponseDto(responseData, StatusCodes.CREATED);
   }
@@ -115,7 +124,14 @@ export class UserController {
 
     const userDto = await this.userService.findUser(id);
 
-    const responseData = new FindUserResponseData(userDto);
+    const controllerUserDto = UserDto.create({
+      id: userDto.id,
+      createdAt: userDto.createdAt,
+      updatedAt: userDto.updatedAt,
+      email: userDto.email,
+      role: userDto.role,
+    });
+    const responseData = new FindUserResponseData(controllerUserDto);
 
     return new FindUserResponseDto(responseData, StatusCodes.OK);
   }
