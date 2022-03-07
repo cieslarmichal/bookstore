@@ -10,7 +10,8 @@ import { Server } from '../../../server';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
 import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
-import { HashService } from 'src/app/domain/user/services/hashService';
+import { HashService } from '../../domain/user/services/hashService';
+import { AuthHelper } from '../../../integration/helpers';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -22,6 +23,7 @@ describe(`UserController (${baseUrl})`, () => {
   let hashService: HashService;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
+  let authHelper: AuthHelper;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -32,6 +34,8 @@ describe(`UserController (${baseUrl})`, () => {
     hashService = container.resolve('hashService');
 
     userTestDataGenerator = new UserTestDataGenerator();
+
+    authHelper = new AuthHelper();
   });
 
   beforeEach(async () => {
@@ -147,15 +151,20 @@ describe(`UserController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when user with given id does not exist', async () => {
+    it.only('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, password } = userTestDataGenerator.generateData();
+      const { id: userId, password, role } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(setPasswordUrl).send({
-        userId,
-        password,
-      });
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .post(setPasswordUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId,
+          password,
+        });
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });

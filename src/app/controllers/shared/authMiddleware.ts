@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { TokenService } from '../../domain/user/services/tokenService';
+import { AuthService } from './authService';
 
 export class AuthMiddleware {
-  public constructor(private readonly tokenService: TokenService) {}
+  public constructor(private readonly authService: AuthService) {}
 
   public async verifyToken(request: Request, response: Response, next: NextFunction) {
     const authHeader = request.headers.authorization;
@@ -21,7 +21,8 @@ export class AuthMiddleware {
     }
 
     try {
-      const payload = await this.tokenService.verifyToken(token as string);
+      const payload = await this.authService.verifyAccessToken(token as string);
+
       response.locals.authPayload = payload;
     } catch (error) {
       response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Invalid access token' });

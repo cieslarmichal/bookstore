@@ -22,7 +22,7 @@ import {
   SetUserPasswordResponseDto,
   UserDto,
 } from './dtos';
-import { UserRole } from 'src/app/domain/user/types';
+import { UserRole } from '../../domain/user/types';
 
 const USERS_PATH = '/users';
 const USERS_PATH_WITH_ID = `${USERS_PATH}/:id`;
@@ -122,11 +122,7 @@ export class UserController {
 
     const { authPayload } = response.locals;
 
-    if (!authPayload) {
-      throw new Error('Auth payload is not set.');
-    }
-
-    if (authPayload.userId !== userId && authPayload.role === UserRole.user) {
+    if (authPayload?.userId !== userId && authPayload?.role === UserRole.user) {
       throw new Error('Cannot set password for other users.');
     }
 
@@ -140,11 +136,7 @@ export class UserController {
 
     const { authPayload } = response.locals;
 
-    if (!authPayload) {
-      throw new Error('Auth payload is not set.');
-    }
-
-    if (authPayload.userId !== id && authPayload.role === UserRole.user) {
+    if (authPayload?.userId !== id && authPayload?.role === UserRole.user) {
       throw new Error('Cannot find other users.');
     }
 
@@ -167,11 +159,7 @@ export class UserController {
 
     const { authPayload } = response.locals;
 
-    if (!authPayload) {
-      throw new Error('Auth payload is not set.');
-    }
-
-    if (authPayload.userId !== id && authPayload.role === UserRole.user) {
+    if (authPayload?.userId !== id && authPayload?.role === UserRole.user) {
       throw new Error('Cannot delete other users.');
     }
 
