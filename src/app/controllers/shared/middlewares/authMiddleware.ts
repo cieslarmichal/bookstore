@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AuthService } from './authService';
+import { AuthService } from '../services';
 
 export class AuthMiddleware {
   public constructor(private readonly authService: AuthService) {}

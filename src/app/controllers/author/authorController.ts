@@ -19,7 +19,7 @@ import {
   UpdateAuthorResponseData,
   UpdateAuthorResponseDto,
 } from './dtos';
-import { ControllerResponse } from '../shared/controllerResponse';
+import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, sendResponseMiddleware } from '../shared';
 
 const AUTHORS_PATH = '/authors';

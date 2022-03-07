@@ -10,7 +10,7 @@ import {
   USER_CONTROLLER,
 } from './controllersInjectionSymbols';
 import { AuthMiddleware } from './shared';
-import { AuthService } from './shared/authService';
+import { AuthService } from './shared';
 import { UserController } from './user/userController';
 
 export class ControllersModule extends LoadableModule {

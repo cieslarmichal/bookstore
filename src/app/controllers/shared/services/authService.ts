@@ -1,4 +1,4 @@
-import { TokenService } from '../../domain/user/services/tokenService';
+import { TokenService } from '../../../domain/user/services/tokenService';
 
 export class AuthService {
   public constructor(private readonly tokenService: TokenService) {}

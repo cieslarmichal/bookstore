@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ControllerResponse } from './controllerResponse';
+import { ControllerResponse } from '../types';
 
 export function sendResponseMiddleware(request: Request, response: Response, next: NextFunction) {
   const controllerResponse: ControllerResponse = response.locals.controllerResponse;
