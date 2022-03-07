@@ -187,6 +187,26 @@ describe(`UserController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
+    it('returns forbidden when user id from access token does not match target user id', async () => {
+      expect.assertions(1);
+
+      const { id: userId, password, role } = userTestDataGenerator.generateData();
+
+      const { id: targetUserId } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .post(setPasswordUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: targetUserId,
+          password,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+    });
+
     it('returns no content when all required fields provided and user with given id exists', async () => {
       expect.assertions(1);
 
@@ -251,6 +271,22 @@ describe(`UserController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
+    it('returns forbidden when user id from access token does not match target user id', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const { id: targetUserId } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .get(`${baseUrl}/${targetUserId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+    });
+
     it('accepts a request and returns ok when userId is uuid and have corresponding user', async () => {
       expect.assertions(1);
 
@@ -311,6 +347,22 @@ describe(`UserController (${baseUrl})`, () => {
       const response = await request(server.server).delete(`${baseUrl}/${user.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('returns forbidden when user id from access token does not match target user id', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const { id: targetUserId } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${targetUserId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
     });
 
     it('accepts a request and returns no content when userId is uuid and corresponds to existing user', async () => {

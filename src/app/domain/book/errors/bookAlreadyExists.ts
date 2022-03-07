@@ -1,4 +1,4 @@
-import { DomainError } from '../../shared/domainError';
+import { DomainError } from '../../../shared/errors/domainError';
 
 type BookAlreadyExistsContext = {
   readonly title: string;

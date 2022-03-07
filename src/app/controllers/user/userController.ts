@@ -23,6 +23,7 @@ import {
   UserDto,
 } from './dtos';
 import { UserRole } from '../../domain/user/types';
+import { UserFromTokenAuthPayloadNotMatchingTargetUser } from './errors/userFromTokenAuthPayloadNotMatchingTargetUser';
 
 const USERS_PATH = '/users';
 const USERS_PATH_WITH_ID = `${USERS_PATH}/:id`;
@@ -118,14 +119,13 @@ export class UserController {
   public async setUserPassword(request: Request, response: Response): Promise<ControllerResponse> {
     const setUserPasswordBodyDto = RecordToInstanceTransformer.transform(request.body, SetUserPasswordBodyDto);
 
-    const { userId, password } = setUserPasswordBodyDto;
+    const { userId: targetUserId, password } = setUserPasswordBodyDto;
 
-    const { authPayload } = response.locals;
+    const { userId, role } = response.locals.authPayload;
 
-    console.log(userId);
-    console.log(authPayload?.userId);
-    if (authPayload?.userId !== userId && authPayload?.role === UserRole.user) {
-      throw new Error('Cannot set password for other users.');
+    if (userId !== targetUserId && role === UserRole.user) {
+      console.log(targetUserId);
+      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
     await this.userService.setPassword(userId, password);
@@ -134,15 +134,15 @@ export class UserController {
   }
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, FindUserParamDto);
+    const { id: targetUserId } = RecordToInstanceTransformer.transform(request.params, FindUserParamDto);
 
-    const { authPayload } = response.locals;
+    const { userId, role } = response.locals.authPayload;
 
-    if (authPayload?.userId !== id && authPayload?.role === UserRole.user) {
-      throw new Error('Cannot find other users.');
+    if (userId !== targetUserId && role === UserRole.user) {
+      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    const userDto = await this.userService.findUser(id);
+    const userDto = await this.userService.findUser(targetUserId);
 
     const controllerUserDto = UserDto.create({
       id: userDto.id,
@@ -157,15 +157,15 @@ export class UserController {
   }
 
   public async deleteUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, RemoveUserParamDto);
+    const { id: targetUserId } = RecordToInstanceTransformer.transform(request.params, RemoveUserParamDto);
 
-    const { authPayload } = response.locals;
+    const { userId, role } = response.locals.authPayload;
 
-    if (authPayload?.userId !== id && authPayload?.role === UserRole.user) {
-      throw new Error('Cannot delete other users.');
+    if (userId !== targetUserId && role === UserRole.user) {
+      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    await this.userService.removeUser(id);
+    await this.userService.removeUser(targetUserId);
 
     return new RemoveUserResponseDto(StatusCodes.NO_CONTENT);
   }
