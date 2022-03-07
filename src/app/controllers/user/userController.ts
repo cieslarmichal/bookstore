@@ -122,6 +122,8 @@ export class UserController {
 
     const { authPayload } = response.locals;
 
+    console.log(userId);
+    console.log(authPayload?.userId);
     if (authPayload?.userId !== userId && authPayload?.role === UserRole.user) {
       throw new Error('Cannot set password for other users.');
     }

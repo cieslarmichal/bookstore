@@ -142,16 +142,21 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { password } = userTestDataGenerator.generateData();
+      const { id: userId, password, role } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(setPasswordUrl).send({
-        password,
-      });
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .post(setPasswordUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          password,
+        });
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it.only('returns not found when user with given id does not exist', async () => {
+    it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, password, role } = userTestDataGenerator.generateData();
@@ -169,6 +174,19 @@ describe(`UserController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, password } = userTestDataGenerator.generateData();
+
+      const response = await request(server.server).post(setPasswordUrl).send({
+        userId,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
     it('returns no content when all required fields provided and user with given id exists', async () => {
       expect.assertions(1);
 
@@ -176,10 +194,15 @@ describe(`UserController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password });
 
-      const response = await request(server.server).post(setPasswordUrl).send({
-        userId: user.id,
-        password,
-      });
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.server)
+        .post(setPasswordUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          password,
+        });
 
       expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
@@ -191,7 +214,13 @@ describe(`UserController (${baseUrl})`, () => {
 
       const userId = 'abc';
 
-      const response = await request(server.server).get(`${baseUrl}/${userId}`);
+      const { role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .get(`${baseUrl}/${userId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -199,11 +228,27 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      const { id } = userTestDataGenerator.generateData();
+      const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).get(`${baseUrl}/${id}`);
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .get(`${baseUrl}/${userId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password });
+
+      const response = await request(server.server).get(`${baseUrl}/${user.id}`);
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('accepts a request and returns ok when userId is uuid and have corresponding user', async () => {
@@ -213,7 +258,11 @@ describe(`UserController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password });
 
-      const response = await request(server.server).get(`${baseUrl}/${user.id}`);
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.server)
+        .get(`${baseUrl}/${user.id}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
@@ -225,7 +274,14 @@ describe(`UserController (${baseUrl})`, () => {
 
       const userId = 'abc';
 
-      const response = await request(server.server).delete(`${baseUrl}/${userId}`).send();
+      const { role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${userId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -233,11 +289,28 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      const { id } = userTestDataGenerator.generateData();
+      const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).delete(`${baseUrl}/${id}`).send();
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${userId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password });
+
+      const response = await request(server.server).delete(`${baseUrl}/${user.id}`);
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('accepts a request and returns no content when userId is uuid and corresponds to existing user', async () => {
@@ -247,7 +320,11 @@ describe(`UserController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password });
 
-      const response = await request(server.server).delete(`${baseUrl}/${user.id}`);
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${user.id}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
