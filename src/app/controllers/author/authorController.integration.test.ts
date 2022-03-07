@@ -9,15 +9,19 @@ import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
+import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
+import { AuthHelper } from '../../../integration/helpers';
 
 const baseUrl = '/authors';
 
 describe(`AuthorController (${baseUrl})`, () => {
   let authorRepository: AuthorRepository;
   let authorTestDataGenerator: AuthorTestDataGenerator;
+  let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
+  let authHelper: AuthHelper;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -27,6 +31,9 @@ describe(`AuthorController (${baseUrl})`, () => {
     authorRepository = container.resolve('authorRepository');
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
+    userTestDataGenerator = new UserTestDataGenerator();
+
+    authHelper = new AuthHelper();
   });
 
   beforeEach(async () => {
@@ -47,21 +54,42 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const { firstName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).send({
+      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         firstName,
       });
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('accepts a request and returns created when all required body properties are provided', async () => {
+    it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
       const response = await request(server.server).post(baseUrl).send({
+        firstName,
+        lastName,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('accepts a request and returns created when all required body properties are provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         firstName,
         lastName,
       });
@@ -74,9 +102,15 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request the authorId param is not uuid', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const authorId = 'abc';
 
-      const response = await request(server.server).get(`${baseUrl}/${authorId}`);
+      const response = await request(server.server)
+        .get(`${baseUrl}/${authorId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -84,14 +118,20 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const { id } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).get(`${baseUrl}/${id}`);
+      const response = await request(server.server)
+        .get(`${baseUrl}/${id}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when authorId is uuid and have corresponding author', async () => {
+    it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -99,6 +139,24 @@ describe(`AuthorController (${baseUrl})`, () => {
       const author = await authorRepository.createOne({ firstName, lastName });
 
       const response = await request(server.server).get(`${baseUrl}/${author.id}`);
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('accepts a request and returns ok when authorId is uuid and have corresponding author', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const response = await request(server.server)
+        .get(`${baseUrl}/${author.id}`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
@@ -108,11 +166,18 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when provided not allowed properties in body', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const { id, firstName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).patch(`${baseUrl}/${id}`).send({
-        firstName,
-      });
+      const response = await request(server.server)
+        .patch(`${baseUrl}/${id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          firstName,
+        });
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -120,13 +185,20 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const authorId = 'abc';
 
       const { about } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).patch(`${baseUrl}/${authorId}`).send({
-        about,
-      });
+      const response = await request(server.server)
+        .patch(`${baseUrl}/${authorId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          about,
+        });
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -134,16 +206,23 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const { id, about } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).patch(`${baseUrl}/${id}`).send({
-        about,
-      });
+      const response = await request(server.server)
+        .patch(`${baseUrl}/${id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          about,
+        });
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns ok when authorId is uuid and corresponds to existing author', async () => {
+    it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -156,6 +235,29 @@ describe(`AuthorController (${baseUrl})`, () => {
         about,
       });
 
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('accepts a request and returns ok when authorId is uuid and corresponds to existing author', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const { about } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const response = await request(server.server)
+        .patch(`${baseUrl}/${author.id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          about,
+        });
+
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
@@ -164,9 +266,16 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const authorId = 'abc';
 
-      const response = await request(server.server).delete(`${baseUrl}/${authorId}`).send();
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${authorId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
 
       expect(response.statusCode).toBe(400);
     });
@@ -174,14 +283,21 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
       const { id } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).delete(`${baseUrl}/${id}`).send();
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
-    it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
+    it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -189,6 +305,25 @@ describe(`AuthorController (${baseUrl})`, () => {
       const author = await authorRepository.createOne({ firstName, lastName });
 
       const response = await request(server.server).delete(`${baseUrl}/${author.id}`).send();
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const response = await request(server.server)
+        .delete(`${baseUrl}/${author.id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
 
       expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
