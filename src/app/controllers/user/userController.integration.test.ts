@@ -41,7 +41,7 @@ describe(`UserController (${baseUrl})`, () => {
   beforeEach(async () => {
     const app = new App();
 
-    server = new Server(app.expressApp);
+    server = new Server(app.instance);
 
     server.listen();
   });
@@ -58,7 +58,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(registerUrl).send({
+      const response = await request(server.instance).post(registerUrl).send({
         email,
       });
 
@@ -72,7 +72,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       await userRepository.createOne({ email, password });
 
-      const response = await request(server.server).post(registerUrl).send({
+      const response = await request(server.instance).post(registerUrl).send({
         email,
         password,
       });
@@ -85,7 +85,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(registerUrl).send({
+      const response = await request(server.instance).post(registerUrl).send({
         email,
         password,
       });
@@ -100,7 +100,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(loginUrl).send({
+      const response = await request(server.instance).post(loginUrl).send({
         email,
       });
 
@@ -112,7 +112,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(loginUrl).send({
+      const response = await request(server.instance).post(loginUrl).send({
         email,
         password,
       });
@@ -129,7 +129,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       await userRepository.createOne({ email, password: hashedPassword });
 
-      const response = await request(server.server).post(loginUrl).send({
+      const response = await request(server.instance).post(loginUrl).send({
         email,
         password,
       });
@@ -146,7 +146,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .post(setPasswordUrl)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -163,7 +163,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .post(setPasswordUrl)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -179,7 +179,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const { id: userId, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(setPasswordUrl).send({
+      const response = await request(server.instance).post(setPasswordUrl).send({
         userId,
         password,
       });
@@ -196,7 +196,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .post(setPasswordUrl)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -216,7 +216,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .post(setPasswordUrl)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -238,7 +238,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${userId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -252,7 +252,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${userId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -266,7 +266,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password });
 
-      const response = await request(server.server).get(`${baseUrl}/${user.id}`);
+      const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -280,7 +280,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${targetUserId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -296,7 +296,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${user.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -314,7 +314,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${userId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
@@ -329,7 +329,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${userId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
@@ -344,7 +344,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password });
 
-      const response = await request(server.server).delete(`${baseUrl}/${user.id}`);
+      const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -358,7 +358,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${targetUserId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -374,7 +374,7 @@ describe(`UserController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${user.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 

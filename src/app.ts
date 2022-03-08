@@ -11,20 +11,20 @@ import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
 import { UserModule } from './app/domain/user/userModule';
 
 export class App {
-  public expressApp: express.Application;
+  public instance: express.Application;
 
   public constructor() {
-    this.expressApp = express();
+    this.instance = express();
     this.setup();
   }
 
   private async setup() {
     ConfigLoader.loadConfig();
 
-    this.expressApp.use(helmet());
-    this.expressApp.use(express.json());
-    this.expressApp.use(express.urlencoded({ extended: false }));
-    this.expressApp.use(jsonMiddleware);
+    this.instance.use(helmet());
+    this.instance.use(express.json());
+    this.instance.use(express.urlencoded({ extended: false }));
+    this.instance.use(jsonMiddleware);
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
 
@@ -32,10 +32,10 @@ export class App {
     const authorController = container.resolve('authorController');
     const userController = container.resolve('userController');
 
-    this.expressApp.use('/', bookController.router);
-    this.expressApp.use('/', authorController.router);
-    this.expressApp.use('/', userController.router);
+    this.instance.use('/', bookController.router);
+    this.instance.use('/', authorController.router);
+    this.instance.use('/', userController.router);
 
-    this.expressApp.use(errorMiddleware);
+    this.instance.use(errorMiddleware);
   }
 }

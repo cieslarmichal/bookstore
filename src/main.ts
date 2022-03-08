@@ -3,6 +3,6 @@ import { App } from './app';
 
 const app = new App();
 
-const server = new Server(app.expressApp);
+const server = new Server(app.instance);
 
 server.listen();

@@ -45,7 +45,7 @@ describe(`BookController (${baseUrl})`, () => {
   beforeEach(async () => {
     const app = new App();
 
-    server = new Server(app.expressApp);
+    server = new Server(app.instance);
 
     server.listen();
   });
@@ -66,7 +66,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
       });
 
@@ -82,7 +82,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
         authorId,
         releaseYear,
@@ -109,7 +109,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
         authorId: author.id,
         releaseYear,
@@ -130,7 +130,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).send({
+      const response = await request(server.instance).post(baseUrl).send({
         title,
         authorId: author.id,
         releaseYear,
@@ -155,7 +155,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
         authorId: author.id,
         releaseYear,
@@ -178,7 +178,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const bookId = 'abc';
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${bookId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -194,7 +194,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -212,7 +212,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server).get(`${baseUrl}/${book.id}`);
+      const response = await request(server.instance).get(`${baseUrl}/${book.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -232,7 +232,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${book.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -250,7 +250,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id, title } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -271,7 +271,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { price } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${bookId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -290,7 +290,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id, price } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -313,7 +313,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server).patch(`${baseUrl}/${book.id}`).send({
+      const response = await request(server.instance).patch(`${baseUrl}/${book.id}`).send({
         price: newPrice,
       });
 
@@ -337,7 +337,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${book.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -358,7 +358,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const bookId = 'abc';
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${bookId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
@@ -375,7 +375,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { id } = bookTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
@@ -394,7 +394,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server).delete(`${baseUrl}/${book.id}`).send();
+      const response = await request(server.instance).delete(`${baseUrl}/${book.id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -414,7 +414,7 @@ describe(`BookController (${baseUrl})`, () => {
 
       const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${book.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();

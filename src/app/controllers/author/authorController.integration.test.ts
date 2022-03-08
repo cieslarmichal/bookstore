@@ -39,7 +39,7 @@ describe(`AuthorController (${baseUrl})`, () => {
   beforeEach(async () => {
     const app = new App();
 
-    server = new Server(app.expressApp);
+    server = new Server(app.instance);
 
     server.listen();
   });
@@ -60,7 +60,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { firstName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         firstName,
       });
 
@@ -72,7 +72,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).send({
+      const response = await request(server.instance).post(baseUrl).send({
         firstName,
         lastName,
       });
@@ -89,7 +89,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         firstName,
         lastName,
       });
@@ -108,7 +108,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const authorId = 'abc';
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${authorId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -124,7 +124,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { id } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -138,7 +138,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.server).get(`${baseUrl}/${author.id}`);
+      const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -154,7 +154,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .get(`${baseUrl}/${author.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
@@ -172,7 +172,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { id, firstName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -193,7 +193,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { about } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${authorId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -212,7 +212,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { id, about } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -231,7 +231,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.server).patch(`${baseUrl}/${author.id}`).send({
+      const response = await request(server.instance).patch(`${baseUrl}/${author.id}`).send({
         about,
       });
 
@@ -251,7 +251,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .patch(`${baseUrl}/${author.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
@@ -272,7 +272,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const authorId = 'abc';
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${authorId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
@@ -289,7 +289,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const { id } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
@@ -304,7 +304,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.server).delete(`${baseUrl}/${author.id}`).send();
+      const response = await request(server.instance).delete(`${baseUrl}/${author.id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -320,7 +320,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.server)
+      const response = await request(server.instance)
         .delete(`${baseUrl}/${author.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
