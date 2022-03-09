@@ -1,7 +1,7 @@
 import { UserRepository } from '../repositories/userRepository';
 import { UserService } from './userService';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
-import { ConfigLoader } from '../../../config';
+import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { UserModule } from '../userModule';

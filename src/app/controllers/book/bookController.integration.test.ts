@@ -1,4 +1,4 @@
-import { ConfigLoader } from '../../config';
+import { ConfigLoader } from '../../../configLoader';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
@@ -15,6 +15,7 @@ import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
+import { UserModule } from '../../domain/user/userModule';
 
 const baseUrl = '/books';
 
@@ -30,11 +31,6 @@ describe(`BookController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, ControllersModule]);
-
-    bookRepository = container.resolve('bookRepository');
-    authorRepository = container.resolve('authorRepository');
-
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
@@ -43,7 +39,12 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const app = new App();
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
+
+    bookRepository = container.resolve('bookRepository');
+    authorRepository = container.resolve('authorRepository');
+
+    const app = new App(container);
 
     server = new Server(app.instance);
 

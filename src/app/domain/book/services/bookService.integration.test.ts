@@ -1,7 +1,7 @@
 import { BookRepository } from '../repositories/bookRepository';
 import { BookService } from './bookService';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
-import { ConfigLoader } from '../../../config';
+import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';

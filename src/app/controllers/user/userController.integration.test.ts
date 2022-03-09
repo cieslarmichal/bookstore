@@ -1,4 +1,4 @@
-import { ConfigLoader } from '../../config';
+import { ConfigLoader } from '../../../configLoader';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
@@ -12,6 +12,8 @@ import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { HashService } from '../../domain/user/services/hashService';
 import { AuthHelper } from '../../../integration/helpers';
+import { BookModule } from '../../domain/book/bookModule';
+import { AuthorModule } from '../../domain/author/authorModule';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -28,18 +30,18 @@ describe(`UserController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, UserModule, ControllersModule]);
-
-    userRepository = container.resolve('userRepository');
-    hashService = container.resolve('hashService');
-
     userTestDataGenerator = new UserTestDataGenerator();
 
     authHelper = new AuthHelper();
   });
 
   beforeEach(async () => {
-    const app = new App();
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
+
+    userRepository = container.resolve('userRepository');
+    hashService = container.resolve('hashService');
+
+    const app = new App(container);
 
     server = new Server(app.instance);
 

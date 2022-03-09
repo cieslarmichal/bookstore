@@ -3,7 +3,7 @@ import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
-import { ConfigLoader } from '../../../config';
+import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';

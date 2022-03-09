@@ -1,8 +1,23 @@
 import { Server } from './server';
 import { App } from './app';
+import { createDIContainer } from './app/shared';
+import { BookModule } from './app/domain/book/bookModule';
+import { AuthorModule } from './app/domain/author/authorModule';
+import { DbModule } from './app/shared/db/dbModule';
+import { ControllersModule } from './app/controllers/controllersModule';
+import { UserModule } from './app/domain/user/userModule';
+import { ConfigLoader } from './configLoader';
 
-const app = new App();
+async function main() {
+  ConfigLoader.loadConfig();
 
-const server = new Server(app.instance);
+  const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
 
-server.listen();
+  const app = new App(container);
+
+  const server = new Server(app.instance);
+
+  server.listen();
+}
+
+main();

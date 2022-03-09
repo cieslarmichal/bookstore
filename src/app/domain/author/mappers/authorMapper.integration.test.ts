@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 import { Author } from '../entities/author';
 import { AuthorMapper } from './authorMapper';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
-import { ConfigLoader } from '../../../config';
+import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorModule } from '../authorModule';

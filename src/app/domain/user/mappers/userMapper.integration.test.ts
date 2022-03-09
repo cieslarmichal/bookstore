@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 import { User } from '../entities/user';
 import { UserMapper } from './userMapper';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
-import { ConfigLoader } from '../../../config';
+import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { UserModule } from '../userModule';

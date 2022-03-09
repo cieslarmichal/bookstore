@@ -1,5 +1,5 @@
 import { AuthorRepository } from '../repositories/authorRepository';
-import { ConfigLoader } from '../../../config';
+import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
