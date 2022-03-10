@@ -1,6 +1,7 @@
 import { IsOptional, IsDate, IsString, IsNumber, IsEnum, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, Unique, ManyToOne } from 'typeorm';
 import { Author } from '../../author/entities/author';
+import { Category } from '../../category/entities/category';
 import { BookFormat, BookLanguage } from '../types';
 
 export const BOOK_TABLE_NAME = 'books';
@@ -58,4 +59,13 @@ export class Book {
   @IsUUID('4')
   @Column()
   public authorId: string;
+
+  @IsOptional()
+  @ManyToOne(() => Category)
+  public category: Category | null;
+
+  @IsOptional()
+  @IsUUID('4')
+  @Column()
+  public categoryId: string;
 }
