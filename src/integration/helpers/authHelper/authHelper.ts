@@ -13,7 +13,6 @@ export class AuthHelper {
         throw new Error('Invalid token.');
       }
 
-      console.log('YEAAAAAAAAAAAAAAAH');
       return {
         ...authPayload,
       };

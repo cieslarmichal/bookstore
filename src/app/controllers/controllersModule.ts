@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from 'awilix';
+import { asClass, AwilixContainer, Lifetime } from 'awilix';
 import { LoadableModule } from '../shared';
 import { AuthorController } from './author/authorController';
 import { BookController } from './book/bookController';
@@ -16,11 +16,11 @@ import { UserController } from './user/userController';
 export class ControllersModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [BOOK_CONTROLLER]: asClass(BookController),
-      [AUTHOR_CONTROLLER]: asClass(AuthorController),
-      [USER_CONTROLLER]: asClass(UserController),
-      [AUTH_MIDDLEWARE]: asClass(AuthMiddleware),
-      [AUTH_SERVICE]: asClass(AuthService),
+      [BOOK_CONTROLLER]: asClass(BookController, { lifetime: Lifetime.SINGLETON }),
+      [AUTHOR_CONTROLLER]: asClass(AuthorController, { lifetime: Lifetime.SINGLETON }),
+      [USER_CONTROLLER]: asClass(UserController, { lifetime: Lifetime.SINGLETON }),
+      [AUTH_MIDDLEWARE]: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),
+      [AUTH_SERVICE]: asClass(AuthService, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

@@ -124,7 +124,6 @@ export class UserController {
     const { userId, role } = response.locals.authPayload;
 
     if (userId !== targetUserId && role === UserRole.user) {
-      console.log(targetUserId);
       throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
