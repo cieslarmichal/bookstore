@@ -31,8 +31,6 @@ describe(`UserController (${baseUrl})`, () => {
     ConfigLoader.loadConfig();
 
     userTestDataGenerator = new UserTestDataGenerator();
-
-    authHelper = new AuthHelper();
   });
 
   beforeEach(async () => {
@@ -42,6 +40,8 @@ describe(`UserController (${baseUrl})`, () => {
     hashService = container.resolve('hashService');
 
     const app = new App(container);
+
+    authHelper = new AuthHelper(container);
 
     server = new Server(app.instance);
 

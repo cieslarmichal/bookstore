@@ -34,8 +34,6 @@ describe(`BookController (${baseUrl})`, () => {
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
-
-    authHelper = new AuthHelper();
   });
 
   beforeEach(async () => {
@@ -43,6 +41,8 @@ describe(`BookController (${baseUrl})`, () => {
 
     bookRepository = container.resolve('bookRepository');
     authorRepository = container.resolve('authorRepository');
+
+    authHelper = new AuthHelper(container);
 
     const app = new App(container);
 

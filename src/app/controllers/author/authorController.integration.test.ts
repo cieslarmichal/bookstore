@@ -14,8 +14,18 @@ import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
+import { asClass, Lifetime } from 'awilix';
 
 const baseUrl = '/authors';
+
+class AuthServiceFake {
+  public constructor() {
+    console.log('fake x');
+  }
+  public async verifyAccessToken(accessToken: string): Promise<Record<string, string>> {
+    return {};
+  }
+}
 
 describe(`AuthorController (${baseUrl})`, () => {
   let authorRepository: AuthorRepository;
@@ -29,14 +39,16 @@ describe(`AuthorController (${baseUrl})`, () => {
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
-
-    authHelper = new AuthHelper();
   });
 
   beforeEach(async () => {
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
 
+    container.register({ authService: asClass(AuthServiceFake, { lifetime: Lifetime.SINGLETON }) });
+
     authorRepository = container.resolve('authorRepository');
+
+    authHelper = new AuthHelper(container);
 
     const app = new App(container);
 
