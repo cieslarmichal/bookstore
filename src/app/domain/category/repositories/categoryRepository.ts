@@ -9,7 +9,6 @@ export class CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}
 
   public async createOne(categoryData: Partial<Category>): Promise<CategoryDto> {
-    // TODO: handle existing entities in all repos!!!!!
     const category = this.entityManager.create(Category, categoryData);
 
     const savedCategory = await this.entityManager.save(category);

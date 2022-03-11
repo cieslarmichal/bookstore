@@ -2,21 +2,13 @@ import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
-import { BookAlreadyExists, BookNotFound } from '../errors';
+import { BookNotFound } from '../errors';
 
 @EntityRepository()
 export class BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
   public async createOne(bookData: Partial<Book>): Promise<BookDto> {
-    const { title, authorId } = bookData;
-
-    const existingBook = await this.findOne({ title, authorId });
-
-    if (existingBook) {
-      throw new BookAlreadyExists({ title: title as string, authorId: authorId as string });
-    }
-
     const book = this.entityManager.create(Book, bookData);
 
     const savedBook = await this.entityManager.save(book);
