@@ -9,13 +9,15 @@ export class BookTestDataGenerator {
       createdAt: this.generateCreatedAt(),
       updatedAt: this.generateUpdatedAt(),
       title: this.generateTitle(),
-      authorId: this.generateAuthorId(),
       releaseYear: this.generateReleaseYear(),
       language: this.generateLanguage(),
       format: this.generateFormat(),
       description: this.generateDescription(),
       price: this.generatePrice(),
       author: null,
+      authorId: this.generateAuthorId(),
+      category: null,
+      categoryId: this.generateCategoryId(),
     };
   }
 
@@ -36,6 +38,10 @@ export class BookTestDataGenerator {
   }
 
   public generateAuthorId(): string {
+    return faker.datatype.uuid();
+  }
+
+  public generateCategoryId(): string {
     return faker.datatype.uuid();
   }
 

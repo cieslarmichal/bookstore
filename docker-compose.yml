@@ -3,14 +3,13 @@ version: "3.9"
 services:
   book-store-postgres:
     image: postgres:14
-    env_file:
-    - .env
+    container_name: book-store-postgres
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-    - "5432:5432"
+    - 5432:5432
     volumes:
       - book-store-pgdata:/var/lib/postgresql/data
 

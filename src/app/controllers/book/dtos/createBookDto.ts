@@ -24,6 +24,9 @@ export class CreateBookBodyDto {
 
   @IsUUID('4')
   public readonly authorId: string;
+
+  @IsUUID('4')
+  public readonly categoryId: string;
 }
 
 export class CreateBookResponseData {

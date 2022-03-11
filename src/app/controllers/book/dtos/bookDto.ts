@@ -34,5 +34,8 @@ export class BookDto {
   @IsUUID('4')
   public readonly authorId: string;
 
+  @IsUUID('4')
+  public readonly categoryId: string;
+
   public static readonly create = RecordToInstanceTransformer.transformFactory(BookDto);
 }

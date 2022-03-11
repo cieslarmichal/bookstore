@@ -2,6 +2,7 @@ import { Book } from '../../domain/book/entities/book';
 import { Author } from '../../domain/author/entities/author';
 import { Connection, createConnection } from 'typeorm';
 import { User } from '../../domain/user/entities/user';
+import { Category } from '../../domain/category/entities/category';
 
 class DbManager {
   private connection: Connection;
@@ -18,7 +19,7 @@ class DbManager {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Book, Author, User],
+      entities: [Book, Author, User, Category],
       synchronize: true,
     });
 

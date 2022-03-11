@@ -10,25 +10,32 @@ import { AuthorModule } from '../../author/authorModule';
 import { AuthorRepository } from '../../author/repositories/authorRepository';
 import { BookAlreadyExists, BookNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
+import { CategoryModule } from '../../category/categoryModule';
+import { CategoryRepository } from '../../category/repositories/categoryRepository';
 
 describe('BookService', () => {
   let bookService: BookService;
   let authorRepository: AuthorRepository;
   let bookRepository: BookRepository;
+  let categoryRepository: CategoryRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
+  let categoryTestDataGenerator: CategoryTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, CategoryModule]);
 
     bookService = container.resolve('bookService');
     authorRepository = container.resolve('authorRepository');
     bookRepository = container.resolve('bookRepository');
+    categoryRepository = container.resolve('categoryRepository');
 
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
+    categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -43,15 +50,20 @@ describe('BookService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBookDto = await bookService.createBook({
         title,
-        authorId: author.id,
         releaseYear,
         language,
         format,
         price,
+        authorId: author.id,
+        categoryId: category.id,
       });
 
       const bookDto = await bookRepository.findOneById(createdBookDto.id);
@@ -66,25 +78,31 @@ describe('BookService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       await bookRepository.createOne({
         title,
-        authorId: author.id,
         releaseYear,
         language,
         format,
         price,
+        authorId: author.id,
+        categoryId: category.id,
       });
 
       try {
         await bookService.createBook({
           title,
-          authorId: author.id,
           releaseYear,
           language,
           format,
           price,
+          authorId: author.id,
+          categoryId: category.id,
         });
       } catch (error) {
         expect(error).toBeInstanceOf(BookAlreadyExists);
@@ -100,15 +118,20 @@ describe('BookService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
-        authorId: author.id,
         releaseYear,
         language,
         format,
         price,
+        authorId: author.id,
+        categoryId: category.id,
       });
 
       const foundBook = await bookService.findBook(book.id);
@@ -137,17 +160,22 @@ describe('BookService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
-        authorId: author.id,
         releaseYear,
         language,
         format,
         price,
+        authorId: author.id,
+        categoryId: category.id,
       });
 
       const updatedBook = await bookService.updateBook(book.id, { price: newPrice });
@@ -177,15 +205,20 @@ describe('BookService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
-        authorId: author.id,
         releaseYear,
         language,
         format,
         price,
+        authorId: author.id,
+        categoryId: category.id,
       });
 
       await bookService.removeBook(book.id);

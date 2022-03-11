@@ -16,14 +16,19 @@ import { PostgresHelper } from '../../../integration/helpers/postgresHelper/post
 import { AuthHelper } from '../../../integration/helpers';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { UserModule } from '../../domain/user/userModule';
+import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
+import { CategoryRepository } from '../../domain/category/repositories/categoryRepository';
+import { CategoryModule } from '../../domain/category/categoryModule';
 
 const baseUrl = '/books';
 
 describe(`BookController (${baseUrl})`, () => {
   let bookRepository: BookRepository;
   let authorRepository: AuthorRepository;
+  let categoryRepository: CategoryRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
+  let categoryTestDataGenerator: CategoryTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -34,13 +39,22 @@ describe(`BookController (${baseUrl})`, () => {
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
+    categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
+    const container = await createDIContainer([
+      DbModule,
+      CategoryModule,
+      BookModule,
+      AuthorModule,
+      UserModule,
+      ControllersModule,
+    ]);
 
     bookRepository = container.resolve('bookRepository');
     authorRepository = container.resolve('authorRepository');
+    categoryRepository = container.resolve('categoryRepository');
 
     authHelper = new AuthHelper(container);
 
@@ -81,11 +95,42 @@ describe(`BookController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, authorId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
         authorId,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+    });
+
+    it('returns internal server error when non existing categoryId is provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const { title, categoryId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
+        title,
+        authorId: author.id,
+        categoryId,
         releaseYear,
         language,
         format,
@@ -106,13 +151,26 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
         authorId: author.id,
+        categoryId: category.id,
         releaseYear,
         language,
         format,
@@ -129,11 +187,16 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).send({
         title,
         authorId: author.id,
+        categoryId: category.id,
         releaseYear,
         language,
         format,
@@ -154,11 +217,16 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
         title,
         authorId: author.id,
+        categoryId: category.id,
         releaseYear,
         language,
         format,
@@ -209,9 +277,21 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance).get(`${baseUrl}/${book.id}`);
 
@@ -229,9 +309,21 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance)
         .get(`${baseUrl}/${book.id}`)
@@ -310,9 +402,21 @@ describe(`BookController (${baseUrl})`, () => {
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance).patch(`${baseUrl}/${book.id}`).send({
         price: newPrice,
@@ -332,11 +436,23 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance)
         .patch(`${baseUrl}/${book.id}`)
@@ -391,9 +507,21 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance).delete(`${baseUrl}/${book.id}`).send();
 
@@ -411,9 +539,21 @@ describe(`BookController (${baseUrl})`, () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({ name });
+
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const book = await bookRepository.createOne({ title, authorId: author.id, releaseYear, language, format, price });
+      const book = await bookRepository.createOne({
+        title,
+        authorId: author.id,
+        categoryId: category.id,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
       const response = await request(server.instance)
         .delete(`${baseUrl}/${book.id}`)

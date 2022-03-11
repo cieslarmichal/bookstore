@@ -5,9 +5,6 @@ export class CreateBookData {
   @IsString()
   public title: string;
 
-  @IsUUID('4')
-  public authorId: string;
-
   @IsNumber()
   public releaseYear: number;
 
@@ -23,4 +20,10 @@ export class CreateBookData {
 
   @IsNumber()
   public price: number;
+
+  @IsUUID('4')
+  public authorId: string;
+
+  @IsUUID('4')
+  public categoryId: string;
 }

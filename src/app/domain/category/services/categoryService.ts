@@ -1,5 +1,5 @@
 import { CategoryDto } from '../dtos';
-import { CategoryNotFound } from '../errors';
+import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { CategoryRepository } from '../repositories/categoryRepository';
 import { CreateCategoryData } from './types';
 
@@ -8,6 +8,14 @@ export class CategoryService {
 
   public async createCategory(categoryData: CreateCategoryData): Promise<CategoryDto> {
     console.log('Creating category...');
+
+    const { name } = categoryData;
+
+    const existingCategory = await this.categoryRepository.findOne({ name });
+
+    if (existingCategory) {
+      throw new CategoryAlreadyExists({ name });
+    }
 
     const category = await this.categoryRepository.createOne(categoryData);
 
