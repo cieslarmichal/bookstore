@@ -14,6 +14,7 @@ import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
+import { CategoryModule } from '../../domain/category/categoryModule';
 
 const baseUrl = '/authors';
 
@@ -32,7 +33,14 @@ describe(`AuthorController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
+    const container = await createDIContainer([
+      DbModule,
+      CategoryModule,
+      BookModule,
+      AuthorModule,
+      UserModule,
+      ControllersModule,
+    ]);
 
     authorRepository = container.resolve('authorRepository');
 

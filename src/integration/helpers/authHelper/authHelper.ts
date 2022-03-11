@@ -7,12 +7,10 @@ export class AuthHelper {
     const fakeToken = 'token';
 
     const authService = this.container.resolve('authService');
-
     jest.spyOn(authService, 'verifyAccessToken').mockImplementation(async (token) => {
       if (token !== fakeToken) {
         throw new Error('Invalid token.');
       }
-
       return {
         ...authPayload,
       };

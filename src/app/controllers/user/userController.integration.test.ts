@@ -14,6 +14,7 @@ import { HashService } from '../../domain/user/services/hashService';
 import { AuthHelper } from '../../../integration/helpers';
 import { BookModule } from '../../domain/book/bookModule';
 import { AuthorModule } from '../../domain/author/authorModule';
+import { CategoryModule } from '../../domain/category/categoryModule';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -34,7 +35,14 @@ describe(`UserController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, UserModule, ControllersModule]);
+    const container = await createDIContainer([
+      DbModule,
+      CategoryModule,
+      BookModule,
+      AuthorModule,
+      UserModule,
+      ControllersModule,
+    ]);
 
     userRepository = container.resolve('userRepository');
     hashService = container.resolve('hashService');
