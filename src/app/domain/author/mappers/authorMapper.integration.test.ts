@@ -51,7 +51,6 @@ describe('AuthorMapper', () => {
         firstName: savedAuthor.firstName,
         lastName: savedAuthor.lastName,
         about: null,
-        books: null,
       });
     });
 
@@ -77,7 +76,6 @@ describe('AuthorMapper', () => {
         firstName: savedAuthor.firstName,
         lastName: savedAuthor.lastName,
         about: savedAuthor.about,
-        books: null,
       });
     });
   });

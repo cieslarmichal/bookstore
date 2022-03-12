@@ -82,61 +82,6 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns internal server error when non existing categoryId is provided', async () => {
-      expect.assertions(1);
-
-      const { id: userId, role } = userTestDataGenerator.generateData();
-
-      const accessToken = authHelper.mockAuth({ userId, role });
-
-      const { title, categoryId, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        title,
-        categoryId,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
-
-      expect(response.statusCode).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
-    });
-
-    it('returns unprocessable entity when book with given title and authorId already exists', async () => {
-      expect.assertions(1);
-
-      const { id: userId, role } = userTestDataGenerator.generateData();
-
-      const accessToken = authHelper.mockAuth({ userId, role });
-
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const category = await categoryRepository.createOne({ name });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      await bookRepository.createOne({
-        title,
-        categoryId: category.id,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
-
-      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        title,
-        categoryId: category.id,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
-
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
-    });
-
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
