@@ -26,6 +26,12 @@ export class AuthorService {
     return author;
   }
 
+  public async findAuthors(bookId: string): Promise<AuthorDto[]> {
+    const authors = await this.authorRepository.findManyByBookId(bookId);
+
+    return authors;
+  }
+
   public async updateAuthor(authorId: string, authorData: UpdateAuthorData): Promise<AuthorDto> {
     console.log(`Updating author with id ${authorId}...`);
 
