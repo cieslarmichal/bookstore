@@ -1,5 +1,5 @@
 import { BookDto } from '../dtos';
-import { BookAlreadyExists, BookNotFound } from '../errors';
+import { BookNotFound } from '../errors';
 import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
 
@@ -8,14 +8,6 @@ export class BookService {
 
   public async createBook(bookData: CreateBookData): Promise<BookDto> {
     console.log('Creating book...');
-
-    const { title, authorId } = bookData;
-
-    const existingBook = await this.bookRepository.findOne({ title, authorId });
-
-    if (existingBook) {
-      throw new BookAlreadyExists({ title, authorId });
-    }
 
     const book = await this.bookRepository.createOne(bookData);
 

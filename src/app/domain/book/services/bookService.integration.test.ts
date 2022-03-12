@@ -5,10 +5,8 @@ import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
-import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorModule } from '../../author/authorModule';
-import { AuthorRepository } from '../../author/repositories/authorRepository';
-import { BookAlreadyExists, BookNotFound } from '../errors';
+import { BookNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { CategoryModule } from '../../category/categoryModule';
@@ -16,11 +14,9 @@ import { CategoryRepository } from '../../category/repositories/categoryReposito
 
 describe('BookService', () => {
   let bookService: BookService;
-  let authorRepository: AuthorRepository;
   let bookRepository: BookRepository;
   let categoryRepository: CategoryRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
 
   beforeAll(async () => {
@@ -29,12 +25,10 @@ describe('BookService', () => {
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, CategoryModule]);
 
     bookService = container.resolve('bookService');
-    authorRepository = container.resolve('authorRepository');
     bookRepository = container.resolve('bookRepository');
     categoryRepository = container.resolve('categoryRepository');
 
     bookTestDataGenerator = new BookTestDataGenerator();
-    authorTestDataGenerator = new AuthorTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
@@ -45,10 +39,6 @@ describe('BookService', () => {
   describe('Create book', () => {
     it('creates book in database', async () => {
       expect.assertions(1);
-
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { name } = categoryTestDataGenerator.generateData();
 
@@ -62,7 +52,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        authorId: author.id,
         categoryId: category.id,
       });
 
@@ -70,53 +59,11 @@ describe('BookService', () => {
 
       expect(bookDto).not.toBeNull();
     });
-
-    it('should not create book and throw if book with the same title and author already exists', async () => {
-      expect.assertions(1);
-
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
-
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const category = await categoryRepository.createOne({ name });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      await bookRepository.createOne({
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
-        authorId: author.id,
-        categoryId: category.id,
-      });
-
-      try {
-        await bookService.createBook({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-          authorId: author.id,
-          categoryId: category.id,
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(BookAlreadyExists);
-      }
-    });
   });
 
   describe('Find book', () => {
     it('finds book by id in database', async () => {
       expect.assertions(1);
-
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
 
       const { name } = categoryTestDataGenerator.generateData();
 
@@ -130,7 +77,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        authorId: author.id,
         categoryId: category.id,
       });
 
@@ -156,10 +102,6 @@ describe('BookService', () => {
     it('updates book in database', async () => {
       expect.assertions(2);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
-
       const { name } = categoryTestDataGenerator.generateData();
 
       const category = await categoryRepository.createOne({ name });
@@ -174,7 +116,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        authorId: author.id,
         categoryId: category.id,
       });
 
@@ -201,10 +142,6 @@ describe('BookService', () => {
     it('removes book from database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
-
-      const author = await authorRepository.createOne({ firstName, lastName });
-
       const { name } = categoryTestDataGenerator.generateData();
 
       const category = await categoryRepository.createOne({ name });
@@ -217,7 +154,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        authorId: author.id,
         categoryId: category.id,
       });
 

@@ -22,8 +22,5 @@ export class CreateBookData {
   public price: number;
 
   @IsUUID('4')
-  public authorId: string;
-
-  @IsUUID('4')
   public categoryId: string;
 }

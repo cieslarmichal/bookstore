@@ -14,8 +14,7 @@ export class BookTestDataGenerator {
       format: this.generateFormat(),
       description: this.generateDescription(),
       price: this.generatePrice(),
-      author: null,
-      authorId: this.generateAuthorId(),
+      authorBooks: null,
       category: null,
       categoryId: this.generateCategoryId(),
     };
