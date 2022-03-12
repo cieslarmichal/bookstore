@@ -7,8 +7,7 @@ export class PostgresHelper {
     const entities = connection.entityMetadatas;
 
     for (const entity of entities) {
-      const repository = connection.getRepository(entity.name);
-      await repository.query(`TRUNCATE ${entity.tableName} RESTART IDENTITY CASCADE;`);
+      await connection.getRepository(entity.name).delete({});
     }
   }
 }
