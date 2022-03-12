@@ -80,7 +80,7 @@ describe('AuthorService', () => {
   });
 
   describe('Find authors by book id', () => {
-    it('finds author by id in database', async () => {
+    it('finds authors by book id in database', async () => {
       expect.assertions(6);
 
       const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();

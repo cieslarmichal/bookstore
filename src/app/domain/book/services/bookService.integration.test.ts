@@ -11,25 +11,35 @@ import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/p
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { CategoryModule } from '../../category/categoryModule';
 import { CategoryRepository } from '../../category/repositories/categoryRepository';
+import { AuthorRepository } from '../../author/repositories/authorRepository';
+import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
+import { AuthorBookRepository } from '../../authorBook/repositories/authorBookRepository';
+import { AuthorBookModule } from '../../authorBook/authorBookModule';
 
 describe('BookService', () => {
   let bookService: BookService;
   let bookRepository: BookRepository;
   let categoryRepository: CategoryRepository;
+  let authorRepository: AuthorRepository;
+  let authorBookRepository: AuthorBookRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
+  let authorTestDataGenerator: AuthorTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, CategoryModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, AuthorBookModule, CategoryModule]);
 
     bookService = container.resolve('bookService');
     bookRepository = container.resolve('bookRepository');
+    authorRepository = container.resolve('authorRepository');
     categoryRepository = container.resolve('categoryRepository');
+    authorBookRepository = container.resolve('authorBookRepository');
 
     bookTestDataGenerator = new BookTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();
+    authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -95,6 +105,62 @@ describe('BookService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(BookNotFound);
       }
+    });
+  });
+
+  describe('Find books by author id', () => {
+    it('finds books by author id in database', async () => {
+      expect.assertions(4);
+
+      const firstBookData = bookTestDataGenerator.generateData();
+
+      const firstBook = await bookRepository.createOne({
+        title: firstBookData.title,
+        releaseYear: firstBookData.releaseYear,
+        language: firstBookData.language,
+        format: firstBookData.format,
+        price: firstBookData.price,
+        categoryId: firstBookData.categoryId,
+      });
+
+      const secondBookData = bookTestDataGenerator.generateData();
+
+      const secondBook = await bookRepository.createOne({
+        title: secondBookData.title,
+        releaseYear: secondBookData.releaseYear,
+        language: secondBookData.language,
+        format: secondBookData.format,
+        price: secondBookData.price,
+        categoryId: secondBookData.categoryId,
+      });
+
+      const thirdBookData = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title: thirdBookData.title,
+        releaseYear: thirdBookData.releaseYear,
+        language: thirdBookData.language,
+        format: thirdBookData.format,
+        price: thirdBookData.price,
+        categoryId: thirdBookData.categoryId,
+      });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({
+        firstName,
+        lastName,
+      });
+
+      await authorBookRepository.createOne({ bookId: firstBook.id, authorId: author.id });
+      await authorBookRepository.createOne({ bookId: secondBook.id, authorId: author.id });
+
+      const foundBooks = await bookService.findBooks(author.id);
+
+      expect(foundBooks).not.toBeNull();
+      expect(foundBooks.length).toBe(2);
+      expect(foundBooks[0].title).toBe(firstBook.title);
+      expect(foundBooks[1].title).toBe(secondBook.title);
     });
   });
 
