@@ -36,6 +36,18 @@ export class AuthorRepository {
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
   }
 
+  public async findManyByBookId(bookId: string): Promise<AuthorDto[]> {
+    const queryBuilder = this.entityManager.getRepository(Author).createQueryBuilder('author');
+
+    const authors = await queryBuilder
+      .leftJoinAndSelect('author.authorBooks', 'authorBooks')
+      .leftJoinAndSelect('authorBooks.book', 'book')
+      .where({ bookId })
+      .getMany();
+
+    return authors.map((author) => this.authorMapper.mapEntityToDto(author));
+  }
+
   public async updateOne(id: string, authorData: Partial<Author>): Promise<AuthorDto> {
     const author = await this.findOneById(id);
 
