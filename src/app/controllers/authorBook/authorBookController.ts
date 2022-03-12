@@ -14,11 +14,11 @@ import {
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, sendResponseMiddleware } from '../shared';
-import { FindAuthorBooksParamDto } from './dtos/findAuthorBooksDto';
+// import { FindAuthorBooksParamDto } from './dtos/findAuthorBooksDto';
 
 const AUTHOR_BOOKS_PATH = '/authors/:authorId/books';
 const AUTHOR_BOOKS_PATH_WITH_ID = `${AUTHOR_BOOKS_PATH}/:bookId`;
-const BOOK_AUTHORS_PATH = '/books/:bookId/authors';
+// const BOOK_AUTHORS_PATH = '/books/:bookId/authors';
 
 export class AuthorBookController {
   public readonly router = express.Router();
@@ -44,24 +44,24 @@ export class AuthorBookController {
         next();
       }),
     );
-    this.router.get(
-      AUTHOR_BOOKS_PATH,
-      [verifyAccessToken],
-      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const findAuthorBooksResponse = await this.findAuthorBooks(request, response);
-        response.locals.controllerResponse = findAuthorBooksResponse;
-        next();
-      }),
-    );
-    this.router.get(
-      BOOK_AUTHORS_PATH,
-      [verifyAccessToken],
-      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const findBookAuthorsResponse = await this.findBookAuthors(request, response);
-        response.locals.controllerResponse = findBookAuthorsResponse;
-        next();
-      }),
-    );
+    // this.router.get(
+    //   AUTHOR_BOOKS_PATH,
+    //   [verifyAccessToken],
+    //   asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+    //     const findAuthorBooksResponse = await this.findAuthorBooks(request, response);
+    //     response.locals.controllerResponse = findAuthorBooksResponse;
+    //     next();
+    //   }),
+    // );
+    // this.router.get(
+    //   BOOK_AUTHORS_PATH,
+    //   [verifyAccessToken],
+    //   asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+    //     const findBookAuthorsResponse = await this.findBookAuthors(request, response);
+    //     response.locals.controllerResponse = findBookAuthorsResponse;
+    //     next();
+    //   }),
+    // );
     this.router.use(sendResponseMiddleware);
     this.router.use(authorBookErrorMiddleware);
   }
@@ -78,25 +78,25 @@ export class AuthorBookController {
     return new CreateAuthorBookResponseDto(responseData, StatusCodes.CREATED);
   }
 
-  public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    const findAuthorBooksParamDto = RecordToInstanceTransformer.transform(request.params, FindAuthorBooksParamDto);
+  // public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
+  //   const findAuthorBooksParamDto = RecordToInstanceTransformer.transform(request.params, FindAuthorBooksParamDto);
 
-    const authorBookDto = await this.authorBookService.findAuthorBook(id);
+  //   const authorBookDto = await this.authorBookService.findAuthorBook(id);
 
-    const responseData = new FindAuthorBookResponseData(authorBookDto);
+  //   const responseData = new FindAuthorBookResponseData(authorBookDto);
 
-    return new FindAuthorBookResponseDto(responseData, StatusCodes.OK);
-  }
+  //   return new FindAuthorBookResponseDto(responseData, StatusCodes.OK);
+  // }
 
-  public async findBookAuthors(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, FindAuthorBookParamDto);
+  // public async findBookAuthors(request: Request, response: Response): Promise<ControllerResponse> {
+  //   const { id } = RecordToInstanceTransformer.transform(request.params, FindAuthorBookParamDto);
 
-    const authorBookDto = await this.authorBookService.findAuthorBook(id);
+  //   const authorBookDto = await this.authorBookService.findAuthorBook(id);
 
-    const responseData = new FindAuthorBookResponseData(authorBookDto);
+  //   const responseData = new FindAuthorBookResponseData(authorBookDto);
 
-    return new FindAuthorBookResponseDto(responseData, StatusCodes.OK);
-  }
+  //   return new FindAuthorBookResponseDto(responseData, StatusCodes.OK);
+  // }
 
   public async deleteAuthorBook(request: Request, response: Response): Promise<ControllerResponse> {
     const removeAuthorBookBodyDto = RecordToInstanceTransformer.transform(request.params, RemoveAuthorBookParamDto);

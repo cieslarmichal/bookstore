@@ -8,21 +8,31 @@ import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 import { AuthorNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { BookRepository } from '../../book/repositories/bookRepository';
+import { AuthorBookModule } from '../../authorBook/authorBookModule';
+import { AuthorBookRepository } from '../../authorBook/repositories/authorBookRepository';
+import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 
 describe('AuthorService', () => {
   let authorService: AuthorService;
   let authorRepository: AuthorRepository;
+  let bookRepository: BookRepository;
+  let authorBookRepository: AuthorBookRepository;
   let authorTestDataGenerator: AuthorTestDataGenerator;
+  let bookTestDataGenerator: BookTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, AuthorBookModule]);
 
     authorService = container.resolve('authorService');
     authorRepository = container.resolve('authorRepository');
+    bookRepository = container.resolve('bookRepository');
+    authorBookRepository = container.resolve('authorBookRepository');
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
+    bookTestDataGenerator = new BookTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -49,7 +59,7 @@ describe('AuthorService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const foundAuthor = await authorService.findAuthor(author.id);
 
@@ -69,13 +79,63 @@ describe('AuthorService', () => {
     });
   });
 
+  describe('Find authors by book id', () => {
+    it('finds author by id in database', async () => {
+      expect.assertions(6);
+
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+
+      const book = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+        categoryId,
+      });
+
+      const firstAuthorData = authorTestDataGenerator.generateData();
+
+      const firstAuthor = await authorRepository.createOne({
+        firstName: firstAuthorData.firstName,
+        lastName: firstAuthorData.lastName,
+      });
+
+      const secondAuthorData = authorTestDataGenerator.generateData();
+
+      const secondAuthor = await authorRepository.createOne({
+        firstName: secondAuthorData.firstName,
+        lastName: secondAuthorData.lastName,
+      });
+
+      const thirdAuthorData = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({
+        firstName: thirdAuthorData.firstName,
+        lastName: thirdAuthorData.lastName,
+      });
+
+      await authorBookRepository.createOne({ bookId: book.id, authorId: firstAuthor.id });
+      await authorBookRepository.createOne({ bookId: book.id, authorId: secondAuthor.id });
+
+      const foundAuthors = await authorService.findAuthors(book.id);
+
+      expect(foundAuthors).not.toBeNull();
+      expect(foundAuthors.length).toBe(2);
+      expect(foundAuthors[0].firstName).toBe(firstAuthor.firstName);
+      expect(foundAuthors[0].lastName).toBe(firstAuthor.lastName);
+      expect(foundAuthors[1].firstName).toBe(secondAuthor.firstName);
+      expect(foundAuthors[1].lastName).toBe(secondAuthor.lastName);
+    });
+  });
+
   describe('Update author', () => {
     it('updates author in database', async () => {
       expect.assertions(2);
 
       const { firstName, lastName, about } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       const updatedAuthor = await authorService.updateAuthor(author.id, { about });
 
@@ -102,7 +162,7 @@ describe('AuthorService', () => {
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const author = await authorService.createAuthor({ firstName, lastName });
+      const author = await authorRepository.createOne({ firstName, lastName });
 
       await authorService.removeAuthor(author.id);
 

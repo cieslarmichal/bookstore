@@ -42,7 +42,7 @@ export class AuthorRepository {
     const authors = await queryBuilder
       .leftJoinAndSelect('author.authorBooks', 'authorBooks')
       .leftJoinAndSelect('authorBooks.book', 'book')
-      .where({ bookId })
+      .where('book.id = :bookId', { bookId })
       .getMany();
 
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
