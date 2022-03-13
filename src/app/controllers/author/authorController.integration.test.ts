@@ -15,6 +15,7 @@ import { PostgresHelper } from '../../../integration/helpers/postgresHelper/post
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
+import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 
 const baseUrl = '/authors';
 
@@ -40,6 +41,7 @@ describe(`AuthorController (${baseUrl})`, () => {
       AuthorModule,
       UserModule,
       ControllersModule,
+      AuthorBookModule,
     ]);
 
     authorRepository = container.resolve('authorRepository');
@@ -286,7 +288,7 @@ describe(`AuthorController (${baseUrl})`, () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns not found when author with given authorId does not exist', async () => {

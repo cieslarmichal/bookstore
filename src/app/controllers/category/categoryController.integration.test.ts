@@ -15,6 +15,7 @@ import { PostgresHelper } from '../../../integration/helpers/postgresHelper/post
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
+import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 
 const baseUrl = '/categories';
 
@@ -40,6 +41,7 @@ describe(`CategoryController (${baseUrl})`, () => {
       AuthorModule,
       UserModule,
       ControllersModule,
+      AuthorBookModule,
     ]);
 
     categoryRepository = container.resolve('categoryRepository');
@@ -183,7 +185,7 @@ describe(`CategoryController (${baseUrl})`, () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns not found when category with given categoryId does not exist', async () => {

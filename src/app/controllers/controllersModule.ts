@@ -1,9 +1,11 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
 import { LoadableModule } from '../shared';
 import { AuthorController } from './author/authorController';
+import { AuthorBookController } from './authorBook/authorBookController';
 import { BookController } from './book/bookController';
 import { CategoryController } from './category/categoryController';
 import {
+  AUTHOR_BOOK_CONTROLLER,
   AUTHOR_CONTROLLER,
   AUTH_MIDDLEWARE,
   AUTH_SERVICE,
@@ -24,6 +26,7 @@ export class ControllersModule extends LoadableModule {
       [AUTHOR_CONTROLLER]: asClass(AuthorController, { lifetime: Lifetime.SINGLETON }),
       [USER_CONTROLLER]: asClass(UserController, { lifetime: Lifetime.SINGLETON }),
       [CATEGORY_CONTROLLER]: asClass(CategoryController, { lifetime: Lifetime.SINGLETON }),
+      [AUTHOR_BOOK_CONTROLLER]: asClass(AuthorBookController, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

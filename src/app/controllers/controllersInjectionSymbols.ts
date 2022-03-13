@@ -4,3 +4,4 @@ export const BOOK_CONTROLLER = 'bookController';
 export const AUTHOR_CONTROLLER = 'authorController';
 export const USER_CONTROLLER = 'userController';
 export const CATEGORY_CONTROLLER = 'categoryController';
+export const AUTHOR_BOOK_CONTROLLER = 'authorBookController';

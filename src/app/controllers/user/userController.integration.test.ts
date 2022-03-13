@@ -15,6 +15,7 @@ import { AuthHelper } from '../../../integration/helpers';
 import { BookModule } from '../../domain/book/bookModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
+import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -42,6 +43,7 @@ describe(`UserController (${baseUrl})`, () => {
       AuthorModule,
       UserModule,
       ControllersModule,
+      AuthorBookModule,
     ]);
 
     userRepository = container.resolve('userRepository');

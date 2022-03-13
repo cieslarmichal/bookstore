@@ -22,11 +22,13 @@ export class App {
     const authorController = this.container.resolve('authorController');
     const userController = this.container.resolve('userController');
     const categoryController = this.container.resolve('categoryController');
+    const authorBookController = this.container.resolve('authorBookController');
 
     this.instance.use('/', bookController.router);
     this.instance.use('/', authorController.router);
     this.instance.use('/', userController.router);
     this.instance.use('/', categoryController.router);
+    this.instance.use('/', authorBookController.router);
 
     this.instance.use(errorMiddleware);
   }
