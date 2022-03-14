@@ -20,6 +20,7 @@ import {
   UpdateBookResponseData,
   UpdateBookResponseDto,
 } from './dtos';
+import { FindBooksResponseData, FindBooksResponseDto } from './dtos/findBooksDto';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
@@ -45,6 +46,15 @@ export class BookController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBookResponse = await this.findBook(request, response);
         response.locals.controllerResponse = findBookResponse;
+        next();
+      }),
+    );
+    this.router.get(
+      BOOKS_PATH,
+      [verifyAccessToken],
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        const findBooksResponse = await this.findBooks(request, response);
+        response.locals.controllerResponse = findBooksResponse;
         next();
       }),
     );
@@ -90,6 +100,14 @@ export class BookController {
     const responseData = new FindBookResponseData(bookDto);
 
     return new FindBookResponseDto(responseData, StatusCodes.OK);
+  }
+
+  public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
+    const booksDto = await this.bookService.findBooks();
+
+    const responseData = new FindBooksResponseData(booksDto);
+
+    return new FindBooksResponseDto(responseData, StatusCodes.OK);
   }
 
   public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {
