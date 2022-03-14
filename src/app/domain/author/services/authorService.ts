@@ -41,7 +41,7 @@ export class AuthorService {
 
     const author = await this.authorRepository.updateOne(authorId, authorData);
 
-    console.log('Author updated.', { authorId });
+    this.loggerService.info('Author updated.', { authorId });
 
     return author;
   }
@@ -51,6 +51,6 @@ export class AuthorService {
 
     await this.authorRepository.removeOne(authorId);
 
-    console.log('Author removed.', { authorId });
+    this.loggerService.info('Author removed.', { authorId });
   }
 }

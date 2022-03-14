@@ -1,3 +1,4 @@
+import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { AuthorDto } from '../../author/dtos';
 import { AuthorNotFound } from '../../author/errors';
 import { AuthorService } from '../../author/services/authorService';
@@ -14,12 +15,13 @@ export class AuthorBookService {
     private readonly authorBookRepository: AuthorBookRepository,
     private readonly authorService: AuthorService,
     private readonly bookService: BookService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   public async createAuthorBook(authorBookData: CreateAuthorBookData): Promise<AuthorBookDto> {
-    console.log('Creating authorBook...');
-
     const { authorId, bookId } = authorBookData;
+
+    this.loggerService.debug('Creating authorBook...', { authorId, bookId });
 
     const author = await this.authorService.findAuthor(authorId);
 
@@ -41,7 +43,7 @@ export class AuthorBookService {
 
     const authorBook = await this.authorBookRepository.createOne(authorBookData);
 
-    console.log('AuthorBook created.');
+    this.loggerService.info('AuthorBook created.', { authorBookId: authorBook.id });
 
     return authorBook;
   }
@@ -67,9 +69,9 @@ export class AuthorBookService {
   }
 
   public async removeAuthorBook(authorBookData: RemoveAuthorBookData): Promise<void> {
-    console.log(`Removing authorBook...`);
-
     const { authorId, bookId } = authorBookData;
+
+    this.loggerService.debug('Removing authorBook...', { authorId, bookId });
 
     const authorBook = await this.authorBookRepository.findOne({ authorId, bookId });
 
@@ -79,6 +81,6 @@ export class AuthorBookService {
 
     await this.authorBookRepository.removeOne(authorBook.id);
 
-    console.log(`AuthorBook removed.`);
+    this.loggerService.info(`AuthorBook removed.`, { authorBookId: authorBook.id });
   }
 }

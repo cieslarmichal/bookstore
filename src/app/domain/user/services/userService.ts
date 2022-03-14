@@ -1,3 +1,4 @@
+import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { UserDto } from '../dtos';
 import { UserAlreadyExists, UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
@@ -12,12 +13,13 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly hashService: HashService,
     private readonly tokenService: TokenService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   public async registerUser(userData: RegisterUserData): Promise<UserDto> {
     const { email, password } = userData;
 
-    console.log(`Registering user ${email}...`);
+    this.loggerService.debug('Registering user...', { email });
 
     const existingUser = await this.userRepository.findOne({ email });
 
@@ -29,7 +31,7 @@ export class UserService {
 
     const user = await this.userRepository.createOne({ email, password: hashedPassword });
 
-    console.log(`User ${email} registered.`);
+    this.loggerService.info('User registered.', { email });
 
     return user;
   }
@@ -37,7 +39,7 @@ export class UserService {
   public async loginUser(userData: LoginUserData): Promise<AccessToken> {
     const { email, password } = userData;
 
-    console.log(`Logging user ${email}...`);
+    this.loggerService.debug('Logging user...', { email });
 
     const user = await this.userRepository.findOne({ email });
 
@@ -53,13 +55,13 @@ export class UserService {
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
 
-    console.log(`User ${email} logged in.`);
+    this.loggerService.info('User logged in.', { email });
 
     return accessToken;
   }
 
   public async setPassword(userId: string, newPassword: string): Promise<UserDto> {
-    console.log(`Setting password for user with id ${userId}...`);
+    this.loggerService.debug('Setting password...', { userId });
 
     const user = await this.userRepository.findOne({ id: userId });
 
@@ -71,7 +73,7 @@ export class UserService {
 
     const updatedUser = await this.userRepository.updateOne(userId, { password: hashedPassword });
 
-    console.log(`Password for user with id ${userId} set.`);
+    this.loggerService.info('Password set.', { userId });
 
     return updatedUser;
   }
@@ -87,10 +89,10 @@ export class UserService {
   }
 
   public async removeUser(userId: string): Promise<void> {
-    console.log(`Removing user with id ${userId}...`);
+    this.loggerService.debug('Removing user...', { userId });
 
     await this.userRepository.removeOne(userId);
 
-    console.log(`User with id ${userId} removed.`);
+    this.loggerService.info('User removed.', { userId });
   }
 }

@@ -1,15 +1,19 @@
+import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { CategoryDto } from '../dtos';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { CategoryRepository } from '../repositories/categoryRepository';
 import { CreateCategoryData } from './types';
 
 export class CategoryService {
-  public constructor(private readonly categoryRepository: CategoryRepository) {}
+  public constructor(
+    private readonly categoryRepository: CategoryRepository,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   public async createCategory(categoryData: CreateCategoryData): Promise<CategoryDto> {
-    console.log('Creating category...');
-
     const { name } = categoryData;
+
+    this.loggerService.debug('Creating category...', { name });
 
     const existingCategory = await this.categoryRepository.findOne({ name });
 
@@ -19,7 +23,7 @@ export class CategoryService {
 
     const category = await this.categoryRepository.createOne(categoryData);
 
-    console.log('Category created.');
+    this.loggerService.info('Category created.', { categoryId: category.id });
 
     return category;
   }
@@ -35,10 +39,10 @@ export class CategoryService {
   }
 
   public async removeCategory(categoryId: string): Promise<void> {
-    console.log(`Removing category with id ${categoryId}...`);
+    this.loggerService.debug('Removing category...', { categoryId });
 
     await this.categoryRepository.removeOne(categoryId);
 
-    console.log(`Category with id ${categoryId} removed.`);
+    this.loggerService.info('Category removed.', { categoryId });
   }
 }

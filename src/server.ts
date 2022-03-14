@@ -10,9 +10,7 @@ export class Server {
   public listen() {
     const httpPort = parseInt(process.env.HTTP_PORT as string);
 
-    this.instance.listen(httpPort, () => {
-      console.log(`Server running on port ${httpPort}`);
-    });
+    this.instance.listen(httpPort);
   }
 
   public close() {
