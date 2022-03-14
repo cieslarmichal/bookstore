@@ -14,24 +14,19 @@ import { AuthorRepository } from '../../author/repositories/authorRepository';
 import { BookRepository } from '../../book/repositories/bookRepository';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { CategoryRepository } from '../../category/repositories/categoryRepository';
-import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { AUTHOR_BOOK_REPOSITORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
 import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
 import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
-import { CATEGORY_REPOSITORY } from '../../category/categoryInjectionSymbols';
 
 describe('AuthorBookService', () => {
   let authorBookService: AuthorBookService;
   let authorBookRepository: AuthorBookRepository;
   let authorRepository: AuthorRepository;
   let bookRepository: BookRepository;
-  let categoryRepository: CategoryRepository;
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -49,12 +44,10 @@ describe('AuthorBookService', () => {
     authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
     authorRepository = container.resolve(AUTHOR_REPOSITORY);
     bookRepository = container.resolve(BOOK_REPOSITORY);
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -72,13 +65,7 @@ describe('AuthorBookService', () => {
         lastName,
       });
 
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const category = await categoryRepository.createOne({
-        name,
-      });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -86,7 +73,7 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId: category.id,
+        categoryId,
       });
 
       const createdAuthorBookDto = await authorBookService.createAuthorBook({
@@ -109,13 +96,7 @@ describe('AuthorBookService', () => {
         lastName,
       });
 
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const category = await categoryRepository.createOne({
-        name,
-      });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -123,7 +104,7 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId: category.id,
+        categoryId,
       });
 
       await authorBookService.createAuthorBook({
@@ -153,13 +134,7 @@ describe('AuthorBookService', () => {
         lastName,
       });
 
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const category = await categoryRepository.createOne({
-        name,
-      });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -167,7 +142,7 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId: category.id,
+        categoryId,
       });
 
       const authorBook = await authorBookRepository.createOne({

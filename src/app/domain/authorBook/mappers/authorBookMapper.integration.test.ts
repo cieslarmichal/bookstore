@@ -10,8 +10,6 @@ import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/p
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { Author } from '../../author/entities/author';
-import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
-import { Category } from '../../category/entities/category';
 import { Book } from '../../book/entities/book';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { AUTHOR_BOOK_MAPPER } from '../authorBookInjectionSymbols';
@@ -21,7 +19,6 @@ describe('AuthorBookMapper', () => {
   let authorBookMapper: AuthorBookMapper;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
   let entityManager: EntityManager;
 
   beforeAll(async () => {
@@ -34,7 +31,6 @@ describe('AuthorBookMapper', () => {
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -54,15 +50,7 @@ describe('AuthorBookMapper', () => {
 
       const savedAuthor = await entityManager.save(createdAuthor);
 
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const createdCategory = entityManager.create(Category, {
-        name,
-      });
-
-      const savedCategory = await entityManager.save(createdCategory);
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -70,7 +58,7 @@ describe('AuthorBookMapper', () => {
         language,
         format,
         price,
-        categoryId: savedCategory.id,
+        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);

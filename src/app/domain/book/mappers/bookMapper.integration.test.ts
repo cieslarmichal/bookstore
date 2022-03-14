@@ -8,8 +8,6 @@ import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
-import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
-import { Category } from '../../category/entities/category';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { BOOK_MAPPER } from '../bookInjectionSymbols';
 import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
@@ -17,7 +15,6 @@ import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
   let entityManager: EntityManager;
 
   beforeAll(async () => {
@@ -29,7 +26,6 @@ describe('BookMapper', () => {
     entityManager = container.resolve(ENTITY_MANAGER);
 
     bookTestDataGenerator = new BookTestDataGenerator();
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -40,15 +36,7 @@ describe('BookMapper', () => {
     it('map book from entity to dto', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const createdCategory = entityManager.create(Category, {
-        name,
-      });
-
-      const savedCategory = await entityManager.save(createdCategory);
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -56,7 +44,7 @@ describe('BookMapper', () => {
         language,
         format,
         price,
-        categoryId: savedCategory.id,
+        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);
@@ -68,7 +56,7 @@ describe('BookMapper', () => {
         createdAt: savedBook.createdAt,
         updatedAt: savedBook.updatedAt,
         title: savedBook.title,
-        categoryId: savedCategory.id,
+        categoryId: savedBook.categoryId,
         releaseYear: savedBook.releaseYear,
         language: savedBook.language,
         format: savedBook.format,
@@ -80,15 +68,8 @@ describe('BookMapper', () => {
     it('maps a book with optional field from entity to dto', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
-
-      const createdCategory = entityManager.create(Category, {
-        name,
-      });
-
-      const savedCategory = await entityManager.save(createdCategory);
-
-      const { title, releaseYear, language, format, description, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, description, price, categoryId } =
+        bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -97,7 +78,7 @@ describe('BookMapper', () => {
         format,
         description: description as string,
         price,
-        categoryId: savedCategory.id,
+        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);
@@ -109,7 +90,7 @@ describe('BookMapper', () => {
         createdAt: savedBook.createdAt,
         updatedAt: savedBook.updatedAt,
         title: savedBook.title,
-        categoryId: savedCategory.id,
+        categoryId: savedBook.categoryId,
         releaseYear: savedBook.releaseYear,
         language: savedBook.language,
         format: savedBook.format,
