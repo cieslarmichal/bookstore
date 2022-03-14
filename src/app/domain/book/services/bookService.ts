@@ -27,7 +27,13 @@ export class BookService {
     return book;
   }
 
-  public async findBooks(authorId: string): Promise<BookDto[]> {
+  public async findBooks(): Promise<BookDto[]> {
+    const books = await this.bookRepository.findMany({});
+
+    return books;
+  }
+
+  public async findBooksByAuthorId(authorId: string): Promise<BookDto[]> {
     const books = await this.bookRepository.findManyByAuthorId(authorId);
 
     return books;

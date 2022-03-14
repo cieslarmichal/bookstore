@@ -176,6 +176,28 @@ describe(`AuthorController (${baseUrl})`, () => {
     });
   });
 
+  describe('Find authors', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const response = await request(server.instance).get(`${baseUrl}`);
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('returns ok', async () => {
+      expect.assertions(1);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance).get(`${baseUrl}`).set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.OK);
+    });
+  });
+
   describe('Update author', () => {
     it('returns bad request when provided not allowed properties in body', async () => {
       expect.assertions(1);

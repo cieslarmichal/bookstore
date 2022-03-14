@@ -105,6 +105,40 @@ describe('BookService', () => {
     });
   });
 
+  describe('Find books', () => {
+    it('finds books in database', async () => {
+      expect.assertions(2);
+
+      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+
+      const book = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+        categoryId,
+      });
+
+      const foundBooks = await bookService.findBooks();
+
+      expect(foundBooks.length).toBe(1);
+      expect(foundBooks[0]).toStrictEqual(book);
+    });
+
+    it('should throw if book with given id does not exist in db', async () => {
+      expect.assertions(1);
+
+      const { id } = bookTestDataGenerator.generateData();
+
+      try {
+        await bookService.findBook(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BookNotFound);
+      }
+    });
+  });
+
   describe('Find books by author id', () => {
     it('finds books by author id in database', async () => {
       expect.assertions(4);
@@ -152,7 +186,7 @@ describe('BookService', () => {
       await authorBookRepository.createOne({ bookId: firstBook.id, authorId: author.id });
       await authorBookRepository.createOne({ bookId: secondBook.id, authorId: author.id });
 
-      const foundBooks = await bookService.findBooks(author.id);
+      const foundBooks = await bookService.findBooksByAuthorId(author.id);
 
       expect(foundBooks).not.toBeNull();
       expect(foundBooks.length).toBe(2);

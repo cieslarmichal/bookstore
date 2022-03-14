@@ -21,6 +21,7 @@ import {
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, sendResponseMiddleware } from '../shared';
+import { FindAuthorsResponseData, FindAuthorsResponseDto } from './dtos/findAuthorsDto';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -46,6 +47,15 @@ export class AuthorController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorResponse = await this.findAuthor(request, response);
         response.locals.controllerResponse = findAuthorResponse;
+        next();
+      }),
+    );
+    this.router.get(
+      AUTHORS_PATH,
+      [verifyAccessToken],
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        const findAuthorsResponse = await this.findAuthors(request, response);
+        response.locals.controllerResponse = findAuthorsResponse;
         next();
       }),
     );
@@ -91,6 +101,14 @@ export class AuthorController {
     const responseData = new FindAuthorResponseData(authorDto);
 
     return new FindAuthorResponseDto(responseData, StatusCodes.OK);
+  }
+
+  public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
+    const authorsDto = await this.authorService.findAuthors();
+
+    const responseData = new FindAuthorsResponseData(authorsDto);
+
+    return new FindAuthorsResponseDto(responseData, StatusCodes.OK);
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {

@@ -55,7 +55,7 @@ export class AuthorBookService {
       throw new AuthorNotFound({ id: authorId });
     }
 
-    return this.bookService.findBooks(authorId);
+    return this.bookService.findBooksByAuthorId(authorId);
   }
 
   public async findBookAuthors(bookId: string): Promise<AuthorDto[]> {
@@ -65,7 +65,7 @@ export class AuthorBookService {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.authorService.findAuthors(bookId);
+    return this.authorService.findAuthorsByBookId(bookId);
   }
 
   public async removeAuthorBook(authorBookData: RemoveAuthorBookData): Promise<void> {

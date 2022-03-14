@@ -83,6 +83,33 @@ describe('AuthorService', () => {
     });
   });
 
+  describe('Find authors', () => {
+    it('finds authors in database', async () => {
+      expect.assertions(2);
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const foundAuthors = await authorService.findAuthors();
+
+      expect(foundAuthors.length).toBe(1);
+      expect(foundAuthors[0]).toStrictEqual(author);
+    });
+
+    it('should throw if author with given id does not exist in db', async () => {
+      expect.assertions(1);
+
+      const { id } = authorTestDataGenerator.generateData();
+
+      try {
+        await authorService.findAuthor(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AuthorNotFound);
+      }
+    });
+  });
+
   describe('Find authors by book id', () => {
     it('finds authors by book id in database', async () => {
       expect.assertions(6);
@@ -122,7 +149,7 @@ describe('AuthorService', () => {
       await authorBookRepository.createOne({ bookId: book.id, authorId: firstAuthor.id });
       await authorBookRepository.createOne({ bookId: book.id, authorId: secondAuthor.id });
 
-      const foundAuthors = await authorService.findAuthors(book.id);
+      const foundAuthors = await authorService.findAuthorsByBookId(book.id);
 
       expect(foundAuthors).not.toBeNull();
       expect(foundAuthors.length).toBe(2);

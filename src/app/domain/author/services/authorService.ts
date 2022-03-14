@@ -30,7 +30,13 @@ export class AuthorService {
     return author;
   }
 
-  public async findAuthors(bookId: string): Promise<AuthorDto[]> {
+  public async findAuthors(): Promise<AuthorDto[]> {
+    const authors = await this.authorRepository.findMany({});
+
+    return authors;
+  }
+
+  public async findAuthorsByBookId(bookId: string): Promise<AuthorDto[]> {
     const authors = await this.authorRepository.findManyByBookId(bookId);
 
     return authors;
