@@ -81,9 +81,9 @@ export class BookController {
   }
 
   public async createBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const createBookBodyDto = RecordToInstanceTransformer.transform(request.body, CreateBookBodyDto);
+    const createBookBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateBookBodyDto);
 
-    const createBookData = RecordToInstanceTransformer.transform(createBookBodyDto, CreateBookData);
+    const createBookData = RecordToInstanceTransformer.strictTransform(createBookBodyDto, CreateBookData);
 
     const bookDto = await this.bookService.createBook(createBookData);
 
@@ -93,7 +93,7 @@ export class BookController {
   }
 
   public async findBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, FindBookParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindBookParamDto);
 
     const bookDto = await this.bookService.findBook(id);
 
@@ -111,11 +111,11 @@ export class BookController {
   }
 
   public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, UpdateBookParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, UpdateBookParamDto);
 
-    const updateBookBodyDto = RecordToInstanceTransformer.transform(request.body, UpdateBookBodyDto);
+    const updateBookBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateBookBodyDto);
 
-    const updateBookData = RecordToInstanceTransformer.transform(updateBookBodyDto, UpdateBookData);
+    const updateBookData = RecordToInstanceTransformer.strictTransform(updateBookBodyDto, UpdateBookData);
 
     const bookDto = await this.bookService.updateBook(id, updateBookData);
 
@@ -125,7 +125,7 @@ export class BookController {
   }
 
   public async deleteBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, RemoveBookParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveBookParamDto);
 
     await this.bookService.removeBook(id);
 

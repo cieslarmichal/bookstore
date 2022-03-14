@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { AuthorService } from '../../domain/author/services/authorService';
-import { CreateAuthorData, UpdateAuthorData } from '../../domain/author/services/types';
+import { CreateAuthorData, FindAuthorsData, UpdateAuthorData } from '../../domain/author/services/types';
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -20,8 +20,8 @@ import {
   UpdateAuthorResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, sendResponseMiddleware } from '../shared';
-import { FindAuthorsResponseData, FindAuthorsResponseDto } from './dtos/findAuthorsDto';
+import { AuthMiddleware, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { FindAuthorsQueryDto, FindAuthorsResponseData, FindAuthorsResponseDto } from './dtos/findAuthorsDto';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -82,9 +82,9 @@ export class AuthorController {
   }
 
   public async createAuthor(request: Request, response: Response): Promise<ControllerResponse> {
-    const createAuthorBodyDto = RecordToInstanceTransformer.transform(request.body, CreateAuthorBodyDto);
+    const createAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAuthorBodyDto);
 
-    const createAuthorData = RecordToInstanceTransformer.transform(createAuthorBodyDto, CreateAuthorData);
+    const createAuthorData = RecordToInstanceTransformer.strictTransform(createAuthorBodyDto, CreateAuthorData);
 
     const authorDto = await this.authorService.createAuthor(createAuthorData);
 
@@ -94,7 +94,7 @@ export class AuthorController {
   }
 
   public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, FindAuthorParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorParamDto);
 
     const authorDto = await this.authorService.findAuthor(id);
 
@@ -104,7 +104,15 @@ export class AuthorController {
   }
 
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
-    const authorsDto = await this.authorService.findAuthors();
+    const findAuthorsQueryDto = RecordToInstanceTransformer.transform(request.query, FindAuthorsQueryDto);
+    console.log(findAuthorsQueryDto);
+
+    const findAuthorsData = RecordToInstanceTransformer.strictTransform(request.query, FindAuthorsData);
+
+    const paginationData = PaginationDataParser.parse(request.query);
+    console.log(paginationData);
+
+    const authorsDto = await this.authorService.findAuthors(findAuthorsData, paginationData);
 
     const responseData = new FindAuthorsResponseData(authorsDto);
 
@@ -112,11 +120,11 @@ export class AuthorController {
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, UpdateAuthorParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, UpdateAuthorParamDto);
 
-    const updateAuthorBodyDto = RecordToInstanceTransformer.transform(request.body, UpdateAuthorBodyDto);
+    const updateAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateAuthorBodyDto);
 
-    const updateAuthorData = RecordToInstanceTransformer.transform(updateAuthorBodyDto, UpdateAuthorData);
+    const updateAuthorData = RecordToInstanceTransformer.strictTransform(updateAuthorBodyDto, UpdateAuthorData);
 
     const authorDto = await this.authorService.updateAuthor(id, updateAuthorData);
 
@@ -126,7 +134,7 @@ export class AuthorController {
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, RemoveAuthorParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAuthorParamDto);
 
     await this.authorService.removeAuthor(id);
 

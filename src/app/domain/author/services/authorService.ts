@@ -1,8 +1,9 @@
 import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { PaginationData } from '../../shared';
 import { AuthorDto } from '../dtos';
 import { AuthorNotFound } from '../errors';
 import { AuthorRepository } from '../repositories/authorRepository';
-import { CreateAuthorData, UpdateAuthorData } from './types';
+import { CreateAuthorData, FindAuthorsData, UpdateAuthorData } from './types';
 
 export class AuthorService {
   public constructor(
@@ -30,8 +31,8 @@ export class AuthorService {
     return author;
   }
 
-  public async findAuthors(): Promise<AuthorDto[]> {
-    const authors = await this.authorRepository.findMany({});
+  public async findAuthors(findAuthorsData: FindAuthorsData, paginationData: PaginationData): Promise<AuthorDto[]> {
+    const authors = await this.authorRepository.findMany(findAuthorsData, paginationData);
 
     return authors;
   }

@@ -76,9 +76,15 @@ export class AuthorBookController {
   }
 
   public async createAuthorBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const createAuthorBookParamDto = RecordToInstanceTransformer.transform(request.params, CreateAuthorBookParamDto);
+    const createAuthorBookParamDto = RecordToInstanceTransformer.strictTransform(
+      request.params,
+      CreateAuthorBookParamDto,
+    );
 
-    const createAuthorBookData = RecordToInstanceTransformer.transform(createAuthorBookParamDto, CreateAuthorBookData);
+    const createAuthorBookData = RecordToInstanceTransformer.strictTransform(
+      createAuthorBookParamDto,
+      CreateAuthorBookData,
+    );
 
     const authorBookDto = await this.authorBookService.createAuthorBook(createAuthorBookData);
 
@@ -88,7 +94,7 @@ export class AuthorBookController {
   }
 
   public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    const { authorId } = RecordToInstanceTransformer.transform(request.params, FindAuthorBooksParamDto);
+    const { authorId } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorBooksParamDto);
 
     const authorBookDto = await this.authorBookService.findAuthorBooks(authorId);
 
@@ -98,7 +104,7 @@ export class AuthorBookController {
   }
 
   public async findBookAuthors(request: Request, response: Response): Promise<ControllerResponse> {
-    const { bookId } = RecordToInstanceTransformer.transform(request.params, FindBookAuthorsParamDto);
+    const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookAuthorsParamDto);
 
     const authorBookDto = await this.authorBookService.findBookAuthors(bookId);
 
@@ -108,9 +114,15 @@ export class AuthorBookController {
   }
 
   public async deleteAuthorBook(request: Request, response: Response): Promise<ControllerResponse> {
-    const removeAuthorBookParamDto = RecordToInstanceTransformer.transform(request.params, RemoveAuthorBookParamDto);
+    const removeAuthorBookParamDto = RecordToInstanceTransformer.strictTransform(
+      request.params,
+      RemoveAuthorBookParamDto,
+    );
 
-    const removeAuthorBookData = RecordToInstanceTransformer.transform(removeAuthorBookParamDto, RemoveAuthorBookData);
+    const removeAuthorBookData = RecordToInstanceTransformer.strictTransform(
+      removeAuthorBookParamDto,
+      RemoveAuthorBookData,
+    );
 
     await this.authorBookService.removeAuthorBook(removeAuthorBookData);
 

@@ -3,6 +3,7 @@ import { AuthorDto } from '../dtos';
 import { Author } from '../entities/author';
 import { AuthorMapper } from '../mappers/authorMapper';
 import { AuthorNotFound } from '../errors';
+import { PaginationData } from '../../shared';
 
 @EntityRepository()
 export class AuthorRepository {
@@ -30,8 +31,10 @@ export class AuthorRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindConditions<Author>): Promise<AuthorDto[]> {
-    const authors = await this.entityManager.find(Author, conditions);
+  public async findMany(conditions: FindConditions<Author>, paginationData: PaginationData): Promise<AuthorDto[]> {
+    const queryBuilder = this.entityManager.getRepository(Author).createQueryBuilder('author');
+
+    const authors = await queryBuilder.offset(paginationData.offset).limit(paginationData.limit).getMany();
 
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
   }

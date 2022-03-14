@@ -91,22 +91,10 @@ describe('AuthorService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const foundAuthors = await authorService.findAuthors();
+      const foundAuthors = await authorService.findAuthors({}, { offset: 0, limit: 5 });
 
       expect(foundAuthors.length).toBe(1);
       expect(foundAuthors[0]).toStrictEqual(author);
-    });
-
-    it('should throw if author with given id does not exist in db', async () => {
-      expect.assertions(1);
-
-      const { id } = authorTestDataGenerator.generateData();
-
-      try {
-        await authorService.findAuthor(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthorNotFound);
-      }
     });
   });
 

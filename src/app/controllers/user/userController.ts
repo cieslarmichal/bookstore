@@ -85,9 +85,9 @@ export class UserController {
   }
 
   public async registerUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const registerUserBodyDto = RecordToInstanceTransformer.transform(request.body, RegisterUserBodyDto);
+    const registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserBodyDto);
 
-    const registerUserData = RecordToInstanceTransformer.transform(registerUserBodyDto, RegisterUserData);
+    const registerUserData = RecordToInstanceTransformer.strictTransform(registerUserBodyDto, RegisterUserData);
 
     const userDto = await this.userService.registerUser(registerUserData);
 
@@ -105,9 +105,9 @@ export class UserController {
   }
 
   public async loginUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const loginUserBodyDto = RecordToInstanceTransformer.transform(request.body, LoginUserBodyDto);
+    const loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserBodyDto);
 
-    const loginUserData = RecordToInstanceTransformer.transform(loginUserBodyDto, LoginUserData);
+    const loginUserData = RecordToInstanceTransformer.strictTransform(loginUserBodyDto, LoginUserData);
 
     const token = await this.userService.loginUser(loginUserData);
 
@@ -117,7 +117,7 @@ export class UserController {
   }
 
   public async setUserPassword(request: Request, response: Response): Promise<ControllerResponse> {
-    const setUserPasswordBodyDto = RecordToInstanceTransformer.transform(request.body, SetUserPasswordBodyDto);
+    const setUserPasswordBodyDto = RecordToInstanceTransformer.strictTransform(request.body, SetUserPasswordBodyDto);
 
     const { userId: targetUserId, password } = setUserPasswordBodyDto;
 
@@ -133,7 +133,7 @@ export class UserController {
   }
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id: targetUserId } = RecordToInstanceTransformer.transform(request.params, FindUserParamDto);
+    const { id: targetUserId } = RecordToInstanceTransformer.strictTransform(request.params, FindUserParamDto);
 
     const { userId, role } = response.locals.authPayload;
 
@@ -156,7 +156,7 @@ export class UserController {
   }
 
   public async deleteUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id: targetUserId } = RecordToInstanceTransformer.transform(request.params, RemoveUserParamDto);
+    const { id: targetUserId } = RecordToInstanceTransformer.strictTransform(request.params, RemoveUserParamDto);
 
     const { userId, role } = response.locals.authPayload;
 

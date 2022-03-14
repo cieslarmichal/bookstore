@@ -59,9 +59,9 @@ export class CategoryController {
   }
 
   public async createCategory(request: Request, response: Response): Promise<ControllerResponse> {
-    const createCategoryBodyDto = RecordToInstanceTransformer.transform(request.body, CreateCategoryBodyDto);
+    const createCategoryBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateCategoryBodyDto);
 
-    const createCategoryData = RecordToInstanceTransformer.transform(createCategoryBodyDto, CreateCategoryData);
+    const createCategoryData = RecordToInstanceTransformer.strictTransform(createCategoryBodyDto, CreateCategoryData);
 
     const categoryDto = await this.categoryService.createCategory(createCategoryData);
 
@@ -71,7 +71,7 @@ export class CategoryController {
   }
 
   public async findCategory(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, FindCategoryParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryParamDto);
 
     const categoryDto = await this.categoryService.findCategory(id);
 
@@ -81,7 +81,7 @@ export class CategoryController {
   }
 
   public async deleteCategory(request: Request, response: Response): Promise<ControllerResponse> {
-    const { id } = RecordToInstanceTransformer.transform(request.params, RemoveCategoryParamDto);
+    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveCategoryParamDto);
 
     await this.categoryService.removeCategory(id);
 
