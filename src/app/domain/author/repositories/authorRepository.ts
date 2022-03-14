@@ -34,7 +34,11 @@ export class AuthorRepository {
   public async findMany(conditions: FindConditions<Author>, paginationData: PaginationData): Promise<AuthorDto[]> {
     const queryBuilder = this.entityManager.getRepository(Author).createQueryBuilder('author');
 
-    const authors = await queryBuilder.offset(paginationData.offset).limit(paginationData.limit).getMany();
+    const authors = await queryBuilder
+      .where(conditions)
+      .offset(paginationData.offset)
+      .limit(paginationData.limit)
+      .getMany();
 
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
   }

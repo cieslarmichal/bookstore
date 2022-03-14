@@ -105,12 +105,10 @@ export class AuthorController {
 
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
     const findAuthorsQueryDto = RecordToInstanceTransformer.transform(request.query, FindAuthorsQueryDto);
-    console.log(findAuthorsQueryDto);
 
-    const findAuthorsData = RecordToInstanceTransformer.strictTransform(request.query, FindAuthorsData);
+    const findAuthorsData = RecordToInstanceTransformer.strictTransform(findAuthorsQueryDto, FindAuthorsData);
 
     const paginationData = PaginationDataParser.parse(request.query);
-    console.log(paginationData);
 
     const authorsDto = await this.authorService.findAuthors(findAuthorsData, paginationData);
 
