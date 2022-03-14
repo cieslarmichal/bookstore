@@ -1,17 +1,21 @@
+import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { AuthorDto } from '../dtos';
 import { AuthorNotFound } from '../errors';
 import { AuthorRepository } from '../repositories/authorRepository';
 import { CreateAuthorData, UpdateAuthorData } from './types';
 
 export class AuthorService {
-  public constructor(private readonly authorRepository: AuthorRepository) {}
+  public constructor(
+    private readonly authorRepository: AuthorRepository,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   public async createAuthor(authorData: CreateAuthorData): Promise<AuthorDto> {
-    console.log('Creating author...');
+    this.loggerService.debug('Creating author...');
 
     const author = await this.authorRepository.createOne(authorData);
 
-    console.log('Author created.');
+    this.loggerService.info('Author created.', { authorId: author.id });
 
     return author;
   }
@@ -33,20 +37,20 @@ export class AuthorService {
   }
 
   public async updateAuthor(authorId: string, authorData: UpdateAuthorData): Promise<AuthorDto> {
-    console.log(`Updating author with id ${authorId}...`);
+    this.loggerService.debug('Updating author...', { authorId });
 
     const author = await this.authorRepository.updateOne(authorId, authorData);
 
-    console.log(`Author with id ${authorId} updated.`);
+    console.log('Author updated.', { authorId });
 
     return author;
   }
 
   public async removeAuthor(authorId: string): Promise<void> {
-    console.log(`Removing author with id ${authorId}...`);
+    this.loggerService.debug('Removing author...', { authorId });
 
     await this.authorRepository.removeOne(authorId);
 
-    console.log(`Author with id ${authorId} removed.`);
+    console.log('Author removed.', { authorId });
   }
 }
