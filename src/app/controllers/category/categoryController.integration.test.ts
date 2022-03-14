@@ -16,6 +16,7 @@ import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
+import { LoggerModule } from '../../shared/logger/loggerModule';
 
 const baseUrl = '/categories';
 
@@ -42,6 +43,7 @@ describe(`CategoryController (${baseUrl})`, () => {
       UserModule,
       ControllersModule,
       AuthorBookModule,
+      LoggerModule,
     ]);
 
     categoryRepository = container.resolve('categoryRepository');

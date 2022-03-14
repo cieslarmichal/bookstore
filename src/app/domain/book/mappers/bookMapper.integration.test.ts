@@ -10,6 +10,7 @@ import { AuthorModule } from '../../author/authorModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { Category } from '../../category/entities/category';
+import { LoggerModule } from '../../../shared/logger/loggerModule';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
@@ -20,7 +21,7 @@ describe('BookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule]);
+    const container = await createDIContainer([DbModule, BookModule, AuthorModule, LoggerModule]);
 
     bookMapper = container.resolve('bookMapper');
     entityManager = container.resolve('entityManager');

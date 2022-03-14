@@ -10,6 +10,7 @@ import { TokenService } from './tokenService';
 import { HashService } from './hashService';
 import { UserDto } from '../dtos';
 import { UserRole } from '../types';
+import { LoggerModule } from '../../../shared/logger/loggerModule';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -21,7 +22,7 @@ describe('UserService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, UserModule]);
+    const container = await createDIContainer([DbModule, UserModule, LoggerModule]);
 
     userService = container.resolve('userService');
     userRepository = container.resolve('userRepository');

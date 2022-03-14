@@ -8,6 +8,7 @@ import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { LoggerModule } from '../../../shared/logger/loggerModule';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
@@ -17,7 +18,7 @@ describe('CategoryService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule]);
+    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule]);
 
     categoryService = container.resolve('categoryService');
     categoryRepository = container.resolve('categoryRepository');

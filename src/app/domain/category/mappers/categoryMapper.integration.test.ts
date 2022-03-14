@@ -8,6 +8,7 @@ import { DbModule } from '../../../shared';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { LoggerModule } from '../../../shared/logger/loggerModule';
 
 describe('CategoryMapper', () => {
   let categoryMapper: CategoryMapper;
@@ -17,7 +18,7 @@ describe('CategoryMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule]);
+    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule]);
 
     categoryMapper = container.resolve('categoryMapper');
     entityManager = container.resolve('entityManager');

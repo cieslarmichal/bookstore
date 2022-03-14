@@ -13,6 +13,7 @@ import { Author } from '../../author/entities/author';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { Category } from '../../category/entities/category';
 import { Book } from '../../book/entities/book';
+import { LoggerModule } from '../../../shared/logger/loggerModule';
 
 describe('AuthorBookMapper', () => {
   let authorBookMapper: AuthorBookMapper;
@@ -24,7 +25,7 @@ describe('AuthorBookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, AuthorBookModule, AuthorModule]);
+    const container = await createDIContainer([DbModule, AuthorBookModule, AuthorModule, LoggerModule]);
 
     authorBookMapper = container.resolve('authorBookMapper');
     entityManager = container.resolve('entityManager');

@@ -16,6 +16,7 @@ import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorT
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { CategoryRepository } from '../../category/repositories/categoryRepository';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
+import { LoggerModule } from '../../../shared/logger/loggerModule';
 
 describe('AuthorBookService', () => {
   let authorBookService: AuthorBookService;
@@ -31,7 +32,14 @@ describe('AuthorBookService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, CategoryModule, BookModule, AuthorModule, AuthorBookModule]);
+    const container = await createDIContainer([
+      DbModule,
+      CategoryModule,
+      BookModule,
+      AuthorModule,
+      AuthorBookModule,
+      LoggerModule,
+    ]);
 
     authorBookService = container.resolve('authorBookService');
     authorBookRepository = container.resolve('authorBookRepository');

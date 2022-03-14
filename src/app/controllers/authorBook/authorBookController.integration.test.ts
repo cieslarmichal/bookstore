@@ -20,6 +20,7 @@ import { AuthorRepository } from '../../domain/author/repositories/authorReposit
 import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { AuthorBookTestDataGenerator } from '../../domain/authorBook/testDataGenerators/authorBookTestDataGenerator';
+import { LoggerModule } from '../../shared/logger/loggerModule';
 
 const authorsUrl = '/authors';
 const booksUrl = '/books';
@@ -53,6 +54,7 @@ describe(`AuthorBookController`, () => {
       AuthorBookModule,
       UserModule,
       ControllersModule,
+      LoggerModule,
     ]);
 
     authorRepository = container.resolve('authorRepository');

@@ -18,6 +18,7 @@ import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerat
 import { CategoryRepository } from '../../domain/category/repositories/categoryRepository';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
+import { LoggerModule } from '../../shared/logger/loggerModule';
 
 const baseUrl = '/books';
 
@@ -47,6 +48,7 @@ describe(`BookController (${baseUrl})`, () => {
       UserModule,
       ControllersModule,
       AuthorBookModule,
+      LoggerModule,
     ]);
 
     bookRepository = container.resolve('bookRepository');
