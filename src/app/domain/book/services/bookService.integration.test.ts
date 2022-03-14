@@ -16,6 +16,10 @@ import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorT
 import { AuthorBookRepository } from '../../authorBook/repositories/authorBookRepository';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { BOOK_REPOSITORY, BOOK_SERVICE } from '../bookInjectionSymbols';
+import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
+import { CATEGORY_REPOSITORY } from '../../category/categoryInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY } from '../../authorBook/authorBookInjectionSymbols';
 
 describe('BookService', () => {
   let bookService: BookService;
@@ -39,11 +43,11 @@ describe('BookService', () => {
       LoggerModule,
     ]);
 
-    bookService = container.resolve('bookService');
-    bookRepository = container.resolve('bookRepository');
-    authorRepository = container.resolve('authorRepository');
-    categoryRepository = container.resolve('categoryRepository');
-    authorBookRepository = container.resolve('authorBookRepository');
+    bookService = container.resolve(BOOK_SERVICE);
+    bookRepository = container.resolve(BOOK_REPOSITORY);
+    authorRepository = container.resolve(AUTHOR_REPOSITORY);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
+    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
 
     bookTestDataGenerator = new BookTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();

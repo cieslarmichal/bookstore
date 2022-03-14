@@ -21,6 +21,9 @@ import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { AuthorBookTestDataGenerator } from '../../domain/authorBook/testDataGenerators/authorBookTestDataGenerator';
 import { LoggerModule } from '../../shared/logger/loggerModule';
+import { AUTHOR_REPOSITORY } from '../../domain/author/authorInjectionSymbols';
+import { BOOK_REPOSITORY } from '../../domain/book/bookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY } from '../../domain/authorBook/authorBookInjectionSymbols';
 
 const authorsUrl = '/authors';
 const booksUrl = '/books';
@@ -57,9 +60,9 @@ describe(`AuthorBookController`, () => {
       LoggerModule,
     ]);
 
-    authorRepository = container.resolve('authorRepository');
-    bookRepository = container.resolve('bookRepository');
-    authorBookRepository = container.resolve('authorBookRepository');
+    authorRepository = container.resolve(AUTHOR_REPOSITORY);
+    bookRepository = container.resolve(BOOK_REPOSITORY);
+    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
 
     authHelper = new AuthHelper(container);
 

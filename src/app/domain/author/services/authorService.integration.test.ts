@@ -13,6 +13,9 @@ import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { AuthorBookRepository } from '../../authorBook/repositories/authorBookRepository';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { AUTHOR_REPOSITORY, AUTHOR_SERVICE } from '../authorInjectionSymbols';
+import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY } from '../../authorBook/authorBookInjectionSymbols';
 
 describe('AuthorService', () => {
   let authorService: AuthorService;
@@ -27,10 +30,10 @@ describe('AuthorService', () => {
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, AuthorBookModule, LoggerModule]);
 
-    authorService = container.resolve('authorService');
-    authorRepository = container.resolve('authorRepository');
-    bookRepository = container.resolve('bookRepository');
-    authorBookRepository = container.resolve('authorBookRepository');
+    authorService = container.resolve(AUTHOR_SERVICE);
+    authorRepository = container.resolve(AUTHOR_REPOSITORY);
+    bookRepository = container.resolve(BOOK_REPOSITORY);
+    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();

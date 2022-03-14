@@ -9,6 +9,8 @@ import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { AUTHOR_MAPPER } from '../authorInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('AuthorMapper', () => {
   let authorMapper: AuthorMapper;
@@ -20,8 +22,8 @@ describe('AuthorMapper', () => {
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, LoggerModule]);
 
-    authorMapper = container.resolve('authorMapper');
-    entityManager = container.resolve('entityManager');
+    authorMapper = container.resolve(AUTHOR_MAPPER);
+    entityManager = container.resolve(ENTITY_MANAGER);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
   });

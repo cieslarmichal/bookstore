@@ -9,6 +9,8 @@ import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
+import { CATEGORY_MAPPER } from '../categoryInjectionSymbols';
 
 describe('CategoryMapper', () => {
   let categoryMapper: CategoryMapper;
@@ -20,8 +22,8 @@ describe('CategoryMapper', () => {
 
     const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule]);
 
-    categoryMapper = container.resolve('categoryMapper');
-    entityManager = container.resolve('entityManager');
+    categoryMapper = container.resolve(CATEGORY_MAPPER);
+    entityManager = container.resolve(ENTITY_MANAGER);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
   });

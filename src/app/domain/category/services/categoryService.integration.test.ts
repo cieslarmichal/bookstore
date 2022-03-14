@@ -9,6 +9,7 @@ import { AuthorModule } from '../../author/authorModule';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { CATEGORY_REPOSITORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
@@ -20,8 +21,8 @@ describe('CategoryService', () => {
 
     const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule]);
 
-    categoryService = container.resolve('categoryService');
-    categoryRepository = container.resolve('categoryRepository');
+    categoryService = container.resolve(CATEGORY_SERVICE);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
   });

@@ -3,6 +3,13 @@ import { errorMiddleware } from './app/middlewares';
 import helmet from 'helmet';
 import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
 import { AwilixContainer } from 'awilix';
+import {
+  AUTHOR_BOOK_CONTROLLER,
+  AUTHOR_CONTROLLER,
+  BOOK_CONTROLLER,
+  CATEGORY_CONTROLLER,
+  USER_CONTROLLER,
+} from './app/controllers/controllersInjectionSymbols';
 
 export class App {
   public instance: express.Application;
@@ -18,11 +25,11 @@ export class App {
     this.instance.use(express.urlencoded({ extended: false }));
     this.instance.use(jsonMiddleware);
 
-    const bookController = this.container.resolve('bookController');
-    const authorController = this.container.resolve('authorController');
-    const userController = this.container.resolve('userController');
-    const categoryController = this.container.resolve('categoryController');
-    const authorBookController = this.container.resolve('authorBookController');
+    const bookController = this.container.resolve(BOOK_CONTROLLER);
+    const authorController = this.container.resolve(AUTHOR_CONTROLLER);
+    const userController = this.container.resolve(USER_CONTROLLER);
+    const categoryController = this.container.resolve(CATEGORY_CONTROLLER);
+    const authorBookController = this.container.resolve(AUTHOR_BOOK_CONTROLLER);
 
     this.instance.use('/', bookController.router);
     this.instance.use('/', authorController.router);

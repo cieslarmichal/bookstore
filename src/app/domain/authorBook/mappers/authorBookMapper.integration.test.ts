@@ -14,6 +14,8 @@ import { CategoryTestDataGenerator } from '../../category/testDataGenerators/cat
 import { Category } from '../../category/entities/category';
 import { Book } from '../../book/entities/book';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { AUTHOR_BOOK_MAPPER } from '../authorBookInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('AuthorBookMapper', () => {
   let authorBookMapper: AuthorBookMapper;
@@ -27,8 +29,8 @@ describe('AuthorBookMapper', () => {
 
     const container = await createDIContainer([DbModule, AuthorBookModule, AuthorModule, LoggerModule]);
 
-    authorBookMapper = container.resolve('authorBookMapper');
-    entityManager = container.resolve('entityManager');
+    authorBookMapper = container.resolve(AUTHOR_BOOK_MAPPER);
+    entityManager = container.resolve(ENTITY_MANAGER);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();

@@ -17,6 +17,7 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
+import { HASH_SERVICE, USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -48,8 +49,8 @@ describe(`UserController (${baseUrl})`, () => {
       LoggerModule,
     ]);
 
-    userRepository = container.resolve('userRepository');
-    hashService = container.resolve('hashService');
+    userRepository = container.resolve(USER_REPOSITORY);
+    hashService = container.resolve(HASH_SERVICE);
 
     const app = new App(container);
 

@@ -11,6 +11,8 @@ import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/p
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { Category } from '../../category/entities/category';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { BOOK_MAPPER } from '../bookInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
@@ -23,8 +25,8 @@ describe('BookMapper', () => {
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, LoggerModule]);
 
-    bookMapper = container.resolve('bookMapper');
-    entityManager = container.resolve('entityManager');
+    bookMapper = container.resolve(BOOK_MAPPER);
+    entityManager = container.resolve(ENTITY_MANAGER);
 
     bookTestDataGenerator = new BookTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();

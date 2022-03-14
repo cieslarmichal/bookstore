@@ -17,6 +17,7 @@ import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
+import { AUTHOR_REPOSITORY } from '../../domain/author/authorInjectionSymbols';
 
 const baseUrl = '/authors';
 
@@ -46,7 +47,7 @@ describe(`AuthorController (${baseUrl})`, () => {
       LoggerModule,
     ]);
 
-    authorRepository = container.resolve('authorRepository');
+    authorRepository = container.resolve(AUTHOR_REPOSITORY);
 
     authHelper = new AuthHelper(container);
 

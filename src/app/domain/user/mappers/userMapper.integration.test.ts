@@ -8,6 +8,8 @@ import { DbModule } from '../../../shared';
 import { UserModule } from '../userModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { USER_MAPPER } from '../userInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('UserMapper', () => {
   let userMapper: UserMapper;
@@ -19,8 +21,8 @@ describe('UserMapper', () => {
 
     const container = await createDIContainer([DbModule, UserModule, LoggerModule]);
 
-    userMapper = container.resolve('userMapper');
-    entityManager = container.resolve('entityManager');
+    userMapper = container.resolve(USER_MAPPER);
+    entityManager = container.resolve(ENTITY_MANAGER);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });

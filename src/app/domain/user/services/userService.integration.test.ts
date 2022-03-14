@@ -11,6 +11,7 @@ import { HashService } from './hashService';
 import { UserDto } from '../dtos';
 import { UserRole } from '../types';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { HASH_SERVICE, TOKEN_SERVICE, USER_REPOSITORY, USER_SERVICE } from '../userInjectionSymbols';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -24,10 +25,10 @@ describe('UserService', () => {
 
     const container = await createDIContainer([DbModule, UserModule, LoggerModule]);
 
-    userService = container.resolve('userService');
-    userRepository = container.resolve('userRepository');
-    tokenService = container.resolve('tokenService');
-    hashService = container.resolve('hashService');
+    userService = container.resolve(USER_SERVICE);
+    userRepository = container.resolve(USER_REPOSITORY);
+    tokenService = container.resolve(TOKEN_SERVICE);
+    hashService = container.resolve(HASH_SERVICE);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });
