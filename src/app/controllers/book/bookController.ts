@@ -5,7 +5,7 @@ import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookErrorMiddleware } from './middlewares';
-import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, ControllerResponse, PaginationDataParser, sendResponseMiddleware } from '../shared';
 import {
   CreateBookBodyDto,
   CreateBookResponseData,
@@ -20,7 +20,7 @@ import {
   UpdateBookResponseData,
   UpdateBookResponseDto,
 } from './dtos';
-import { FindBooksResponseData, FindBooksResponseDto } from './dtos/findBooksDto';
+import { FindBooksQueryDto, FindBooksResponseData, FindBooksResponseDto } from './dtos/findBooksDto';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
@@ -103,7 +103,11 @@ export class BookController {
   }
 
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    const booksDto = await this.bookService.findBooks();
+    const findBooksQueryDto = RecordToInstanceTransformer.transform(request.query, FindBooksQueryDto);
+
+    const paginationData = PaginationDataParser.parse(request.query);
+
+    const booksDto = await this.bookService.findBooks(findBooksQueryDto, paginationData);
 
     const responseData = new FindBooksResponseData(booksDto);
 

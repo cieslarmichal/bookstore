@@ -1,8 +1,7 @@
 import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
-import { BookFormat, BookLanguage } from '../../../domain/book/types';
-import { BookDto } from './bookDto';
+import { BookFormat, BookLanguage } from '../../types';
 
-export class FindBooksQueryDto {
+export class FindBooksData {
   @IsOptional()
   @IsString()
   public readonly title?: string;
@@ -26,12 +25,4 @@ export class FindBooksQueryDto {
   @IsOptional()
   @IsUUID('4')
   public categoryId?: string;
-}
-
-export class FindBooksResponseData {
-  public constructor(public readonly books: BookDto[]) {}
-}
-
-export class FindBooksResponseDto {
-  public constructor(public readonly data: FindBooksResponseData, public readonly statusCode: number) {}
 }

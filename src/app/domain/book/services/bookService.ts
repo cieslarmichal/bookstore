@@ -1,8 +1,10 @@
 import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { PaginationData } from '../../shared';
 import { BookDto } from '../dtos';
 import { BookNotFound } from '../errors';
 import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
+import { FindBooksData } from './types/findBooksData';
 
 export class BookService {
   public constructor(private readonly bookRepository: BookRepository, private readonly loggerService: LoggerService) {}
@@ -27,8 +29,8 @@ export class BookService {
     return book;
   }
 
-  public async findBooks(): Promise<BookDto[]> {
-    const books = await this.bookRepository.findMany({});
+  public async findBooks(findBooksData: FindBooksData, paginationData: PaginationData): Promise<BookDto[]> {
+    const books = await this.bookRepository.findMany(findBooksData, paginationData);
 
     return books;
   }

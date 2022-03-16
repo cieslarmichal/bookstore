@@ -120,22 +120,10 @@ describe('BookService', () => {
         categoryId,
       });
 
-      const foundBooks = await bookService.findBooks();
+      const foundBooks = await bookService.findBooks({}, { page: 1, limit: 5 });
 
       expect(foundBooks.length).toBe(1);
       expect(foundBooks[0]).toStrictEqual(book);
-    });
-
-    it('should throw if book with given id does not exist in db', async () => {
-      expect.assertions(1);
-
-      const { id } = bookTestDataGenerator.generateData();
-
-      try {
-        await bookService.findBook(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(BookNotFound);
-      }
     });
   });
 
