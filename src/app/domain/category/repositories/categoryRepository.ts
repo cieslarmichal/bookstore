@@ -3,6 +3,7 @@ import { CategoryDto } from '../dtos';
 import { Category } from '../entities/category';
 import { CategoryMapper } from '../mappers/categoryMapper';
 import { CategoryNotFound } from '../errors';
+import { PaginationData } from '../../shared';
 
 @EntityRepository()
 export class CategoryRepository {
@@ -30,10 +31,18 @@ export class CategoryRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindConditions<Category>): Promise<CategoryDto[]> {
-    const categorys = await this.entityManager.find(Category, conditions);
+  public async findMany(conditions: FindConditions<Category>, paginationData: PaginationData): Promise<CategoryDto[]> {
+    const queryBuilder = this.entityManager.getRepository(Category).createQueryBuilder('category');
 
-    return categorys.map((category) => this.categoryMapper.mapEntityToDto(category));
+    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+
+    const categories = await queryBuilder
+      .where(conditions)
+      .skip(numberOfEnitiesToSkip)
+      .take(paginationData.limit)
+      .getMany();
+
+    return categories.map((category) => this.categoryMapper.mapEntityToDto(category));
   }
 
   public async updateOne(id: string, categoryData: Partial<Category>): Promise<CategoryDto> {

@@ -1,8 +1,9 @@
 import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { PaginationData } from '../../shared';
 import { CategoryDto } from '../dtos';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { CategoryRepository } from '../repositories/categoryRepository';
-import { CreateCategoryData } from './types';
+import { CreateCategoryData, FindCategoriesData } from './types';
 
 export class CategoryService {
   public constructor(
@@ -36,6 +37,15 @@ export class CategoryService {
     }
 
     return category;
+  }
+
+  public async findCategories(
+    findCategoriesData: FindCategoriesData,
+    paginationData: PaginationData,
+  ): Promise<CategoryDto[]> {
+    const categories = await this.categoryRepository.findMany(findCategoriesData, paginationData);
+
+    return categories;
   }
 
   public async removeCategory(categoryId: string): Promise<void> {

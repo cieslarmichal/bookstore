@@ -10,7 +10,7 @@ export class CreateAuthorBodyDto {
 
   @IsString()
   @IsOptional()
-  public readonly about?: string | null;
+  public readonly about?: string;
 }
 
 export class CreateAuthorResponseData {

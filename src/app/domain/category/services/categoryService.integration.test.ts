@@ -93,6 +93,23 @@ describe('CategoryService', () => {
     });
   });
 
+  describe('Find categories', () => {
+    it('finds categories in database', async () => {
+      expect.assertions(2);
+
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({
+        name,
+      });
+
+      const foundCategories = await categoryService.findCategories({}, { page: 1, limit: 5 });
+
+      expect(foundCategories.length).toBe(1);
+      expect(foundCategories[0]).toStrictEqual(category);
+    });
+  });
+
   describe('Remove category', () => {
     it('removes category from database', async () => {
       expect.assertions(1);

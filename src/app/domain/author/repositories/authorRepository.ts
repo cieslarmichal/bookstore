@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindConditions, LimitOnUpdateNotSupportedError } from 'typeorm';
+import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
 import { AuthorDto } from '../dtos';
 import { Author } from '../entities/author';
 import { AuthorMapper } from '../mappers/authorMapper';

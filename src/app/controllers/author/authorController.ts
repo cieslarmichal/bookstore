@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { AuthorService } from '../../domain/author/services/authorService';
-import { CreateAuthorData, FindAuthorsData, UpdateAuthorData } from '../../domain/author/services/types';
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -84,9 +83,7 @@ export class AuthorController {
   public async createAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const createAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAuthorBodyDto);
 
-    const createAuthorData = RecordToInstanceTransformer.strictTransform(createAuthorBodyDto, CreateAuthorData);
-
-    const authorDto = await this.authorService.createAuthor(createAuthorData);
+    const authorDto = await this.authorService.createAuthor(createAuthorBodyDto);
 
     const responseData = new CreateAuthorResponseData(authorDto);
 
@@ -106,11 +103,9 @@ export class AuthorController {
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
     const findAuthorsQueryDto = RecordToInstanceTransformer.transform(request.query, FindAuthorsQueryDto);
 
-    const findAuthorsData = RecordToInstanceTransformer.strictTransform(findAuthorsQueryDto, FindAuthorsData);
-
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const authorsDto = await this.authorService.findAuthors(findAuthorsData, paginationData);
+    const authorsDto = await this.authorService.findAuthors(findAuthorsQueryDto, paginationData);
 
     const responseData = new FindAuthorsResponseData(authorsDto);
 
@@ -122,9 +117,7 @@ export class AuthorController {
 
     const updateAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateAuthorBodyDto);
 
-    const updateAuthorData = RecordToInstanceTransformer.strictTransform(updateAuthorBodyDto, UpdateAuthorData);
-
-    const authorDto = await this.authorService.updateAuthor(id, updateAuthorData);
+    const authorDto = await this.authorService.updateAuthor(id, updateAuthorBodyDto);
 
     const responseData = new UpdateAuthorResponseData(authorDto);
 

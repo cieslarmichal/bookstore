@@ -91,7 +91,7 @@ describe('AuthorService', () => {
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const foundAuthors = await authorService.findAuthors({}, { offset: 0, limit: 5 });
+      const foundAuthors = await authorService.findAuthors({}, { page: 1, limit: 5 });
 
       expect(foundAuthors.length).toBe(1);
       expect(foundAuthors[0]).toStrictEqual(author);
