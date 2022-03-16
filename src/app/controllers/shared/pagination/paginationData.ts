@@ -3,10 +3,10 @@ import { RecordToInstanceTransformer } from '../../../shared';
 
 export class PaginationData {
   @IsNumber()
-  public limit: number;
+  public page: number;
 
   @IsNumber()
-  public offset: number;
+  public limit: number;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(PaginationData);
 }
