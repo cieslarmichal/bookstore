@@ -26,7 +26,7 @@ export class AuthorBookService {
     const author = await this.authorService.findAuthor(authorId);
 
     if (!author) {
-      throw new AuthorBookNotFound({ id: authorId });
+      throw new AuthorNotFound({ id: authorId });
     }
 
     const book = await this.bookService.findBook(bookId);

@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { AuthorBook } from '../../authorBook/entities/authorBook';
+import { BookCategory } from '../../bookCategory/entities/bookCategory';
 import { Category } from '../../category/entities/category';
 import { BookFormat, BookLanguage } from '../types';
 
@@ -63,11 +64,6 @@ export class Book {
   public authorBooks?: AuthorBook[] | null;
 
   @IsOptional()
-  @ManyToOne(() => Category)
-  public category: Category | null;
-
-  @IsOptional()
-  @IsUUID('4')
-  @Column()
-  public categoryId: string;
+  @OneToMany(() => BookCategory, (bookCategory) => bookCategory.book)
+  public bookCategories?: BookCategory[] | null;
 }
