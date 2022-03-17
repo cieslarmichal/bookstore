@@ -1,52 +1,44 @@
-import { AuthorBookRepository } from '../repositories/bookCategoryRepository';
-import { AuthorBookService } from './bookCategoryService';
-import { AuthorBookTestDataGenerator } from '../testDataGenerators/bookCategoryTestDataGenerator';
+import { BookCategoryRepository } from '../repositories/bookCategoryRepository';
+import { BookCategoryService } from './bookCategoryService';
+import { BookCategoryTestDataGenerator } from '../testDataGenerators/bookCategoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
-import { AuthorBookModule } from '../bookCategoryModule';
-import { AuthorModule } from '../../author/authorModule';
-import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
+import { BookCategoryModule } from '../bookCategoryModule';
+import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
-import { AuthorRepository } from '../../author/repositories/authorRepository';
+import { CategoryRepository } from '../../category/repositories/categoryRepository';
 import { BookRepository } from '../../book/repositories/bookRepository';
-import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { AUTHOR_BOOK_REPOSITORY, AUTHOR_BOOK_SERVICE } from '../bookCategoryInjectionSymbols';
-import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
 import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
+import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
+import { BOOK_CATEGORY_REPOSITORY, BOOK_CATEGORY_SERVICE } from '../bookCategoryInjectionSymbols';
+import { CATEGORY_REPOSITORY } from '../../category/categoryInjectionSymbols';
 
-describe('AuthorBookService', () => {
-  let authorBookService: AuthorBookService;
-  let authorBookRepository: AuthorBookRepository;
-  let authorRepository: AuthorRepository;
+describe('BookCategoryService', () => {
+  let bookCategoryService: BookCategoryService;
+  let bookCategoryRepository: BookCategoryRepository;
+  let categoryRepository: CategoryRepository;
   let bookRepository: BookRepository;
-  let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
+  let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
+  let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([
-      DbModule,
-      CategoryModule,
-      BookModule,
-      AuthorModule,
-      AuthorBookModule,
-      LoggerModule,
-    ]);
+    const container = await createDIContainer([DbModule, CategoryModule, BookModule, BookCategoryModule, LoggerModule]);
 
-    authorBookService = container.resolve(AUTHOR_BOOK_SERVICE);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
-    authorRepository = container.resolve(AUTHOR_REPOSITORY);
+    bookCategoryService = container.resolve(BOOK_CATEGORY_SERVICE);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
     bookRepository = container.resolve(BOOK_REPOSITORY);
 
-    authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
-    authorTestDataGenerator = new AuthorTestDataGenerator();
+    bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
+    categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
@@ -54,18 +46,17 @@ describe('AuthorBookService', () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Create authorBook', () => {
-    it('creates authorBook in database', async () => {
+  describe('Create bookCategory', () => {
+    it('creates bookCategory in database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({
-        firstName,
-        lastName,
+      const category = await categoryRepository.createOne({
+        name,
       });
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -73,30 +64,28 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
-      const createdAuthorBookDto = await authorBookService.createAuthorBook({
-        authorId: author.id,
+      const createdBookCategoryDto = await bookCategoryService.createBookCategory({
+        categoryId: category.id,
         bookId: book.id,
       });
 
-      const authorBookDto = await authorBookRepository.findOneById(createdAuthorBookDto.id);
+      const bookCategoryDto = await bookCategoryRepository.findOneById(createdBookCategoryDto.id);
 
-      expect(authorBookDto).not.toBeNull();
+      expect(bookCategoryDto).not.toBeNull();
     });
 
-    it('should not create authorBook and throw if authorBook with the same name exists', async () => {
+    it('should not create bookCategory and throw if bookCategory with the same bookId and categoryId exists', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({
-        firstName,
-        lastName,
+      const category = await categoryRepository.createOne({
+        name,
       });
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -104,37 +93,35 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
-      await authorBookService.createAuthorBook({
-        authorId: author.id,
+      await bookCategoryService.createBookCategory({
+        categoryId: category.id,
         bookId: book.id,
       });
 
       try {
-        await authorBookService.createAuthorBook({
-          authorId: author.id,
+        await bookCategoryService.createBookCategory({
+          categoryId: category.id,
           bookId: book.id,
         });
       } catch (error) {
-        expect(error).toBeInstanceOf(AuthorBookAlreadyExists);
+        expect(error).toBeInstanceOf(BookCategoryAlreadyExists);
       }
     });
   });
 
-  describe('Remove authorBook', () => {
-    it('removes authorBook from database', async () => {
+  describe('Remove bookCategory', () => {
+    it('removes bookCategory from database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({
-        firstName,
-        lastName,
+      const category = await categoryRepository.createOne({
+        name,
       });
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -142,30 +129,29 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
-      const authorBook = await authorBookRepository.createOne({
-        authorId: author.id,
+      const bookCategory = await bookCategoryRepository.createOne({
+        categoryId: category.id,
         bookId: book.id,
       });
 
-      await authorBookService.removeAuthorBook({ authorId: author.id, bookId: book.id });
+      await bookCategoryService.removeBookCategory({ categoryId: category.id, bookId: book.id });
 
-      const authorBookDto = await authorBookRepository.findOneById(authorBook.id);
+      const bookCategoryDto = await bookCategoryRepository.findOneById(bookCategory.id);
 
-      expect(authorBookDto).toBeNull();
+      expect(bookCategoryDto).toBeNull();
     });
 
-    it('should throw if authorBook with given id does not exist', async () => {
+    it('should throw if bookCategory with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+      const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
 
       try {
-        await authorBookService.removeAuthorBook({ authorId, bookId });
+        await bookCategoryService.removeBookCategory({ categoryId, bookId });
       } catch (error) {
-        expect(error).toBeInstanceOf(AuthorBookNotFound);
+        expect(error).toBeInstanceOf(BookCategoryNotFound);
       }
     });
   });

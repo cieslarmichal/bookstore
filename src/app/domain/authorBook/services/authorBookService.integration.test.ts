@@ -65,7 +65,7 @@ describe('AuthorBookService', () => {
         lastName,
       });
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -73,7 +73,6 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const createdAuthorBookDto = await authorBookService.createAuthorBook({
@@ -86,7 +85,7 @@ describe('AuthorBookService', () => {
       expect(authorBookDto).not.toBeNull();
     });
 
-    it('should not create authorBook and throw if authorBook with the same name exists', async () => {
+    it('should not create authorBook and throw if authorBook with the authorId and bookId exists', async () => {
       expect.assertions(1);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -96,7 +95,7 @@ describe('AuthorBookService', () => {
         lastName,
       });
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -104,7 +103,6 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       await authorBookService.createAuthorBook({
@@ -134,7 +132,7 @@ describe('AuthorBookService', () => {
         lastName,
       });
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -142,7 +140,6 @@ describe('AuthorBookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const authorBook = await authorBookRepository.createOne({

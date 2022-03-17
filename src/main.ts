@@ -10,6 +10,7 @@ import { ConfigLoader } from './configLoader';
 import { CategoryModule } from './app/domain/category/categoryModule';
 import { LoggerModule } from './app/shared/logger/loggerModule';
 import { AuthorBookModule } from './app/domain/authorBook/authorBookModule';
+import { BookCategoryModule } from './app/domain/bookCategory/bookCategoryModule';
 
 async function main() {
   ConfigLoader.loadConfig();
@@ -23,6 +24,7 @@ async function main() {
     ControllersModule,
     AuthorBookModule,
     LoggerModule,
+    BookCategoryModule,
   ]);
 
   const app = new App(container);
