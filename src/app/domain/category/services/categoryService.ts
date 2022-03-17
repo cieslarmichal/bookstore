@@ -48,6 +48,12 @@ export class CategoryService {
     return categories;
   }
 
+  public async findCategoriesByBookId(bookId: string): Promise<CategoryDto[]> {
+    const categories = await this.categoryRepository.findManyByBookId(bookId);
+
+    return categories;
+  }
+
   public async removeCategory(categoryId: string): Promise<void> {
     this.loggerService.debug('Removing category...', { categoryId });
 

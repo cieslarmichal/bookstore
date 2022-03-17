@@ -45,6 +45,18 @@ export class CategoryRepository {
     return categories.map((category) => this.categoryMapper.mapEntityToDto(category));
   }
 
+  public async findManyByBookId(bookId: string): Promise<CategoryDto[]> {
+    const queryBuilder = this.entityManager.getRepository(Category).createQueryBuilder('category');
+
+    const categories = await queryBuilder
+      .leftJoinAndSelect('category.bookCategories', 'bookCategories')
+      .leftJoinAndSelect('bookCategories.book', 'book')
+      .where('book.id = :bookId', { bookId })
+      .getMany();
+
+    return categories.map((category) => this.categoryMapper.mapEntityToDto(category));
+  }
+
   public async updateOne(id: string, categoryData: Partial<Category>): Promise<CategoryDto> {
     const category = await this.findOneById(id);
 
