@@ -1,6 +1,5 @@
 import { IsOptional, IsDate, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne, Unique } from 'typeorm';
-import { Author } from '../../author/entities/author';
 import { Book } from '../../book/entities/book';
 import { Category } from '../../category/entities/category';
 
