@@ -1,6 +1,7 @@
 import express from 'express';
-import { errorMiddleware } from './app/middlewares';
 import helmet from 'helmet';
+import { queryParser } from 'express-query-parser';
+import { errorMiddleware } from './app/middlewares';
 import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
 import { AwilixContainer } from 'awilix';
 import {
@@ -23,6 +24,12 @@ export class App {
     this.instance.use(helmet());
     this.instance.use(express.json());
     this.instance.use(express.urlencoded({ extended: false }));
+    this.instance.use(
+      queryParser({
+        parseBoolean: true,
+        parseNumber: true,
+      }),
+    );
     this.instance.use(jsonMiddleware);
 
     const bookController = this.container.resolve(BOOK_CONTROLLER);
