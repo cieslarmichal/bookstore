@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
 import { BookDto } from './bookDto';
 
@@ -21,9 +21,6 @@ export class CreateBookBodyDto {
 
   @IsNumber()
   public readonly price: number;
-
-  @IsUUID('4')
-  public readonly categoryId: string;
 }
 
 export class CreateBookResponseData {

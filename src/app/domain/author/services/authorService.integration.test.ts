@@ -102,7 +102,7 @@ describe('AuthorService', () => {
     it('finds authors by book id in database', async () => {
       expect.assertions(6);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -110,7 +110,6 @@ describe('AuthorService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const firstAuthorData = authorTestDataGenerator.generateData();
