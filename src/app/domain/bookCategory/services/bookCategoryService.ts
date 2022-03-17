@@ -1,8 +1,8 @@
 import { LoggerService } from '../../../shared/logger/services/loggerService';
-import { AuthorDto } from '../../author/dtos';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';
+import { CategoryDto } from '../../category/dtos';
 import { CategoryNotFound } from '../../category/errors';
 import { CategoryService } from '../../category/services/categoryService';
 import { BookCategoryDto } from '../dtos';
@@ -48,24 +48,24 @@ export class BookCategoryService {
     return bookCategory;
   }
 
-  public async findCategoriesOfBook(bookId: string): Promise<BookDto[]> {
+  public async findCategoriesOfBook(bookId: string): Promise<CategoryDto[]> {
     const book = await this.bookService.findBook(bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.categoryService.findCategoriesByBookId(authorId);
+    return this.categoryService.findCategoriesByBookId(bookId);
   }
 
-  public async findBooksFromCategory(bookId: string): Promise<AuthorDto[]> {
-    const book = await this.bookService.findBook(bookId);
+  public async findBooksFromCategory(categoryId: string): Promise<BookDto[]> {
+    const category = await this.categoryService.findCategory(categoryId);
 
-    if (!book) {
-      throw new BookNotFound({ id: bookId });
+    if (!category) {
+      throw new CategoryNotFound({ id: categoryId });
     }
 
-    return this.authorService.findBooksByCategoryId(bookId);
+    return this.bookService.findBooksByCategoryId(categoryId);
   }
 
   public async removeBookCategory(bookCategoryData: RemoveBookCategoryData): Promise<void> {
