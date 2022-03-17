@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../types';
 
 export class CreateBookData {
@@ -20,7 +20,4 @@ export class CreateBookData {
 
   @IsNumber()
   public price: number;
-
-  @IsUUID('4')
-  public categoryId: string;
 }

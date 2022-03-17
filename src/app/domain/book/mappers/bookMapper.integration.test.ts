@@ -36,7 +36,7 @@ describe('BookMapper', () => {
     it('map book from entity to dto', async () => {
       expect.assertions(1);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -44,7 +44,6 @@ describe('BookMapper', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);
@@ -56,7 +55,6 @@ describe('BookMapper', () => {
         createdAt: savedBook.createdAt,
         updatedAt: savedBook.updatedAt,
         title: savedBook.title,
-        categoryId: savedBook.categoryId,
         releaseYear: savedBook.releaseYear,
         language: savedBook.language,
         format: savedBook.format,
@@ -68,8 +66,7 @@ describe('BookMapper', () => {
     it('maps a book with optional field from entity to dto', async () => {
       expect.assertions(1);
 
-      const { title, releaseYear, language, format, description, price, categoryId } =
-        bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, description, price } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -78,7 +75,6 @@ describe('BookMapper', () => {
         format,
         description: description as string,
         price,
-        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);
@@ -90,7 +86,6 @@ describe('BookMapper', () => {
         createdAt: savedBook.createdAt,
         updatedAt: savedBook.updatedAt,
         title: savedBook.title,
-        categoryId: savedBook.categoryId,
         releaseYear: savedBook.releaseYear,
         language: savedBook.language,
         format: savedBook.format,

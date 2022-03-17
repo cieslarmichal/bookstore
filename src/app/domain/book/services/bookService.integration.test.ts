@@ -55,7 +55,7 @@ describe('BookService', () => {
     it('creates book in database', async () => {
       expect.assertions(1);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBookDto = await bookService.createBook({
         title,
@@ -63,7 +63,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const bookDto = await bookRepository.findOneById(createdBookDto.id);
@@ -76,7 +75,7 @@ describe('BookService', () => {
     it('finds book by id in database', async () => {
       expect.assertions(1);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -84,7 +83,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const foundBook = await bookService.findBook(book.id);
@@ -109,7 +107,7 @@ describe('BookService', () => {
     it('finds books in database', async () => {
       expect.assertions(2);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -117,7 +115,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const foundBooks = await bookService.findBooks({}, { page: 1, limit: 5 });
@@ -139,7 +136,6 @@ describe('BookService', () => {
         language: firstBookData.language,
         format: firstBookData.format,
         price: firstBookData.price,
-        categoryId: firstBookData.categoryId,
       });
 
       const secondBookData = bookTestDataGenerator.generateData();
@@ -150,7 +146,6 @@ describe('BookService', () => {
         language: secondBookData.language,
         format: secondBookData.format,
         price: secondBookData.price,
-        categoryId: secondBookData.categoryId,
       });
 
       const thirdBookData = bookTestDataGenerator.generateData();
@@ -161,7 +156,6 @@ describe('BookService', () => {
         language: thirdBookData.language,
         format: thirdBookData.format,
         price: thirdBookData.price,
-        categoryId: thirdBookData.categoryId,
       });
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -187,7 +181,7 @@ describe('BookService', () => {
     it('updates book in database', async () => {
       expect.assertions(2);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const { price: newPrice } = bookTestDataGenerator.generateData();
 
@@ -197,7 +191,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const updatedBook = await bookService.updateBook(book.id, { price: newPrice });
@@ -223,7 +216,7 @@ describe('BookService', () => {
     it('removes book from database', async () => {
       expect.assertions(1);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -231,7 +224,6 @@ describe('BookService', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       await bookService.removeBook(book.id);

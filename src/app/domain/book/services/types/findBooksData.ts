@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../types';
 
 export class FindBooksData {
@@ -8,21 +8,17 @@ export class FindBooksData {
 
   @IsOptional()
   @IsNumber()
-  public releaseYear?: number;
+  public readonly releaseYear?: number;
 
   @IsOptional()
   @IsEnum(BookLanguage)
-  public language?: BookLanguage;
+  public readonly language?: BookLanguage;
 
   @IsOptional()
   @IsEnum(BookFormat)
-  public format?: BookFormat;
+  public readonly format?: BookFormat;
 
   @IsOptional()
   @IsNumber()
-  public price?: number;
-
-  @IsOptional()
-  @IsUUID('4')
-  public categoryId?: string;
+  public readonly price?: number;
 }
