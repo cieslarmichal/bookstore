@@ -6,17 +6,17 @@ import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookCategoryModule } from '../bookCategoryModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
-import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { Author } from '../../author/entities/author';
 import { Book } from '../../book/entities/book';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { AUTHOR_BOOK_MAPPER } from '../bookCategoryInjectionSymbols';
+import { BOOK_CATEGORY_MAPPER } from '../bookCategoryInjectionSymbols';
 import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
+import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
+import { Category } from '../../category/entities/category';
 
 describe('BookCategoryMapper', () => {
-  let authorBookMapper: BookCategoryMapper;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
+  let bookCategoryMapper: BookCategoryMapper;
+  let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
   let entityManager: EntityManager;
 
@@ -25,10 +25,10 @@ describe('BookCategoryMapper', () => {
 
     const container = await createDIContainer([DbModule, BookCategoryModule, LoggerModule]);
 
-    authorBookMapper = container.resolve(AUTHOR_BOOK_MAPPER);
+    bookCategoryMapper = container.resolve(BOOK_CATEGORY_MAPPER);
     entityManager = container.resolve(ENTITY_MANAGER);
 
-    authorTestDataGenerator = new AuthorTestDataGenerator();
+    categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
@@ -36,20 +36,19 @@ describe('BookCategoryMapper', () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Map authorBook', () => {
-    it('map authorBook from entity to dto', async () => {
+  describe('Map bookCategory', () => {
+    it('map bookCategory from entity to dto', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const createdAuthor = entityManager.create(Author, {
-        firstName,
-        lastName,
+      const createdCategory = entityManager.create(Category, {
+        name,
       });
 
-      const savedAuthor = await entityManager.save(createdAuthor);
+      const savedCategory = await entityManager.save(createdCategory);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -57,26 +56,25 @@ describe('BookCategoryMapper', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);
 
       const createdBookCategory = entityManager.create(BookCategory, {
-        authorId: savedAuthor.id,
         bookId: savedBook.id,
+        categoryId: savedCategory.id,
       });
 
       const savedBookCategory = await entityManager.save(createdBookCategory);
 
-      const authorBookDto = authorBookMapper.mapEntityToDto(savedBookCategory);
+      const bookCategoryDto = bookCategoryMapper.mapEntityToDto(savedBookCategory);
 
-      expect(authorBookDto).toEqual({
+      expect(bookCategoryDto).toEqual({
         id: savedBookCategory.id,
         createdAt: savedBookCategory.createdAt,
         updatedAt: savedBookCategory.updatedAt,
-        authorId: savedAuthor.id,
         bookId: savedBook.id,
+        categoryId: savedCategory.id,
       });
     });
   });
