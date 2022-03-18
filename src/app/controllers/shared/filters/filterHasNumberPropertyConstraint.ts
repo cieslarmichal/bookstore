@@ -2,7 +2,7 @@ import { isNumber, ValidationArguments, ValidatorConstraint, ValidatorConstraint
 import { FilterProperty } from './filterProperty';
 
 @ValidatorConstraint()
-export class FilterHasNumberProperty implements ValidatorConstraintInterface {
+export class FilterHasNumberPropertyConstraint implements ValidatorConstraintInterface {
   public validate(filterProperty: FilterProperty<number>, args: ValidationArguments) {
     const entries = Object.entries(filterProperty);
     return entries.length === 1 && isNumber(entries[0][1]);

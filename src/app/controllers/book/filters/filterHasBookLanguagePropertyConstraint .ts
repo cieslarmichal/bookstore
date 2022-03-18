@@ -3,7 +3,7 @@ import { BookLanguage } from '../../../domain/book/types';
 import { FilterProperty } from '../../shared/filters';
 
 @ValidatorConstraint()
-export class FilterHasBookLanguageProperty implements ValidatorConstraintInterface {
+export class FilterHasBookLanguagePropertyConstraint implements ValidatorConstraintInterface {
   public validate(filterProperty: FilterProperty<BookLanguage>, args: ValidationArguments) {
     const entries = Object.entries(filterProperty);
     return entries.length === 1 && isEnum(entries[0][1], BookLanguage);

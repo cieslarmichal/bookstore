@@ -1,2 +1,2 @@
-export * from './filterHasBookFormatProperty';
-export * from './filterHasBookLanguageProperty ';
+export * from './filterHasBookFormatPropertyConstraint';
+export * from './filterHasBookLanguagePropertyConstraint ';

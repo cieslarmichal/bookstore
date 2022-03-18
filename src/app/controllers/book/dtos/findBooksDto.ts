@@ -1,28 +1,32 @@
 import { IsOptional, Validate } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
-import { FilterHasNumberProperty, FilterHasStringProperty, FilterProperty } from '../../shared/filters';
-import { FilterHasBookFormatProperty, FilterHasBookLanguageProperty } from '../filters';
+import {
+  FilterHasNumberPropertyConstraint,
+  FilterHasStringPropertyConstraint,
+  FilterProperty,
+} from '../../shared/filters';
+import { FilterHasBookFormatPropertyConstraint, FilterHasBookLanguagePropertyConstraint } from '../filters';
 import { BookDto } from './bookDto';
 
 export class FindBooksQueryDto {
   @IsOptional()
-  @Validate(FilterHasStringProperty, {})
+  @Validate(FilterHasStringPropertyConstraint, {})
   public readonly title?: FilterProperty<string>;
 
   @IsOptional()
-  @Validate(FilterHasNumberProperty, {})
+  @Validate(FilterHasNumberPropertyConstraint, {})
   public readonly releaseYear?: FilterProperty<number>;
 
   @IsOptional()
-  @Validate(FilterHasBookLanguageProperty, {})
+  @Validate(FilterHasBookLanguagePropertyConstraint, {})
   public readonly language?: FilterProperty<BookLanguage>;
 
   @IsOptional()
-  @Validate(FilterHasBookFormatProperty, {})
+  @Validate(FilterHasBookFormatPropertyConstraint, {})
   public readonly format?: FilterProperty<BookFormat>;
 
   @IsOptional()
-  @Validate(FilterHasNumberProperty, {})
+  @Validate(FilterHasNumberPropertyConstraint, {})
   public readonly price?: FilterProperty<number>;
 }
 

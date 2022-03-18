@@ -3,7 +3,7 @@ import { BookFormat } from '../../../domain/book/types';
 import { FilterProperty } from '../../shared/filters';
 
 @ValidatorConstraint()
-export class FilterHasBookFormatProperty implements ValidatorConstraintInterface {
+export class FilterHasBookFormatPropertyConstraint implements ValidatorConstraintInterface {
   public validate(filterProperty: FilterProperty<BookFormat>, args: ValidationArguments) {
     const entries = Object.entries(filterProperty);
     return entries.length === 1 && isEnum(entries[0][1], BookFormat);

@@ -1,3 +1,3 @@
 export * from './filterProperty';
-export * from './filterHasStringProperty';
-export * from './filterHasNumberProperty';
+export * from './filterHasStringPropertyConstraint';
+export * from './filterHasNumberPropertyConstraint';
