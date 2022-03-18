@@ -1,6 +1,7 @@
-import { IsEnum, IsNumber, IsOptional, Validate } from 'class-validator';
+import { IsOptional, Validate } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
-import { FilterHasStringProperty, FilterProperty } from '../../shared/filters';
+import { FilterHasNumberProperty, FilterHasStringProperty, FilterProperty } from '../../shared/filters';
+import { FilterHasBookFormatProperty, FilterHasBookLanguageProperty } from '../filters';
 import { BookDto } from './bookDto';
 
 export class FindBooksQueryDto {
@@ -9,20 +10,20 @@ export class FindBooksQueryDto {
   public readonly title?: FilterProperty<string>;
 
   @IsOptional()
-  @IsNumber()
-  public readonly releaseYear?: number;
+  @Validate(FilterHasNumberProperty, {})
+  public readonly releaseYear?: FilterProperty<number>;
 
   @IsOptional()
-  @IsEnum(BookLanguage)
-  public readonly language?: BookLanguage;
+  @Validate(FilterHasBookLanguageProperty, {})
+  public readonly language?: FilterProperty<BookLanguage>;
 
   @IsOptional()
-  @IsEnum(BookFormat)
-  public readonly format?: BookFormat;
+  @Validate(FilterHasBookFormatProperty, {})
+  public readonly format?: FilterProperty<BookFormat>;
 
   @IsOptional()
-  @IsNumber()
-  public readonly price?: number;
+  @Validate(FilterHasNumberProperty, {})
+  public readonly price?: FilterProperty<number>;
 }
 
 export class FindBooksResponseData {

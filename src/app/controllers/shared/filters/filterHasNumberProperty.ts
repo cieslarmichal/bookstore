@@ -1,11 +1,11 @@
-import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
+import { isNumber, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { FilterProperty } from './filterProperty';
 
 @ValidatorConstraint()
 export class FilterHasNumberProperty implements ValidatorConstraintInterface {
   public validate(filterProperty: FilterProperty<number>, args: ValidationArguments) {
     const entries = Object.entries(filterProperty);
-    return entries.length === 1 && typeof entries[0][1] === 'number';
+    return entries.length === 1 && isNumber(entries[0][1]);
   }
 
   public defaultMessage(args: ValidationArguments) {
