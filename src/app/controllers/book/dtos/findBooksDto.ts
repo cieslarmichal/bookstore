@@ -5,7 +5,6 @@ import {
   FilterHasStringPropertyConstraint,
   FilterProperty,
 } from '../../shared/filters';
-import { FilterHasBookFormatPropertyConstraint, FilterHasBookLanguagePropertyConstraint } from '../filters';
 import { BookDto } from './bookDto';
 
 export class FindBooksQueryDto {
@@ -18,11 +17,11 @@ export class FindBooksQueryDto {
   public readonly releaseYear?: FilterProperty<number>;
 
   @IsOptional()
-  @Validate(FilterHasBookLanguagePropertyConstraint, {})
+  @Validate(FilterHasStringPropertyConstraint, {})
   public readonly language?: FilterProperty<BookLanguage>;
 
   @IsOptional()
-  @Validate(FilterHasBookFormatPropertyConstraint, {})
+  @Validate(FilterHasStringPropertyConstraint, {})
   public readonly format?: FilterProperty<BookFormat>;
 
   @IsOptional()
