@@ -1,13 +1,6 @@
-import {
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  Validate,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, Validate } from 'class-validator';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
+import { FilterHasStringProperty, FilterProperty } from '../../shared/filters';
 import { BookDto } from './bookDto';
 
 export class FindBooksQueryDto {
