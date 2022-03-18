@@ -3,12 +3,14 @@ import { LoadableModule } from '../shared';
 import { AuthorController } from './author/authorController';
 import { AuthorBookController } from './authorBook/authorBookController';
 import { BookController } from './book/bookController';
+import { BookCategoryController } from './bookCategory/bookCategoryController';
 import { CategoryController } from './category/categoryController';
 import {
   AUTHOR_BOOK_CONTROLLER,
   AUTHOR_CONTROLLER,
   AUTH_MIDDLEWARE,
   AUTH_SERVICE,
+  BOOK_CATEGORY_CONTROLLER,
   BOOK_CONTROLLER,
   CATEGORY_CONTROLLER,
   USER_CONTROLLER,
@@ -27,6 +29,7 @@ export class ControllersModule extends LoadableModule {
       [USER_CONTROLLER]: asClass(UserController, { lifetime: Lifetime.SINGLETON }),
       [CATEGORY_CONTROLLER]: asClass(CategoryController, { lifetime: Lifetime.SINGLETON }),
       [AUTHOR_BOOK_CONTROLLER]: asClass(AuthorBookController, { lifetime: Lifetime.SINGLETON }),
+      [BOOK_CATEGORY_CONTROLLER]: asClass(BookCategoryController, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

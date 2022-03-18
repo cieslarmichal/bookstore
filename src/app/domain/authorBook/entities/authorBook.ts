@@ -25,7 +25,7 @@ export class AuthorBook {
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
 
-  @ManyToOne(() => Author, (author) => author.authorBooks)
+  @ManyToOne(() => Author, (author) => author.authorBooks, { onDelete: 'CASCADE' })
   public author?: Author;
 
   @IsOptional()
@@ -33,7 +33,7 @@ export class AuthorBook {
   @Column({ type: 'uuid' })
   public authorId: string;
 
-  @ManyToOne(() => Book, (book) => book.authorBooks)
+  @ManyToOne(() => Book, (book) => book.authorBooks, { onDelete: 'CASCADE' })
   public book?: Book;
 
   @IsOptional()

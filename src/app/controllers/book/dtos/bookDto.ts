@@ -31,8 +31,5 @@ export class BookDto {
   @IsNumber()
   public readonly price: number;
 
-  @IsUUID('4')
-  public readonly categoryId: string;
-
   public static readonly create = RecordToInstanceTransformer.transformFactory(BookDto);
 }

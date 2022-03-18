@@ -18,6 +18,7 @@ import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
 import { BOOK_REPOSITORY } from '../../domain/book/bookInjectionSymbols';
+import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 
 const baseUrl = '/books';
 
@@ -45,6 +46,7 @@ describe(`BookController (${baseUrl})`, () => {
       ControllersModule,
       AuthorBookModule,
       LoggerModule,
+      BookCategoryModule,
     ]);
 
     bookRepository = container.resolve(BOOK_REPOSITORY);

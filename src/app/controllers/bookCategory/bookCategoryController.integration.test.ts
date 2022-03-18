@@ -1,40 +1,40 @@
 import { ConfigLoader } from '../../../configLoader';
-import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
+import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
-import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { AuthorBookRepository } from '../../domain/authorBook/repositories/authorBookRepository';
+import { BookCategoryRepository } from '../../domain/bookCategory/repositories/bookCategoryRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
-import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
-import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
+import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
+import { CategoryRepository } from '../../domain/category/repositories/categoryRepository';
 import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
-import { AuthorBookTestDataGenerator } from '../../domain/authorBook/testDataGenerators/authorBookTestDataGenerator';
+import { BookCategoryTestDataGenerator } from '../../domain/bookCategory/testDataGenerators/bookCategoryTestDataGenerator';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { AUTHOR_REPOSITORY } from '../../domain/author/authorInjectionSymbols';
 import { BOOK_REPOSITORY } from '../../domain/book/bookInjectionSymbols';
-import { AUTHOR_BOOK_REPOSITORY } from '../../domain/authorBook/authorBookInjectionSymbols';
-import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
+import { BOOK_CATEGORY_REPOSITORY } from '../../domain/bookCategory/bookCategoryInjectionSymbols';
+import { AuthorModule } from '../../domain/author/authorModule';
+import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymbols';
+import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 
-const authorsUrl = '/authors';
+const categoriesUrl = '/categories';
 const booksUrl = '/books';
 
-describe(`AuthorBookController`, () => {
-  let authorBookRepository: AuthorBookRepository;
-  let authorRepository: AuthorRepository;
+describe(`BookCategoryController`, () => {
+  let bookCategoryRepository: BookCategoryRepository;
+  let categoryRepository: CategoryRepository;
   let bookRepository: BookRepository;
-  let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
+  let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
+  let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
@@ -43,9 +43,9 @@ describe(`AuthorBookController`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
+    bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
-    authorTestDataGenerator = new AuthorTestDataGenerator();
+    categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
@@ -55,16 +55,16 @@ describe(`AuthorBookController`, () => {
       CategoryModule,
       BookModule,
       AuthorModule,
+      BookCategoryModule,
       AuthorBookModule,
       UserModule,
       ControllersModule,
       LoggerModule,
-      BookCategoryModule,
     ]);
 
-    authorRepository = container.resolve(AUTHOR_REPOSITORY);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
     bookRepository = container.resolve(BOOK_REPOSITORY);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
 
     authHelper = new AuthHelper(container);
 
@@ -81,19 +81,19 @@ describe(`AuthorBookController`, () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Create authorBook', () => {
-    it('returns bad request when authorId or bookId are not uuid', async () => {
+  describe('Create bookCategory', () => {
+    it('returns bad request when categoryId or bookId are not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const authorId = '123';
+      const categoryId = '123';
       const bookId = '123';
 
       const response = await request(server.instance)
-        .post(`${authorsUrl}/${authorId}/books/${bookId}`)
+        .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
@@ -102,14 +102,14 @@ describe(`AuthorBookController`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+      const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(`${authorsUrl}/${authorId}/books/${bookId}`);
+      const response = await request(server.instance).post(`${booksUrl}/${bookId}/categories/${categoryId}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('returns unprocessable entity when authorBook with authorId and bookId already exists', async () => {
+    it('returns unprocessable entity when bookCategory with categoryId and bookId already exists', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
@@ -126,30 +126,30 @@ describe(`AuthorBookController`, () => {
         price,
       });
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const category = await categoryRepository.createOne({ name });
 
-      await authorBookRepository.createOne({ authorId: author.id, bookId: book.id });
+      await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book.id });
 
       const response = await request(server.instance)
-        .post(`${authorsUrl}/${author.id}/books/${book.id}`)
+        .post(`${booksUrl}/${book.id}/categories/${category.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
 
-    it('returns not found when author or book corresponding to authorId and bookId does not exist', async () => {
+    it('returns not found when category or book corresponding to categoryId and bookId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+      const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
 
       const response = await request(server.instance)
-        .post(`${authorsUrl}/${authorId}/books/${bookId}`)
+        .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
@@ -172,46 +172,46 @@ describe(`AuthorBookController`, () => {
         price,
       });
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const category = await categoryRepository.createOne({ name });
 
       const response = await request(server.instance)
-        .post(`${authorsUrl}/${author.id}/books/${book.id}`)
+        .post(`${booksUrl}/${book.id}/categories/${category.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
-  describe('Find author books', () => {
-    it('returns bad request the authorId param is not uuid', async () => {
+  describe('Find category books', () => {
+    it('returns bad request the categoryId param is not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const authorId = 'abc';
+      const categoryId = 'abc';
 
       const response = await request(server.instance)
-        .get(`${authorsUrl}/${authorId}/books`)
+        .get(`${categoriesUrl}/${categoryId}/books`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when author with given authorId does not exist', async () => {
+    it('returns not found when category with given categoryId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = authorTestDataGenerator.generateData();
+      const { id } = categoryTestDataGenerator.generateData();
 
       const response = await request(server.instance)
-        .get(`${authorsUrl}/${id}/books`)
+        .get(`${categoriesUrl}/${id}/books`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
@@ -220,35 +220,35 @@ describe(`AuthorBookController`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const category = await categoryRepository.createOne({ name });
 
-      const response = await request(server.instance).get(`${authorsUrl}/${author.id}/books`);
+      const response = await request(server.instance).get(`${categoriesUrl}/${category.id}/books`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('returns ok when authorId is uuid and have corresponding author', async () => {
+    it('returns ok when categoryId is uuid and have corresponding category', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const category = await categoryRepository.createOne({ name });
 
       const response = await request(server.instance)
-        .get(`${authorsUrl}/${author.id}/books`)
+        .get(`${categoriesUrl}/${category.id}/books`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
-  describe('Find authors of the book', () => {
+  describe('Find categories of the book', () => {
     it('returns bad request the bookId param is not uuid', async () => {
       expect.assertions(1);
 
@@ -259,7 +259,7 @@ describe(`AuthorBookController`, () => {
       const bookId = 'abc';
 
       const response = await request(server.instance)
-        .get(`${booksUrl}/${bookId}/authors`)
+        .get(`${booksUrl}/${bookId}/categories`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
@@ -275,7 +275,7 @@ describe(`AuthorBookController`, () => {
       const { id } = bookTestDataGenerator.generateData();
 
       const response = await request(server.instance)
-        .get(`${booksUrl}/${id}/authors`)
+        .get(`${booksUrl}/${id}/categories`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
@@ -294,7 +294,7 @@ describe(`AuthorBookController`, () => {
         price,
       });
 
-      const response = await request(server.instance).get(`${booksUrl}/${book.id}/authors`);
+      const response = await request(server.instance).get(`${booksUrl}/${book.id}/categories`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -317,43 +317,43 @@ describe(`AuthorBookController`, () => {
       });
 
       const response = await request(server.instance)
-        .get(`${booksUrl}/${book.id}/authors`)
+        .get(`${booksUrl}/${book.id}/categories`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
-  describe('Remove authorBook', () => {
-    it('returns bad request when authorId or bookId params are not uuid', async () => {
+  describe('Remove bookCategory', () => {
+    it('returns bad request when categoryId or bookId params are not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const authorId = 'abc';
+      const categoryId = 'abc';
       const bookId = 'dfg';
 
       const response = await request(server.instance)
-        .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
+        .delete(`${booksUrl}/${bookId}/categories/${categoryId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when authorBook with authorId and bookId does not exist', async () => {
+    it('returns not found when bookCategory with categoryId and bookId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+      const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
 
       const response = await request(server.instance)
-        .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
+        .delete(`${booksUrl}/${bookId}/categories/${categoryId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
@@ -373,18 +373,18 @@ describe(`AuthorBookController`, () => {
         price,
       });
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const category = await categoryRepository.createOne({ name });
 
-      await authorBookRepository.createOne({ authorId: author.id, bookId: book.id });
+      await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book.id });
 
-      const response = await request(server.instance).delete(`${authorsUrl}/${author.id}/books/${book.id}`).send();
+      const response = await request(server.instance).delete(`${booksUrl}/${book.id}/categories/${category.id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns no content when authorBookId is uuid and corresponds to existing authorBook', async () => {
+    it('accepts a request and returns no content when bookCategoryId is uuid and corresponds to existing bookCategory', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
@@ -401,14 +401,14 @@ describe(`AuthorBookController`, () => {
         price,
       });
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      const { name } = categoryTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+      const category = await categoryRepository.createOne({ name });
 
-      await authorBookRepository.createOne({ authorId: author.id, bookId: book.id });
+      await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book.id });
 
       const response = await request(server.instance)
-        .delete(`${authorsUrl}/${author.id}/books/${book.id}`)
+        .delete(`${booksUrl}/${book.id}/categories/${category.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 

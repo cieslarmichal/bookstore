@@ -1,16 +1,7 @@
 import { IsOptional, IsDate, IsString, IsNumber, IsEnum, IsUUID } from 'class-validator';
-import {
-  Entity,
-  CreateDateColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
 import { AuthorBook } from '../../authorBook/entities/authorBook';
 import { BookCategory } from '../../bookCategory/entities/bookCategory';
-import { Category } from '../../category/entities/category';
 import { BookFormat, BookLanguage } from '../types';
 
 export const BOOK_TABLE_NAME = 'books';

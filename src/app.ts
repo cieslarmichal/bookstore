@@ -7,6 +7,7 @@ import { AwilixContainer } from 'awilix';
 import {
   AUTHOR_BOOK_CONTROLLER,
   AUTHOR_CONTROLLER,
+  BOOK_CATEGORY_CONTROLLER,
   BOOK_CONTROLLER,
   CATEGORY_CONTROLLER,
   USER_CONTROLLER,
@@ -37,12 +38,14 @@ export class App {
     const userController = this.container.resolve(USER_CONTROLLER);
     const categoryController = this.container.resolve(CATEGORY_CONTROLLER);
     const authorBookController = this.container.resolve(AUTHOR_BOOK_CONTROLLER);
+    const bookCategoryController = this.container.resolve(BOOK_CATEGORY_CONTROLLER);
 
     this.instance.use('/', bookController.router);
     this.instance.use('/', authorController.router);
     this.instance.use('/', userController.router);
     this.instance.use('/', categoryController.router);
     this.instance.use('/', authorBookController.router);
+    this.instance.use('/', bookCategoryController.router);
 
     this.instance.use(errorMiddleware);
   }

@@ -50,7 +50,7 @@ describe('AuthorBookMapper', () => {
 
       const savedAuthor = await entityManager.save(createdAuthor);
 
-      const { title, releaseYear, language, format, price, categoryId } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
       const createdBook = entityManager.create(Book, {
         title,
@@ -58,7 +58,6 @@ describe('AuthorBookMapper', () => {
         language,
         format,
         price,
-        categoryId,
       });
 
       const savedBook = await entityManager.save(createdBook);

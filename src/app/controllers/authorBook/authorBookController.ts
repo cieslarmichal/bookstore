@@ -11,19 +11,15 @@ import {
   CreateAuthorBookResponseDto,
   RemoveAuthorBookParamDto,
   RemoveAuthorBookResponseDto,
-} from './dtos';
-import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, sendResponseMiddleware } from '../shared';
-import {
   FindAuthorBooksParamDto,
   FindAuthorBooksResponseData,
   FindAuthorBooksResponseDto,
-} from './dtos/findAuthorBooksDto';
-import {
   FindBookAuthorsParamDto,
   FindBookAuthorsResponseData,
   FindBookAuthorsResponseDto,
-} from './dtos/findBookAuthorsDto';
+} from './dtos';
+import { ControllerResponse } from '../shared/types/controllerResponse';
+import { AuthMiddleware, sendResponseMiddleware } from '../shared';
 
 const AUTHOR_BOOKS_PATH = '/authors/:authorId/books';
 const AUTHOR_BOOKS_PATH_WITH_ID = `${AUTHOR_BOOKS_PATH}/:bookId`;
@@ -96,9 +92,9 @@ export class AuthorBookController {
   public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const { authorId } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorBooksParamDto);
 
-    const authorBookDto = await this.authorBookService.findAuthorBooks(authorId);
+    const booksDto = await this.authorBookService.findAuthorBooks(authorId);
 
-    const responseData = new FindAuthorBooksResponseData(authorBookDto);
+    const responseData = new FindAuthorBooksResponseData(booksDto);
 
     return new FindAuthorBooksResponseDto(responseData, StatusCodes.OK);
   }
@@ -106,9 +102,9 @@ export class AuthorBookController {
   public async findBookAuthors(request: Request, response: Response): Promise<ControllerResponse> {
     const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookAuthorsParamDto);
 
-    const authorBookDto = await this.authorBookService.findBookAuthors(bookId);
+    const authorsDto = await this.authorBookService.findBookAuthors(bookId);
 
-    const responseData = new FindBookAuthorsResponseData(authorBookDto);
+    const responseData = new FindBookAuthorsResponseData(authorsDto);
 
     return new FindBookAuthorsResponseDto(responseData, StatusCodes.OK);
   }
