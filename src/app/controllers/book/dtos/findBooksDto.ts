@@ -1,27 +1,35 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  Validate,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+} from 'class-validator';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
 import { BookDto } from './bookDto';
 
 export class FindBooksQueryDto {
   @IsOptional()
-  @IsString()
-  public readonly title?: string;
+  @Validate(FilterHasStringProperty, {})
+  public readonly title?: FilterProperty<string>;
 
   @IsOptional()
   @IsNumber()
-  public releaseYear?: number;
+  public readonly releaseYear?: number;
 
   @IsOptional()
   @IsEnum(BookLanguage)
-  public language?: BookLanguage;
+  public readonly language?: BookLanguage;
 
   @IsOptional()
   @IsEnum(BookFormat)
-  public format?: BookFormat;
+  public readonly format?: BookFormat;
 
   @IsOptional()
   @IsNumber()
-  public price?: number;
+  public readonly price?: number;
 }
 
 export class FindBooksResponseData {
