@@ -103,13 +103,11 @@ export class BookController {
   }
 
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    console.log(request.query);
-    const findBooksQueryDto = RecordToInstanceTransformer.strictTransform(request.query, FindBooksQueryDto);
-    console.log(findBooksQueryDto);
+    const findBooksQueryDto = RecordToInstanceTransformer.transform(request.query, FindBooksQueryDto);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const booksDto = await this.bookService.findBooks({}, paginationData);
+    const booksDto = await this.bookService.findBooks(findBooksQueryDto, paginationData);
 
     const responseData = new FindBooksResponseData(booksDto);
 

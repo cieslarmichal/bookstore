@@ -4,6 +4,7 @@ import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
 import { BookNotFound } from '../errors';
 import { PaginationData } from '../../shared';
+import { FindBooksData } from './types';
 
 @EntityRepository()
 export class BookRepository {
@@ -31,7 +32,7 @@ export class BookRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindConditions<Book>, paginationData: PaginationData): Promise<BookDto[]> {
+  public async findMany(conditions: FindBooksData, paginationData: PaginationData): Promise<BookDto[]> {
     const queryBuilder = this.entityManager.getRepository(Book).createQueryBuilder('book');
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;

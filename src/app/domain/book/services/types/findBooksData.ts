@@ -1,24 +1,19 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { BookFormat, BookLanguage } from '../../types';
+import { IsOptional } from 'class-validator';
+import { FilterNumberProperty, FilterStringProperty } from '../../../shared';
 
 export class FindBooksData {
   @IsOptional()
-  @IsString()
-  public readonly title?: string;
+  public readonly title?: FilterStringProperty;
 
   @IsOptional()
-  @IsNumber()
-  public readonly releaseYear?: number;
+  public readonly releaseYear?: FilterNumberProperty;
 
   @IsOptional()
-  @IsEnum(BookLanguage)
-  public readonly language?: BookLanguage;
+  public readonly language?: FilterStringProperty;
 
   @IsOptional()
-  @IsEnum(BookFormat)
-  public readonly format?: BookFormat;
+  public readonly format?: FilterStringProperty;
 
   @IsOptional()
-  @IsNumber()
-  public readonly price?: number;
+  public readonly price?: FilterNumberProperty;
 }
