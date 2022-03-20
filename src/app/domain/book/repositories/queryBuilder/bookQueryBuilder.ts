@@ -1,14 +1,11 @@
-import { FilterProperty } from '../../../shared/types/filterProperty';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { QueryBuilder } from '../../../shared/queryBuilder';
+import { EntityManager } from 'typeorm';
 import { Book } from '../../entities/book';
 import { FindBooksData } from '../types';
 
-export class BookQueryBuilder {
-  private instance: SelectQueryBuilder<Book>;
-  private whereApplied: boolean;
-
-  public constructor(private readonly entityManager: EntityManager) {
-    this.instance = this.entityManager.getRepository(Book).createQueryBuilder('book');
+export class BookQueryBuilder extends QueryBuilder<Book> {
+  public constructor(entityManager: EntityManager) {
+    super(entityManager, Book, 'book');
   }
 
   public conditions(findBooksData: FindBooksData): BookQueryBuilder {
@@ -51,70 +48,5 @@ export class BookQueryBuilder {
 
   public getSql(): string {
     return this.instance.getSql();
-  }
-
-  private partialConditionsForFilterProperty(columnName: string, filterProperty: FilterProperty) {
-    if (!this.whereApplied) {
-      this.partialConditionsForFilterPropertyAsFirstWhereCondition(columnName, filterProperty);
-      this.whereApplied = true;
-    } else {
-      this.partialConditionsForFilterPropertyAsNextWhereCondition(columnName, filterProperty);
-    }
-  }
-
-  private partialConditionsForFilterPropertyAsFirstWhereCondition(columnName: string, filterProperty: FilterProperty) {
-    if (filterProperty.eq) {
-      this.instance.where(`${columnName} = :data`, {
-        data: filterProperty.eq,
-      });
-    } else if (filterProperty.gt) {
-      this.instance.where(`${columnName} > :data`, {
-        data: filterProperty.gt,
-      });
-    } else if (filterProperty.gte) {
-      this.instance.where(`${columnName} >= :data`, {
-        data: filterProperty.gte,
-      });
-    } else if (filterProperty.lt) {
-      this.instance.where(`${columnName} < :data`, {
-        data: filterProperty.lt,
-      });
-    } else if (filterProperty.lte) {
-      this.instance.where(`${columnName} <= :data`, {
-        data: filterProperty.lte,
-      });
-    } else if (filterProperty.like) {
-      this.instance.where(`${columnName} LIKE :data`, {
-        data: filterProperty.like,
-      });
-    }
-  }
-
-  private partialConditionsForFilterPropertyAsNextWhereCondition(columnName: string, filterProperty: FilterProperty) {
-    if (filterProperty.eq) {
-      this.instance.andWhere(`${columnName} = :data`, {
-        data: filterProperty.eq,
-      });
-    } else if (filterProperty.gt) {
-      this.instance.andWhere(`${columnName} > :data`, {
-        data: filterProperty.gt,
-      });
-    } else if (filterProperty.gte) {
-      this.instance.andWhere(`${columnName} >= :data`, {
-        data: filterProperty.gte,
-      });
-    } else if (filterProperty.lt) {
-      this.instance.andWhere(`${columnName} < :data`, {
-        data: filterProperty.lt,
-      });
-    } else if (filterProperty.lte) {
-      this.instance.andWhere(`${columnName} <= :data`, {
-        data: filterProperty.lte,
-      });
-    } else if (filterProperty.like) {
-      this.instance.andWhere(`${columnName} LIKE :data`, {
-        data: filterProperty.like,
-      });
-    }
   }
 }
