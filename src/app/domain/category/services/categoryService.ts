@@ -48,8 +48,12 @@ export class CategoryService {
     return categories;
   }
 
-  public async findCategoriesByBookId(bookId: string): Promise<CategoryDto[]> {
-    const categories = await this.categoryRepository.findManyByBookId(bookId);
+  public async findCategoriesByBookId(
+    bookId: string,
+    findCategoriesData: FindCategoriesData,
+    paginationData: PaginationData,
+  ): Promise<CategoryDto[]> {
+    const categories = await this.categoryRepository.findManyByBookId(bookId, findCategoriesData, paginationData);
 
     return categories;
   }

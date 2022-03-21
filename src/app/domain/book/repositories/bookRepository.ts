@@ -66,13 +66,20 @@ export class BookRepository {
     return books.map((book) => this.bookMapper.mapEntityToDto(book));
   }
 
-  public async findManyByCategoryId(categoryId: string): Promise<BookDto[]> {
-    const queryBuilder = this.entityManager.getRepository(Book).createQueryBuilder('book');
+  public async findManyByCategoryId(
+    categoryId: string,
+    conditions: FindBooksData,
+    paginationData: PaginationData,
+  ): Promise<BookDto[]> {
+    const bookQueryBuilder = new BookQueryBuilder(this.entityManager);
 
-    const books = await queryBuilder
-      .leftJoinAndSelect('book.bookCategories', 'bookCategories')
-      .leftJoinAndSelect('bookCategories.category', 'category')
-      .where('category.id = :categoryId', { categoryId })
+    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+
+    const books = await bookQueryBuilder
+      .categoryConditions(categoryId)
+      .boookConditions(conditions)
+      .skip(numberOfEnitiesToSkip)
+      .take(paginationData.limit)
       .getMany();
 
     return books.map((book) => this.bookMapper.mapEntityToDto(book));

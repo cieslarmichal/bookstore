@@ -19,7 +19,9 @@ import {
   RemoveBookCategoryResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { FindBooksQueryDto } from '../book/dtos/findBooksDto';
+import { FindCategoriesQueryDto } from '../category/dtos';
 
 const BOOK_CATEGORIES_PATH = '/books/:bookId/categories';
 const BOOK_CATEGORIES_PATH_WITH_ID = `${BOOK_CATEGORIES_PATH}/:categoryId`;
@@ -92,7 +94,15 @@ export class BookCategoryController {
   public async findBookCategories(request: Request, response: Response): Promise<ControllerResponse> {
     const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookCategoriesParamDto);
 
-    const categoriesDto = await this.bookCategoryService.findCategoriesOfBook(bookId);
+    const categoriesQueryDto = RecordToInstanceTransformer.transform(request.query, FindCategoriesQueryDto);
+
+    const paginationData = PaginationDataParser.parse(request.query);
+
+    const categoriesDto = await this.bookCategoryService.findCategoriesOfBook(
+      bookId,
+      categoriesQueryDto,
+      paginationData,
+    );
 
     const responseData = new FindBookCategoriesResponseData(categoriesDto);
 
@@ -102,7 +112,11 @@ export class BookCategoryController {
   public async findCategoryBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
 
-    const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId);
+    const booksQueryDto = RecordToInstanceTransformer.transform(request.query, FindBooksQueryDto);
+
+    const paginationData = PaginationDataParser.parse(request.query);
+
+    const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId, booksQueryDto, paginationData);
 
     const responseData = new FindCategoryBooksResponseData(booksDto);
 

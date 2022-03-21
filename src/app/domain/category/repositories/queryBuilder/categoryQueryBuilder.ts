@@ -8,7 +8,15 @@ export class CategoryQueryBuilder extends QueryBuilder<Category> {
     super(entityManager, Category, 'category');
   }
 
-  public conditions(findCategorysData: FindCategoriesData): CategoryQueryBuilder {
+  public bookConditions(bookId: string): CategoryQueryBuilder {
+    this.instance
+      .leftJoinAndSelect('category.bookCategories', 'bookCategories')
+      .leftJoinAndSelect('bookCategories.book', 'book');
+    this.equalConditionForProperty('book.id', bookId);
+    return this;
+  }
+
+  public categoryConditions(findCategorysData: FindCategoriesData): CategoryQueryBuilder {
     if (findCategorysData.name) {
       this.partialConditionsForFilterProperty('category.name', findCategorysData.name);
     }

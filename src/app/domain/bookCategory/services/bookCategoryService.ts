@@ -2,9 +2,12 @@ import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';
+import { FindBooksData } from '../../book/services/types';
 import { CategoryDto } from '../../category/dtos';
 import { CategoryNotFound } from '../../category/errors';
 import { CategoryService } from '../../category/services/categoryService';
+import { FindCategoriesData } from '../../category/services/types';
+import { PaginationData } from '../../shared';
 import { BookCategoryDto } from '../dtos';
 import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
 import { BookCategoryRepository } from '../repositories/bookCategoryRepository';
@@ -48,24 +51,32 @@ export class BookCategoryService {
     return bookCategory;
   }
 
-  public async findCategoriesOfBook(bookId: string): Promise<CategoryDto[]> {
+  public async findCategoriesOfBook(
+    bookId: string,
+    findCategoriesData: FindCategoriesData,
+    paginationData: PaginationData,
+  ): Promise<CategoryDto[]> {
     const book = await this.bookService.findBook(bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.categoryService.findCategoriesByBookId(bookId);
+    return this.categoryService.findCategoriesByBookId(bookId, findCategoriesData, paginationData);
   }
 
-  public async findBooksFromCategory(categoryId: string): Promise<BookDto[]> {
+  public async findBooksFromCategory(
+    categoryId: string,
+    findBooksData: FindBooksData,
+    paginationData: PaginationData,
+  ): Promise<BookDto[]> {
     const category = await this.categoryService.findCategory(categoryId);
 
     if (!category) {
       throw new CategoryNotFound({ id: categoryId });
     }
 
-    return this.bookService.findBooksByCategoryId(categoryId);
+    return this.bookService.findBooksByCategoryId(categoryId, findBooksData, paginationData);
   }
 
   public async removeBookCategory(bookCategoryData: RemoveBookCategoryData): Promise<void> {

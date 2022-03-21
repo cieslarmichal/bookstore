@@ -39,7 +39,7 @@ export class CategoryRepository {
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
     const categories = await categoryQueryBuilder
-      .conditions(conditions)
+      .categoryConditions(conditions)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
@@ -47,13 +47,20 @@ export class CategoryRepository {
     return categories.map((category) => this.categoryMapper.mapEntityToDto(category));
   }
 
-  public async findManyByBookId(bookId: string): Promise<CategoryDto[]> {
-    const queryBuilder = this.entityManager.getRepository(Category).createQueryBuilder('category');
+  public async findManyByBookId(
+    bookId: string,
+    conditions: FindCategoriesData,
+    paginationData: PaginationData,
+  ): Promise<CategoryDto[]> {
+    const categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
-    const categories = await queryBuilder
-      .leftJoinAndSelect('category.bookCategories', 'bookCategories')
-      .leftJoinAndSelect('bookCategories.book', 'book')
-      .where('book.id = :bookId', { bookId })
+    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+
+    const categories = await categoryQueryBuilder
+      .bookConditions(bookId)
+      .categoryConditions(conditions)
+      .skip(numberOfEnitiesToSkip)
+      .take(paginationData.limit)
       .getMany();
 
     return categories.map((category) => this.categoryMapper.mapEntityToDto(category));

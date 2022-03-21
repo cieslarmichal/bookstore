@@ -16,6 +16,14 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
     return this;
   }
 
+  public categoryConditions(categoryId: string): BookQueryBuilder {
+    this.instance
+      .leftJoinAndSelect('book.bookCategories', 'bookCategories')
+      .leftJoinAndSelect('bookCategories.category', 'category');
+    this.equalConditionForProperty('category.id', categoryId);
+    return this;
+  }
+
   public boookConditions(findBooksData: FindBooksData): BookQueryBuilder {
     if (findBooksData.title) {
       this.partialConditionsForFilterProperty('book.title', findBooksData.title);
