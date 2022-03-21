@@ -84,17 +84,61 @@ describe('AuthorService', () => {
   });
 
   describe('Find authors', () => {
-    it('finds authors in database', async () => {
+    it('finds authors by one condition in database', async () => {
       expect.assertions(2);
 
       const { firstName, lastName } = authorTestDataGenerator.generateData();
 
       const author = await authorRepository.createOne({ firstName, lastName });
 
-      const foundAuthors = await authorService.findAuthors({}, { page: 1, limit: 5 });
+      const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+
+      const foundAuthors = await authorService.findAuthors({ firstName: { like: firstName } }, { page: 1, limit: 5 });
 
       expect(foundAuthors.length).toBe(1);
       expect(foundAuthors[0]).toStrictEqual(author);
+    });
+
+    it('finds authors by two conditions in database', async () => {
+      expect.assertions(2);
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+
+      const foundAuthors = await authorService.findAuthors(
+        { firstName: { eq: firstName }, lastName: { eq: lastName } },
+        { page: 1, limit: 5 },
+      );
+
+      expect(foundAuthors.length).toBe(1);
+      expect(foundAuthors[0]).toStrictEqual(author);
+    });
+
+    it('finds authors in database limited by pagination', async () => {
+      expect.assertions(1);
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName, lastName });
+
+      const { lastName: otherLastName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName, lastName: otherLastName });
+
+      const { lastName: anotherLastName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName, lastName: anotherLastName });
+
+      const foundAuthors = await authorService.findAuthors({ firstName: { eq: firstName } }, { page: 1, limit: 2 });
+
+      expect(foundAuthors.length).toBe(2);
     });
   });
 
