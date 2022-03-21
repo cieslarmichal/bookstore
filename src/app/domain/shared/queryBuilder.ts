@@ -13,6 +13,29 @@ export abstract class QueryBuilder<T> {
     this.instance = this.entityManager.getRepository(EntityConstructor).createQueryBuilder(queryBuilderAlias);
   }
 
+  protected equalConditionForProperty(columnName: string, data: string) {
+    if (!this.whereApplied) {
+      this.equalConditionForPropertyAsFirstWhereCondition(columnName, data);
+      this.whereApplied = true;
+    } else {
+      this.equalConditionForPropertyAsNextWhereCondition(columnName, data);
+    }
+  }
+
+  private equalConditionForPropertyAsFirstWhereCondition(columnName: string, data: string) {
+    const paramName = `${columnName}EqualsParameter`;
+    this.instance.where(`${columnName} = :${paramName}`, {
+      [`${paramName}`]: data,
+    });
+  }
+
+  private equalConditionForPropertyAsNextWhereCondition(columnName: string, data: string) {
+    const paramName = `${columnName}EqualsParameter`;
+    this.instance.where(`${columnName} = :${paramName}`, {
+      [`${paramName}`]: data,
+    });
+  }
+
   protected partialConditionsForFilterProperty(columnName: string, filterProperty: FilterProperty) {
     if (!this.whereApplied) {
       this.partialConditionsForFilterPropertyAsFirstWhereCondition(columnName, filterProperty);

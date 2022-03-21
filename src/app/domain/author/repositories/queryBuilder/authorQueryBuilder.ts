@@ -8,7 +8,13 @@ export class AuthorQueryBuilder extends QueryBuilder<Author> {
     super(entityManager, Author, 'author');
   }
 
-  public conditions(findAuthorsData: FindAuthorsData): AuthorQueryBuilder {
+  public bookConditions(bookId: string): AuthorQueryBuilder {
+    this.instance.leftJoinAndSelect('author.authorBooks', 'authorBooks').leftJoinAndSelect('authorBooks.book', 'book');
+    this.equalConditionForProperty('book.id', bookId);
+    return this;
+  }
+
+  public authorConditions(findAuthorsData: FindAuthorsData): AuthorQueryBuilder {
     if (findAuthorsData.firstName) {
       this.partialConditionsForFilterProperty('author.firstName', findAuthorsData.firstName);
     }

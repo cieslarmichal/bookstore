@@ -2,9 +2,11 @@ import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { AuthorDto } from '../../author/dtos';
 import { AuthorNotFound } from '../../author/errors';
 import { AuthorService } from '../../author/services/authorService';
+import { FindAuthorsData } from '../../author/services/types';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';
+import { PaginationData } from '../../shared';
 import { AuthorBookDto } from '../dtos';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
 import { AuthorBookRepository } from '../repositories/authorBookRepository';
@@ -58,14 +60,18 @@ export class AuthorBookService {
     return this.bookService.findBooksByAuthorId(authorId);
   }
 
-  public async findBookAuthors(bookId: string): Promise<AuthorDto[]> {
+  public async findBookAuthors(
+    bookId: string,
+    findAuthorsData: FindAuthorsData,
+    paginationData: PaginationData,
+  ): Promise<AuthorDto[]> {
     const book = await this.bookService.findBook(bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.authorService.findAuthorsByBookId(bookId);
+    return this.authorService.findAuthorsByBookId(bookId, findAuthorsData, paginationData);
   }
 
   public async removeAuthorBook(authorBookData: RemoveAuthorBookData): Promise<void> {

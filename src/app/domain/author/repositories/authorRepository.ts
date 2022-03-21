@@ -39,7 +39,7 @@ export class AuthorRepository {
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
     const authors = await authorQueryBuilder
-      .conditions(conditions)
+      .authorConditions(conditions)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
@@ -47,13 +47,20 @@ export class AuthorRepository {
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
   }
 
-  public async findManyByBookId(bookId: string): Promise<AuthorDto[]> {
-    const queryBuilder = this.entityManager.getRepository(Author).createQueryBuilder('author');
+  public async findManyByBookId(
+    bookId: string,
+    conditions: FindAuthorsData,
+    paginationData: PaginationData,
+  ): Promise<AuthorDto[]> {
+    const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
-    const authors = await queryBuilder
-      .leftJoinAndSelect('author.authorBooks', 'authorBooks')
-      .leftJoinAndSelect('authorBooks.book', 'book')
-      .where('book.id = :bookId', { bookId })
+    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+
+    const authors = await authorQueryBuilder
+      .bookConditions(bookId)
+      .authorConditions(conditions)
+      .skip(numberOfEnitiesToSkip)
+      .take(paginationData.limit)
       .getMany();
 
     return authors.map((author) => this.authorMapper.mapEntityToDto(author));
