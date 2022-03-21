@@ -4,6 +4,8 @@ import { Author } from '../entities/author';
 import { AuthorMapper } from '../mappers/authorMapper';
 import { AuthorNotFound } from '../errors';
 import { PaginationData } from '../../shared';
+import { AuthorQueryBuilder } from './queryBuilder';
+import { FindAuthorsData } from './types';
 
 @EntityRepository()
 export class AuthorRepository {
@@ -31,13 +33,13 @@ export class AuthorRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindConditions<Author>, paginationData: PaginationData): Promise<AuthorDto[]> {
-    const queryBuilder = this.entityManager.getRepository(Author).createQueryBuilder('author');
+  public async findMany(conditions: FindAuthorsData, paginationData: PaginationData): Promise<AuthorDto[]> {
+    const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
-    const authors = await queryBuilder
-      .where(conditions)
+    const authors = await authorQueryBuilder
+      .conditions(conditions)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();

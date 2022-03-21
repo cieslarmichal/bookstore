@@ -1,14 +1,15 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, Validate } from 'class-validator';
+import { FilterHasStringPropertyConstraint, FilterProperty } from '../../shared';
 import { AuthorDto } from './authorDto';
 
 export class FindAuthorsQueryDto {
   @IsOptional()
-  @IsString()
-  public readonly firstName?: string;
+  @Validate(FilterHasStringPropertyConstraint, {})
+  public readonly firstName?: FilterProperty<string>;
 
   @IsOptional()
-  @IsString()
-  public readonly lastName?: string;
+  @Validate(FilterHasStringPropertyConstraint, {})
+  public readonly lastName?: FilterProperty<string>;
 }
 
 export class FindAuthorsResponseData {

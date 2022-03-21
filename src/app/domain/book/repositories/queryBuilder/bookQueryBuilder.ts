@@ -43,8 +43,6 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
   }
 
   public async getMany(): Promise<Book[]> {
-    console.log(this.instance.getSql());
-    console.log(this.instance.getParameters());
     return this.instance.getMany();
   }
 }
