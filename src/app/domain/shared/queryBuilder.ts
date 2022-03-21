@@ -24,56 +24,68 @@ export abstract class QueryBuilder<T> {
 
   private partialConditionsForFilterPropertyAsFirstWhereCondition(columnName: string, filterProperty: FilterProperty) {
     if (filterProperty.eq) {
-      this.instance.where(`${columnName} = :data`, {
-        data: filterProperty.eq,
+      const paramName = `${columnName}EqualsParameter`;
+      this.instance.where(`${columnName} = :${paramName}`, {
+        [`${paramName}`]: filterProperty.eq,
       });
     } else if (filterProperty.gt) {
-      this.instance.where(`${columnName} > :data`, {
-        data: filterProperty.gt,
+      const paramName = `${columnName}GreaterThanParameter`;
+      this.instance.where(`${columnName} > :${paramName}`, {
+        [`${paramName}`]: filterProperty.gt,
       });
     } else if (filterProperty.gte) {
-      this.instance.where(`${columnName} >= :data`, {
-        data: filterProperty.gte,
+      const paramName = `${columnName}GreaterThanOrEqualParameter`;
+      this.instance.where(`${columnName} >= :${paramName}`, {
+        [`${paramName}`]: filterProperty.gte,
       });
     } else if (filterProperty.lt) {
-      this.instance.where(`${columnName} < :data`, {
-        data: filterProperty.lt,
+      const paramName = `${columnName}LessThanParameter`;
+      this.instance.where(`${columnName} < :${paramName}`, {
+        [`${paramName}`]: filterProperty.lt,
       });
     } else if (filterProperty.lte) {
-      this.instance.where(`${columnName} <= :data`, {
-        data: filterProperty.lte,
+      const paramName = `${columnName}LessThanOrEqualParameter`;
+      this.instance.where(`${columnName} <= :${paramName}`, {
+        [`${paramName}`]: filterProperty.lte,
       });
     } else if (filterProperty.like) {
-      this.instance.where(`${columnName} LIKE :data`, {
-        data: filterProperty.like,
+      const paramName = `${columnName}LikeParameter`;
+      this.instance.where(`${columnName} LIKE :${paramName}`, {
+        [`${paramName}`]: filterProperty.like,
       });
     }
   }
 
   private partialConditionsForFilterPropertyAsNextWhereCondition(columnName: string, filterProperty: FilterProperty) {
     if (filterProperty.eq) {
-      this.instance.andWhere(`${columnName} = :data`, {
-        data: filterProperty.eq,
+      const paramName = `${columnName}EqualsParameter`;
+      this.instance.andWhere(`${columnName} = :${paramName}`, {
+        [`${paramName}`]: filterProperty.eq,
       });
     } else if (filterProperty.gt) {
-      this.instance.andWhere(`${columnName} > :data`, {
-        data: filterProperty.gt,
+      const paramName = `${columnName}GreaterThanParameter`;
+      this.instance.andWhere(`${columnName} > :${paramName}`, {
+        [`${paramName}`]: filterProperty.gt,
       });
     } else if (filterProperty.gte) {
-      this.instance.andWhere(`${columnName} >= :data`, {
-        data: filterProperty.gte,
+      const paramName = `${columnName}GreaterThanOrEqualParameter`;
+      this.instance.andWhere(`${columnName} >= :${paramName}`, {
+        [`${paramName}`]: filterProperty.gte,
       });
     } else if (filterProperty.lt) {
-      this.instance.andWhere(`${columnName} < :data`, {
-        data: filterProperty.lt,
+      const paramName = `${columnName}LessThanParameter`;
+      this.instance.andWhere(`${columnName} < :${paramName}`, {
+        [`${paramName}`]: filterProperty.lt,
       });
     } else if (filterProperty.lte) {
-      this.instance.andWhere(`${columnName} <= :data`, {
-        data: filterProperty.lte,
+      const paramName = `${columnName}LessThanOrEqualParameter`;
+      this.instance.andWhere(`${columnName} <= :${paramName}`, {
+        [`${paramName}`]: filterProperty.lte,
       });
     } else if (filterProperty.like) {
-      this.instance.andWhere(`${columnName} LIKE :data`, {
-        data: filterProperty.like,
+      const paramName = `${columnName}LikeParameter`;
+      this.instance.andWhere(`${columnName} LIKE :${paramName}`, {
+        [`${paramName}`]: filterProperty.like,
       });
     }
   }

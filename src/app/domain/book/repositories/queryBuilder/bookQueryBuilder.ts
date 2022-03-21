@@ -10,23 +10,23 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
 
   public conditions(findBooksData: FindBooksData): BookQueryBuilder {
     if (findBooksData.title) {
-      this.partialConditionsForFilterProperty('book_title', findBooksData.title);
+      this.partialConditionsForFilterProperty('book.title', findBooksData.title);
     }
 
     if (findBooksData.releaseYear) {
-      this.partialConditionsForFilterProperty('book_releaseYear', findBooksData.releaseYear);
+      this.partialConditionsForFilterProperty('book.releaseYear', findBooksData.releaseYear);
     }
 
     if (findBooksData.language) {
-      this.partialConditionsForFilterProperty('book_language', findBooksData.language);
+      this.partialConditionsForFilterProperty('book.language', findBooksData.language);
     }
 
     if (findBooksData.format) {
-      this.partialConditionsForFilterProperty('book_format', findBooksData.format);
+      this.partialConditionsForFilterProperty('book.format', findBooksData.format);
     }
 
     if (findBooksData.price) {
-      this.partialConditionsForFilterProperty('book_price', findBooksData.price);
+      this.partialConditionsForFilterProperty('book.price', findBooksData.price);
     }
 
     return this;
@@ -43,10 +43,8 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
   }
 
   public async getMany(): Promise<Book[]> {
+    console.log(this.instance.getSql());
+    console.log(this.instance.getParameters());
     return this.instance.getMany();
-  }
-
-  public getSql(): string {
-    return this.instance.getSql();
   }
 }

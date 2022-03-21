@@ -104,7 +104,7 @@ describe('BookService', () => {
   });
 
   describe('Find books', () => {
-    it('finds books in database', async () => {
+    it('finds books by condition in database', async () => {
       expect.assertions(2);
 
       const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
@@ -117,10 +117,96 @@ describe('BookService', () => {
         price,
       });
 
-      const foundBooks = await bookService.findBooks({}, { page: 1, limit: 5 });
+      const { title: title2 } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title: title2,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const foundBooks = await bookService.findBooks({ title: { eq: title } }, { page: 1, limit: 5 });
 
       expect(foundBooks.length).toBe(1);
       expect(foundBooks[0]).toStrictEqual(book);
+    });
+
+    it('finds books by two conditions in database', async () => {
+      expect.assertions(2);
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { title: title2, releaseYear: otherReleaseYear } = bookTestDataGenerator.generateData();
+
+      const book = await bookRepository.createOne({
+        title: title2,
+        releaseYear: otherReleaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { title: title3 } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title: title3,
+        releaseYear: otherReleaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const foundBooks = await bookService.findBooks(
+        { releaseYear: { eq: otherReleaseYear }, title: { eq: title2 } },
+        { page: 1, limit: 5 },
+      );
+
+      expect(foundBooks.length).toBe(1);
+      expect(foundBooks[0]).toStrictEqual(book);
+    });
+
+    it('finds books in database limited by pagination', async () => {
+      expect.assertions(1);
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const foundBooks = await bookService.findBooks({}, { page: 1, limit: 2 });
+
+      expect(foundBooks.length).toBe(2);
     });
   });
 
