@@ -94,7 +94,7 @@ describe('CategoryService', () => {
   });
 
   describe('Find categories', () => {
-    it('finds categories in database', async () => {
+    it('finds categories by condition in database', async () => {
       expect.assertions(2);
 
       const { name } = categoryTestDataGenerator.generateData();
@@ -103,7 +103,7 @@ describe('CategoryService', () => {
         name,
       });
 
-      const foundCategories = await categoryService.findCategories({}, { page: 1, limit: 5 });
+      const foundCategories = await categoryService.findCategories({ name: { eq: name } }, { page: 1, limit: 5 });
 
       expect(foundCategories.length).toBe(1);
       expect(foundCategories[0]).toStrictEqual(category);
