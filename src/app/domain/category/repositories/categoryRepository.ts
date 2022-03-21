@@ -4,6 +4,8 @@ import { Category } from '../entities/category';
 import { CategoryMapper } from '../mappers/categoryMapper';
 import { CategoryNotFound } from '../errors';
 import { PaginationData } from '../../shared';
+import { FindCategoriesData } from './types';
+import { CategoryQueryBuilder } from './queryBuilder';
 
 @EntityRepository()
 export class CategoryRepository {
@@ -31,13 +33,13 @@ export class CategoryRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindConditions<Category>, paginationData: PaginationData): Promise<CategoryDto[]> {
-    const queryBuilder = this.entityManager.getRepository(Category).createQueryBuilder('category');
+  public async findMany(conditions: FindCategoriesData, paginationData: PaginationData): Promise<CategoryDto[]> {
+    const categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
-    const categories = await queryBuilder
-      .where(conditions)
+    const categories = await categoryQueryBuilder
+      .conditions(conditions)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();

@@ -1,10 +1,11 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, Validate } from 'class-validator';
+import { FilterHasStringPropertyConstraint, FilterProperty } from '../../shared';
 import { CategoryDto } from './categoryDto';
 
 export class FindCategoriesQueryDto {
   @IsOptional()
-  @IsString()
-  public readonly name?: string;
+  @Validate(FilterHasStringPropertyConstraint, {})
+  public readonly name?: FilterProperty<string>;
 }
 
 export class FindCategoriesResponseData {
