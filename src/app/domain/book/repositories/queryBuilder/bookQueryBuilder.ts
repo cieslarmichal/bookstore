@@ -8,7 +8,15 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
     super(entityManager, Book, 'book');
   }
 
-  public conditions(findBooksData: FindBooksData): BookQueryBuilder {
+  public authorConditions(authorId: string): BookQueryBuilder {
+    this.instance
+      .leftJoinAndSelect('book.authorBooks', 'authorBooks')
+      .leftJoinAndSelect('authorBooks.author', 'author');
+    this.equalConditionForProperty('author.id', authorId);
+    return this;
+  }
+
+  public boookConditions(findBooksData: FindBooksData): BookQueryBuilder {
     if (findBooksData.title) {
       this.partialConditionsForFilterProperty('book.title', findBooksData.title);
     }

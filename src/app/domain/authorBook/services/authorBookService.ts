@@ -6,6 +6,7 @@ import { FindAuthorsData } from '../../author/services/types';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';
+import { FindBooksData } from '../../book/services/types';
 import { PaginationData } from '../../shared';
 import { AuthorBookDto } from '../dtos';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
@@ -50,14 +51,18 @@ export class AuthorBookService {
     return authorBook;
   }
 
-  public async findAuthorBooks(authorId: string): Promise<BookDto[]> {
+  public async findAuthorBooks(
+    authorId: string,
+    findBooksData: FindBooksData,
+    paginationData: PaginationData,
+  ): Promise<BookDto[]> {
     const author = await this.authorService.findAuthor(authorId);
 
     if (!author) {
       throw new AuthorNotFound({ id: authorId });
     }
 
-    return this.bookService.findBooksByAuthorId(authorId);
+    return this.bookService.findBooksByAuthorId(authorId, findBooksData, paginationData);
   }
 
   public async findBookAuthors(

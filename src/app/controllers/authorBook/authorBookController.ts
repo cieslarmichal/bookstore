@@ -21,6 +21,7 @@ import {
 import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, PaginationDataParser, sendResponseMiddleware } from '../shared';
 import { FindAuthorsQueryDto } from '../author/dtos/findAuthorsDto';
+import { FindBooksQueryDto } from '../book/dtos/findBooksDto';
 
 const AUTHOR_BOOKS_PATH = '/authors/:authorId/books';
 const AUTHOR_BOOKS_PATH_WITH_ID = `${AUTHOR_BOOKS_PATH}/:bookId`;
@@ -93,7 +94,11 @@ export class AuthorBookController {
   public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const { authorId } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorBooksParamDto);
 
-    const booksDto = await this.authorBookService.findAuthorBooks(authorId);
+    const booksQueryDto = RecordToInstanceTransformer.transform(request.query, FindBooksQueryDto);
+
+    const paginationData = PaginationDataParser.parse(request.query);
+
+    const booksDto = await this.authorBookService.findAuthorBooks(authorId, booksQueryDto, paginationData);
 
     const responseData = new FindAuthorBooksResponseData(booksDto);
 

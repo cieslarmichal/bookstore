@@ -211,8 +211,8 @@ describe('BookService', () => {
   });
 
   describe('Find books by author id', () => {
-    it('finds books by author id in database', async () => {
-      expect.assertions(4);
+    it('finds books by author id with filtering in database', async () => {
+      expect.assertions(3);
 
       const firstBookData = bookTestDataGenerator.generateData();
 
@@ -254,12 +254,15 @@ describe('BookService', () => {
       await authorBookRepository.createOne({ bookId: firstBook.id, authorId: author.id });
       await authorBookRepository.createOne({ bookId: secondBook.id, authorId: author.id });
 
-      const foundBooks = await bookService.findBooksByAuthorId(author.id);
+      const foundBooks = await bookService.findBooksByAuthorId(
+        author.id,
+        { title: { eq: firstBook.title } },
+        { page: 1, limit: 5 },
+      );
 
       expect(foundBooks).not.toBeNull();
-      expect(foundBooks.length).toBe(2);
+      expect(foundBooks.length).toBe(1);
       expect(foundBooks[0].title).toBe(firstBook.title);
-      expect(foundBooks[1].title).toBe(secondBook.title);
     });
   });
 
