@@ -10,21 +10,41 @@ import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { CATEGORY_REPOSITORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
+import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
+import { BookModule } from '../../book/bookModule';
+import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
+import { BookRepository } from '../../book/repositories/bookRepository';
+import { BookCategoryRepository } from '../../bookCategory/repositories/bookCategoryRepository';
+import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY } from '../../bookCategory/bookCategoryInjectionSymbols';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
   let categoryRepository: CategoryRepository;
+  let bookRepository: BookRepository;
+  let bookCategoryRepository: BookCategoryRepository;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
+  let bookTestDataGenerator: BookTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule]);
+    const container = await createDIContainer([
+      DbModule,
+      BookModule,
+      BookCategoryModule,
+      CategoryModule,
+      AuthorModule,
+      LoggerModule,
+    ]);
 
     categoryService = container.resolve(CATEGORY_SERVICE);
     categoryRepository = container.resolve(CATEGORY_REPOSITORY);
+    bookRepository = container.resolve(BOOK_REPOSITORY);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
+    bookTestDataGenerator = new BookTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -107,6 +127,53 @@ describe('CategoryService', () => {
 
       expect(foundCategories.length).toBe(1);
       expect(foundCategories[0]).toStrictEqual(category);
+    });
+  });
+
+  describe('Find categories by book id', () => {
+    it('finds categories by bookId with condition in database', async () => {
+      expect.assertions(2);
+
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category1 = await categoryRepository.createOne({
+        name,
+      });
+
+      const { name: otherName } = categoryTestDataGenerator.generateData();
+
+      const category2 = await categoryRepository.createOne({
+        name: otherName,
+      });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const book = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      await bookCategoryRepository.createOne({
+        categoryId: category1.id,
+        bookId: book.id,
+      });
+
+      await bookCategoryRepository.createOne({
+        categoryId: category2.id,
+        bookId: book.id,
+      });
+
+      const categories = await categoryService.findCategoriesByBookId(
+        book.id,
+        { name: { eq: name } },
+        { page: 1, limit: 5 },
+      );
+
+      expect(categories.length).toBe(1);
+      expect(categories[0]).toStrictEqual(category1);
     });
   });
 

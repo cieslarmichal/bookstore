@@ -17,14 +17,23 @@ import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { BOOK_REPOSITORY, BOOK_SERVICE } from '../bookInjectionSymbols';
 import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
 import { AUTHOR_BOOK_REPOSITORY } from '../../authorBook/authorBookInjectionSymbols';
+import { BookCategoryRepository } from '../../bookCategory/repositories/bookCategoryRepository';
+import { BOOK_CATEGORY_REPOSITORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { CategoryRepository } from '../../category/repositories/categoryRepository';
+import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
+import { CATEGORY_REPOSITORY } from '../../category/categoryInjectionSymbols';
+import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
 
 describe('BookService', () => {
   let bookService: BookService;
   let bookRepository: BookRepository;
   let authorRepository: AuthorRepository;
   let authorBookRepository: AuthorBookRepository;
+  let bookCategoryRepository: BookCategoryRepository;
+  let categoryRepository: CategoryRepository;
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
+  let categoryTestDataGenerator: CategoryTestDataGenerator;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -35,6 +44,7 @@ describe('BookService', () => {
       AuthorModule,
       AuthorBookModule,
       CategoryModule,
+      BookCategoryModule,
       LoggerModule,
     ]);
 
@@ -42,9 +52,12 @@ describe('BookService', () => {
     bookRepository = container.resolve(BOOK_REPOSITORY);
     authorRepository = container.resolve(AUTHOR_REPOSITORY);
     authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
 
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
+    categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -211,7 +224,7 @@ describe('BookService', () => {
   });
 
   describe('Find books by author id', () => {
-    it('finds books by author id with filtering in database', async () => {
+    it('finds books by authorId with filtering in database', async () => {
       expect.assertions(3);
 
       const firstBookData = bookTestDataGenerator.generateData();
@@ -263,6 +276,57 @@ describe('BookService', () => {
       expect(foundBooks).not.toBeNull();
       expect(foundBooks.length).toBe(1);
       expect(foundBooks[0].title).toBe(firstBook.title);
+    });
+  });
+
+  describe('Find books by category id', () => {
+    it('finds books by categoryId with conditions in database', async () => {
+      expect.assertions(2);
+
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category = await categoryRepository.createOne({
+        name,
+      });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const book1 = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { title: otherTitle } = bookTestDataGenerator.generateData();
+
+      const book2 = await bookRepository.createOne({
+        title: otherTitle,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      await bookCategoryRepository.createOne({
+        categoryId: category.id,
+        bookId: book1.id,
+      });
+
+      await bookCategoryRepository.createOne({
+        categoryId: category.id,
+        bookId: book2.id,
+      });
+
+      const books = await bookService.findBooksByCategoryId(
+        category.id,
+        { title: { eq: title }, price: { lte: price } },
+        { page: 1, limit: 5 },
+      );
+
+      expect(books.length).toBe(1);
+      expect(books[0]).toStrictEqual(book1);
     });
   });
 
