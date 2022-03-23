@@ -20,10 +20,9 @@ export class GreaterThanOrEqualFilter {
   public constructor(public readonly fieldName: string, public readonly value: number) {}
 }
 
-// export class BetweenFilter {
-//   public field: string;
-//   public values: Array<number>;
-// }
+export class BetweenFilter {
+  public constructor(public readonly fieldName: string, public readonly values: Array<number>) {}
+}
 
 // export class LikeFilter {
 //   public field: string;
@@ -35,7 +34,7 @@ const LESS_THAN_OPERATION_NAME = 'lt';
 const LESS_THAN_OR_EQUAL_OPERATION_NAME = 'lte';
 const GREATER_THAN_OPERATION_NAME = 'gt';
 const GREATER_THAN_OR_EQUAL_OPERATION_NAME = 'gte';
-// const BETWEEN_OPERATION_NAME = 'between';
+const BETWEEN_OPERATION_NAME = 'between';
 // const LIKE_OPERATION_NAME = 'like';
 
 const TOKENS_SEPARATOR = '||';
@@ -117,6 +116,22 @@ export class FilterDataParser {
           }
 
           filters.push(new GreaterThanOrEqualFilter(fieldName, value));
+          break;
+        }
+        case BETWEEN_OPERATION_NAME: {
+          const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR).map((value) => {
+            const numberValue = parseInt(value);
+            if (!numberValue) {
+              throw new InvalidFilterSyntaxError();
+            }
+            return numberValue;
+          });
+
+          if (values.length !== 2) {
+            throw new InvalidFilterSyntaxError();
+          }
+
+          filters.push(new BetweenFilter(fieldName, values));
           break;
         }
       }

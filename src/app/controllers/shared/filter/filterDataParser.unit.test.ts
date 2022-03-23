@@ -1,5 +1,6 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import {
+  BetweenFilter,
   EqualFilter,
   FilterDataParser,
   GreaterThanFilter,
@@ -236,6 +237,60 @@ describe('FilterDataParser', () => {
       expect(filterData[0]).toBeInstanceOf(GreaterThanOrEqualFilter);
       expect((filterData[0] as GreaterThanOrEqualFilter).fieldName).toStrictEqual('price');
       expect((filterData[0] as GreaterThanOrEqualFilter).value).toStrictEqual(10);
+    });
+  });
+
+  describe('Between filter', () => {
+    it('should throw when invalid syntax is provided', () => {
+      expect.assertions(1);
+
+      try {
+        FilterDataParser.parse(['price|between|10,50'], new Map(Object.entries({ price: ['between'] })));
+      } catch (error) {
+        expect(error).toBeInstanceOf(InvalidFilterSyntaxError);
+      }
+    });
+
+    it('should throw when filter value is not a number', () => {
+      expect.assertions(1);
+
+      try {
+        FilterDataParser.parse(['price||between||aaa,b'], new Map(Object.entries({ price: ['between'] })));
+      } catch (error) {
+        expect(error).toBeInstanceOf(InvalidFilterSyntaxError);
+      }
+    });
+
+    it('should throw when only one filter value is provided', () => {
+      expect.assertions(1);
+
+      try {
+        FilterDataParser.parse(['price||between||10'], new Map(Object.entries({ price: ['between'] })));
+      } catch (error) {
+        expect(error).toBeInstanceOf(InvalidFilterSyntaxError);
+      }
+    });
+
+    it('should return empty array when valid syntax is provided but filter is not supported', () => {
+      expect.assertions(1);
+
+      const filterData = FilterDataParser.parse(['price||between||6,10'], new Map(Object.entries({ price: ['eq'] })));
+
+      expect(filterData.length).toBe(0);
+    });
+
+    it('should return GreaterThanOrEqualFilter when valid syntax is provided and filter is supported', () => {
+      expect.assertions(4);
+
+      const filterData = FilterDataParser.parse(
+        ['price||between||10,20'],
+        new Map(Object.entries({ price: ['between'] })),
+      );
+
+      expect(filterData.length).toBe(1);
+      expect(filterData[0]).toBeInstanceOf(BetweenFilter);
+      expect((filterData[0] as BetweenFilter).fieldName).toStrictEqual('price');
+      expect((filterData[0] as BetweenFilter).values).toStrictEqual([10, 20]);
     });
   });
 });
