@@ -4,7 +4,7 @@ import {
   FilterHasNumberPropertyConstraint,
   FilterHasStringPropertyConstraint,
   FilterProperty,
-} from '../../shared/filters';
+} from '../../shared/filter';
 import { BookDto } from './bookDto';
 
 export class FindBooksQueryDto {
