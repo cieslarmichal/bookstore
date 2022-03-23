@@ -5,3 +5,5 @@ export * from './greaterThanOperation';
 export * from './greaterThanOrEqualOperation';
 export * from './betweenOperation';
 export * from './likeOperation';
+export * from './operationNames';
+export * from './operationFactory';

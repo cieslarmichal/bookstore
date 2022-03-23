@@ -1,21 +1,14 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import {
-  BetweenOperation,
-  EqualOperation,
-  GreaterThanOperation,
-  GreaterThanOrEqualOperation,
-  LessThanOperation,
-  LessThanOrEqualOperation,
-  LikeOperation,
+  BETWEEN_OPERATION_NAME,
+  EQUAL_OPERATION_NAME,
+  GREATER_THAN_OPERATION_NAME,
+  GREATER_THAN_OR_EQUAL_OPERATION_NAME,
+  LESS_THAN_OPERATION_NAME,
+  LESS_THAN_OR_EQUAL_OPERATION_NAME,
+  LIKE_OPERATION_NAME,
+  OperationFactory,
 } from './operations';
-
-const EQUAL_OPERATION_NAME = 'eq';
-const LESS_THAN_OPERATION_NAME = 'lt';
-const LESS_THAN_OR_EQUAL_OPERATION_NAME = 'lte';
-const GREATER_THAN_OPERATION_NAME = 'gt';
-const GREATER_THAN_OR_EQUAL_OPERATION_NAME = 'gte';
-const BETWEEN_OPERATION_NAME = 'between';
-const LIKE_OPERATION_NAME = 'like';
 
 const TOKENS_SEPARATOR = '||';
 const VALUES_SEPARATOR = ',';
@@ -55,39 +48,14 @@ export class FilterDataParser {
       switch (operationName) {
         case EQUAL_OPERATION_NAME: {
           const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR);
-          filters.push(new EqualOperation(fieldName, values));
+
+          filters.push(OperationFactory.create(EQUAL_OPERATION_NAME, fieldName, values));
+
           break;
         }
-        case LESS_THAN_OPERATION_NAME: {
-          const value = parseInt(tokens[VALUES_INDEX]);
-
-          if (!value) {
-            throw new InvalidFilterSyntaxError();
-          }
-
-          filters.push(new LessThanOperation(fieldName, value));
-          break;
-        }
-        case LESS_THAN_OR_EQUAL_OPERATION_NAME: {
-          const value = parseInt(tokens[VALUES_INDEX]);
-
-          if (!value) {
-            throw new InvalidFilterSyntaxError();
-          }
-
-          filters.push(new LessThanOrEqualOperation(fieldName, value));
-          break;
-        }
-        case GREATER_THAN_OPERATION_NAME: {
-          const value = parseInt(tokens[VALUES_INDEX]);
-
-          if (!value) {
-            throw new InvalidFilterSyntaxError();
-          }
-
-          filters.push(new GreaterThanOperation(fieldName, value));
-          break;
-        }
+        case LESS_THAN_OPERATION_NAME:
+        case LESS_THAN_OR_EQUAL_OPERATION_NAME:
+        case GREATER_THAN_OPERATION_NAME:
         case GREATER_THAN_OR_EQUAL_OPERATION_NAME: {
           const value = parseInt(tokens[VALUES_INDEX]);
 
@@ -95,12 +63,14 @@ export class FilterDataParser {
             throw new InvalidFilterSyntaxError();
           }
 
-          filters.push(new GreaterThanOrEqualOperation(fieldName, value));
+          filters.push(OperationFactory.create(operationName, fieldName, value));
+
           break;
         }
         case BETWEEN_OPERATION_NAME: {
           const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR).map((value) => {
             const numberValue = parseInt(value);
+
             if (!numberValue) {
               throw new InvalidFilterSyntaxError();
             }
@@ -111,12 +81,15 @@ export class FilterDataParser {
             throw new InvalidFilterSyntaxError();
           }
 
-          filters.push(new BetweenOperation(fieldName, values));
+          filters.push(OperationFactory.create(BETWEEN_OPERATION_NAME, fieldName, values));
+
           break;
         }
         case LIKE_OPERATION_NAME: {
           const value = tokens[VALUES_INDEX];
-          filters.push(new LikeOperation(fieldName, value));
+
+          filters.push(OperationFactory.create(LIKE_OPERATION_NAME, fieldName, value));
+
           break;
         }
       }
