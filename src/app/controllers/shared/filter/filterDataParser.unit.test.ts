@@ -325,4 +325,39 @@ describe('FilterDataParser', () => {
       expect((filterData[0] as LikeFilter).value).toStrictEqual('harry');
     });
   });
+
+  describe('Combined filters', () => {
+    it('should return empty array when given two filters and none of them is supported', () => {
+      expect.assertions(1);
+
+      const filterData = FilterDataParser.parse(
+        ['title||like||harry', 'price||lte||50'],
+        new Map(Object.entries({ title: [], price: [] })),
+      );
+
+      expect(filterData.length).toBe(0);
+    });
+
+    it('should return one filter when given two filters but one is not supported', () => {
+      expect.assertions(1);
+
+      const filterData = FilterDataParser.parse(
+        ['title||like||harry', 'price||lte||50'],
+        new Map(Object.entries({ title: ['like'], price: [] })),
+      );
+
+      expect(filterData.length).toBe(1);
+    });
+
+    it('should return both filters when they are supported', () => {
+      expect.assertions(1);
+
+      const filterData = FilterDataParser.parse(
+        ['title||like||harry', 'price||lte||50'],
+        new Map(Object.entries({ title: ['like'], price: ['lte'] })),
+      );
+
+      expect(filterData.length).toBe(2);
+    });
+  });
 });
