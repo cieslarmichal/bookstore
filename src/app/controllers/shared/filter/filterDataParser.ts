@@ -24,10 +24,9 @@ export class BetweenFilter {
   public constructor(public readonly fieldName: string, public readonly values: Array<number>) {}
 }
 
-// export class LikeFilter {
-//   public field: string;
-//   public value: string;
-// }
+export class LikeFilter {
+  public constructor(public readonly fieldName: string, public readonly value: string) {}
+}
 
 const EQUAL_OPERATION_NAME = 'eq';
 const LESS_THAN_OPERATION_NAME = 'lt';
@@ -35,7 +34,7 @@ const LESS_THAN_OR_EQUAL_OPERATION_NAME = 'lte';
 const GREATER_THAN_OPERATION_NAME = 'gt';
 const GREATER_THAN_OR_EQUAL_OPERATION_NAME = 'gte';
 const BETWEEN_OPERATION_NAME = 'between';
-// const LIKE_OPERATION_NAME = 'like';
+const LIKE_OPERATION_NAME = 'like';
 
 const TOKENS_SEPARATOR = '||';
 const VALUES_SEPARATOR = ',';
@@ -132,6 +131,11 @@ export class FilterDataParser {
           }
 
           filters.push(new BetweenFilter(fieldName, values));
+          break;
+        }
+        case LIKE_OPERATION_NAME: {
+          const value = tokens[VALUES_INDEX];
+          filters.push(new LikeFilter(fieldName, value));
           break;
         }
       }

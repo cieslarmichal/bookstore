@@ -7,6 +7,7 @@ import {
   GreaterThanOrEqualFilter,
   LessThanFilter,
   LessThanOrEqualFilter,
+  LikeFilter,
 } from './filterDataParser';
 
 describe('FilterDataParser', () => {
@@ -50,7 +51,7 @@ describe('FilterDataParser', () => {
       expect(filterData.length).toBe(0);
     });
 
-    it('should return equal filter when valid syntax with one entry is provided and filter is supported', () => {
+    it('should return EqualFilter when valid syntax with one entry is provided and filter is supported', () => {
       expect.assertions(4);
 
       const filterData = FilterDataParser.parse(['title||eq||lotr'], new Map(Object.entries({ title: ['eq'] })));
@@ -291,6 +292,37 @@ describe('FilterDataParser', () => {
       expect(filterData[0]).toBeInstanceOf(BetweenFilter);
       expect((filterData[0] as BetweenFilter).fieldName).toStrictEqual('price');
       expect((filterData[0] as BetweenFilter).values).toStrictEqual([10, 20]);
+    });
+  });
+
+  describe('Like filter', () => {
+    it('should throw when invalid syntax is provided', () => {
+      expect.assertions(1);
+
+      try {
+        FilterDataParser.parse(['title|like|harry'], new Map(Object.entries({ title: ['like'] })));
+      } catch (error) {
+        expect(error).toBeInstanceOf(InvalidFilterSyntaxError);
+      }
+    });
+
+    it('should return empty array when valid syntax is provided but filter is not supported', () => {
+      expect.assertions(1);
+
+      const filterData = FilterDataParser.parse(['title||like||harry'], new Map(Object.entries({ title: ['lt'] })));
+
+      expect(filterData.length).toBe(0);
+    });
+
+    it('should return LikeFilter when valid syntax is provided and filter is supported', () => {
+      expect.assertions(4);
+
+      const filterData = FilterDataParser.parse(['title||like||harry'], new Map(Object.entries({ title: ['like'] })));
+
+      expect(filterData.length).toBe(1);
+      expect(filterData[0]).toBeInstanceOf(LikeFilter);
+      expect((filterData[0] as LikeFilter).fieldName).toStrictEqual('title');
+      expect((filterData[0] as LikeFilter).value).toStrictEqual('harry');
     });
   });
 });
