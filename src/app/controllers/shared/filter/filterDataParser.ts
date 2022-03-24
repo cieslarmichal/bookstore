@@ -18,7 +18,15 @@ const VALUES_INDEX = 2;
 const EXPECTED_NUMBER_OF_TOKENS = 3;
 
 export class FilterDataParser {
-  public static parse(filterData: Array<string>, supportedFieldsFilters: Map<string, Array<string>>): Array<any> {
+  public static parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Array<any> {
+    let filterData: Array<string>;
+
+    try {
+      filterData = JSON.parse(filterDataAsJson);
+    } catch (error) {
+      throw new InvalidFilterSyntaxError('filter data is not valid json object');
+    }
+
     if (!filterData) {
       return [];
     }
@@ -30,10 +38,11 @@ export class FilterDataParser {
     const filters = new Array<any>();
 
     for (const fieldData of filterData) {
+      console.log(fieldData);
       const tokens = fieldData.split(TOKENS_SEPARATOR);
-
+      console.log(tokens);
       if (tokens.length != EXPECTED_NUMBER_OF_TOKENS) {
-        throw new InvalidFilterSyntaxError();
+        throw new InvalidFilterSyntaxError('number of tokens in filter element is not equal 3');
       }
 
       const fieldName = tokens[FIELD_NAME_INDEX];
@@ -60,7 +69,7 @@ export class FilterDataParser {
           const value = parseInt(tokens[VALUES_INDEX]);
 
           if (!value) {
-            throw new InvalidFilterSyntaxError();
+            throw new InvalidFilterSyntaxError('value is not a number');
           }
 
           filters.push(OperationFactory.create(operationName, fieldName, value));
@@ -72,13 +81,13 @@ export class FilterDataParser {
             const numberValue = parseInt(value);
 
             if (!numberValue) {
-              throw new InvalidFilterSyntaxError();
+              throw new InvalidFilterSyntaxError('one of the values is not a number');
             }
             return numberValue;
           });
 
           if (values.length !== 2) {
-            throw new InvalidFilterSyntaxError();
+            throw new InvalidFilterSyntaxError('number of values is not 2');
           }
 
           filters.push(OperationFactory.create(BETWEEN_OPERATION_NAME, fieldName, values));

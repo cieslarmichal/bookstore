@@ -12,15 +12,12 @@ import {
   FindBookCategoriesParamDto,
   FindBookCategoriesResponseData,
   FindBookCategoriesResponseDto,
-  FindCategoryBooksParamDto,
-  FindCategoryBooksResponseData,
-  FindCategoryBooksResponseDto,
   RemoveBookCategoryParamDto,
   RemoveBookCategoryResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, PaginationDataParser, sendResponseMiddleware } from '../shared';
-import { FindBooksQueryDto } from '../book/dtos/findBooksDto';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { supportedFindBooksFieldsFilters } from '../book/dtos/findBooksDto';
 import { FindCategoriesQueryDto } from '../category/dtos';
 
 const BOOK_CATEGORIES_PATH = '/books/:bookId/categories';
@@ -110,17 +107,20 @@ export class BookCategoryController {
   }
 
   public async findCategoryBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
+    // const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
 
-    const booksQueryDto = RecordToInstanceTransformer.transform(request.query, FindBooksQueryDto);
+    const filterData = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    console.log(filterData);
 
-    const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId, booksQueryDto, paginationData);
+    // const paginationData = PaginationDataParser.parse(request.query);
 
-    const responseData = new FindCategoryBooksResponseData(booksDto);
+    // const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId, booksQueryDto, paginationData);
 
-    return new FindCategoryBooksResponseDto(responseData, StatusCodes.OK);
+    // const responseData = new FindCategoryBooksResponseData(booksDto);
+
+    // return new FindCategoryBooksResponseDto(responseData, StatusCodes.OK);
+    return { data: 'x', statusCode: StatusCodes.OK };
   }
 
   public async deleteBookCategory(request: Request, response: Response): Promise<ControllerResponse> {

@@ -1,33 +1,37 @@
-import { IsOptional, Validate } from 'class-validator';
-import { BookFormat, BookLanguage } from '../../../domain/book/types';
 import {
-  FilterHasNumberPropertyConstraint,
-  FilterHasStringPropertyConstraint,
-  FilterProperty,
+  BETWEEN_OPERATION_NAME,
+  EQUAL_OPERATION_NAME,
+  GREATER_THAN_OPERATION_NAME,
+  GREATER_THAN_OR_EQUAL_OPERATION_NAME,
+  LESS_THAN_OPERATION_NAME,
+  LESS_THAN_OR_EQUAL_OPERATION_NAME,
+  LIKE_OPERATION_NAME,
 } from '../../shared/filter';
 import { BookDto } from './bookDto';
 
-export class FindBooksQueryDto {
-  @IsOptional()
-  @Validate(FilterHasStringPropertyConstraint, {})
-  public readonly title?: FilterProperty<string>;
-
-  @IsOptional()
-  @Validate(FilterHasNumberPropertyConstraint, {})
-  public readonly releaseYear?: FilterProperty<number>;
-
-  @IsOptional()
-  @Validate(FilterHasStringPropertyConstraint, {})
-  public readonly language?: FilterProperty<BookLanguage>;
-
-  @IsOptional()
-  @Validate(FilterHasStringPropertyConstraint, {})
-  public readonly format?: FilterProperty<BookFormat>;
-
-  @IsOptional()
-  @Validate(FilterHasNumberPropertyConstraint, {})
-  public readonly price?: FilterProperty<number>;
-}
+export const supportedFindBooksFieldsFilters: Map<string, Array<string>> = new Map(
+  Object.entries({
+    title: [EQUAL_OPERATION_NAME, LIKE_OPERATION_NAME],
+    releaseYear: [
+      EQUAL_OPERATION_NAME,
+      LESS_THAN_OPERATION_NAME,
+      LESS_THAN_OR_EQUAL_OPERATION_NAME,
+      GREATER_THAN_OPERATION_NAME,
+      GREATER_THAN_OR_EQUAL_OPERATION_NAME,
+      BETWEEN_OPERATION_NAME,
+    ],
+    language: [EQUAL_OPERATION_NAME],
+    format: [EQUAL_OPERATION_NAME],
+    price: [
+      EQUAL_OPERATION_NAME,
+      LESS_THAN_OPERATION_NAME,
+      LESS_THAN_OR_EQUAL_OPERATION_NAME,
+      GREATER_THAN_OPERATION_NAME,
+      GREATER_THAN_OR_EQUAL_OPERATION_NAME,
+      BETWEEN_OPERATION_NAME,
+    ],
+  }),
+);
 
 export class FindBooksResponseData {
   public constructor(public readonly books: BookDto[]) {}

@@ -1,5 +1,5 @@
 export class InvalidFilterSyntaxError extends Error {
-  public constructor() {
-    super('Error while parsing filter object');
+  public constructor(errorDetails: string) {
+    super(`Error while parsing filter object: ${errorDetails}`);
   }
 }
