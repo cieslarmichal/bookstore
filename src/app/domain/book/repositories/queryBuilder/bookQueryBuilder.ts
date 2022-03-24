@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../../shared/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Book } from '../../entities/book';
-import { FindBooksData } from '../types';
+import { Filter } from '../../../../shared';
 
 export class BookQueryBuilder extends QueryBuilder<Book> {
   public constructor(entityManager: EntityManager) {
@@ -24,25 +24,9 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
     return this;
   }
 
-  public boookConditions(findBooksData: FindBooksData): BookQueryBuilder {
-    if (findBooksData.title) {
-      this.partialConditionsForFilterProperty('book.title', findBooksData.title);
-    }
-
-    if (findBooksData.releaseYear) {
-      this.partialConditionsForFilterProperty('book.releaseYear', findBooksData.releaseYear);
-    }
-
-    if (findBooksData.language) {
-      this.partialConditionsForFilterProperty('book.language', findBooksData.language);
-    }
-
-    if (findBooksData.format) {
-      this.partialConditionsForFilterProperty('book.format', findBooksData.format);
-    }
-
-    if (findBooksData.price) {
-      this.partialConditionsForFilterProperty('book.price', findBooksData.price);
+  public boookConditions(filters: Filter[]): BookQueryBuilder {
+    for (const filter of filters) {
+      this.partialConditionsForFilter(`book.${filter.fieldName}`, filter);
     }
 
     return this;

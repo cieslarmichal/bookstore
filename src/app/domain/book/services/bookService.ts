@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { Filter, LoggerService } from '../../../shared';
 import { PaginationData } from '../../shared';
 import { BookDto } from '../dtos';
 import { BookNotFound } from '../errors';
@@ -29,8 +29,8 @@ export class BookService {
     return book;
   }
 
-  public async findBooks(findBooksData: FindBooksData, paginationData: PaginationData): Promise<BookDto[]> {
-    const books = await this.bookRepository.findMany(findBooksData, paginationData);
+  public async findBooks(filters: Filter[], paginationData: PaginationData): Promise<BookDto[]> {
+    const books = await this.bookRepository.findMany(filters, paginationData);
 
     return books;
   }

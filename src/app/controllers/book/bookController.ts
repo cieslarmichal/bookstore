@@ -5,7 +5,7 @@ import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookErrorMiddleware } from './middlewares';
-import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, ControllerResponse, PaginationDataParser, sendResponseMiddleware } from '../shared';
 import {
   CreateBookBodyDto,
   CreateBookResponseData,
@@ -13,6 +13,8 @@ import {
   FindBookParamDto,
   FindBookResponseData,
   FindBookResponseDto,
+  FindBooksResponseData,
+  FindBooksResponseDto,
   RemoveBookParamDto,
   RemoveBookResponseDto,
   UpdateBookBodyDto,
@@ -106,15 +108,13 @@ export class BookController {
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const filterData = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
-    console.log(filterData);
+    const paginationData = PaginationDataParser.parse(request.query);
 
-    // const paginationData = PaginationDataParser.parse(request.query);
+    const booksDto = await this.bookService.findBooks(filterData, paginationData);
 
-    // const booksDto = await this.bookService.findBooks(findBooksQueryDto, paginationData);
+    const responseData = new FindBooksResponseData(booksDto);
 
-    // const responseData = new FindBooksResponseData(booksDto);
-
-    return { data: 'x', statusCode: StatusCodes.OK };
+    return new FindBooksResponseDto(responseData, StatusCodes.OK);
   }
 
   public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {

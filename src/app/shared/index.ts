@@ -4,3 +4,5 @@ export * from './mapper';
 export * from './db';
 export * from './di';
 export * from './errors';
+export * from './filter';
+export * from './logger';

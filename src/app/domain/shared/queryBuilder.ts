@@ -1,5 +1,14 @@
+import {
+  BetweenFilter,
+  EqualFilter,
+  Filter,
+  GreaterThanFilter,
+  GreaterThanOrEqualFilter,
+  LessThanFilter,
+  LessThanOrEqualFilter,
+  LikeFilter,
+} from '../../shared';
 import { EntityManager, SelectQueryBuilder } from 'typeorm';
-import { FilterProperty } from './types/filterProperty';
 
 export abstract class QueryBuilder<T> {
   protected instance: SelectQueryBuilder<T>;
@@ -36,79 +45,107 @@ export abstract class QueryBuilder<T> {
     });
   }
 
-  protected partialConditionsForFilterProperty(columnName: string, filterProperty: FilterProperty) {
+  protected partialConditionsForFilter(columnName: string, filter: Filter) {
     if (!this.whereApplied) {
-      this.partialConditionsForFilterPropertyAsFirstWhereCondition(columnName, filterProperty);
+      this.partialConditionsForFilterPropertyAsFirstWhereCondition(columnName, filter);
       this.whereApplied = true;
     } else {
-      this.partialConditionsForFilterPropertyAsNextWhereCondition(columnName, filterProperty);
+      this.partialConditionsForFilterPropertyAsNextWhereCondition(columnName, filter);
     }
   }
 
-  private partialConditionsForFilterPropertyAsFirstWhereCondition(columnName: string, filterProperty: FilterProperty) {
-    if (filterProperty.eq) {
+  private partialConditionsForFilterPropertyAsFirstWhereCondition(columnName: string, filter: Filter) {
+    if (filter instanceof EqualFilter) {
       const paramName = `${columnName}EqualsParameter`;
-      this.instance.where(`${columnName} = :${paramName}`, {
-        [`${paramName}`]: filterProperty.eq,
-      });
-    } else if (filterProperty.gt) {
+
+      if (filter.values.length > 1) {
+        this.instance.where(`${columnName} IN (:...${paramName})`, {
+          [`${paramName}`]: filter.values,
+        });
+      } else {
+        this.instance.where(`${columnName} = :${paramName}`, {
+          [`${paramName}`]: filter.values,
+        });
+      }
+    } else if (filter instanceof GreaterThanFilter) {
       const paramName = `${columnName}GreaterThanParameter`;
       this.instance.where(`${columnName} > :${paramName}`, {
-        [`${paramName}`]: filterProperty.gt,
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.gte) {
+    } else if (filter instanceof GreaterThanOrEqualFilter) {
       const paramName = `${columnName}GreaterThanOrEqualParameter`;
       this.instance.where(`${columnName} >= :${paramName}`, {
-        [`${paramName}`]: filterProperty.gte,
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.lt) {
+    } else if (filter instanceof LessThanFilter) {
       const paramName = `${columnName}LessThanParameter`;
       this.instance.where(`${columnName} < :${paramName}`, {
-        [`${paramName}`]: filterProperty.lt,
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.lte) {
+    } else if (filter instanceof LessThanOrEqualFilter) {
       const paramName = `${columnName}LessThanOrEqualParameter`;
       this.instance.where(`${columnName} <= :${paramName}`, {
-        [`${paramName}`]: filterProperty.lte,
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.like) {
+    } else if (filter instanceof LikeFilter) {
       const paramName = `${columnName}LikeParameter`;
       this.instance.where(`${columnName} LIKE :${paramName}`, {
-        [`${paramName}`]: filterProperty.like,
+        [`${paramName}`]: filter.value,
+      });
+    } else if (filter instanceof BetweenFilter) {
+      const paramName1 = `${columnName}BetweenParameter1`;
+      const paramName2 = `${columnName}BetweenParameter2`;
+      this.instance.where(`${columnName} BETWEEN :${paramName1} AND :${paramName2}`, {
+        [`${paramName1}`]: filter.values[0],
+        [`${paramName2}`]: filter.values[1],
       });
     }
   }
 
-  private partialConditionsForFilterPropertyAsNextWhereCondition(columnName: string, filterProperty: FilterProperty) {
-    if (filterProperty.eq) {
+  private partialConditionsForFilterPropertyAsNextWhereCondition(columnName: string, filter: Filter) {
+    if (filter instanceof EqualFilter) {
       const paramName = `${columnName}EqualsParameter`;
-      this.instance.andWhere(`${columnName} = :${paramName}`, {
-        [`${paramName}`]: filterProperty.eq,
-      });
-    } else if (filterProperty.gt) {
+
+      if (filter.values.length > 1) {
+        this.instance.where(`${columnName} IN (:...${paramName})`, {
+          [`${paramName}`]: filter.values,
+        });
+      } else {
+        this.instance.where(`${columnName} = :${paramName}`, {
+          [`${paramName}`]: filter.values,
+        });
+      }
+    } else if (filter instanceof GreaterThanFilter) {
       const paramName = `${columnName}GreaterThanParameter`;
-      this.instance.andWhere(`${columnName} > :${paramName}`, {
-        [`${paramName}`]: filterProperty.gt,
+      this.instance.where(`${columnName} > :${paramName}`, {
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.gte) {
+    } else if (filter instanceof GreaterThanOrEqualFilter) {
       const paramName = `${columnName}GreaterThanOrEqualParameter`;
-      this.instance.andWhere(`${columnName} >= :${paramName}`, {
-        [`${paramName}`]: filterProperty.gte,
+      this.instance.where(`${columnName} >= :${paramName}`, {
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.lt) {
+    } else if (filter instanceof LessThanFilter) {
       const paramName = `${columnName}LessThanParameter`;
-      this.instance.andWhere(`${columnName} < :${paramName}`, {
-        [`${paramName}`]: filterProperty.lt,
+      this.instance.where(`${columnName} < :${paramName}`, {
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.lte) {
+    } else if (filter instanceof LessThanOrEqualFilter) {
       const paramName = `${columnName}LessThanOrEqualParameter`;
-      this.instance.andWhere(`${columnName} <= :${paramName}`, {
-        [`${paramName}`]: filterProperty.lte,
+      this.instance.where(`${columnName} <= :${paramName}`, {
+        [`${paramName}`]: filter.value,
       });
-    } else if (filterProperty.like) {
+    } else if (filter instanceof LikeFilter) {
       const paramName = `${columnName}LikeParameter`;
-      this.instance.andWhere(`${columnName} LIKE :${paramName}`, {
-        [`${paramName}`]: filterProperty.like,
+      this.instance.where(`${columnName} LIKE :${paramName}`, {
+        [`${paramName}`]: filter.value,
+      });
+    } else if (filter instanceof BetweenFilter) {
+      const paramName1 = `${columnName}BetweenParameter1`;
+      const paramName2 = `${columnName}BetweenParameter2`;
+      this.instance.where(`${columnName} BETWEEN :${paramName1} AND :${paramName2}`, {
+        [`${paramName1}`]: filter.values[0],
+        [`${paramName2}`]: filter.values[1],
       });
     }
   }

@@ -1,14 +1,14 @@
 import { InvalidFilterSyntaxError } from './errors';
 import { FilterDataParser } from './filterDataParser';
 import {
-  BetweenOperation,
-  EqualOperation,
-  GreaterThanOperation,
-  GreaterThanOrEqualOperation,
-  LessThanOperation,
-  LessThanOrEqualOperation,
-  LikeOperation,
-} from './operations';
+  BetweenFilter,
+  EqualFilter,
+  GreaterThanFilter,
+  GreaterThanOrEqualFilter,
+  LessThanFilter,
+  LessThanOrEqualFilter,
+  LikeFilter,
+} from '../../../shared';
 
 describe('FilterDataParser', () => {
   describe('Empty input', () => {
@@ -67,9 +67,9 @@ describe('FilterDataParser', () => {
       const filterData = FilterDataParser.parse(`["title||eq||lotr"]`, new Map(Object.entries({ title: ['eq'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(EqualOperation);
-      expect((filterData[0] as EqualOperation).fieldName).toStrictEqual('title');
-      expect((filterData[0] as EqualOperation).values).toStrictEqual(['lotr']);
+      expect(filterData[0]).toBeInstanceOf(EqualFilter);
+      expect((filterData[0] as EqualFilter).fieldName).toStrictEqual('title');
+      expect((filterData[0] as EqualFilter).values).toStrictEqual(['lotr']);
     });
 
     it('should return EqualFilter when valid syntax with two entries is provided and filter is supported', () => {
@@ -81,9 +81,9 @@ describe('FilterDataParser', () => {
       );
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(EqualOperation);
-      expect((filterData[0] as EqualOperation).fieldName).toStrictEqual('author');
-      expect((filterData[0] as EqualOperation).values).toStrictEqual(['J.R.R. Tolkien', 'J.K. Rowling']);
+      expect(filterData[0]).toBeInstanceOf(EqualFilter);
+      expect((filterData[0] as EqualFilter).fieldName).toStrictEqual('author');
+      expect((filterData[0] as EqualFilter).values).toStrictEqual(['J.R.R. Tolkien', 'J.K. Rowling']);
     });
   });
 
@@ -122,9 +122,9 @@ describe('FilterDataParser', () => {
       const filterData = FilterDataParser.parse(`["price||lt||10"]`, new Map(Object.entries({ price: ['lt'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(LessThanOperation);
-      expect((filterData[0] as LessThanOperation).fieldName).toStrictEqual('price');
-      expect((filterData[0] as LessThanOperation).value).toStrictEqual(10);
+      expect(filterData[0]).toBeInstanceOf(LessThanFilter);
+      expect((filterData[0] as LessThanFilter).fieldName).toStrictEqual('price');
+      expect((filterData[0] as LessThanFilter).value).toStrictEqual(10);
     });
   });
 
@@ -163,9 +163,9 @@ describe('FilterDataParser', () => {
       const filterData = FilterDataParser.parse(`["price||lte||10"]`, new Map(Object.entries({ price: ['lte'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(LessThanOrEqualOperation);
-      expect((filterData[0] as LessThanOrEqualOperation).fieldName).toStrictEqual('price');
-      expect((filterData[0] as LessThanOrEqualOperation).value).toStrictEqual(10);
+      expect(filterData[0]).toBeInstanceOf(LessThanOrEqualFilter);
+      expect((filterData[0] as LessThanOrEqualFilter).fieldName).toStrictEqual('price');
+      expect((filterData[0] as LessThanOrEqualFilter).value).toStrictEqual(10);
     });
   });
 
@@ -204,9 +204,9 @@ describe('FilterDataParser', () => {
       const filterData = FilterDataParser.parse(`["price||gt||10"]`, new Map(Object.entries({ price: ['gt'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(GreaterThanOperation);
-      expect((filterData[0] as GreaterThanOperation).fieldName).toStrictEqual('price');
-      expect((filterData[0] as GreaterThanOperation).value).toStrictEqual(10);
+      expect(filterData[0]).toBeInstanceOf(GreaterThanFilter);
+      expect((filterData[0] as GreaterThanFilter).fieldName).toStrictEqual('price');
+      expect((filterData[0] as GreaterThanFilter).value).toStrictEqual(10);
     });
   });
 
@@ -245,9 +245,9 @@ describe('FilterDataParser', () => {
       const filterData = FilterDataParser.parse(`["price||gte||10"]`, new Map(Object.entries({ price: ['gte'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(GreaterThanOrEqualOperation);
-      expect((filterData[0] as GreaterThanOrEqualOperation).fieldName).toStrictEqual('price');
-      expect((filterData[0] as GreaterThanOrEqualOperation).value).toStrictEqual(10);
+      expect(filterData[0]).toBeInstanceOf(GreaterThanOrEqualFilter);
+      expect((filterData[0] as GreaterThanOrEqualFilter).fieldName).toStrictEqual('price');
+      expect((filterData[0] as GreaterThanOrEqualFilter).value).toStrictEqual(10);
     });
   });
 
@@ -299,9 +299,9 @@ describe('FilterDataParser', () => {
       );
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(BetweenOperation);
-      expect((filterData[0] as BetweenOperation).fieldName).toStrictEqual('price');
-      expect((filterData[0] as BetweenOperation).values).toStrictEqual([10, 20]);
+      expect(filterData[0]).toBeInstanceOf(BetweenFilter);
+      expect((filterData[0] as BetweenFilter).fieldName).toStrictEqual('price');
+      expect((filterData[0] as BetweenFilter).values).toStrictEqual([10, 20]);
     });
   });
 
@@ -330,9 +330,9 @@ describe('FilterDataParser', () => {
       const filterData = FilterDataParser.parse(`["title||like||harry"]`, new Map(Object.entries({ title: ['like'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(LikeOperation);
-      expect((filterData[0] as LikeOperation).fieldName).toStrictEqual('title');
-      expect((filterData[0] as LikeOperation).value).toStrictEqual('harry');
+      expect(filterData[0]).toBeInstanceOf(LikeFilter);
+      expect((filterData[0] as LikeFilter).fieldName).toStrictEqual('title');
+      expect((filterData[0] as LikeFilter).value).toStrictEqual('harry');
     });
   });
 

@@ -6,6 +6,7 @@ import { BookNotFound } from '../errors';
 import { PaginationData } from '../../shared';
 import { FindBooksData } from './types';
 import { BookQueryBuilder } from './queryBuilder';
+import { Filter } from '../../../shared';
 
 @EntityRepository()
 export class BookRepository {
@@ -33,13 +34,13 @@ export class BookRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindBooksData, paginationData: PaginationData): Promise<BookDto[]> {
+  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<BookDto[]> {
     const bookQueryBuilder = new BookQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
     const books = await bookQueryBuilder
-      .boookConditions(conditions)
+      .boookConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();

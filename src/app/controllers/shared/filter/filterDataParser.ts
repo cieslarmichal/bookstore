@@ -1,14 +1,14 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import {
-  BETWEEN_OPERATION_NAME,
-  EQUAL_OPERATION_NAME,
-  GREATER_THAN_OPERATION_NAME,
-  GREATER_THAN_OR_EQUAL_OPERATION_NAME,
-  LESS_THAN_OPERATION_NAME,
-  LESS_THAN_OR_EQUAL_OPERATION_NAME,
-  LIKE_OPERATION_NAME,
-  OperationFactory,
-} from './operations';
+  BETWEEN_FILTER_NAME,
+  EQUAL_FILTER_NAME,
+  GREATER_THAN_FILTER_NAME,
+  GREATER_THAN_OR_EQUAL_FILTER_NAME,
+  LESS_THAN_FILTER_NAME,
+  LESS_THAN_OR_EQUAL_FILTER_NAME,
+  LIKE_FILTER_NAME,
+  FilterFactory,
+} from '../../../shared';
 
 const TOKENS_SEPARATOR = '||';
 const VALUES_SEPARATOR = ',';
@@ -46,37 +46,37 @@ export class FilterDataParser {
       }
 
       const fieldName = tokens[FIELD_NAME_INDEX];
-      const operationName = tokens[OPERATION_NAME_INDEX];
+      const filterName = tokens[OPERATION_NAME_INDEX];
 
       const supportedFieldFilters = supportedFieldsFilters.get(fieldName);
 
-      if (!supportedFieldFilters || !supportedFieldFilters.includes(operationName)) {
+      if (!supportedFieldFilters || !supportedFieldFilters.includes(filterName)) {
         continue;
       }
 
-      switch (operationName) {
-        case EQUAL_OPERATION_NAME: {
+      switch (filterName) {
+        case EQUAL_FILTER_NAME: {
           const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR);
 
-          filters.push(OperationFactory.create(EQUAL_OPERATION_NAME, fieldName, values));
+          filters.push(FilterFactory.create(EQUAL_FILTER_NAME, fieldName, values));
 
           break;
         }
-        case LESS_THAN_OPERATION_NAME:
-        case LESS_THAN_OR_EQUAL_OPERATION_NAME:
-        case GREATER_THAN_OPERATION_NAME:
-        case GREATER_THAN_OR_EQUAL_OPERATION_NAME: {
+        case LESS_THAN_FILTER_NAME:
+        case LESS_THAN_OR_EQUAL_FILTER_NAME:
+        case GREATER_THAN_FILTER_NAME:
+        case GREATER_THAN_OR_EQUAL_FILTER_NAME: {
           const value = parseInt(tokens[VALUES_INDEX]);
 
           if (!value) {
             throw new InvalidFilterSyntaxError('value is not a number');
           }
 
-          filters.push(OperationFactory.create(operationName, fieldName, value));
+          filters.push(FilterFactory.create(filterName, fieldName, value));
 
           break;
         }
-        case BETWEEN_OPERATION_NAME: {
+        case BETWEEN_FILTER_NAME: {
           const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR).map((value) => {
             const numberValue = parseInt(value);
 
@@ -90,14 +90,14 @@ export class FilterDataParser {
             throw new InvalidFilterSyntaxError('number of values is not 2');
           }
 
-          filters.push(OperationFactory.create(BETWEEN_OPERATION_NAME, fieldName, values));
+          filters.push(FilterFactory.create(BETWEEN_FILTER_NAME, fieldName, values));
 
           break;
         }
-        case LIKE_OPERATION_NAME: {
+        case LIKE_FILTER_NAME: {
           const value = tokens[VALUES_INDEX];
 
-          filters.push(OperationFactory.create(LIKE_OPERATION_NAME, fieldName, value));
+          filters.push(FilterFactory.create(LIKE_FILTER_NAME, fieldName, value));
 
           break;
         }
