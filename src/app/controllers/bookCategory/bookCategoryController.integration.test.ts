@@ -257,19 +257,28 @@ describe(`BookCategoryController`, () => {
         price,
       });
 
+      const book3 = await bookRepository.createOne({
+        title: otherTitle,
+        releaseYear,
+        language,
+        format: BookFormat.kindle,
+        price,
+      });
+
       const { name } = categoryTestDataGenerator.generateData();
 
       const category = await categoryRepository.createOne({ name });
 
       await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book1.id });
       await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book2.id });
+      await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book3.id });
 
       const response = await request(server.instance)
-        .get(`${categoriesUrl}/${category.id}/books?filter=["format||eq||paperback"]`)
+        .get(`${categoriesUrl}/${category.id}/books?filter=["format||eq||paperback,hardcover"]`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
-      expect(response.body.data.books.length).toBe(1);
+      expect(response.body.data.books.length).toBe(2);
     });
   });
 
