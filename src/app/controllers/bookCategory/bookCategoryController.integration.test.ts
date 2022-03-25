@@ -25,6 +25,7 @@ import { BOOK_CATEGORY_REPOSITORY } from '../../domain/bookCategory/bookCategory
 import { AuthorModule } from '../../domain/author/authorModule';
 import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymbols';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
+import { BookFormat } from '../../domain/book/types';
 
 const categoriesUrl = '/categories';
 const booksUrl = '/books';
@@ -229,22 +230,46 @@ describe(`BookCategoryController`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('returns ok when categoryId is uuid and have corresponding category', async () => {
-      expect.assertions(1);
+    it('returns books matching filter criteria', async () => {
+      expect.assertions(2);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
+      const { title, releaseYear, language, price } = bookTestDataGenerator.generateData();
+
+      const book1 = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format: BookFormat.paperback,
+        price,
+      });
+
+      const { title: otherTitle } = bookTestDataGenerator.generateData();
+
+      const book2 = await bookRepository.createOne({
+        title: otherTitle,
+        releaseYear,
+        language,
+        format: BookFormat.hardcover,
+        price,
+      });
+
       const { name } = categoryTestDataGenerator.generateData();
 
       const category = await categoryRepository.createOne({ name });
 
+      await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book1.id });
+      await bookCategoryRepository.createOne({ categoryId: category.id, bookId: book2.id });
+
       const response = await request(server.instance)
-        .get(`${categoriesUrl}/${category.id}/books`)
+        .get(`${categoriesUrl}/${category.id}/books?filter=["format||eq||paperback"]`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.books.length).toBe(1);
     });
   });
 
@@ -299,14 +324,14 @@ describe(`BookCategoryController`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('returns ok when bookId is uuid and have corresponding book', async () => {
-      expect.assertions(1);
+    it('returns categories matchin filter criteria', async () => {
+      expect.assertions(2);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      const { title, releaseYear, language, price, format } = bookTestDataGenerator.generateData();
 
       const book = await bookRepository.createOne({
         title,
@@ -316,11 +341,23 @@ describe(`BookCategoryController`, () => {
         price,
       });
 
+      const { name } = categoryTestDataGenerator.generateData();
+
+      const category1 = await categoryRepository.createOne({ name });
+
+      const { name: otherName } = categoryTestDataGenerator.generateData();
+
+      const category2 = await categoryRepository.createOne({ name: otherName });
+
+      await bookCategoryRepository.createOne({ categoryId: category1.id, bookId: book.id });
+      await bookCategoryRepository.createOne({ categoryId: category2.id, bookId: book.id });
+
       const response = await request(server.instance)
-        .get(`${booksUrl}/${book.id}/categories`)
+        .get(`${booksUrl}/${book.id}/categories?filter=["name||eq||${name}"]`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.categories.length).toBe(1);
     });
   });
 

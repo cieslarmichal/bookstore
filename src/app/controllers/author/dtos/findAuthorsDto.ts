@@ -1,16 +1,12 @@
-import { IsOptional, Validate } from 'class-validator';
-import { FilterHasStringPropertyConstraint, FilterProperty } from '../../shared';
+import { EQUAL_FILTER_NAME, LIKE_FILTER_NAME } from '../../../shared';
 import { AuthorDto } from './authorDto';
 
-export class FindAuthorsQueryDto {
-  @IsOptional()
-  @Validate(FilterHasStringPropertyConstraint, {})
-  public readonly firstName?: FilterProperty<string>;
-
-  @IsOptional()
-  @Validate(FilterHasStringPropertyConstraint, {})
-  public readonly lastName?: FilterProperty<string>;
-}
+export const supportedFindAuthorsFieldsFilters: Map<string, Array<string>> = new Map(
+  Object.entries({
+    firstName: [EQUAL_FILTER_NAME, LIKE_FILTER_NAME],
+    lastName: [EQUAL_FILTER_NAME, LIKE_FILTER_NAME],
+  }),
+);
 
 export class FindAuthorsResponseData {
   public constructor(public readonly authors: AuthorDto[]) {}

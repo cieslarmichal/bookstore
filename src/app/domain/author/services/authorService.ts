@@ -1,9 +1,10 @@
+import { Filter } from '../../../shared';
 import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { PaginationData } from '../../shared';
 import { AuthorDto } from '../dtos';
 import { AuthorNotFound } from '../errors';
 import { AuthorRepository } from '../repositories/authorRepository';
-import { CreateAuthorData, FindAuthorsData, UpdateAuthorData } from './types';
+import { CreateAuthorData, UpdateAuthorData } from './types';
 
 export class AuthorService {
   public constructor(
@@ -31,18 +32,18 @@ export class AuthorService {
     return author;
   }
 
-  public async findAuthors(findAuthorsData: FindAuthorsData, paginationData: PaginationData): Promise<AuthorDto[]> {
-    const authors = await this.authorRepository.findMany(findAuthorsData, paginationData);
+  public async findAuthors(filters: Filter[], paginationData: PaginationData): Promise<AuthorDto[]> {
+    const authors = await this.authorRepository.findMany(filters, paginationData);
 
     return authors;
   }
 
   public async findAuthorsByBookId(
     bookId: string,
-    findAuthorsData: FindAuthorsData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<AuthorDto[]> {
-    const authors = await this.authorRepository.findManyByBookId(bookId, findAuthorsData, paginationData);
+    const authors = await this.authorRepository.findManyByBookId(bookId, filters, paginationData);
 
     return authors;
   }

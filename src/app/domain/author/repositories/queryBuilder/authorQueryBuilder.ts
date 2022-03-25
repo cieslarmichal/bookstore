@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../../shared/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Author } from '../../entities/author';
-import { FindAuthorsData } from '../types';
+import { Filter } from '../../../../shared';
 
 export class AuthorQueryBuilder extends QueryBuilder<Author> {
   public constructor(entityManager: EntityManager) {
@@ -14,13 +14,9 @@ export class AuthorQueryBuilder extends QueryBuilder<Author> {
     return this;
   }
 
-  public authorConditions(findAuthorsData: FindAuthorsData): AuthorQueryBuilder {
-    if (findAuthorsData.firstName) {
-      this.partialConditionsForFilterProperty('author.firstName', findAuthorsData.firstName);
-    }
-
-    if (findAuthorsData.lastName) {
-      this.partialConditionsForFilterProperty('author.lastName', findAuthorsData.lastName);
+  public authorConditions(filters: Filter[]): AuthorQueryBuilder {
+    for (const filter of filters) {
+      this.partialConditionsForFilter(`author.${filter.fieldName}`, filter);
     }
 
     return this;
@@ -34,9 +30,5 @@ export class AuthorQueryBuilder extends QueryBuilder<Author> {
   public take(enitiesToTake: number): AuthorQueryBuilder {
     this.instance = this.instance.take(enitiesToTake);
     return this;
-  }
-
-  public async getMany(): Promise<Author[]> {
-    return this.instance.getMany();
   }
 }

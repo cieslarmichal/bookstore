@@ -205,16 +205,39 @@ describe(`BookController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns ok when bookId is uuid and have corresponding book', async () => {
-      expect.assertions(1);
+    it('accepts request and returns books with filters', async () => {
+      expect.assertions(2);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance).get(`${baseUrl}`).set('Authorization', `Bearer ${accessToken}`);
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { title: otherTitle } = bookTestDataGenerator.generateData();
+
+      await bookRepository.createOne({
+        title: otherTitle,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const response = await request(server.instance)
+        .get(`${baseUrl}?filter=["title||eq||${title}"]`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.books.length).toBe(1);
     });
   });
 

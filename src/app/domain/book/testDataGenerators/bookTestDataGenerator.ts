@@ -32,7 +32,7 @@ export class BookTestDataGenerator {
   }
 
   public generateTitle(): string {
-    return faker.lorem.text(10);
+    return faker.lorem.words(2);
   }
 
   public generateAuthorId(): string {

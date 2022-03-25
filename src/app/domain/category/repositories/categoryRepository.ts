@@ -4,8 +4,8 @@ import { Category } from '../entities/category';
 import { CategoryMapper } from '../mappers/categoryMapper';
 import { CategoryNotFound } from '../errors';
 import { PaginationData } from '../../shared';
-import { FindCategoriesData } from './types';
 import { CategoryQueryBuilder } from './queryBuilder';
+import { Filter } from '../../../shared';
 
 @EntityRepository()
 export class CategoryRepository {
@@ -33,13 +33,13 @@ export class CategoryRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindCategoriesData, paginationData: PaginationData): Promise<CategoryDto[]> {
+  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<CategoryDto[]> {
     const categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
     const categories = await categoryQueryBuilder
-      .categoryConditions(conditions)
+      .categoryConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
@@ -49,7 +49,7 @@ export class CategoryRepository {
 
   public async findManyByBookId(
     bookId: string,
-    conditions: FindCategoriesData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<CategoryDto[]> {
     const categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
@@ -58,7 +58,7 @@ export class CategoryRepository {
 
     const categories = await categoryQueryBuilder
       .bookConditions(bookId)
-      .categoryConditions(conditions)
+      .categoryConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();

@@ -246,6 +246,48 @@ describe(`AuthorBookController`, () => {
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
+
+    it('returns books matching filter criteria', async () => {
+      expect.assertions(2);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const book1 = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { title: otherTitle } = bookTestDataGenerator.generateData();
+
+      const book2 = await bookRepository.createOne({
+        title: otherTitle,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author = await authorRepository.createOne({ firstName, lastName });
+
+      await authorBookRepository.createOne({ authorId: author.id, bookId: book1.id });
+      await authorBookRepository.createOne({ authorId: author.id, bookId: book2.id });
+
+      const response = await request(server.instance)
+        .get(`${authorsUrl}/${author.id}/books?filter=["title||like||${title}"]`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.books.length).toBe(1);
+    });
   });
 
   describe('Find authors of the book', () => {
@@ -321,6 +363,42 @@ describe(`AuthorBookController`, () => {
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
+    });
+
+    it('returns authors matching filter criteria', async () => {
+      expect.assertions(2);
+
+      const { id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+      const book = await bookRepository.createOne({
+        title,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
+
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      const author1 = await authorRepository.createOne({ firstName, lastName });
+
+      const { firstName: otherFirstName } = authorTestDataGenerator.generateData();
+
+      const author2 = await authorRepository.createOne({ firstName: otherFirstName, lastName });
+
+      await authorBookRepository.createOne({ authorId: author1.id, bookId: book.id });
+      await authorBookRepository.createOne({ authorId: author2.id, bookId: book.id });
+
+      const response = await request(server.instance)
+        .get(`${booksUrl}/${book.id}/authors?filter=["firstName||like||${firstName}"]`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.authors.length).toBe(1);
     });
   });
 

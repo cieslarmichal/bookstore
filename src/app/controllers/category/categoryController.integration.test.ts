@@ -184,16 +184,27 @@ describe(`CategoryController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('returns ok', async () => {
-      expect.assertions(1);
+    it('returns categories with filtering provided', async () => {
+      expect.assertions(2);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance).get(`${baseUrl}`).set('Authorization', `Bearer ${accessToken}`);
+      const { name } = categoryTestDataGenerator.generateData();
+
+      await categoryRepository.createOne({ name });
+
+      const { name: otherName } = categoryTestDataGenerator.generateData();
+
+      await categoryRepository.createOne({ name: otherName });
+
+      const response = await request(server.instance)
+        .get(`${baseUrl}?filter=["name||eq||${name}"]`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.categories.length).toBe(1);
     });
   });
 

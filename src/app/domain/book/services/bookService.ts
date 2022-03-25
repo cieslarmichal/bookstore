@@ -4,7 +4,6 @@ import { BookDto } from '../dtos';
 import { BookNotFound } from '../errors';
 import { BookRepository } from '../repositories/bookRepository';
 import { CreateBookData, UpdateBookData } from './types';
-import { FindBooksData } from './types/findBooksData';
 
 export class BookService {
   public constructor(private readonly bookRepository: BookRepository, private readonly loggerService: LoggerService) {}
@@ -37,20 +36,20 @@ export class BookService {
 
   public async findBooksByAuthorId(
     authorId: string,
-    findBooksData: FindBooksData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
-    const books = await this.bookRepository.findManyByAuthorId(authorId, findBooksData, paginationData);
+    const books = await this.bookRepository.findManyByAuthorId(authorId, filters, paginationData);
 
     return books;
   }
 
   public async findBooksByCategoryId(
     categoryId: string,
-    findBooksData: FindBooksData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
-    const books = await this.bookRepository.findManyByCategoryId(categoryId, findBooksData, paginationData);
+    const books = await this.bookRepository.findManyByCategoryId(categoryId, filters, paginationData);
 
     return books;
   }

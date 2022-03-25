@@ -1,9 +1,10 @@
+import { Filter } from '../../../shared';
 import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { PaginationData } from '../../shared';
 import { CategoryDto } from '../dtos';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { CategoryRepository } from '../repositories/categoryRepository';
-import { CreateCategoryData, FindCategoriesData } from './types';
+import { CreateCategoryData } from './types';
 
 export class CategoryService {
   public constructor(
@@ -39,21 +40,18 @@ export class CategoryService {
     return category;
   }
 
-  public async findCategories(
-    findCategoriesData: FindCategoriesData,
-    paginationData: PaginationData,
-  ): Promise<CategoryDto[]> {
-    const categories = await this.categoryRepository.findMany(findCategoriesData, paginationData);
+  public async findCategories(filters: Filter[], paginationData: PaginationData): Promise<CategoryDto[]> {
+    const categories = await this.categoryRepository.findMany(filters, paginationData);
 
     return categories;
   }
 
   public async findCategoriesByBookId(
     bookId: string,
-    findCategoriesData: FindCategoriesData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<CategoryDto[]> {
-    const categories = await this.categoryRepository.findManyByBookId(bookId, findCategoriesData, paginationData);
+    const categories = await this.categoryRepository.findManyByBookId(bookId, filters, paginationData);
 
     return categories;
   }

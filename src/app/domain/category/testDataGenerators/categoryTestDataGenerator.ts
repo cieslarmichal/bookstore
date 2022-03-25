@@ -24,6 +24,6 @@ export class CategoryTestDataGenerator {
   }
 
   public generateName(): string {
-    return faker.lorem.text(10);
+    return faker.lorem.word();
   }
 }

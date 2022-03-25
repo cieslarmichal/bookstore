@@ -106,11 +106,11 @@ export class BookController {
   }
 
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    const filterData = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const booksDto = await this.bookService.findBooks(filterData, paginationData);
+    const booksDto = await this.bookService.findBooks(filters, paginationData);
 
     const responseData = new FindBooksResponseData(booksDto);
 

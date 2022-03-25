@@ -22,6 +22,10 @@ export abstract class QueryBuilder<T> {
     this.instance = this.entityManager.getRepository(EntityConstructor).createQueryBuilder(queryBuilderAlias);
   }
 
+  public async getMany(): Promise<T[]> {
+    return this.instance.getMany();
+  }
+
   protected equalConditionForProperty(columnName: string, data: string) {
     if (!this.whereApplied) {
       this.equalConditionForPropertyAsFirstWhereCondition(columnName, data);
@@ -58,12 +62,12 @@ export abstract class QueryBuilder<T> {
     if (filter instanceof EqualFilter) {
       const paramName = `${columnName}EqualsParameter`;
 
-      if (filter.values.length > 1) {
-        this.instance.where(`${columnName} IN (:...${paramName})`, {
-          [`${paramName}`]: filter.values,
+      if (filter.values.length === 1) {
+        this.instance.where(`${columnName} = :${paramName}`, {
+          [`${paramName}`]: filter.values[0],
         });
       } else {
-        this.instance.where(`${columnName} = :${paramName}`, {
+        this.instance.where(`${columnName} IN (:...${paramName})`, {
           [`${paramName}`]: filter.values,
         });
       }
@@ -106,12 +110,12 @@ export abstract class QueryBuilder<T> {
     if (filter instanceof EqualFilter) {
       const paramName = `${columnName}EqualsParameter`;
 
-      if (filter.values.length > 1) {
-        this.instance.where(`${columnName} IN (:...${paramName})`, {
-          [`${paramName}`]: filter.values,
+      if (filter.values.length === 1) {
+        this.instance.where(`${columnName} = :${paramName}`, {
+          [`${paramName}`]: filter.values[0],
         });
       } else {
-        this.instance.where(`${columnName} = :${paramName}`, {
+        this.instance.where(`${columnName} IN (:...${paramName})`, {
           [`${paramName}`]: filter.values,
         });
       }

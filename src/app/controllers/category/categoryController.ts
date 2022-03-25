@@ -8,7 +8,6 @@ import {
   CreateCategoryBodyDto,
   CreateCategoryResponseData,
   CreateCategoryResponseDto,
-  FindCategoriesQueryDto,
   FindCategoriesResponseData,
   FindCategoriesResponseDto,
   FindCategoryParamDto,
@@ -16,9 +15,10 @@ import {
   FindCategoryResponseDto,
   RemoveCategoryParamDto,
   RemoveCategoryResponseDto,
+  supportedFindCategoriesFieldsFilters,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
 
 const CATEGORIES_PATH = '/categories';
 const CATEGORIES_PATH_WITH_ID = `${CATEGORIES_PATH}/:id`;
@@ -90,11 +90,11 @@ export class CategoryController {
   }
 
   public async findCategories(request: Request, response: Response): Promise<ControllerResponse> {
-    const findCategoriesQueryDto = RecordToInstanceTransformer.transform(request.query, FindCategoriesQueryDto);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindCategoriesFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const categoryDto = await this.categoryService.findCategories(findCategoriesQueryDto, paginationData);
+    const categoryDto = await this.categoryService.findCategories(filters, paginationData);
 
     const responseData = new FindCategoriesResponseData(categoryDto);
 

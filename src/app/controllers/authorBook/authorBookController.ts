@@ -14,11 +14,14 @@ import {
   FindBookAuthorsParamDto,
   FindBookAuthorsResponseData,
   FindBookAuthorsResponseDto,
+  FindAuthorBooksResponseData,
+  FindAuthorBooksResponseDto,
+  FindAuthorBooksParamDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
-import { FindAuthorsQueryDto } from '../author/dtos/findAuthorsDto';
 import { supportedFindBooksFieldsFilters } from '../book/dtos/findBooksDto';
+import { supportedFindAuthorsFieldsFilters } from '../author/dtos/findAuthorsDto';
 
 const AUTHOR_BOOKS_PATH = '/authors/:authorId/books';
 const AUTHOR_BOOKS_PATH_WITH_ID = `${AUTHOR_BOOKS_PATH}/:bookId`;
@@ -89,29 +92,27 @@ export class AuthorBookController {
   }
 
   public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    // const { authorId } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorBooksParamDto);
+    const { authorId } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorBooksParamDto);
 
-    const filterData = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
-    console.log(filterData);
-    // const paginationData = PaginationDataParser.parse(request.query);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
-    // const booksDto = await this.authorBookService.findAuthorBooks(authorId, booksQueryDto, paginationData);
+    const paginationData = PaginationDataParser.parse(request.query);
 
-    // const responseData = new FindAuthorBooksResponseData(booksDto);
+    const booksDto = await this.authorBookService.findAuthorBooks(authorId, filters, paginationData);
 
-    // return new FindAuthorBooksResponseDto(responseData, StatusCodes.OK);
+    const responseData = new FindAuthorBooksResponseData(booksDto);
 
-    return { data: 'x', statusCode: StatusCodes.OK };
+    return new FindAuthorBooksResponseDto(responseData, StatusCodes.OK);
   }
 
   public async findBookAuthors(request: Request, response: Response): Promise<ControllerResponse> {
     const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookAuthorsParamDto);
 
-    const authorsQueryDto = RecordToInstanceTransformer.transform(request.query, FindAuthorsQueryDto);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAuthorsFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const authorsDto = await this.authorBookService.findBookAuthors(bookId, authorsQueryDto, paginationData);
+    const authorsDto = await this.authorBookService.findBookAuthors(bookId, filters, paginationData);
 
     const responseData = new FindBookAuthorsResponseData(authorsDto);
 

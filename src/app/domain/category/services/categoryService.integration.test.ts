@@ -2,7 +2,7 @@ import { CategoryRepository } from '../repositories/categoryRepository';
 import { CategoryService } from './categoryService';
 import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, EqualFilter } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
@@ -123,7 +123,10 @@ describe('CategoryService', () => {
         name,
       });
 
-      const foundCategories = await categoryService.findCategories({ name: { eq: name } }, { page: 1, limit: 5 });
+      const foundCategories = await categoryService.findCategories([new EqualFilter('name', [name])], {
+        page: 1,
+        limit: 5,
+      });
 
       expect(foundCategories.length).toBe(1);
       expect(foundCategories[0]).toStrictEqual(category);
@@ -166,11 +169,10 @@ describe('CategoryService', () => {
         bookId: book.id,
       });
 
-      const categories = await categoryService.findCategoriesByBookId(
-        book.id,
-        { name: { eq: name } },
-        { page: 1, limit: 5 },
-      );
+      const categories = await categoryService.findCategoriesByBookId(book.id, [new EqualFilter('name', [name])], {
+        page: 1,
+        limit: 5,
+      });
 
       expect(categories.length).toBe(1);
       expect(categories[0]).toStrictEqual(category1);

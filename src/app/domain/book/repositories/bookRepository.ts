@@ -4,7 +4,6 @@ import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
 import { BookNotFound } from '../errors';
 import { PaginationData } from '../../shared';
-import { FindBooksData } from './types';
 import { BookQueryBuilder } from './queryBuilder';
 import { Filter } from '../../../shared';
 
@@ -50,7 +49,7 @@ export class BookRepository {
 
   public async findManyByAuthorId(
     authorId: string,
-    conditions: FindBooksData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
     const bookQueryBuilder = new BookQueryBuilder(this.entityManager);
@@ -59,7 +58,7 @@ export class BookRepository {
 
     const books = await bookQueryBuilder
       .authorConditions(authorId)
-      .boookConditions(conditions)
+      .boookConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
@@ -69,7 +68,7 @@ export class BookRepository {
 
   public async findManyByCategoryId(
     categoryId: string,
-    conditions: FindBooksData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
     const bookQueryBuilder = new BookQueryBuilder(this.entityManager);
@@ -78,7 +77,7 @@ export class BookRepository {
 
     const books = await bookQueryBuilder
       .categoryConditions(categoryId)
-      .boookConditions(conditions)
+      .boookConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();

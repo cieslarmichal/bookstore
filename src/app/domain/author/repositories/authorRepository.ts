@@ -5,7 +5,7 @@ import { AuthorMapper } from '../mappers/authorMapper';
 import { AuthorNotFound } from '../errors';
 import { PaginationData } from '../../shared';
 import { AuthorQueryBuilder } from './queryBuilder';
-import { FindAuthorsData } from './types';
+import { Filter } from '../../../shared';
 
 @EntityRepository()
 export class AuthorRepository {
@@ -33,13 +33,13 @@ export class AuthorRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindAuthorsData, paginationData: PaginationData): Promise<AuthorDto[]> {
+  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<AuthorDto[]> {
     const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
     const authors = await authorQueryBuilder
-      .authorConditions(conditions)
+      .authorConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
@@ -49,7 +49,7 @@ export class AuthorRepository {
 
   public async findManyByBookId(
     bookId: string,
-    conditions: FindAuthorsData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<AuthorDto[]> {
     const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
@@ -58,7 +58,7 @@ export class AuthorRepository {
 
     const authors = await authorQueryBuilder
       .bookConditions(bookId)
-      .authorConditions(conditions)
+      .authorConditions(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();

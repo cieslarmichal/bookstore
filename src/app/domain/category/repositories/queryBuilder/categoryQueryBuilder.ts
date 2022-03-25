@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../../shared/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Category } from '../../entities/category';
-import { FindCategoriesData } from '../types';
+import { Filter } from '../../../../shared';
 
 export class CategoryQueryBuilder extends QueryBuilder<Category> {
   public constructor(entityManager: EntityManager) {
@@ -12,13 +12,15 @@ export class CategoryQueryBuilder extends QueryBuilder<Category> {
     this.instance
       .leftJoinAndSelect('category.bookCategories', 'bookCategories')
       .leftJoinAndSelect('bookCategories.book', 'book');
+
     this.equalConditionForProperty('book.id', bookId);
+
     return this;
   }
 
-  public categoryConditions(findCategorysData: FindCategoriesData): CategoryQueryBuilder {
-    if (findCategorysData.name) {
-      this.partialConditionsForFilterProperty('category.name', findCategorysData.name);
+  public categoryConditions(filters: Filter[]): CategoryQueryBuilder {
+    for (const filter of filters) {
+      this.partialConditionsForFilter(`category.${filter.fieldName}`, filter);
     }
 
     return this;
@@ -32,9 +34,5 @@ export class CategoryQueryBuilder extends QueryBuilder<Category> {
   public take(enitiesToTake: number): CategoryQueryBuilder {
     this.instance = this.instance.take(enitiesToTake);
     return this;
-  }
-
-  public async getMany(): Promise<Category[]> {
-    return this.instance.getMany();
   }
 }

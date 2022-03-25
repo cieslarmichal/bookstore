@@ -19,6 +19,14 @@ const EXPECTED_NUMBER_OF_TOKENS = 3;
 
 export class FilterDataParser {
   public static parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Array<any> {
+    if (!filterDataAsJson) {
+      return [];
+    }
+
+    if (!supportedFieldsFilters) {
+      return [];
+    }
+
     let filterData: Array<string>;
 
     try {
@@ -27,20 +35,11 @@ export class FilterDataParser {
       throw new InvalidFilterSyntaxError('filter data is not valid json object');
     }
 
-    if (!filterData) {
-      return [];
-    }
-
-    if (!supportedFieldsFilters) {
-      return [];
-    }
-
     const filters = new Array<any>();
 
     for (const fieldData of filterData) {
-      console.log(fieldData);
       const tokens = fieldData.split(TOKENS_SEPARATOR);
-      console.log(tokens);
+
       if (tokens.length != EXPECTED_NUMBER_OF_TOKENS) {
         throw new InvalidFilterSyntaxError('number of tokens in filter element is not equal 3');
       }

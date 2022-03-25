@@ -12,13 +12,16 @@ import {
   FindBookCategoriesParamDto,
   FindBookCategoriesResponseData,
   FindBookCategoriesResponseDto,
+  FindCategoryBooksParamDto,
+  FindCategoryBooksResponseData,
+  FindCategoryBooksResponseDto,
   RemoveBookCategoryParamDto,
   RemoveBookCategoryResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
 import { supportedFindBooksFieldsFilters } from '../book/dtos/findBooksDto';
-import { FindCategoriesQueryDto } from '../category/dtos';
+import { supportedFindCategoriesFieldsFilters } from '../category/dtos';
 
 const BOOK_CATEGORIES_PATH = '/books/:bookId/categories';
 const BOOK_CATEGORIES_PATH_WITH_ID = `${BOOK_CATEGORIES_PATH}/:categoryId`;
@@ -91,15 +94,11 @@ export class BookCategoryController {
   public async findBookCategories(request: Request, response: Response): Promise<ControllerResponse> {
     const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookCategoriesParamDto);
 
-    const categoriesQueryDto = RecordToInstanceTransformer.transform(request.query, FindCategoriesQueryDto);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindCategoriesFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const categoriesDto = await this.bookCategoryService.findCategoriesOfBook(
-      bookId,
-      categoriesQueryDto,
-      paginationData,
-    );
+    const categoriesDto = await this.bookCategoryService.findCategoriesOfBook(bookId, filters, paginationData);
 
     const responseData = new FindBookCategoriesResponseData(categoriesDto);
 
@@ -107,20 +106,17 @@ export class BookCategoryController {
   }
 
   public async findCategoryBooks(request: Request, response: Response): Promise<ControllerResponse> {
-    // const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
+    const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
 
-    const filterData = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
-    console.log(filterData);
+    const paginationData = PaginationDataParser.parse(request.query);
 
-    // const paginationData = PaginationDataParser.parse(request.query);
+    const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId, filters, paginationData);
 
-    // const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId, booksQueryDto, paginationData);
+    const responseData = new FindCategoryBooksResponseData(booksDto);
 
-    // const responseData = new FindCategoryBooksResponseData(booksDto);
-
-    // return new FindCategoryBooksResponseDto(responseData, StatusCodes.OK);
-    return { data: 'x', statusCode: StatusCodes.OK };
+    return new FindCategoryBooksResponseDto(responseData, StatusCodes.OK);
   }
 
   public async deleteBookCategory(request: Request, response: Response): Promise<ControllerResponse> {

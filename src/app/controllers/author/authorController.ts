@@ -19,8 +19,12 @@ import {
   UpdateAuthorResponseDto,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, PaginationDataParser, sendResponseMiddleware } from '../shared';
-import { FindAuthorsQueryDto, FindAuthorsResponseData, FindAuthorsResponseDto } from './dtos/findAuthorsDto';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import {
+  FindAuthorsResponseData,
+  FindAuthorsResponseDto,
+  supportedFindAuthorsFieldsFilters,
+} from './dtos/findAuthorsDto';
 
 const AUTHORS_PATH = '/authors';
 const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
@@ -101,11 +105,11 @@ export class AuthorController {
   }
 
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
-    const findAuthorsQueryDto = RecordToInstanceTransformer.transform(request.query, FindAuthorsQueryDto);
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAuthorsFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const authorsDto = await this.authorService.findAuthors(findAuthorsQueryDto, paginationData);
+    const authorsDto = await this.authorService.findAuthors(filters, paginationData);
 
     const responseData = new FindAuthorsResponseData(authorsDto);
 

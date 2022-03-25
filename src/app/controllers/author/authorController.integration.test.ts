@@ -187,16 +187,27 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('returns ok', async () => {
-      expect.assertions(1);
+    it('returns authors with filtering provided', async () => {
+      expect.assertions(2);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance).get(`${baseUrl}`).set('Authorization', `Bearer ${accessToken}`);
+      const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName, lastName });
+
+      const { firstName: otherFirstName } = authorTestDataGenerator.generateData();
+
+      await authorRepository.createOne({ firstName: otherFirstName, lastName });
+
+      const response = await request(server.instance)
+        .get(`${baseUrl}?filter=["firstName||eq||${firstName}"]`)
+        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.authors.length).toBe(1);
     });
   });
 

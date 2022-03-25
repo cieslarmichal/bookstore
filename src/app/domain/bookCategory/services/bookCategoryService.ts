@@ -1,12 +1,11 @@
+import { Filter } from '../../../shared';
 import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';
-import { FindBooksData } from '../../book/services/types';
 import { CategoryDto } from '../../category/dtos';
 import { CategoryNotFound } from '../../category/errors';
 import { CategoryService } from '../../category/services/categoryService';
-import { FindCategoriesData } from '../../category/services/types';
 import { PaginationData } from '../../shared';
 import { BookCategoryDto } from '../dtos';
 import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
@@ -53,7 +52,7 @@ export class BookCategoryService {
 
   public async findCategoriesOfBook(
     bookId: string,
-    findCategoriesData: FindCategoriesData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<CategoryDto[]> {
     const book = await this.bookService.findBook(bookId);
@@ -62,12 +61,12 @@ export class BookCategoryService {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.categoryService.findCategoriesByBookId(bookId, findCategoriesData, paginationData);
+    return this.categoryService.findCategoriesByBookId(bookId, filters, paginationData);
   }
 
   public async findBooksFromCategory(
     categoryId: string,
-    findBooksData: FindBooksData,
+    filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
     const category = await this.categoryService.findCategory(categoryId);
@@ -76,7 +75,7 @@ export class BookCategoryService {
       throw new CategoryNotFound({ id: categoryId });
     }
 
-    return this.bookService.findBooksByCategoryId(categoryId, findBooksData, paginationData);
+    return this.bookService.findBooksByCategoryId(categoryId, filters, paginationData);
   }
 
   public async removeBookCategory(bookCategoryData: RemoveBookCategoryData): Promise<void> {

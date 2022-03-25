@@ -1,6 +1,6 @@
 import { AuthorRepository } from '../repositories/authorRepository';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, EqualFilter } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
@@ -95,7 +95,10 @@ describe('AuthorService', () => {
 
       await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
 
-      const foundAuthors = await authorService.findAuthors({ firstName: { like: firstName } }, { page: 1, limit: 5 });
+      const foundAuthors = await authorService.findAuthors([new EqualFilter('firstName', [firstName])], {
+        page: 1,
+        limit: 5,
+      });
 
       expect(foundAuthors.length).toBe(1);
       expect(foundAuthors[0]).toStrictEqual(author);
@@ -113,8 +116,11 @@ describe('AuthorService', () => {
       await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
 
       const foundAuthors = await authorService.findAuthors(
-        { firstName: { eq: firstName }, lastName: { eq: lastName } },
-        { page: 1, limit: 5 },
+        [new EqualFilter('firstName', [firstName]), new EqualFilter('lastName', [lastName])],
+        {
+          page: 1,
+          limit: 5,
+        },
       );
 
       expect(foundAuthors.length).toBe(1);
@@ -136,7 +142,10 @@ describe('AuthorService', () => {
 
       await authorRepository.createOne({ firstName, lastName: anotherLastName });
 
-      const foundAuthors = await authorService.findAuthors({ firstName: { eq: firstName } }, { page: 1, limit: 2 });
+      const foundAuthors = await authorService.findAuthors([new EqualFilter('firstName', [firstName])], {
+        page: 1,
+        limit: 2,
+      });
 
       expect(foundAuthors.length).toBe(2);
     });
@@ -182,7 +191,7 @@ describe('AuthorService', () => {
 
       const foundAuthors = await authorService.findAuthorsByBookId(
         book.id,
-        { firstName: { eq: firstAuthor.firstName } },
+        [new EqualFilter('firstName', [firstAuthor.firstName])],
         { page: 1, limit: 5 },
       );
 

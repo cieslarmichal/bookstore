@@ -1,12 +1,11 @@
-import { IsOptional, Validate } from 'class-validator';
-import { FilterHasStringPropertyConstraint, FilterProperty } from '../../shared';
+import { EQUAL_FILTER_NAME, LIKE_FILTER_NAME } from '../../../shared';
 import { CategoryDto } from './categoryDto';
 
-export class FindCategoriesQueryDto {
-  @IsOptional()
-  @Validate(FilterHasStringPropertyConstraint, {})
-  public readonly name?: FilterProperty<string>;
-}
+export const supportedFindCategoriesFieldsFilters: Map<string, Array<string>> = new Map(
+  Object.entries({
+    name: [EQUAL_FILTER_NAME, LIKE_FILTER_NAME],
+  }),
+);
 
 export class FindCategoriesResponseData {
   public constructor(public readonly categories: CategoryDto[]) {}

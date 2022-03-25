@@ -41,8 +41,4 @@ export class BookQueryBuilder extends QueryBuilder<Book> {
     this.instance = this.instance.take(enitiesToTake);
     return this;
   }
-
-  public async getMany(): Promise<Book[]> {
-    return this.instance.getMany();
-  }
 }

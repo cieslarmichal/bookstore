@@ -12,14 +12,12 @@ import {
 
 describe('FilterDataParser', () => {
   describe('Empty input', () => {
-    it('should throw when filter data is empty string', () => {
+    it('should return empty array when filter data is empty string', () => {
       expect.assertions(1);
 
-      try {
-        FilterDataParser.parse('', new Map(Object.entries({ title: ['eq'] })));
-      } catch (error) {
-        expect(error).toBeInstanceOf(InvalidFilterSyntaxError);
-      }
+      const filterData = FilterDataParser.parse('', new Map(Object.entries({ title: ['eq'] })));
+
+      expect(filterData.length).toBe(0);
     });
 
     it('should return empty array when filter data is empty array', () => {
