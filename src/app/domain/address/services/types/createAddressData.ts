@@ -2,7 +2,10 @@ import { IsOptional, IsString } from 'class-validator';
 
 export class CreateAddressData {
   @IsString()
-  public readonly fullName: string;
+  public readonly firstName: string;
+
+  @IsString()
+  public readonly lastName: string;
 
   @IsString()
   public readonly phoneNumber: string;

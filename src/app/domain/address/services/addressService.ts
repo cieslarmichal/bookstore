@@ -11,10 +11,11 @@ export class AddressService {
   ) {}
 
   public async createAddress(addressData: CreateAddressData): Promise<AddressDto> {
-    const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } = addressData;
+    const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } = addressData;
 
     this.loggerService.debug('Creating address...', {
-      fullName,
+      firstName,
+      lastName,
       phoneNumber,
       country,
       state,

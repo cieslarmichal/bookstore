@@ -12,7 +12,10 @@ export class AddressDto {
   public readonly updatedAt: Date;
 
   @IsString()
-  public readonly fullName: string;
+  public readonly firstName: string;
+
+  @IsString()
+  public readonly lastName: string;
 
   @IsString()
   public readonly phoneNumber: string;

@@ -3,7 +3,11 @@ import { IsOptional, IsString } from 'class-validator';
 export class UpdateAddressData {
   @IsString()
   @IsOptional()
-  public readonly fullName?: string;
+  public readonly firstName?: string;
+
+  @IsString()
+  @IsOptional()
+  public readonly lastName?: string;
 
   @IsString()
   @IsOptional()

@@ -34,11 +34,12 @@ describe('AddressService', () => {
     it('creates address in database', async () => {
       expect.assertions(1);
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const createdAddressDto = await addressService.createAddress({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -57,11 +58,12 @@ describe('AddressService', () => {
     it('finds address by id in database', async () => {
       expect.assertions(1);
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const address = await addressRepository.createOne({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -92,11 +94,12 @@ describe('AddressService', () => {
     it('removes address from database', async () => {
       expect.assertions(1);
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const address = await addressRepository.createOne({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,

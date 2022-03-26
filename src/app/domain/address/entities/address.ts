@@ -24,7 +24,11 @@ export class Address {
 
   @IsString()
   @Column()
-  public fullName: string;
+  public firstName: string;
+
+  @IsString()
+  @Column()
+  public lastName: string;
 
   @IsString()
   @Column()

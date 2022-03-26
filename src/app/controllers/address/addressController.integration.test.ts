@@ -88,11 +88,12 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).send({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -111,11 +112,12 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -164,11 +166,12 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const address = await addressRepository.createOne({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -189,11 +192,12 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const address = await addressRepository.createOne({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -248,11 +252,12 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const address = await addressRepository.createOne({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,
@@ -273,11 +278,12 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
       const address = await addressRepository.createOne({
-        fullName,
+        firstName,
+        lastName,
         phoneNumber,
         country,
         state,

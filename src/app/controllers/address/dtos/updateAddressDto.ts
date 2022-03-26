@@ -4,7 +4,11 @@ import { AddressDto } from './addressDto';
 export class UpdateAddressBodyDto {
   @IsString()
   @IsOptional()
-  public readonly fullName?: string;
+  public readonly firstName: string;
+
+  @IsString()
+  @IsOptional()
+  public readonly lastName: string;
 
   @IsString()
   @IsOptional()
