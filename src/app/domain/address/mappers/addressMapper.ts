@@ -4,7 +4,19 @@ import { Address } from '../entities/address';
 
 export class AddressMapper implements Mapper<Address, AddressDto> {
   public mapEntityToDto(entity: Address): AddressDto {
-    const { id, createdAt, updatedAt, fullName, phoneNumber, country, state, city, zipCode, streetAddress } = entity;
+    const {
+      id,
+      createdAt,
+      updatedAt,
+      fullName,
+      phoneNumber,
+      country,
+      state,
+      city,
+      zipCode,
+      streetAddress,
+      deliveryInstructions,
+    } = entity;
 
     return AddressDto.create({
       id,
@@ -17,6 +29,7 @@ export class AddressMapper implements Mapper<Address, AddressDto> {
       city,
       zipCode,
       streetAddress,
+      deliveryInstructions: deliveryInstructions || null,
     });
   }
 }

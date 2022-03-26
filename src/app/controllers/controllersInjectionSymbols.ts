@@ -6,3 +6,4 @@ export const USER_CONTROLLER = 'userController';
 export const CATEGORY_CONTROLLER = 'categoryController';
 export const AUTHOR_BOOK_CONTROLLER = 'authorBookController';
 export const BOOK_CATEGORY_CONTROLLER = 'bookCategoryController';
+export const ADDRESS_CONTROLLER = 'addressController';

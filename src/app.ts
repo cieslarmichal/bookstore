@@ -4,6 +4,7 @@ import { errorMiddleware } from './app/middlewares';
 import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
 import { AwilixContainer } from 'awilix';
 import {
+  ADDRESS_CONTROLLER,
   AUTHOR_BOOK_CONTROLLER,
   AUTHOR_CONTROLLER,
   BOOK_CATEGORY_CONTROLLER,
@@ -32,6 +33,7 @@ export class App {
     const categoryController = this.container.resolve(CATEGORY_CONTROLLER);
     const authorBookController = this.container.resolve(AUTHOR_BOOK_CONTROLLER);
     const bookCategoryController = this.container.resolve(BOOK_CATEGORY_CONTROLLER);
+    const addressController = this.container.resolve(ADDRESS_CONTROLLER);
 
     this.instance.use('/', bookController.router);
     this.instance.use('/', authorController.router);
@@ -39,6 +41,7 @@ export class App {
     this.instance.use('/', categoryController.router);
     this.instance.use('/', authorBookController.router);
     this.instance.use('/', bookCategoryController.router);
+    this.instance.use('/', addressController.router);
 
     this.instance.use(errorMiddleware);
   }

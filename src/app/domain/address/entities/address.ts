@@ -49,4 +49,9 @@ export class Address {
   @IsString()
   @Column()
   public streetAddress: string;
+
+  @IsOptional()
+  @IsString()
+  @Column({ type: 'text', nullable: true })
+  public deliveryInstructions: string | null;
 }

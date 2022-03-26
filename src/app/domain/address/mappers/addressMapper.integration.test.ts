@@ -63,6 +63,43 @@ describe('AddressMapper', () => {
         city: savedAddress.city,
         zipCode: savedAddress.zipCode,
         streetAddress: savedAddress.streetAddress,
+        deliveryInstructions: null,
+      });
+    });
+
+    it('map address from entity to dto with optional fields', async () => {
+      expect.assertions(1);
+
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions } =
+        addressTestDataGenerator.generateData();
+
+      const createdAddress = entityManager.create(Address, {
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        deliveryInstructions,
+      });
+
+      const savedAddress = await entityManager.save(createdAddress);
+
+      const addressDto = addressMapper.mapEntityToDto(savedAddress);
+
+      expect(addressDto).toEqual({
+        id: savedAddress.id,
+        createdAt: savedAddress.createdAt,
+        updatedAt: savedAddress.updatedAt,
+        fullName: savedAddress.fullName,
+        phoneNumber: savedAddress.phoneNumber,
+        country: savedAddress.country,
+        state: savedAddress.state,
+        city: savedAddress.city,
+        zipCode: savedAddress.zipCode,
+        streetAddress: savedAddress.streetAddress,
+        deliveryInstructions: savedAddress.deliveryInstructions,
       });
     });
   });

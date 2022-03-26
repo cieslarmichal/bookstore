@@ -1,6 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
+import { AddressDto } from './addressDto';
 
-export class CreateAddressData {
+export class CreateAddressBodyDto {
   @IsString()
   public readonly fullName: string;
 
@@ -24,5 +25,13 @@ export class CreateAddressData {
 
   @IsString()
   @IsOptional()
-  public readonly deliveryInstructions?: string | null;
+  public readonly deliveryInstructions?: string;
+}
+
+export class CreateAddressResponseData {
+  public constructor(public readonly address: AddressDto) {}
+}
+
+export class CreateAddressResponseDto {
+  public constructor(public readonly data: CreateAddressResponseData, public readonly statusCode: number) {}
 }

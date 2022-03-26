@@ -14,6 +14,7 @@ export class AddressTestDataGenerator {
       city: this.generateCity(),
       zipCode: this.generateZipCode(),
       streetAddress: this.generateStreetAddress(),
+      deliveryInstructions: this.generateDeliveryInstructions(),
     };
   }
 
@@ -55,5 +56,9 @@ export class AddressTestDataGenerator {
 
   public generateStreetAddress(): string {
     return faker.address.streetAddress(true);
+  }
+
+  public generateDeliveryInstructions(): string {
+    return faker.lorem.words();
   }
 }

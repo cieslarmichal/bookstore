@@ -1,14 +1,14 @@
 import { ConfigLoader } from '../../../configLoader';
-import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
+import { AddressTestDataGenerator } from '../../domain/address/testDataGenerators/addressTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
-import { CategoryModule } from '../../domain/category/categoryModule';
+import { AddressModule } from '../../domain/address/addressModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { CategoryRepository } from '../../domain/category/repositories/categoryRepository';
+import { AddressRepository } from '../../domain/address/repositories/addressRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
@@ -17,15 +17,15 @@ import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymbols';
+import { ADDRESS_REPOSITORY } from '../../domain/address/addressInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
-import { AddressModule } from '../../domain/address/addressModule';
+import { CategoryModule } from '../../domain/category/categoryModule';
 
-const baseUrl = '/categories';
+const baseUrl = '/addresses';
 
-describe(`CategoryController (${baseUrl})`, () => {
-  let categoryRepository: CategoryRepository;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
+describe(`AddressController (${baseUrl})`, () => {
+  let addressRepository: AddressRepository;
+  let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -33,14 +33,14 @@ describe(`CategoryController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
+    addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
   beforeEach(async () => {
     const container = await createDIContainer([
       DbModule,
-      CategoryModule,
+      AddressModule,
       BookModule,
       AuthorModule,
       UserModule,
@@ -48,10 +48,11 @@ describe(`CategoryController (${baseUrl})`, () => {
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,
+      CategoryModule,
       AddressModule,
     ]);
 
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
+    addressRepository = container.resolve(ADDRESS_REPOSITORY);
 
     authHelper = new AuthHelper(container);
 
@@ -68,7 +69,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Create category', () => {
+  describe('Create address', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
@@ -87,10 +88,17 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).send({
-        name,
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
       });
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
@@ -103,41 +111,48 @@ describe(`CategoryController (${baseUrl})`, () => {
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { name } = categoryTestDataGenerator.generateData();
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
 
       const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        name,
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
       });
 
       expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
-  describe('Find category', () => {
-    it('returns bad request the categoryId param is not uuid', async () => {
+  describe('Find address', () => {
+    it('returns bad request the addressId param is not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const categoryId = 'abc';
+      const addressId = 'abc';
 
       const response = await request(server.instance)
-        .get(`${baseUrl}/${categoryId}`)
+        .get(`${baseUrl}/${addressId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when category with given categoryId does not exist', async () => {
+    it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = categoryTestDataGenerator.generateData();
+      const { id } = addressTestDataGenerator.generateData();
 
       const response = await request(server.instance)
         .get(`${baseUrl}/${id}`)
@@ -149,93 +164,78 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
 
-      const category = await categoryRepository.createOne({ name });
+      const address = await addressRepository.createOne({
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+      });
 
-      const response = await request(server.instance).get(`${baseUrl}/${category.id}`);
+      const response = await request(server.instance).get(`${baseUrl}/${address.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns ok when categoryId is uuid and have corresponding category', async () => {
+    it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { name } = categoryTestDataGenerator.generateData();
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
 
-      const category = await categoryRepository.createOne({ name });
+      const address = await addressRepository.createOne({
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+      });
 
       const response = await request(server.instance)
-        .get(`${baseUrl}/${category.id}`)
+        .get(`${baseUrl}/${address.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
-  describe('Find categories', () => {
-    it('returns unauthorized when access token is not provided', async () => {
-      expect.assertions(1);
-
-      const response = await request(server.instance).get(`${baseUrl}`);
-
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
-    });
-
-    it('returns categories with filtering provided', async () => {
-      expect.assertions(2);
-
-      const { id: userId, role } = userTestDataGenerator.generateData();
-
-      const accessToken = authHelper.mockAuth({ userId, role });
-
-      const { name } = categoryTestDataGenerator.generateData();
-
-      await categoryRepository.createOne({ name });
-
-      const { name: otherName } = categoryTestDataGenerator.generateData();
-
-      await categoryRepository.createOne({ name: otherName });
-
-      const response = await request(server.instance)
-        .get(`${baseUrl}?filter=["name||eq||${name}"]`)
-        .set('Authorization', `Bearer ${accessToken}`);
-
-      expect(response.statusCode).toBe(StatusCodes.OK);
-      expect(response.body.data.categories.length).toBe(1);
-    });
-  });
-
-  describe('Remove category', () => {
-    it('returns bad request when the categoryId param is not uuid', async () => {
+  describe('Remove address', () => {
+    it('returns bad request when the addressId param is not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const categoryId = 'abc';
+      const addressId = 'abc';
 
       const response = await request(server.instance)
-        .delete(`${baseUrl}/${categoryId}`)
+        .delete(`${baseUrl}/${addressId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when category with given categoryId does not exist', async () => {
+    it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = categoryTestDataGenerator.generateData();
+      const { id } = addressTestDataGenerator.generateData();
 
       const response = await request(server.instance)
         .delete(`${baseUrl}/${id}`)
@@ -248,28 +248,46 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
 
-      const category = await categoryRepository.createOne({ name });
+      const address = await addressRepository.createOne({
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+      });
 
-      const response = await request(server.instance).delete(`${baseUrl}/${category.id}`).send();
+      const response = await request(server.instance).delete(`${baseUrl}/${address.id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns no content when categoryId is uuid and corresponds to existing category', async () => {
+    it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { name } = categoryTestDataGenerator.generateData();
+      const { fullName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
 
-      const category = await categoryRepository.createOne({ name });
+      const address = await addressRepository.createOne({
+        fullName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+      });
 
       const response = await request(server.instance)
-        .delete(`${baseUrl}/${category.id}`)
+        .delete(`${baseUrl}/${address.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 

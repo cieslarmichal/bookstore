@@ -19,6 +19,7 @@ import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
 import { HASH_SERVICE, USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
+import { AddressModule } from '../../domain/address/addressModule';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -49,6 +50,7 @@ describe(`UserController (${baseUrl})`, () => {
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,
+      AddressModule,
     ]);
 
     userRepository = container.resolve(USER_REPOSITORY);

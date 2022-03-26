@@ -19,6 +19,7 @@ import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
 import { AUTHOR_REPOSITORY } from '../../domain/author/authorInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
+import { AddressModule } from '../../domain/address/addressModule';
 
 const baseUrl = '/authors';
 
@@ -47,6 +48,7 @@ describe(`AuthorController (${baseUrl})`, () => {
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,
+      AddressModule,
     ]);
 
     authorRepository = container.resolve(AUTHOR_REPOSITORY);
