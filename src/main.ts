@@ -11,6 +11,7 @@ import { CategoryModule } from './app/domain/category/categoryModule';
 import { LoggerModule } from './app/shared/logger/loggerModule';
 import { AuthorBookModule } from './app/domain/authorBook/authorBookModule';
 import { BookCategoryModule } from './app/domain/bookCategory/bookCategoryModule';
+import { AddressModule } from './app/domain/address/addressModule';
 
 async function main() {
   ConfigLoader.loadConfig();
@@ -25,6 +26,7 @@ async function main() {
     AuthorBookModule,
     LoggerModule,
     BookCategoryModule,
+    AddressModule,
   ]);
 
   const app = new App(container);

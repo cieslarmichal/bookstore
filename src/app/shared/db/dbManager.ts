@@ -5,6 +5,7 @@ import { User } from '../../domain/user/entities/user';
 import { Category } from '../../domain/category/entities/category';
 import { AuthorBook } from '../../domain/authorBook/entities/authorBook';
 import { BookCategory } from '../../domain/bookCategory/entities/bookCategory';
+import { Address } from '../../domain/address/entities/address';
 
 class DbManager {
   private connection: Connection;
@@ -21,7 +22,7 @@ class DbManager {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Book, Author, User, Category, AuthorBook, BookCategory],
+      entities: [Book, Author, User, Category, AuthorBook, BookCategory, Address],
       synchronize: true,
     });
 

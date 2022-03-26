@@ -30,7 +30,7 @@ export class AuthorTestDataGenerator {
   }
 
   public generateLastName(): string {
-    return faker.name.firstName();
+    return faker.name.lastName();
   }
 
   public generateAbout(): string {
