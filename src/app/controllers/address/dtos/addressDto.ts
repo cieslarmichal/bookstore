@@ -1,4 +1,4 @@
-import { IsDate, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../shared';
 
 export class AddressDto {
@@ -34,6 +34,14 @@ export class AddressDto {
 
   @IsString()
   public readonly streetAddress: string;
+
+  @IsString()
+  @IsOptional()
+  public readonly deliveryInstructions?: string | null;
+
+  @IsOptional()
+  @IsUUID('4')
+  public readonly customerId: string;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(AddressDto);
 }

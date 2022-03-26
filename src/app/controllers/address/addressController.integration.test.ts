@@ -20,11 +20,18 @@ import { LoggerModule } from '../../shared/logger/loggerModule';
 import { ADDRESS_REPOSITORY } from '../../domain/address/addressInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
+import { UserRepository } from '../../domain/user/repositories/userRepository';
+import { CustomerRepository } from '../../domain/customer/repositories/customerRepository';
+import { USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
+import { CUSTOMER_REPOSITORY } from '../../domain/customer/customerInjectionSymbols';
+import { CustomerModule } from '../../domain/customer/customerModule';
 
 const baseUrl = '/addresses';
 
 describe(`AddressController (${baseUrl})`, () => {
   let addressRepository: AddressRepository;
+  let customerRepository: CustomerRepository;
+  let userRepository: UserRepository;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
@@ -50,9 +57,12 @@ describe(`AddressController (${baseUrl})`, () => {
       BookCategoryModule,
       CategoryModule,
       AddressModule,
+      CustomerModule,
     ]);
 
     addressRepository = container.resolve(ADDRESS_REPOSITORY);
+    userRepository = container.resolve(USER_REPOSITORY);
+    customerRepository = container.resolve(CUSTOMER_REPOSITORY);
 
     authHelper = new AuthHelper(container);
 
@@ -88,6 +98,12 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
+
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
@@ -100,6 +116,7 @@ describe(`AddressController (${baseUrl})`, () => {
         city,
         zipCode,
         streetAddress,
+        customerId: customer.id,
       });
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
@@ -108,9 +125,13 @@ describe(`AddressController (${baseUrl})`, () => {
     it('accepts a request and returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      const { email, password, id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
 
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
@@ -124,6 +145,7 @@ describe(`AddressController (${baseUrl})`, () => {
         city,
         zipCode,
         streetAddress,
+        customerId: customer.id,
       });
 
       expect(response.statusCode).toBe(StatusCodes.CREATED);
@@ -166,6 +188,12 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
+
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
@@ -178,6 +206,7 @@ describe(`AddressController (${baseUrl})`, () => {
         city,
         zipCode,
         streetAddress,
+        customerId: customer.id,
       });
 
       const response = await request(server.instance).get(`${baseUrl}/${address.id}`);
@@ -188,9 +217,13 @@ describe(`AddressController (${baseUrl})`, () => {
     it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      const { email, password, id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
 
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
@@ -204,6 +237,7 @@ describe(`AddressController (${baseUrl})`, () => {
         city,
         zipCode,
         streetAddress,
+        customerId: customer.id,
       });
 
       const response = await request(server.instance)
@@ -252,6 +286,12 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
+
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
 
@@ -264,6 +304,7 @@ describe(`AddressController (${baseUrl})`, () => {
         city,
         zipCode,
         streetAddress,
+        customerId: customer.id,
       });
 
       const response = await request(server.instance).delete(`${baseUrl}/${address.id}`).send();
@@ -274,9 +315,13 @@ describe(`AddressController (${baseUrl})`, () => {
     it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      const { email, password, id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
 
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressTestDataGenerator.generateData();
@@ -290,6 +335,7 @@ describe(`AddressController (${baseUrl})`, () => {
         city,
         zipCode,
         streetAddress,
+        customerId: customer.id,
       });
 
       const response = await request(server.instance)

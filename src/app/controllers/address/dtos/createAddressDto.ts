@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { AddressDto } from './addressDto';
 
 export class CreateAddressBodyDto {
@@ -28,7 +28,11 @@ export class CreateAddressBodyDto {
 
   @IsString()
   @IsOptional()
-  public readonly deliveryInstructions?: string;
+  public readonly deliveryInstructions?: string | null;
+
+  @IsOptional()
+  @IsUUID('4')
+  public readonly customerId: string;
 }
 
 export class CreateAddressResponseData {

@@ -39,5 +39,9 @@ export class AddressDto {
   @IsString()
   public readonly deliveryInstructions?: string | null;
 
+  @IsOptional()
+  @IsUUID('4')
+  public readonly customerId: string;
+
   public static readonly create = RecordToInstanceTransformer.transformFactory(AddressDto);
 }

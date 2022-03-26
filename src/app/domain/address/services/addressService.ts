@@ -11,7 +11,7 @@ export class AddressService {
   ) {}
 
   public async createAddress(addressData: CreateAddressData): Promise<AddressDto> {
-    const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } = addressData;
+    const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, customerId } = addressData;
 
     this.loggerService.debug('Creating address...', {
       firstName,
@@ -22,6 +22,7 @@ export class AddressService {
       city,
       zipCode,
       streetAddress,
+      customerId,
     });
 
     const address = await this.addressRepository.createOne(addressData);

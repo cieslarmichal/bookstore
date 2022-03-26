@@ -7,7 +7,8 @@ export class AddressTestDataGenerator {
       id: this.generateId(),
       createdAt: this.generateCreatedAt(),
       updatedAt: this.generateUpdatedAt(),
-      fullName: this.generateFullName(),
+      firstName: this.generateFirstName(),
+      lastName: this.generateLastName(),
       phoneNumber: this.generatePhoneNumber(),
       country: this.generateCountry(),
       state: this.generateState(),
@@ -15,6 +16,7 @@ export class AddressTestDataGenerator {
       zipCode: this.generateZipCode(),
       streetAddress: this.generateStreetAddress(),
       deliveryInstructions: this.generateDeliveryInstructions(),
+      customerId: this.generateCustomerId(),
     };
   }
 
@@ -30,8 +32,12 @@ export class AddressTestDataGenerator {
     return faker.date.recent(1);
   }
 
-  public generateFullName(): string {
-    return faker.name.firstName() + ' ' + faker.name.lastName();
+  public generateFirstName(): string {
+    return faker.name.firstName();
+  }
+
+  public generateLastName(): string {
+    return faker.name.lastName();
   }
 
   public generatePhoneNumber(): string {
@@ -60,5 +66,9 @@ export class AddressTestDataGenerator {
 
   public generateDeliveryInstructions(): string {
     return faker.lorem.words();
+  }
+
+  public generateCustomerId(): string {
+    return faker.datatype.uuid();
   }
 }

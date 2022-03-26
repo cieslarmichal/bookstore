@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateAddressData {
   @IsString()
@@ -28,4 +28,8 @@ export class CreateAddressData {
   @IsString()
   @IsOptional()
   public readonly deliveryInstructions?: string | null;
+
+  @IsOptional()
+  @IsUUID('4')
+  public readonly customerId: string;
 }

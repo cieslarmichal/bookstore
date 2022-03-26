@@ -20,6 +20,7 @@ import { LoggerModule } from '../../shared/logger/loggerModule';
 import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
+import { CustomerModule } from '../../domain/customer/customerModule';
 
 const baseUrl = '/categories';
 
@@ -49,6 +50,7 @@ describe(`CategoryController (${baseUrl})`, () => {
       LoggerModule,
       BookCategoryModule,
       AddressModule,
+      CustomerModule,
     ]);
 
     categoryRepository = container.resolve(CATEGORY_REPOSITORY);

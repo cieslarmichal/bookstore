@@ -17,6 +17,7 @@ export class AddressMapper implements Mapper<Address, AddressDto> {
       zipCode,
       streetAddress,
       deliveryInstructions,
+      customerId,
     } = entity;
 
     return AddressDto.create({
@@ -32,6 +33,7 @@ export class AddressMapper implements Mapper<Address, AddressDto> {
       zipCode,
       streetAddress,
       deliveryInstructions: deliveryInstructions || null,
+      customerId,
     });
   }
 }

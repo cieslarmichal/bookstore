@@ -27,6 +27,7 @@ import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymb
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { BookFormat } from '../../domain/book/types';
 import { AddressModule } from '../../domain/address/addressModule';
+import { CustomerModule } from '../../domain/customer/customerModule';
 
 const categoriesUrl = '/categories';
 const booksUrl = '/books';
@@ -63,6 +64,7 @@ describe(`BookCategoryController`, () => {
       ControllersModule,
       LoggerModule,
       AddressModule,
+      CustomerModule,
     ]);
 
     categoryRepository = container.resolve(CATEGORY_REPOSITORY);
