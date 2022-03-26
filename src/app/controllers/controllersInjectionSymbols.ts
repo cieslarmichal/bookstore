@@ -7,3 +7,4 @@ export const CATEGORY_CONTROLLER = 'categoryController';
 export const AUTHOR_BOOK_CONTROLLER = 'authorBookController';
 export const BOOK_CATEGORY_CONTROLLER = 'bookCategoryController';
 export const ADDRESS_CONTROLLER = 'addressController';
+export const CUSTOMER_CONTROLLER = 'customerController';

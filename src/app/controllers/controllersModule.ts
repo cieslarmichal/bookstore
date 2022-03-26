@@ -15,8 +15,10 @@ import {
   BOOK_CATEGORY_CONTROLLER,
   BOOK_CONTROLLER,
   CATEGORY_CONTROLLER,
+  CUSTOMER_CONTROLLER,
   USER_CONTROLLER,
 } from './controllersInjectionSymbols';
+import { CustomerController } from './customer/addressController';
 import { AuthMiddleware } from './shared';
 import { AuthService } from './shared';
 import { UserController } from './user/userController';
@@ -33,6 +35,7 @@ export class ControllersModule extends LoadableModule {
       [AUTHOR_BOOK_CONTROLLER]: asClass(AuthorBookController, { lifetime: Lifetime.SINGLETON }),
       [BOOK_CATEGORY_CONTROLLER]: asClass(BookCategoryController, { lifetime: Lifetime.SINGLETON }),
       [ADDRESS_CONTROLLER]: asClass(AddressController, { lifetime: Lifetime.SINGLETON }),
+      [CUSTOMER_CONTROLLER]: asClass(CustomerController, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

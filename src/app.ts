@@ -10,6 +10,7 @@ import {
   BOOK_CATEGORY_CONTROLLER,
   BOOK_CONTROLLER,
   CATEGORY_CONTROLLER,
+  CUSTOMER_CONTROLLER,
   USER_CONTROLLER,
 } from './app/controllers/controllersInjectionSymbols';
 
@@ -34,6 +35,7 @@ export class App {
     const authorBookController = this.container.resolve(AUTHOR_BOOK_CONTROLLER);
     const bookCategoryController = this.container.resolve(BOOK_CATEGORY_CONTROLLER);
     const addressController = this.container.resolve(ADDRESS_CONTROLLER);
+    const customerController = this.container.resolve(CUSTOMER_CONTROLLER);
 
     this.instance.use('/', bookController.router);
     this.instance.use('/', authorController.router);
@@ -42,6 +44,7 @@ export class App {
     this.instance.use('/', authorBookController.router);
     this.instance.use('/', bookCategoryController.router);
     this.instance.use('/', addressController.router);
+    this.instance.use('/', customerController.router);
 
     this.instance.use(errorMiddleware);
   }

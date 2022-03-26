@@ -1,14 +1,13 @@
 import { ConfigLoader } from '../../../configLoader';
-import { AddressTestDataGenerator } from '../../domain/address/testDataGenerators/addressTestDataGenerator';
+import { CustomerTestDataGenerator } from '../../domain/customer/testDataGenerators/customerTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer } from '../../shared';
 import { DbModule } from '../../shared';
-import { AddressModule } from '../../domain/address/addressModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { AddressRepository } from '../../domain/address/repositories/addressRepository';
+import { CustomerRepository } from '../../domain/customer/repositories/customerRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
@@ -17,22 +16,20 @@ import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { ADDRESS_REPOSITORY } from '../../domain/address/addressInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
-import { CustomerRepository } from '../../domain/customer/repositories/customerRepository';
 import { USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
 import { CUSTOMER_REPOSITORY } from '../../domain/customer/customerInjectionSymbols';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { AddressModule } from '../../domain/address/addressModule';
 
-const baseUrl = '/addresses';
+const baseUrl = '/customers';
 
-describe(`AddressController (${baseUrl})`, () => {
-  let addressRepository: AddressRepository;
+describe(`CustomerController (${baseUrl})`, () => {
   let customerRepository: CustomerRepository;
   let userRepository: UserRepository;
-  let addressTestDataGenerator: AddressTestDataGenerator;
+  let customerTestDataGenerator: CustomerTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -40,14 +37,13 @@ describe(`AddressController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    addressTestDataGenerator = new AddressTestDataGenerator();
+    customerTestDataGenerator = new CustomerTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
   beforeEach(async () => {
     const container = await createDIContainer([
       DbModule,
-      AddressModule,
       BookModule,
       AuthorModule,
       UserModule,
@@ -57,11 +53,11 @@ describe(`AddressController (${baseUrl})`, () => {
       BookCategoryModule,
       CategoryModule,
       CustomerModule,
+      AddressModule,
     ]);
 
-    addressRepository = container.resolve(ADDRESS_REPOSITORY);
-    userRepository = container.resolve(USER_REPOSITORY);
     customerRepository = container.resolve(CUSTOMER_REPOSITORY);
+    userRepository = container.resolve(USER_REPOSITORY);
 
     authHelper = new AuthHelper(container);
 
@@ -78,7 +74,7 @@ describe(`AddressController (${baseUrl})`, () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Create address', () => {
+  describe('Create customer', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
@@ -101,22 +97,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password, role });
 
-      const customer = await customerRepository.createOne({ userId: user.id });
-
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
-
-      const response = await request(server.instance).post(baseUrl).send({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
+      const response = await request(server.instance).post(baseUrl).send({ userId: user.id });
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -130,52 +111,39 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const user = await userRepository.createOne({ email, password, role });
 
-      const customer = await customerRepository.createOne({ userId: user.id });
-
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
-
       const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
+        userId: user.id,
       });
 
       expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
-  describe('Find address', () => {
-    it('returns bad request the addressId param is not uuid', async () => {
+  describe('Find customer', () => {
+    it('returns bad request the customerId param is not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const addressId = 'abc';
+      const customerId = 'abc';
 
       const response = await request(server.instance)
-        .get(`${baseUrl}/${addressId}`)
+        .get(`${baseUrl}/${customerId}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when address with given addressId does not exist', async () => {
+    it('returns not found when customer with given customerId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = addressTestDataGenerator.generateData();
+      const { id } = customerTestDataGenerator.generateData();
 
       const response = await request(server.instance)
         .get(`${baseUrl}/${id}`)
@@ -193,27 +161,12 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const customer = await customerRepository.createOne({ userId: user.id });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
-
-      const address = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
-
-      const response = await request(server.instance).get(`${baseUrl}/${address.id}`);
+      const response = await request(server.instance).get(`${baseUrl}/${customer.id}`);
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
+    it('accepts a request and returns ok when customerId is uuid and have corresponding customer', async () => {
       expect.assertions(1);
 
       const { email, password, id: userId, role } = userTestDataGenerator.generateData();
@@ -224,55 +177,40 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const customer = await customerRepository.createOne({ userId: user.id });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
-
-      const address = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
-
       const response = await request(server.instance)
-        .get(`${baseUrl}/${address.id}`)
+        .get(`${baseUrl}/${customer.id}`)
         .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
-  describe('Remove address', () => {
-    it('returns bad request when the addressId param is not uuid', async () => {
+  describe('Remove customer', () => {
+    it('returns bad request when the customerId param is not uuid', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const addressId = 'abc';
+      const customerId = 'abc';
 
       const response = await request(server.instance)
-        .delete(`${baseUrl}/${addressId}`)
+        .delete(`${baseUrl}/${customerId}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
       expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('returns not found when address with given addressId does not exist', async () => {
+    it('returns not found when customer with given customerId does not exist', async () => {
       expect.assertions(1);
 
       const { id: userId, role } = userTestDataGenerator.generateData();
 
       const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = addressTestDataGenerator.generateData();
+      const { id } = customerTestDataGenerator.generateData();
 
       const response = await request(server.instance)
         .delete(`${baseUrl}/${id}`)
@@ -291,27 +229,12 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const customer = await customerRepository.createOne({ userId: user.id });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
-
-      const address = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
-
-      const response = await request(server.instance).delete(`${baseUrl}/${address.id}`).send();
+      const response = await request(server.instance).delete(`${baseUrl}/${customer.id}`).send();
 
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
+    it('accepts a request and returns no content when customerId is uuid and corresponds to existing customer', async () => {
       expect.assertions(1);
 
       const { email, password, id: userId, role } = userTestDataGenerator.generateData();
@@ -322,23 +245,8 @@ describe(`AddressController (${baseUrl})`, () => {
 
       const customer = await customerRepository.createOne({ userId: user.id });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
-
-      const address = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
-
       const response = await request(server.instance)
-        .delete(`${baseUrl}/${address.id}`)
+        .delete(`${baseUrl}/${customer.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
 
