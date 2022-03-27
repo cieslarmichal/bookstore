@@ -3,6 +3,9 @@ import { AddressDto } from '../dtos';
 import { Address } from '../entities/address';
 import { AddressMapper } from '../mappers/addressMapper';
 import { AddressNotFound } from '../errors';
+import { PaginationData } from '../../shared';
+import { Filter } from '../../../shared';
+import { AddressQueryBuilder } from './queryBuilder';
 
 @EntityRepository()
 export class AddressRepository {
@@ -30,8 +33,16 @@ export class AddressRepository {
     return this.findOne({ id });
   }
 
-  public async findMany(conditions: FindConditions<Address>): Promise<AddressDto[]> {
-    const addresses = await this.entityManager.find(Address, conditions);
+  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<AddressDto[]> {
+    const addressQueryBuilder = new AddressQueryBuilder(this.entityManager);
+
+    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+
+    const addresses = await addressQueryBuilder
+      .addressConditions(filters)
+      .skip(numberOfEnitiesToSkip)
+      .take(paginationData.limit)
+      .getMany();
 
     return addresses.map((address) => this.addressMapper.mapEntityToDto(address));
   }

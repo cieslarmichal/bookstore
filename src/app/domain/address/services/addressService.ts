@@ -1,4 +1,6 @@
+import { Filter } from '../../../shared';
 import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { PaginationData } from '../../shared';
 import { AddressDto } from '../dtos';
 import { AddressNotFound } from '../errors';
 import { AddressRepository } from '../repositories/addressRepository';
@@ -40,6 +42,12 @@ export class AddressService {
     }
 
     return address;
+  }
+
+  public async findAddresses(filters: Filter[], paginationData: PaginationData): Promise<AddressDto[]> {
+    const authors = await this.addressRepository.findMany(filters, paginationData);
+
+    return authors;
   }
 
   public async removeAddress(addressId: string): Promise<void> {

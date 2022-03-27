@@ -247,6 +247,68 @@ describe(`AddressController (${baseUrl})`, () => {
     });
   });
 
+  describe('Find addresses', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const response = await request(server.instance).get(`${baseUrl}`);
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('returns addresses with filtering provided', async () => {
+      expect.assertions(2);
+
+      const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const user1 = await userRepository.createOne({ email, password, role });
+
+      const { email: otherEmail } = userTestDataGenerator.generateData();
+
+      const user2 = await userRepository.createOne({ email: otherEmail, password, role });
+
+      const customer1 = await customerRepository.createOne({ userId: user1.id });
+
+      const customer2 = await customerRepository.createOne({ userId: user2.id });
+
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
+
+      await addressRepository.createOne({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer1.id,
+      });
+
+      await addressRepository.createOne({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer2.id,
+      });
+
+      const response = await request(server.instance)
+        .get(`${baseUrl}?filter=["customerId||eq||${customer1.id}"]`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.OK);
+      expect(response.body.data.addresses.length).toBe(1);
+    });
+  });
+
   describe('Remove address', () => {
     it('returns bad request when the addressId param is not uuid', async () => {
       expect.assertions(1);

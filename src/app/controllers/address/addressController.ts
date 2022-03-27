@@ -8,14 +8,17 @@ import {
   CreateAddressBodyDto,
   CreateAddressResponseData,
   CreateAddressResponseDto,
+  FindAddressesResponseData,
+  FindAddressesResponseDto,
   FindAddressParamDto,
   FindAddressResponseData,
   FindAddressResponseDto,
   RemoveAddressParamDto,
   RemoveAddressResponseDto,
+  supportedFindAddressesFieldsFilters,
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
 
 const ADDRESSES_PATH = '/addresses';
 const ADDRESSES_PATH_WITH_ID = `${ADDRESSES_PATH}/:id`;
@@ -41,6 +44,15 @@ export class AddressController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAddressResponse = await this.findAddress(request, response);
         response.locals.controllerResponse = findAddressResponse;
+        next();
+      }),
+    );
+    this.router.get(
+      ADDRESSES_PATH,
+      [verifyAccessToken],
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        const findAddressesResponse = await this.findAddresses(request, response);
+        response.locals.controllerResponse = findAddressesResponse;
         next();
       }),
     );
@@ -75,6 +87,18 @@ export class AddressController {
     const responseData = new FindAddressResponseData(addressDto);
 
     return new FindAddressResponseDto(responseData, StatusCodes.OK);
+  }
+
+  public async findAddresses(request: Request, response: Response): Promise<ControllerResponse> {
+    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAddressesFieldsFilters);
+
+    const paginationData = PaginationDataParser.parse(request.query);
+
+    const addressesDto = await this.addressService.findAddresses(filters, paginationData);
+
+    const responseData = new FindAddressesResponseData(addressesDto);
+
+    return new FindAddressesResponseDto(responseData, StatusCodes.OK);
   }
 
   public async deleteAddress(request: Request, response: Response): Promise<ControllerResponse> {
