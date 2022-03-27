@@ -19,7 +19,8 @@
     "test:clearCache": "jest --clearCache",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json"
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
+    "test:ci": "cross-env NODE_ENV=test jest --runInBand --no-cache --coverage --verbose"
   },
   "dependencies": {
     "awilix": "^7.0.1",
