@@ -2,7 +2,7 @@ import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { CustomerDto } from '../dtos';
 import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
 import { CustomerRepository } from '../repositories/customerRepository';
-import { CreateCustomerData } from './types';
+import { CreateCustomerData, FindCustomerData } from './types';
 
 export class CustomerService {
   public constructor(
@@ -28,11 +28,11 @@ export class CustomerService {
     return customer;
   }
 
-  public async findCustomer(customerId: string): Promise<CustomerDto> {
-    const customer = await this.customerRepository.findOneById(customerId);
+  public async findCustomer(customerData: FindCustomerData): Promise<CustomerDto> {
+    const customer = await this.customerRepository.findOne(customerData);
 
     if (!customer) {
-      throw new CustomerNotFound({ id: customerId });
+      throw new CustomerNotFound({ ...customerData });
     }
 
     return customer;

@@ -80,7 +80,21 @@ describe('CustomerService', () => {
 
       const customer = await customerRepository.createOne({ userId: user.id });
 
-      const foundCustomer = await customerService.findCustomer(customer.id);
+      const foundCustomer = await customerService.findCustomer({ id: customer.id });
+
+      expect(foundCustomer).not.toBeNull();
+    });
+
+    it('finds customer by userId in database', async () => {
+      expect.assertions(1);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      await customerRepository.createOne({ userId: user.id });
+
+      const foundCustomer = await customerService.findCustomer({ userId: user.id });
 
       expect(foundCustomer).not.toBeNull();
     });
@@ -91,7 +105,7 @@ describe('CustomerService', () => {
       const { id } = customerTestDataGenerator.generateData();
 
       try {
-        await customerService.findCustomer(id);
+        await customerService.findCustomer({ id });
       } catch (error) {
         expect(error).toBeInstanceOf(CustomerNotFound);
       }

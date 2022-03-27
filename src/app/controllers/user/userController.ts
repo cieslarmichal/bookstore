@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../domain/user/services/userService';
-import { LoginUserData, RegisterUserData } from '../../domain/user/services/types';
 import { RecordToInstanceTransformer } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -87,9 +86,7 @@ export class UserController {
   public async registerUser(request: Request, response: Response): Promise<ControllerResponse> {
     const registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserBodyDto);
 
-    const registerUserData = RecordToInstanceTransformer.strictTransform(registerUserBodyDto, RegisterUserData);
-
-    const userDto = await this.userService.registerUser(registerUserData);
+    const userDto = await this.userService.registerUser(registerUserBodyDto);
 
     const controllerUserDto = UserDto.create({
       id: userDto.id,
@@ -107,9 +104,7 @@ export class UserController {
   public async loginUser(request: Request, response: Response): Promise<ControllerResponse> {
     const loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserBodyDto);
 
-    const loginUserData = RecordToInstanceTransformer.strictTransform(loginUserBodyDto, LoginUserData);
-
-    const token = await this.userService.loginUser(loginUserData);
+    const token = await this.userService.loginUser(loginUserBodyDto);
 
     const responseData = new LoginUserResponseData(token);
 

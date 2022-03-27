@@ -213,7 +213,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
-    it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
+    it(`returns forbidden when user requests other customer's address`, async () => {
       expect.assertions(1);
 
       const { email, password, id: userId, role } = userTestDataGenerator.generateData();
@@ -221,6 +221,39 @@ describe(`AddressController (${baseUrl})`, () => {
       const accessToken = authHelper.mockAuth({ userId, role });
 
       const user = await userRepository.createOne({ email, password, role });
+
+      const customer = await customerRepository.createOne({ userId: user.id });
+
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressTestDataGenerator.generateData();
+
+      const address = await addressRepository.createOne({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer.id,
+      });
+
+      const response = await request(server.instance)
+        .get(`${baseUrl}/${address.id}`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+    });
+
+    it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
+      expect.assertions(1);
+
+      const { email, password, role } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password, role });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role });
 
       const customer = await customerRepository.createOne({ userId: user.id });
 

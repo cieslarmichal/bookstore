@@ -19,6 +19,10 @@ import {
 } from './dtos';
 import { ControllerResponse } from '../shared/types/controllerResponse';
 import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { CustomerService } from '../../domain/customer/services/customerService';
+import { UserRole } from '../../domain/user/types';
+import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress, UserIsNotACustomer } from './errors';
+import { CustomerDto } from 'src/app/domain/customer/dtos';
 
 const ADDRESSES_PATH = '/addresses';
 const ADDRESSES_PATH_WITH_ID = `${ADDRESSES_PATH}/:id`;
@@ -26,7 +30,11 @@ const ADDRESSES_PATH_WITH_ID = `${ADDRESSES_PATH}/:id`;
 export class AddressController {
   public readonly router = express.Router();
 
-  public constructor(private readonly addressService: AddressService, authMiddleware: AuthMiddleware) {
+  public constructor(
+    private readonly addressService: AddressService,
+    private readonly customerService: CustomerService,
+    authMiddleware: AuthMiddleware,
+  ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
@@ -83,6 +91,23 @@ export class AddressController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAddressParamDto);
 
     const addressDto = await this.addressService.findAddress(id);
+
+    const { userId, role } = response.locals.authPayload;
+
+    let customer: CustomerDto;
+
+    try {
+      customer = await this.customerService.findCustomer({ userId });
+    } catch (error) {
+      throw new UserIsNotACustomer({ userId });
+    }
+
+    if (addressDto.customerId !== customer.id && role === UserRole.user) {
+      throw new CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress({
+        customerId: customer.id,
+        targetCustomerId: addressDto.customerId,
+      });
+    }
 
     const responseData = new FindAddressResponseData(addressDto);
 

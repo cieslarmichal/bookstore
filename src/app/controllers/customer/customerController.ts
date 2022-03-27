@@ -70,7 +70,7 @@ export class CustomerController {
   public async findCustomer(request: Request, response: Response): Promise<ControllerResponse> {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindCustomerParamDto);
 
-    const customerDto = await this.customerService.findCustomer(id);
+    const customerDto = await this.customerService.findCustomer({ id });
 
     const responseData = new FindCustomerResponseData(customerDto);
 

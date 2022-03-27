@@ -1,7 +1,8 @@
 import { DomainError } from '../../../shared/errors/domainError';
 
 type CustomerNotFoundContext = {
-  readonly id: string;
+  readonly id?: string;
+  readonly userId?: string;
 };
 
 export class CustomerNotFound extends DomainError<CustomerNotFoundContext> {

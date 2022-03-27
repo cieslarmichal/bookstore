@@ -18,7 +18,7 @@ import {
   CUSTOMER_CONTROLLER,
   USER_CONTROLLER,
 } from './controllersInjectionSymbols';
-import { CustomerController } from './customer/addressController';
+import { CustomerController } from './customer/customerController';
 import { AuthMiddleware } from './shared';
 import { AuthService } from './shared';
 import { UserController } from './user/userController';
