@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class LoginUserData {
+export class RegisterByEmailUserData {
   @IsString()
   public readonly email: string;
 

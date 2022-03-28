@@ -1,11 +1,17 @@
 import { DomainError } from '../../../shared/errors/domainError';
 
-type UserAlreadyExistsContext = {
+type UserAlreadyExistsEmailContext = {
   readonly email: string;
 };
 
-export class UserAlreadyExists extends DomainError<UserAlreadyExistsContext> {
-  public constructor(context: UserAlreadyExistsContext) {
+type UserAlreadyExistsPhoneNumberContext = {
+  readonly phoneNumber: string;
+};
+
+export class UserAlreadyExists extends DomainError<
+  UserAlreadyExistsEmailContext | UserAlreadyExistsPhoneNumberContext
+> {
+  public constructor(context: UserAlreadyExistsEmailContext | UserAlreadyExistsPhoneNumberContext) {
     super('User already exists.', context);
   }
 }

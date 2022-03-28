@@ -4,7 +4,12 @@ import { UserAlreadyExists, UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
 import { HashService } from './hashService';
 import { TokenService } from './tokenService';
-import { RegisterUserData, LoginUserData } from './types';
+import {
+  RegisterByEmailUserData,
+  LoginByEmailUserData,
+  RegisterByPhoneNumberUserData,
+  LoginByPhoneNumberUserData,
+} from './types';
 
 export type AccessToken = string;
 
@@ -16,7 +21,7 @@ export class UserService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async registerUser(userData: RegisterUserData): Promise<UserDto> {
+  public async registerUserByEmail(userData: RegisterByEmailUserData): Promise<UserDto> {
     const { email, password } = userData;
 
     this.loggerService.debug('Registering user...', { email });
@@ -36,7 +41,27 @@ export class UserService {
     return user;
   }
 
-  public async loginUser(userData: LoginUserData): Promise<AccessToken> {
+  public async registerUserByPhoneNumber(userData: RegisterByPhoneNumberUserData) {
+    const { phoneNumber, password } = userData;
+
+    this.loggerService.debug('Registering user...', { phoneNumber });
+
+    const existingUser = await this.userRepository.findOne({ phoneNumber });
+
+    if (existingUser) {
+      throw new UserAlreadyExists({ phoneNumber });
+    }
+
+    const hashedPassword = await this.hashService.hash(password);
+
+    const user = await this.userRepository.createOne({ phoneNumber, password: hashedPassword });
+
+    this.loggerService.info('User registered.', { phoneNumber });
+
+    return user;
+  }
+
+  public async loginUserByEmail(userData: LoginByEmailUserData): Promise<AccessToken> {
     const { email, password } = userData;
 
     this.loggerService.debug('Logging user...', { email });
@@ -56,6 +81,30 @@ export class UserService {
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
 
     this.loggerService.info('User logged in.', { email });
+
+    return accessToken;
+  }
+
+  public async loginUserByPhoneNumber(userData: LoginByPhoneNumberUserData): Promise<AccessToken> {
+    const { phoneNumber, password } = userData;
+
+    this.loggerService.debug('Logging user...', { phoneNumber });
+
+    const user = await this.userRepository.findOne({ phoneNumber });
+
+    if (!user) {
+      throw new UserNotFound({ phoneNumber });
+    }
+
+    const passwordIsValid = await this.hashService.compare(password, user.password);
+
+    if (!passwordIsValid) {
+      throw new UserNotFound({ phoneNumber });
+    }
+
+    const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
+
+    this.loggerService.info('User logged in.', { phoneNumber });
 
     return accessToken;
   }

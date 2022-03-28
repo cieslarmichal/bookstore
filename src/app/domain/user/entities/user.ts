@@ -1,4 +1,4 @@
-import { IsOptional, IsDate, IsString, IsEnum, IsUUID } from 'class-validator';
+import { IsOptional, IsDate, IsString, IsEnum, IsUUID, ValidateIf } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToOne } from 'typeorm';
 import { Customer } from '../../customer/entities/customer';
 import { UserRole } from '../types';
@@ -24,9 +24,15 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
 
+  @ValidateIf((object) => !object.phoneNumber || object.email)
   @IsString()
-  @Column({ type: 'text', unique: true })
+  @Column({ type: 'text', unique: true, nullable: true })
   public email: string;
+
+  @ValidateIf((object) => !object.email || object.phoneNumber)
+  @IsString()
+  @Column({ type: 'text', unique: true, nullable: true })
+  public phoneNumber: string;
 
   @IsString()
   @Column()

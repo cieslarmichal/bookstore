@@ -1,2 +1,4 @@
-export * from './registerUserData';
-export * from './loginUserData';
+export * from './registerByEmailUserData';
+export * from './registerByPhoneNumberUserData';
+export * from './loginByEmailUserData';
+export * from './loginByPhoneNumberUserData';

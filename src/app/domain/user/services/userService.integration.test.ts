@@ -35,13 +35,13 @@ describe('UserService', () => {
 
   afterEach(async () => {});
 
-  describe('Register user', () => {
+  describe('Register user by email', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
       const { email, password } = userTestDataGenerator.generateData();
 
-      const createdUserDto = await userService.registerUser({
+      const createdUserDto = await userService.registerUserByEmail({
         email,
         password,
       });
@@ -62,7 +62,7 @@ describe('UserService', () => {
       });
 
       try {
-        await userService.registerUser({
+        await userService.registerUserByEmail({
           email,
           password,
         });
@@ -72,7 +72,44 @@ describe('UserService', () => {
     });
   });
 
-  describe('Login user', () => {
+  describe('Register user by phone number', () => {
+    it('creates user in database', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const createdUserDto = await userService.registerUserByPhoneNumber({
+        phoneNumber,
+        password,
+      });
+
+      const userDto = await userRepository.findOneById(createdUserDto.id);
+
+      expect(userDto).not.toBeNull();
+    });
+
+    it('should not create user and throw if user with the same phone number already exists', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({
+        phoneNumber,
+        password,
+      });
+
+      try {
+        await userService.registerUserByPhoneNumber({
+          phoneNumber,
+          password,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserAlreadyExists);
+      }
+    });
+  });
+
+  describe('Login user by email', () => {
     it('should return access token', async () => {
       expect.assertions(2);
 
@@ -85,7 +122,7 @@ describe('UserService', () => {
         password: hashedPassword,
       });
 
-      const accessToken = await userService.loginUser({
+      const accessToken = await userService.loginUserByEmail({
         email,
         password,
       });
@@ -102,7 +139,7 @@ describe('UserService', () => {
       const { email, password } = userTestDataGenerator.generateData();
 
       try {
-        await userService.loginUser({
+        await userService.loginUserByEmail({
           email,
           password,
         });
@@ -124,8 +161,70 @@ describe('UserService', () => {
       });
 
       try {
-        await userService.loginUser({
+        await userService.loginUserByEmail({
           email,
+          password: otherPassword,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
+      }
+    });
+  });
+
+  describe('Login user by phone number', () => {
+    it('should return access token', async () => {
+      expect.assertions(2);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const hashedPassword = await hashService.hash(password);
+
+      const user = await userRepository.createOne({
+        phoneNumber,
+        password: hashedPassword,
+      });
+
+      const accessToken = await userService.loginUserByPhoneNumber({
+        phoneNumber,
+        password,
+      });
+
+      const data = await tokenService.verifyToken(accessToken);
+
+      expect(data.id).toBe(user.id);
+      expect(data.role).toBe(UserRole.user);
+    });
+
+    it('should throw if user with given email does not exist', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      try {
+        await userService.loginUserByPhoneNumber({
+          phoneNumber,
+          password,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
+      }
+    });
+
+    it('should throw if user password does not match db password', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const { password: otherPassword } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({
+        phoneNumber,
+        password,
+      });
+
+      try {
+        await userService.loginUserByPhoneNumber({
+          phoneNumber,
           password: otherPassword,
         });
       } catch (error) {

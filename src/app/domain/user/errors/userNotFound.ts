@@ -8,8 +8,13 @@ type UserNotFoundEmailContext = {
   readonly email: string;
 };
 
-export class UserNotFound extends DomainError<UserNotFoundIdContext | UserNotFoundEmailContext> {
-  public constructor(context: UserNotFoundIdContext | UserNotFoundEmailContext) {
+type UserNotFoundPhoneNumberContext = {
+  readonly phoneNumber: string;
+};
+export class UserNotFound extends DomainError<
+  UserNotFoundIdContext | UserNotFoundEmailContext | UserNotFoundPhoneNumberContext
+> {
+  public constructor(context: UserNotFoundIdContext | UserNotFoundEmailContext | UserNotFoundPhoneNumberContext) {
     super('User not found.', context);
   }
 }

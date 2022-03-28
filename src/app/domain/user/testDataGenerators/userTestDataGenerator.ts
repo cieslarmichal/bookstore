@@ -9,6 +9,7 @@ export class UserTestDataGenerator {
       createdAt: this.generateCreatedAt(),
       updatedAt: this.generateUpdatedAt(),
       email: this.generateEmail(),
+      phoneNumber: this.generatePhoneNumber(),
       password: this.generatePassword(),
       role: this.generateRole(),
     };
@@ -28,6 +29,10 @@ export class UserTestDataGenerator {
 
   public generateEmail(): string {
     return faker.internet.email();
+  }
+
+  public generatePhoneNumber(): string {
+    return faker.phone.phoneNumber();
   }
 
   public generatePassword(): string {

@@ -86,7 +86,7 @@ export class UserController {
   public async registerUser(request: Request, response: Response): Promise<ControllerResponse> {
     const registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserBodyDto);
 
-    const userDto = await this.userService.registerUser(registerUserBodyDto);
+    const userDto = await this.userService.registerUserByEmail(registerUserBodyDto);
 
     const controllerUserDto = UserDto.create({
       id: userDto.id,
@@ -104,7 +104,7 @@ export class UserController {
   public async loginUser(request: Request, response: Response): Promise<ControllerResponse> {
     const loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserBodyDto);
 
-    const token = await this.userService.loginUser(loginUserBodyDto);
+    const token = await this.userService.loginUserByEmail(loginUserBodyDto);
 
     const responseData = new LoginUserResponseData(token);
 
