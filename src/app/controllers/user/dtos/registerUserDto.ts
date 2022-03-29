@@ -1,9 +1,17 @@
 import { IsString } from 'class-validator';
 import { UserDto } from './userDto';
 
-export class RegisterUserBodyDto {
+export class RegisterUserByEmailBodyDto {
   @IsString()
   public readonly email: string;
+
+  @IsString()
+  public readonly password: string;
+}
+
+export class RegisterUserByPhoneNumberBodyDto {
+  @IsString()
+  public readonly phoneNumber: string;
 
   @IsString()
   public readonly password: string;

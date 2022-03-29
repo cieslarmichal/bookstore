@@ -5,10 +5,10 @@ import { UserRepository } from '../repositories/userRepository';
 import { HashService } from './hashService';
 import { TokenService } from './tokenService';
 import {
-  RegisterByEmailUserData,
-  LoginByEmailUserData,
-  RegisterByPhoneNumberUserData,
-  LoginByPhoneNumberUserData,
+  RegisterUserByEmailData,
+  LoginUserByEmailData,
+  RegisterUserByPhoneNumberData,
+  LoginUserByPhoneNumberData,
 } from './types';
 
 export type AccessToken = string;
@@ -21,7 +21,7 @@ export class UserService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async registerUserByEmail(userData: RegisterByEmailUserData): Promise<UserDto> {
+  public async registerUserByEmail(userData: RegisterUserByEmailData): Promise<UserDto> {
     const { email, password } = userData;
 
     this.loggerService.debug('Registering user...', { email });
@@ -41,7 +41,7 @@ export class UserService {
     return user;
   }
 
-  public async registerUserByPhoneNumber(userData: RegisterByPhoneNumberUserData) {
+  public async registerUserByPhoneNumber(userData: RegisterUserByPhoneNumberData) {
     const { phoneNumber, password } = userData;
 
     this.loggerService.debug('Registering user...', { phoneNumber });
@@ -61,7 +61,7 @@ export class UserService {
     return user;
   }
 
-  public async loginUserByEmail(userData: LoginByEmailUserData): Promise<AccessToken> {
+  public async loginUserByEmail(userData: LoginUserByEmailData): Promise<AccessToken> {
     const { email, password } = userData;
 
     this.loggerService.debug('Logging user...', { email });
@@ -85,7 +85,7 @@ export class UserService {
     return accessToken;
   }
 
-  public async loginUserByPhoneNumber(userData: LoginByPhoneNumberUserData): Promise<AccessToken> {
+  public async loginUserByPhoneNumber(userData: LoginUserByPhoneNumberData): Promise<AccessToken> {
     const { phoneNumber, password } = userData;
 
     this.loggerService.debug('Logging user...', { phoneNumber });

@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../shared';
 import { UserRole } from '../../../domain/user/types';
 
@@ -13,7 +13,12 @@ export class UserDto {
   public readonly updatedAt: Date;
 
   @IsString()
+  @IsOptional()
   public readonly email: string;
+
+  @IsString()
+  @IsOptional()
+  public readonly phoneNumber: string;
 
   @IsEnum(UserRole)
   public readonly role: UserRole;

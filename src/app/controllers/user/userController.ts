@@ -6,10 +6,8 @@ import { StatusCodes } from 'http-status-codes';
 import { userErrorMiddleware } from './middlewares';
 import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../shared';
 import {
-  RegisterUserBodyDto,
   RegisterUserResponseData,
   RegisterUserResponseDto,
-  LoginUserBodyDto,
   LoginUserResponseData,
   LoginUserResponseDto,
   FindUserParamDto,
@@ -20,9 +18,13 @@ import {
   SetUserPasswordBodyDto,
   SetUserPasswordResponseDto,
   UserDto,
+  LoginUserByEmailBodyDto,
+  LoginUserByPhoneNumberBodyDto,
+  RegisterUserByEmailBodyDto,
+  RegisterUserByPhoneNumberBodyDto,
 } from './dtos';
 import { UserRole } from '../../domain/user/types';
-import { UserFromTokenAuthPayloadNotMatchingTargetUser } from './errors/userFromTokenAuthPayloadNotMatchingTargetUser';
+import { UserFromTokenAuthPayloadNotMatchingTargetUser } from './errors';
 
 const USERS_PATH = '/users';
 const USERS_PATH_WITH_ID = `${USERS_PATH}/:id`;
@@ -84,27 +86,43 @@ export class UserController {
   }
 
   public async registerUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserBodyDto);
+    let registerUserBodyDto: RegisterUserByEmailBodyDto | RegisterUserByPhoneNumberBodyDto;
 
-    const userDto = await this.userService.registerUserByEmail(registerUserBodyDto);
+    let user: UserDto;
 
-    const controllerUserDto = UserDto.create({
-      id: userDto.id,
-      createdAt: userDto.createdAt,
-      updatedAt: userDto.updatedAt,
-      email: userDto.email,
-      role: userDto.role,
+    if (request.body.email) {
+      registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserByEmailBodyDto);
+      user = await this.userService.registerUserByEmail(registerUserBodyDto);
+    } else {
+      registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserByPhoneNumberBodyDto);
+      user = await this.userService.registerUserByPhoneNumber(registerUserBodyDto);
+    }
+
+    const userDto = UserDto.create({
+      id: user.id,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      email: user.email,
+      role: user.role,
     });
 
-    const responseData = new RegisterUserResponseData(controllerUserDto);
+    const responseData = new RegisterUserResponseData(userDto);
 
     return new RegisterUserResponseDto(responseData, StatusCodes.CREATED);
   }
 
   public async loginUser(request: Request, response: Response): Promise<ControllerResponse> {
-    const loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserBodyDto);
+    let loginUserBodyDto: LoginUserByEmailBodyDto | LoginUserByPhoneNumberBodyDto;
 
-    const token = await this.userService.loginUserByEmail(loginUserBodyDto);
+    let token: string;
+
+    if (request.body.email) {
+      loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByEmailBodyDto);
+      token = await this.userService.loginUserByEmail(loginUserBodyDto);
+    } else {
+      loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByPhoneNumberBodyDto);
+      token = await this.userService.loginUserByPhoneNumber(loginUserBodyDto);
+    }
 
     const responseData = new LoginUserResponseData(token);
 

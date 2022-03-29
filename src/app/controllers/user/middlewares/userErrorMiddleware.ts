@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UserAlreadyExists, UserNotFound } from '../../../domain/user/errors';
-import { UserFromTokenAuthPayloadNotMatchingTargetUser } from '../errors/userFromTokenAuthPayloadNotMatchingTargetUser';
+import { UserFromTokenAuthPayloadNotMatchingTargetUser } from '../errors';
 
 export function userErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
   if (error instanceof UserAlreadyExists) {

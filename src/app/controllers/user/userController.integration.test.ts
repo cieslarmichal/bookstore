@@ -73,7 +73,7 @@ describe(`UserController (${baseUrl})`, () => {
     await PostgresHelper.removeDataFromTables();
   });
 
-  describe('Register user', () => {
+  describe('Register user by email', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
@@ -115,7 +115,49 @@ describe(`UserController (${baseUrl})`, () => {
     });
   });
 
-  describe('Login user', () => {
+  describe('Register user by phone number', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber } = userTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(registerUrl).send({
+        phoneNumber,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns unprocessable entity when user with given phone number already exists', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({ phoneNumber, password });
+
+      const response = await request(server.instance).post(registerUrl).send({
+        phoneNumber,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it('returns created when all required body properties are provided', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(registerUrl).send({
+        phoneNumber,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.CREATED);
+    });
+  });
+
+  describe('Login user by email', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
@@ -152,6 +194,50 @@ describe(`UserController (${baseUrl})`, () => {
 
       const response = await request(server.instance).post(loginUrl).send({
         email,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.OK);
+    });
+  });
+
+  describe('Login user by phone number', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber } = userTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(loginUrl).send({
+        phoneNumber,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns not found when user with given phone number does not exist', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(loginUrl).send({
+        phoneNumber,
+        password,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns ok when existing credentials are provided', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const hashedPassword = await hashService.hash(password);
+
+      await userRepository.createOne({ phoneNumber, password: hashedPassword });
+
+      const response = await request(server.instance).post(loginUrl).send({
+        phoneNumber,
         password,
       });
 
