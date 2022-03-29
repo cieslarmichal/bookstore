@@ -22,6 +22,9 @@ import {
   LoginUserByPhoneNumberBodyDto,
   RegisterUserByEmailBodyDto,
   RegisterUserByPhoneNumberBodyDto,
+  SetUserPhoneNumberBodyDto,
+  SetUserEmailResponseDto,
+  SetUserEmailBodyDto,
 } from './dtos';
 import { UserRole } from '../../domain/user/types';
 import { UserFromTokenAuthPayloadNotMatchingTargetUser } from './errors';
@@ -31,6 +34,8 @@ const USERS_PATH_WITH_ID = `${USERS_PATH}/:id`;
 const REGISTER_PATH = `${USERS_PATH}/register`;
 const LOGIN_PATH = `${USERS_PATH}/login`;
 const SET_PASSWORD_PATH = `${USERS_PATH}/set-password`;
+const SET_PHONE_NUMBER_PATH = `${USERS_PATH}/set-phone-number`;
+const SET_EMAIL_PATH = `${USERS_PATH}/set-email`;
 
 export class UserController {
   public readonly router = express.Router();
@@ -60,6 +65,24 @@ export class UserController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const setUserPasswordResponse = await this.setUserPassword(request, response);
         response.locals.controllerResponse = setUserPasswordResponse;
+        next();
+      }),
+    );
+    this.router.post(
+      SET_PHONE_NUMBER_PATH,
+      [verifyAccessToken],
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        const setUserPhoneNumberResponse = await this.setUserPhoneNumber(request, response);
+        response.locals.controllerResponse = setUserPhoneNumberResponse;
+        next();
+      }),
+    );
+    this.router.post(
+      SET_EMAIL_PATH,
+      [verifyAccessToken],
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        const setUserEmailResponse = await this.setUserEmail(request, response);
+        response.locals.controllerResponse = setUserEmailResponse;
         next();
       }),
     );
@@ -143,6 +166,41 @@ export class UserController {
     await this.userService.setPassword(userId, password);
 
     return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
+  }
+
+  public async setUserPhoneNumber(request: Request, response: Response): Promise<ControllerResponse> {
+    const setUserPhoneNumberBodyDto = RecordToInstanceTransformer.strictTransform(
+      request.body,
+      SetUserPhoneNumberBodyDto,
+    );
+
+    const { userId: targetUserId, phoneNumber } = setUserPhoneNumberBodyDto;
+
+    const { userId, role } = response.locals.authPayload;
+
+    if (userId !== targetUserId && role === UserRole.user) {
+      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+    }
+
+    await this.userService.setPhoneNumber(userId, phoneNumber);
+
+    return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
+  }
+
+  public async setUserEmail(request: Request, response: Response): Promise<ControllerResponse> {
+    const setUserEmailBodyDto = RecordToInstanceTransformer.strictTransform(request.body, SetUserEmailBodyDto);
+
+    const { userId: targetUserId, email } = setUserEmailBodyDto;
+
+    const { userId, role } = response.locals.authPayload;
+
+    if (userId !== targetUserId && role === UserRole.user) {
+      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+    }
+
+    await this.userService.setEmail(userId, email);
+
+    return new SetUserEmailResponseDto(StatusCodes.NO_CONTENT);
   }
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {

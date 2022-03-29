@@ -4,13 +4,14 @@ import { User } from '../entities/user';
 
 export class UserMapper implements Mapper<User, UserDto> {
   public mapEntityToDto(entity: User): UserDto {
-    const { id, createdAt, updatedAt, email, password, role } = entity;
+    const { id, createdAt, updatedAt, email, phoneNumber, password, role } = entity;
 
     return UserDto.create({
       id,
       createdAt,
       updatedAt,
       email,
+      phoneNumber,
       password,
       role,
     });

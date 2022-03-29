@@ -1,13 +1,13 @@
 import { IsString, IsUUID } from 'class-validator';
 
-export class SetUserPasswordBodyDto {
+export class SetUserEmailBodyDto {
   @IsUUID('4')
   public readonly userId: string;
 
   @IsString()
-  public readonly password: string;
+  public readonly email: string;
 }
 
-export class SetUserPasswordResponseDto {
+export class SetUserEmailResponseDto {
   public constructor(public readonly statusCode: number) {}
 }

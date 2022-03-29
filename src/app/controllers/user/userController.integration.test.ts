@@ -26,6 +26,8 @@ const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
 const loginUrl = `${baseUrl}/login`;
 const setPasswordUrl = `${baseUrl}/set-password`;
+const setEmailUrl = `${baseUrl}/set-email`;
+const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
 describe(`UserController (${baseUrl})`, () => {
   let userRepository: UserRepository;
@@ -314,7 +316,7 @@ describe(`UserController (${baseUrl})`, () => {
       expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
     });
 
-    it('returns no content when all required fields provided and user with given id exists', async () => {
+    it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
       const { email, password } = userTestDataGenerator.generateData();
@@ -330,6 +332,273 @@ describe(`UserController (${baseUrl})`, () => {
           userId: user.id,
           password,
         });
+
+      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+    });
+  });
+
+  describe('Set email', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, email, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance)
+        .post(setEmailUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          email,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns not found when user with given id does not exist', async () => {
+      expect.assertions(1);
+
+      const { id: userId, email, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance)
+        .post(setEmailUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId,
+          email,
+        });
+
+      console.log(response.body);
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, email } = userTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(setEmailUrl).send({
+        userId,
+        email,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('returns forbidden when user id from access token does not match target user id', async () => {
+      expect.assertions(1);
+
+      const { id: userId, email, role } = userTestDataGenerator.generateData();
+
+      const { id: targetUserId } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance)
+        .post(setEmailUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: targetUserId,
+          email,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+    });
+
+    it('returns unprocessable entity when email is already in use by other user', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({ email, password });
+
+      const user = await userRepository.createOne({ phoneNumber, password });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.instance)
+        .post(setEmailUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          email,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it('returns unprocessable entity when email is already set for target user', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.instance)
+        .post(setEmailUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          email,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it('returns no content when all required fields are provided and user with given id exists', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ phoneNumber, password });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.instance)
+        .post(setEmailUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          email,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+    });
+  });
+
+  describe('Set phone number', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance)
+        .post(setPhoneNumberUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          phoneNumber,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('returns not found when user with given id does not exist', async () => {
+      expect.assertions(1);
+
+      const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance)
+        .post(setPhoneNumberUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId,
+          phoneNumber,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { id: userId, phoneNumber } = userTestDataGenerator.generateData();
+
+      const response = await request(server.instance).post(setPhoneNumberUrl).send({
+        userId,
+        phoneNumber,
+      });
+
+      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('returns forbidden when user id from access token does not match target user id', async () => {
+      expect.assertions(1);
+
+      const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+
+      const { id: targetUserId } = userTestDataGenerator.generateData();
+
+      const accessToken = authHelper.mockAuth({ userId, role });
+
+      const response = await request(server.instance)
+        .post(setPhoneNumberUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: targetUserId,
+          phoneNumber,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+    });
+
+    it('returns unprocessable entity when phone number is already in use by other user', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({ phoneNumber, password });
+
+      const user = await userRepository.createOne({ email, password });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.instance)
+        .post(setPhoneNumberUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          phoneNumber,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it('returns unprocessable entity when phone number is already set for target user', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ phoneNumber, password });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.instance)
+        .post(setPhoneNumberUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          phoneNumber,
+        });
+
+      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it('returns no content when all required fields are provided and user with given id exists', async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({ email, password });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+      const response = await request(server.instance)
+        .post(setPhoneNumberUrl)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userId: user.id,
+          phoneNumber,
+        });
+
+      console.log(response.body);
 
       expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
     });

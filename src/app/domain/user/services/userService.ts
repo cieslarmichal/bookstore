@@ -1,6 +1,6 @@
 import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { UserDto } from '../dtos';
-import { UserAlreadyExists, UserNotFound } from '../errors';
+import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../errors';
 import { UserRepository } from '../repositories/userRepository';
 import { HashService } from './hashService';
 import { TokenService } from './tokenService';
@@ -123,6 +123,58 @@ export class UserService {
     const updatedUser = await this.userRepository.updateOne(userId, { password: hashedPassword });
 
     this.loggerService.info('Password set.', { userId });
+
+    return updatedUser;
+  }
+
+  public async setEmail(userId: string, email: string): Promise<UserDto> {
+    this.loggerService.debug('Setting email...', { userId });
+
+    const user = await this.userRepository.findOne({ id: userId });
+
+    if (!user) {
+      throw new UserNotFound({ id: userId });
+    }
+
+    if (user.email) {
+      throw new EmailAlreadySet({ userId, email });
+    }
+
+    const existingUserWithTargetEmail = await this.userRepository.findOne({ email });
+
+    if (existingUserWithTargetEmail) {
+      throw new UserAlreadyExists({ email });
+    }
+
+    const updatedUser = await this.userRepository.updateOne(userId, { email });
+
+    this.loggerService.info('Email set.', { userId });
+
+    return updatedUser;
+  }
+
+  public async setPhoneNumber(userId: string, phoneNumber: string): Promise<UserDto> {
+    this.loggerService.debug('Setting phone number...', { userId });
+
+    const user = await this.userRepository.findOne({ id: userId });
+
+    if (!user) {
+      throw new UserNotFound({ id: userId });
+    }
+
+    if (user.phoneNumber) {
+      throw new PhoneNumberAlreadySet({ userId, phoneNumber });
+    }
+
+    const existingUserWithTargetPhoneNumber = await this.userRepository.findOne({ phoneNumber });
+
+    if (existingUserWithTargetPhoneNumber) {
+      throw new UserAlreadyExists({ phoneNumber });
+    }
+
+    const updatedUser = await this.userRepository.updateOne(userId, { phoneNumber });
+
+    this.loggerService.info('Phone number set.', { userId });
 
     return updatedUser;
   }

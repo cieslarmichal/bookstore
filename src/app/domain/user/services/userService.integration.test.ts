@@ -5,7 +5,7 @@ import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { UserModule } from '../userModule';
-import { UserAlreadyExists, UserNotFound } from '../errors';
+import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../errors';
 import { TokenService } from './tokenService';
 import { HashService } from './hashService';
 import { UserDto } from '../dtos';
@@ -256,13 +256,155 @@ describe('UserService', () => {
       expect(await hashService.compare(newPassword, updatedUser.password)).toBe(true);
     });
 
-    it('should throw if user with given email does not exist', async () => {
+    it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
       const { id, password } = userTestDataGenerator.generateData();
 
       try {
         await userService.setPassword(id, password);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
+      }
+    });
+  });
+
+  describe('Set email', () => {
+    it(`should update user's email in db`, async () => {
+      expect.assertions(2);
+
+      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({
+        phoneNumber,
+        password,
+      });
+
+      await userService.setEmail(user.id, email);
+
+      const updatedUser = (await userRepository.findOneById(user.id)) as UserDto;
+
+      expect(updatedUser).not.toBeNull();
+      expect(updatedUser.email).toBe(email);
+    });
+
+    it(`should throw if user already has email set in db`, async () => {
+      expect.assertions(1);
+
+      const { email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({
+        email,
+        password,
+      });
+
+      try {
+        await userService.setEmail(user.id, email);
+      } catch (error) {
+        expect(error).toBeInstanceOf(EmailAlreadySet);
+      }
+    });
+
+    it(`should throw if email is already assigned to different user in db`, async () => {
+      expect.assertions(1);
+
+      const { email, phoneNumber, password } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({
+        email,
+        password,
+      });
+
+      const user = await userRepository.createOne({
+        phoneNumber,
+        password,
+      });
+
+      try {
+        await userService.setEmail(user.id, email);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserAlreadyExists);
+      }
+    });
+
+    it('should throw if user with given id does not exist', async () => {
+      expect.assertions(1);
+
+      const { id, email } = userTestDataGenerator.generateData();
+
+      try {
+        await userService.setEmail(id, email);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFound);
+      }
+    });
+  });
+
+  describe('Set phone number', () => {
+    it(`should update user's phone number in db`, async () => {
+      expect.assertions(2);
+
+      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({
+        email,
+        password,
+      });
+
+      await userService.setPhoneNumber(user.id, phoneNumber);
+
+      const updatedUser = (await userRepository.findOneById(user.id)) as UserDto;
+
+      expect(updatedUser).not.toBeNull();
+      expect(updatedUser.phoneNumber).toBe(phoneNumber);
+    });
+
+    it(`should throw if user already has phone number set in db`, async () => {
+      expect.assertions(1);
+
+      const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+      const user = await userRepository.createOne({
+        phoneNumber,
+        password,
+      });
+
+      try {
+        await userService.setPhoneNumber(user.id, phoneNumber);
+      } catch (error) {
+        expect(error).toBeInstanceOf(PhoneNumberAlreadySet);
+      }
+    });
+
+    it(`should throw if phone number is already assigned to different user in db`, async () => {
+      expect.assertions(1);
+
+      const { email, phoneNumber, password } = userTestDataGenerator.generateData();
+
+      await userRepository.createOne({
+        phoneNumber,
+        password,
+      });
+
+      const user = await userRepository.createOne({
+        email,
+        password,
+      });
+
+      try {
+        await userService.setPhoneNumber(user.id, phoneNumber);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserAlreadyExists);
+      }
+    });
+
+    it('should throw if user with given id does not exist', async () => {
+      expect.assertions(1);
+
+      const { id, phoneNumber } = userTestDataGenerator.generateData();
+
+      try {
+        await userService.setPhoneNumber(id, phoneNumber);
       } catch (error) {
         expect(error).toBeInstanceOf(UserNotFound);
       }
