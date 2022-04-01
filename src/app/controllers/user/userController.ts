@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../domain/user/services/userService';
-import { RecordToInstanceTransformer } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { userErrorMiddleware } from './middlewares';
@@ -40,7 +40,11 @@ const SET_EMAIL_PATH = `${USERS_PATH}/set-email`;
 export class UserController {
   public readonly router = express.Router();
 
-  public constructor(private readonly userService: UserService, authMiddleware: AuthMiddleware) {
+  public constructor(
+    private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    private readonly userService: UserService,
+    authMiddleware: AuthMiddleware,
+  ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
@@ -109,17 +113,26 @@ export class UserController {
   }
 
   public async registerUser(request: Request, response: Response): Promise<ControllerResponse> {
-    let registerUserBodyDto: RegisterUserByEmailBodyDto | RegisterUserByPhoneNumberBodyDto;
+    const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let user: UserDto;
+    const user = await unitOfWork.runInTransaction(async () => {
+      let user: UserDto;
 
-    if (request.body.email) {
-      registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserByEmailBodyDto);
-      user = await this.userService.registerUserByEmail(registerUserBodyDto);
-    } else {
-      registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserByPhoneNumberBodyDto);
-      user = await this.userService.registerUserByPhoneNumber(registerUserBodyDto);
-    }
+      let registerUserBodyDto: RegisterUserByEmailBodyDto | RegisterUserByPhoneNumberBodyDto;
+
+      if (request.body.email) {
+        registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserByEmailBodyDto);
+        user = await this.userService.registerUserByEmail(registerUserBodyDto);
+      } else {
+        registerUserBodyDto = RecordToInstanceTransformer.strictTransform(
+          request.body,
+          RegisterUserByPhoneNumberBodyDto,
+        );
+        user = await this.userService.registerUserByPhoneNumber(registerUserBodyDto);
+      }
+
+      return user;
+    });
 
     const userDto = UserDto.create({
       id: user.id,
@@ -135,17 +148,23 @@ export class UserController {
   }
 
   public async loginUser(request: Request, response: Response): Promise<ControllerResponse> {
-    let loginUserBodyDto: LoginUserByEmailBodyDto | LoginUserByPhoneNumberBodyDto;
+    const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let token: string;
+    const token = await unitOfWork.runInTransaction(async () => {
+      let token: string;
 
-    if (request.body.email) {
-      loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByEmailBodyDto);
-      token = await this.userService.loginUserByEmail(loginUserBodyDto);
-    } else {
-      loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByPhoneNumberBodyDto);
-      token = await this.userService.loginUserByPhoneNumber(loginUserBodyDto);
-    }
+      let loginUserBodyDto: LoginUserByEmailBodyDto | LoginUserByPhoneNumberBodyDto;
+
+      if (request.body.email) {
+        loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByEmailBodyDto);
+        token = await this.userService.loginUserByEmail(loginUserBodyDto);
+      } else {
+        loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByPhoneNumberBodyDto);
+        token = await this.userService.loginUserByPhoneNumber(loginUserBodyDto);
+      }
+
+      return token;
+    });
 
     const responseData = new LoginUserResponseData(token);
 
@@ -153,6 +172,8 @@ export class UserController {
   }
 
   public async setUserPassword(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const setUserPasswordBodyDto = RecordToInstanceTransformer.strictTransform(request.body, SetUserPasswordBodyDto);
 
     const { userId: targetUserId, password } = setUserPasswordBodyDto;
@@ -163,12 +184,16 @@ export class UserController {
       throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    await this.userService.setPassword(userId, password);
+    await unitOfWork.runInTransaction(async () => {
+      await this.userService.setPassword(userId, password);
+    });
 
     return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
   }
 
   public async setUserPhoneNumber(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const setUserPhoneNumberBodyDto = RecordToInstanceTransformer.strictTransform(
       request.body,
       SetUserPhoneNumberBodyDto,
@@ -182,12 +207,16 @@ export class UserController {
       throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    await this.userService.setPhoneNumber(userId, phoneNumber);
+    await unitOfWork.runInTransaction(async () => {
+      await this.userService.setPhoneNumber(userId, phoneNumber);
+    });
 
     return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
   }
 
   public async setUserEmail(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const setUserEmailBodyDto = RecordToInstanceTransformer.strictTransform(request.body, SetUserEmailBodyDto);
 
     const { userId: targetUserId, email } = setUserEmailBodyDto;
@@ -198,12 +227,16 @@ export class UserController {
       throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    await this.userService.setEmail(userId, email);
+    await unitOfWork.runInTransaction(async () => {
+      await this.userService.setEmail(userId, email);
+    });
 
     return new SetUserEmailResponseDto(StatusCodes.NO_CONTENT);
   }
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id: targetUserId } = RecordToInstanceTransformer.strictTransform(request.params, FindUserParamDto);
 
     const { userId, role } = response.locals.authPayload;
@@ -212,7 +245,11 @@ export class UserController {
       throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    const userDto = await this.userService.findUser(targetUserId);
+    const userDto = await unitOfWork.runInTransaction(async () => {
+      const user = await this.userService.findUser(targetUserId);
+
+      return user;
+    });
 
     const controllerUserDto = UserDto.create({
       id: userDto.id,
@@ -227,6 +264,8 @@ export class UserController {
   }
 
   public async deleteUser(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id: targetUserId } = RecordToInstanceTransformer.strictTransform(request.params, RemoveUserParamDto);
 
     const { userId, role } = response.locals.authPayload;
@@ -235,7 +274,9 @@ export class UserController {
       throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
     }
 
-    await this.userService.removeUser(targetUserId);
+    await unitOfWork.runInTransaction(async () => {
+      await this.userService.removeUser(targetUserId);
+    });
 
     return new RemoveUserResponseDto(StatusCodes.NO_CONTENT);
   }
