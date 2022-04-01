@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { CustomerTestDataGenerator } from '../../domain/customer/testDataGenerators/customerTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
@@ -19,10 +19,11 @@ import { LoggerModule } from '../../shared/logger/loggerModule';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
-import { USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
-import { CUSTOMER_REPOSITORY } from '../../domain/customer/customerInjectionSymbols';
+import { USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY } from '../../domain/customer/customerInjectionSymbols';
 import { CustomerModule } from '../../domain/customer/customerModule';
 import { AddressModule } from '../../domain/address/addressModule';
+import { ENTITY_MANAGER } from 'src/app/shared/db/dbInjectionSymbols';
 
 const baseUrl = '/customers';
 
@@ -54,10 +55,13 @@ describe(`CustomerController (${baseUrl})`, () => {
       CategoryModule,
       CustomerModule,
       AddressModule,
+      UnitOfWorkModule,
     ]);
 
-    customerRepository = container.resolve(CUSTOMER_REPOSITORY);
-    userRepository = container.resolve(USER_REPOSITORY);
+    const entityManager = container.resolve(ENTITY_MANAGER);
+
+    customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
+    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
 

@@ -16,7 +16,6 @@ import { UserRepository } from '../../user/repositories/userRepository';
 import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';
 import { UserModule } from '../../user/userModule';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
-import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('AddressService', () => {
   let addressService: AddressService;
@@ -39,11 +38,10 @@ describe('AddressService', () => {
       UnitOfWorkModule,
     ]);
 
-    const entityManager = container.resolve(ENTITY_MANAGER);
     addressService = container.resolve(ADDRESS_SERVICE);
-    addressRepository = container.resolve(ADDRESS_REPOSITORY_FACTORY).create(entityManager);
-    customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
-    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
+    addressRepositoryFactory = container.resolve(ADDRESS_REPOSITORY_FACTORY);
+    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
+    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
 
     postgresHelper = new PostgresHelper(container);
 

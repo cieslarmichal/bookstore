@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { ControllersModule } from '../controllersModule';
@@ -17,10 +17,11 @@ import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../domain/category/categoryInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const baseUrl = '/categories';
 
@@ -51,9 +52,12 @@ describe(`CategoryController (${baseUrl})`, () => {
       BookCategoryModule,
       AddressModule,
       CustomerModule,
+      UnitOfWorkModule,
     ]);
 
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
+    const entityManager = container.resolve(ENTITY_MANAGER);
+
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
 

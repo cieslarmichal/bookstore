@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
@@ -17,10 +17,11 @@ import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { BOOK_REPOSITORY } from '../../domain/book/bookInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const baseUrl = '/books';
 
@@ -51,9 +52,12 @@ describe(`BookController (${baseUrl})`, () => {
       BookCategoryModule,
       AddressModule,
       CustomerModule,
+      UnitOfWorkModule,
     ]);
 
-    bookRepository = container.resolve(BOOK_REPOSITORY);
+    const entityManager = container.resolve(ENTITY_MANAGER);
+
+    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
 

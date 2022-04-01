@@ -1,8 +1,7 @@
-import { EntityManager } from 'typeorm';
 import { AuthorBook } from '../entities/authorBook';
 import { AuthorBookMapper } from './authorBookMapper';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
@@ -13,21 +12,27 @@ import { Author } from '../../author/entities/author';
 import { Book } from '../../book/entities/book';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { AUTHOR_BOOK_MAPPER } from '../authorBookInjectionSymbols';
-import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('AuthorBookMapper', () => {
   let authorBookMapper: AuthorBookMapper;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let entityManager: EntityManager;
+  let postgresHelper: PostgresHelper;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, AuthorBookModule, AuthorModule, LoggerModule]);
+    const container = await createDIContainer([
+      DbModule,
+      AuthorBookModule,
+      AuthorModule,
+      LoggerModule,
+      UnitOfWorkModule,
+    ]);
 
     authorBookMapper = container.resolve(AUTHOR_BOOK_MAPPER);
-    entityManager = container.resolve(ENTITY_MANAGER);
+
+    postgresHelper = new PostgresHelper(container);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
@@ -41,42 +46,46 @@ describe('AuthorBookMapper', () => {
     it('map authorBook from entity to dto', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const createdAuthor = entityManager.create(Author, {
-        firstName,
-        lastName,
-      });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const savedAuthor = await entityManager.save(createdAuthor);
+        const createdAuthor = entityManager.create(Author, {
+          firstName,
+          lastName,
+        });
 
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const savedAuthor = await entityManager.save(createdAuthor);
 
-      const createdBook = entityManager.create(Book, {
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      const savedBook = await entityManager.save(createdBook);
+        const createdBook = entityManager.create(Book, {
+          title,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
 
-      const createdAuthorBook = entityManager.create(AuthorBook, {
-        authorId: savedAuthor.id,
-        bookId: savedBook.id,
-      });
+        const savedBook = await entityManager.save(createdBook);
 
-      const savedAuthorBook = await entityManager.save(createdAuthorBook);
+        const createdAuthorBook = entityManager.create(AuthorBook, {
+          authorId: savedAuthor.id,
+          bookId: savedBook.id,
+        });
 
-      const authorBookDto = authorBookMapper.mapEntityToDto(savedAuthorBook);
+        const savedAuthorBook = await entityManager.save(createdAuthorBook);
 
-      expect(authorBookDto).toEqual({
-        id: savedAuthorBook.id,
-        createdAt: savedAuthorBook.createdAt,
-        updatedAt: savedAuthorBook.updatedAt,
-        authorId: savedAuthor.id,
-        bookId: savedBook.id,
+        const authorBookDto = authorBookMapper.mapEntityToDto(savedAuthorBook);
+
+        expect(authorBookDto).toEqual({
+          id: savedAuthorBook.id,
+          createdAt: savedAuthorBook.createdAt,
+          updatedAt: savedAuthorBook.updatedAt,
+          authorId: savedAuthor.id,
+          bookId: savedBook.id,
+        });
       });
     });
   });

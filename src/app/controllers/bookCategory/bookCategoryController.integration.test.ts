@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
@@ -20,14 +20,15 @@ import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { BookCategoryTestDataGenerator } from '../../domain/bookCategory/testDataGenerators/bookCategoryTestDataGenerator';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { BOOK_REPOSITORY } from '../../domain/book/bookInjectionSymbols';
-import { BOOK_CATEGORY_REPOSITORY } from '../../domain/bookCategory/bookCategoryInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../domain/bookCategory/bookCategoryInjectionSymbols';
 import { AuthorModule } from '../../domain/author/authorModule';
-import { CATEGORY_REPOSITORY } from '../../domain/category/categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../domain/category/categoryInjectionSymbols';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { BookFormat } from '../../domain/book/types';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const categoriesUrl = '/categories';
 const booksUrl = '/books';
@@ -65,11 +66,14 @@ describe(`BookCategoryController`, () => {
       LoggerModule,
       AddressModule,
       CustomerModule,
+      UnitOfWorkModule,
     ]);
 
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
-    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
+    const entityManager = container.resolve(ENTITY_MANAGER);
+
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY_FACTORY).create(entityManager);
+    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
 

@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { AddressTestDataGenerator } from '../../domain/address/testDataGenerators/addressTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { AddressModule } from '../../domain/address/addressModule';
 import { ControllersModule } from '../controllersModule';
@@ -58,9 +58,11 @@ describe(`AddressController (${baseUrl})`, () => {
       BookCategoryModule,
       CategoryModule,
       CustomerModule,
+      UnitOfWorkModule,
     ]);
 
     const entityManager = container.resolve(ENTITY_MANAGER);
+
     addressRepository = container.resolve(ADDRESS_REPOSITORY_FACTORY).create(entityManager);
     userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
     customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);

@@ -17,10 +17,11 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { HASH_SERVICE, USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
+import { HASH_SERVICE, USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { ENTITY_MANAGER } from 'src/app/shared/db/dbInjectionSymbols';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -57,7 +58,9 @@ describe(`UserController (${baseUrl})`, () => {
       CustomerModule,
     ]);
 
-    userRepository = container.resolve(USER_REPOSITORY);
+    const entityManager = container.resolve(ENTITY_MANAGER);
+
+    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
     hashService = container.resolve(HASH_SERVICE);
 
     const app = new App(container);
