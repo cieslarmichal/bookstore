@@ -9,13 +9,13 @@ export abstract class UnitOfWork {
   public abstract rollback(): Promise<void>;
   public abstract cleanUp(): Promise<void>;
 
-  public async runInTransaction<Result>(callback: TransactionCallback<Result>): Promise<Result> {
+  public async runInTransaction<Result>(callback: TransactionCallback<Result, UnitOfWork>): Promise<Result> {
     try {
       await this.init();
 
       this.loggerService.debug('Initialized unit of work.');
 
-      const result = await callback();
+      const result = await callback(this);
 
       await this.commit();
 

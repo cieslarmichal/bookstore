@@ -1,1 +1,1 @@
-export type TransactionCallback<Result> = () => Promise<Result>;
+export type TransactionCallback<Result, UnitOfWork> = (unitOfWork: UnitOfWork) => Promise<Result>;
