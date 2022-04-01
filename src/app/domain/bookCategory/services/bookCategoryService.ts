@@ -34,7 +34,7 @@ export class BookCategoryService {
       throw new BookNotFound({ id: bookId });
     }
 
-    const category = await this.categoryService.findCategory(categoryId);
+    const category = await this.categoryService.findCategory(unitOfWork, categoryId);
 
     if (!category) {
       throw new CategoryNotFound({ id: categoryId });
@@ -69,7 +69,7 @@ export class BookCategoryService {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.categoryService.findCategoriesByBookId(bookId, filters, paginationData);
+    return this.categoryService.findCategoriesByBookId(unitOfWork, bookId, filters, paginationData);
   }
 
   public async findBooksFromCategory(
@@ -78,7 +78,7 @@ export class BookCategoryService {
     filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
-    const category = await this.categoryService.findCategory(categoryId);
+    const category = await this.categoryService.findCategory(unitOfWork, categoryId);
 
     if (!category) {
       throw new CategoryNotFound({ id: categoryId });

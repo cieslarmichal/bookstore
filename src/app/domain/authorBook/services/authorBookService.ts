@@ -33,7 +33,7 @@ export class AuthorBookService {
       throw new AuthorNotFound({ id: authorId });
     }
 
-    const book = await this.bookService.findBook(bookId);
+    const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
@@ -68,7 +68,7 @@ export class AuthorBookService {
       throw new AuthorNotFound({ id: authorId });
     }
 
-    return this.bookService.findBooksByAuthorId(authorId, filters, paginationData);
+    return this.bookService.findBooksByAuthorId(unitOfWork, authorId, filters, paginationData);
   }
 
   public async findBookAuthors(
@@ -77,7 +77,7 @@ export class AuthorBookService {
     filters: Filter[],
     paginationData: PaginationData,
   ): Promise<AuthorDto[]> {
-    const book = await this.bookService.findBook(bookId);
+    const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
