@@ -17,14 +17,15 @@ import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { ADDRESS_REPOSITORY } from '../../domain/address/addressInjectionSymbols';
+import { ADDRESS_REPOSITORY_FACTORY } from '../../domain/address/addressInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
 import { CustomerRepository } from '../../domain/customer/repositories/customerRepository';
-import { USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
-import { CUSTOMER_REPOSITORY } from '../../domain/customer/customerInjectionSymbols';
+import { USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY } from '../../domain/customer/customerInjectionSymbols';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const baseUrl = '/addresses';
 
@@ -59,9 +60,10 @@ describe(`AddressController (${baseUrl})`, () => {
       CustomerModule,
     ]);
 
-    addressRepository = container.resolve(ADDRESS_REPOSITORY);
-    userRepository = container.resolve(USER_REPOSITORY);
-    customerRepository = container.resolve(CUSTOMER_REPOSITORY);
+    const entityManager = container.resolve(ENTITY_MANAGER);
+    addressRepository = container.resolve(ADDRESS_REPOSITORY_FACTORY).create(entityManager);
+    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
+    customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
 

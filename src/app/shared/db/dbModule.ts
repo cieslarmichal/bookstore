@@ -1,7 +1,7 @@
 import { LoadableModule } from '../di';
 import { dbManager } from './dbManager';
 import { asValue, AwilixContainer } from 'awilix';
-import { ENTITY_MANAGER } from './dbInjectionSymbols';
+import { CONNECTION, ENTITY_MANAGER } from './dbInjectionSymbols';
 
 export class DbModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
@@ -9,6 +9,7 @@ export class DbModule extends LoadableModule {
 
     container.register({
       [ENTITY_MANAGER]: asValue(dbConnection.manager),
+      [CONNECTION]: asValue(dbConnection),
     });
   }
 }

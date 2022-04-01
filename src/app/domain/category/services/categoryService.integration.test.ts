@@ -9,14 +9,15 @@ import { AuthorModule } from '../../author/authorModule';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { CATEGORY_REPOSITORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { BookModule } from '../../book/bookModule';
 import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
 import { BookRepository } from '../../book/repositories/bookRepository';
 import { BookCategoryRepository } from '../../bookCategory/repositories/bookCategoryRepository';
-import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
-import { BOOK_CATEGORY_REPOSITORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
@@ -38,10 +39,11 @@ describe('CategoryService', () => {
       LoggerModule,
     ]);
 
+    const entityManager = container.resolve(ENTITY_MANAGER);
     categoryService = container.resolve(CATEGORY_SERVICE);
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
-    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY_FACTORY).create(entityManager);
+    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY).create(entityManager);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();

@@ -13,10 +13,11 @@ import { CategoryRepository } from '../../category/repositories/categoryReposito
 import { BookRepository } from '../../book/repositories/bookRepository';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
-import { BOOK_CATEGORY_REPOSITORY, BOOK_CATEGORY_SERVICE } from '../bookCategoryInjectionSymbols';
-import { CATEGORY_REPOSITORY } from '../../category/categoryInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY, BOOK_CATEGORY_SERVICE } from '../bookCategoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../category/categoryInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('BookCategoryService', () => {
   let bookCategoryService: BookCategoryService;
@@ -32,10 +33,11 @@ describe('BookCategoryService', () => {
 
     const container = await createDIContainer([DbModule, CategoryModule, BookModule, BookCategoryModule, LoggerModule]);
 
+    const entityManager = container.resolve(ENTITY_MANAGER);
     bookCategoryService = container.resolve(BOOK_CATEGORY_SERVICE);
-    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY).create(entityManager);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY_FACTORY).create(entityManager);
+    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
 
     bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();

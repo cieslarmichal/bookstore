@@ -8,14 +8,15 @@ import { AddressModule } from '../addressModule';
 import { AddressNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { ADDRESS_REPOSITORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
+import { ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
 import { CustomerRepository } from '../../customer/repositories/customerRepository';
-import { CUSTOMER_REPOSITORY } from '../../customer/customerInjectionSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY } from '../../customer/customerInjectionSymbols';
 import { CustomerModule } from '../../customer/customerModule';
 import { UserRepository } from '../../user/repositories/userRepository';
-import { USER_REPOSITORY } from '../../user/userInjectionSymbols';
+import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';
 import { UserModule } from '../../user/userModule';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('AddressService', () => {
   let addressService: AddressService;
@@ -30,10 +31,11 @@ describe('AddressService', () => {
 
     const container = await createDIContainer([DbModule, AddressModule, LoggerModule, CustomerModule, UserModule]);
 
+    const entityManager = container.resolve(ENTITY_MANAGER);
     addressService = container.resolve(ADDRESS_SERVICE);
-    addressRepository = container.resolve(ADDRESS_REPOSITORY);
-    customerRepository = container.resolve(CUSTOMER_REPOSITORY);
-    userRepository = container.resolve(USER_REPOSITORY);
+    addressRepository = container.resolve(ADDRESS_REPOSITORY_FACTORY).create(entityManager);
+    customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
+    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
 
     addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();

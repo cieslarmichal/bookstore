@@ -8,11 +8,12 @@ import { CustomerModule } from '../customerModule';
 import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { CUSTOMER_REPOSITORY, CUSTOMER_SERVICE } from '../customerInjectionSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY, CUSTOMER_SERVICE } from '../customerInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
 import { UserRepository } from '../../user/repositories/userRepository';
-import { USER_REPOSITORY } from '../../user/userInjectionSymbols';
+import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';
 import { UserModule } from '../../user/userModule';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('CustomerService', () => {
   let customerService: CustomerService;
@@ -26,9 +27,10 @@ describe('CustomerService', () => {
 
     const container = await createDIContainer([DbModule, CustomerModule, LoggerModule, UserModule]);
 
+    const entityManager = container.resolve(ENTITY_MANAGER);
     customerService = container.resolve(CUSTOMER_SERVICE);
-    customerRepository = container.resolve(CUSTOMER_REPOSITORY);
-    userRepository = container.resolve(USER_REPOSITORY);
+    customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
+    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
 
     customerTestDataGenerator = new CustomerTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();

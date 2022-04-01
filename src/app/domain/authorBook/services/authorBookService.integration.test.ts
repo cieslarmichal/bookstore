@@ -15,9 +15,10 @@ import { BookRepository } from '../../book/repositories/bookRepository';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { AUTHOR_BOOK_REPOSITORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
-import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
-import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('AuthorBookService', () => {
   let authorBookService: AuthorBookService;
@@ -40,10 +41,11 @@ describe('AuthorBookService', () => {
       LoggerModule,
     ]);
 
+    const entityManager = container.resolve(ENTITY_MANAGER);
     authorBookService = container.resolve(AUTHOR_BOOK_SERVICE);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
-    authorRepository = container.resolve(AUTHOR_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
+    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY).create(entityManager);
+    authorRepository = container.resolve(AUTHOR_REPOSITORY_FACTORY).create(entityManager);
+    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();

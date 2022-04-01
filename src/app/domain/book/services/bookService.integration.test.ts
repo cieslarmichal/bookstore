@@ -14,16 +14,17 @@ import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorT
 import { AuthorBookRepository } from '../../authorBook/repositories/authorBookRepository';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { BOOK_REPOSITORY, BOOK_SERVICE } from '../bookInjectionSymbols';
-import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
-import { AUTHOR_BOOK_REPOSITORY } from '../../authorBook/authorBookInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY, BOOK_SERVICE } from '../bookInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';
 import { BookCategoryRepository } from '../../bookCategory/repositories/bookCategoryRepository';
-import { BOOK_CATEGORY_REPOSITORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategoryInjectionSymbols';
 import { CategoryRepository } from '../../category/repositories/categoryRepository';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
-import { CATEGORY_REPOSITORY } from '../../category/categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../category/categoryInjectionSymbols';
 import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
 import { BookFormat, BookLanguage } from '../types';
+import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('BookService', () => {
   let bookService: BookService;
@@ -49,12 +50,13 @@ describe('BookService', () => {
       LoggerModule,
     ]);
 
+    const entityManager = container.resolve(ENTITY_MANAGER);
     bookService = container.resolve(BOOK_SERVICE);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
-    authorRepository = container.resolve(AUTHOR_REPOSITORY);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
-    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
+    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
+    authorRepository = container.resolve(AUTHOR_REPOSITORY_FACTORY).create(entityManager);
+    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY).create(entityManager);
+    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY).create(entityManager);
+    categoryRepository = container.resolve(CATEGORY_REPOSITORY_FACTORY).create(entityManager);
 
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
