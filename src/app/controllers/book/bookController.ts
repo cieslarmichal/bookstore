@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { BookService } from '../../domain/book/services/bookService';
 import { CreateBookData, UpdateBookData } from '../../domain/book/services/types';
-import { RecordToInstanceTransformer } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookErrorMiddleware } from './middlewares';
@@ -31,7 +31,11 @@ const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
 export class BookController {
   public readonly router = express.Router();
 
-  public constructor(private readonly bookService: BookService, authMiddleware: AuthMiddleware) {
+  public constructor(
+    private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    private readonly bookService: BookService,
+    authMiddleware: AuthMiddleware,
+  ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
@@ -84,11 +88,17 @@ export class BookController {
   }
 
   public async createBook(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const createBookBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateBookBodyDto);
 
     const createBookData = RecordToInstanceTransformer.strictTransform(createBookBodyDto, CreateBookData);
 
-    const bookDto = await this.bookService.createBook(createBookData);
+    const bookDto = await unitOfWork.runInTransaction(async () => {
+      const book = await this.bookService.createBook(createBookData);
+
+      return book;
+    });
 
     const responseData = new CreateBookResponseData(bookDto);
 
@@ -96,9 +106,15 @@ export class BookController {
   }
 
   public async findBook(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindBookParamDto);
 
-    const bookDto = await this.bookService.findBook(id);
+    const bookDto = await unitOfWork.runInTransaction(async () => {
+      const book = await this.bookService.findBook(id);
+
+      return book;
+    });
 
     const responseData = new FindBookResponseData(bookDto);
 
@@ -106,11 +122,17 @@ export class BookController {
   }
 
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const booksDto = await this.bookService.findBooks(filters, paginationData);
+    const booksDto = await unitOfWork.runInTransaction(async () => {
+      const books = await this.bookService.findBooks(filters, paginationData);
+
+      return books;
+    });
 
     const responseData = new FindBooksResponseData(booksDto);
 
@@ -118,13 +140,19 @@ export class BookController {
   }
 
   public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, UpdateBookParamDto);
 
     const updateBookBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateBookBodyDto);
 
     const updateBookData = RecordToInstanceTransformer.strictTransform(updateBookBodyDto, UpdateBookData);
 
-    const bookDto = await this.bookService.updateBook(id, updateBookData);
+    const bookDto = await unitOfWork.runInTransaction(async () => {
+      const book = await this.bookService.updateBook(id, updateBookData);
+
+      return book;
+    });
 
     const responseData = new UpdateBookResponseData(bookDto);
 
@@ -132,9 +160,13 @@ export class BookController {
   }
 
   public async deleteBook(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveBookParamDto);
 
-    await this.bookService.removeBook(id);
+    await unitOfWork.runInTransaction(async () => {
+      await this.bookService.removeBook(id);
+    });
 
     return new RemoveBookResponseDto(StatusCodes.NO_CONTENT);
   }
