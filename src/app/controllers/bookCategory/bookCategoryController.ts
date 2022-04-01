@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { BookCategoryService } from '../../domain/bookCategory/services/bookCategoryService';
 import { CreateBookCategoryData, RemoveBookCategoryData } from '../../domain/bookCategory/services/types';
-import { RecordToInstanceTransformer } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookCategoryErrorMiddleware } from './middlewares';
@@ -30,7 +30,11 @@ const CATEGORY_BOOKS_PATH = '/categories/:categoryId/books';
 export class BookCategoryController {
   public readonly router = express.Router();
 
-  public constructor(private readonly bookCategoryService: BookCategoryService, authMiddleware: AuthMiddleware) {
+  public constructor(
+    private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    private readonly bookCategoryService: BookCategoryService,
+    authMiddleware: AuthMiddleware,
+  ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
@@ -74,6 +78,8 @@ export class BookCategoryController {
   }
 
   public async createBookCategory(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const createBookCategoryParamDto = RecordToInstanceTransformer.strictTransform(
       request.params,
       CreateBookCategoryParamDto,
@@ -84,7 +90,10 @@ export class BookCategoryController {
       CreateBookCategoryData,
     );
 
-    const bookCategoryDto = await this.bookCategoryService.createBookCategory(createBookCategoryData);
+    const bookCategoryDto = await unitOfWork.runInTransaction(async () => {
+      const bookCategory = await this.bookCategoryService.createBookCategory(createBookCategoryData);
+      return bookCategory;
+    });
 
     const responseData = new CreateBookCategoryResponseData(bookCategoryDto);
 
@@ -92,13 +101,19 @@ export class BookCategoryController {
   }
 
   public async findBookCategories(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookCategoriesParamDto);
 
     const filters = FilterDataParser.parse(request.query.filter as string, supportedFindCategoriesFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const categoriesDto = await this.bookCategoryService.findCategoriesOfBook(bookId, filters, paginationData);
+    const categoriesDto = await unitOfWork.runInTransaction(async () => {
+      const categories = await this.bookCategoryService.findCategoriesOfBook(bookId, filters, paginationData);
+
+      return categories;
+    });
 
     const responseData = new FindBookCategoriesResponseData(categoriesDto);
 
@@ -106,13 +121,19 @@ export class BookCategoryController {
   }
 
   public async findCategoryBooks(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
 
     const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const booksDto = await this.bookCategoryService.findBooksFromCategory(categoryId, filters, paginationData);
+    const booksDto = await unitOfWork.runInTransaction(async () => {
+      const books = await this.bookCategoryService.findBooksFromCategory(categoryId, filters, paginationData);
+
+      return books;
+    });
 
     const responseData = new FindCategoryBooksResponseData(booksDto);
 
@@ -120,6 +141,8 @@ export class BookCategoryController {
   }
 
   public async deleteBookCategory(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const removeBookCategoryParamDto = RecordToInstanceTransformer.strictTransform(
       request.params,
       RemoveBookCategoryParamDto,
@@ -130,7 +153,9 @@ export class BookCategoryController {
       RemoveBookCategoryData,
     );
 
-    await this.bookCategoryService.removeBookCategory(removeBookCategoryData);
+    await unitOfWork.runInTransaction(async () => {
+      await this.bookCategoryService.removeBookCategory(removeBookCategoryData);
+    });
 
     return new RemoveBookCategoryResponseDto(StatusCodes.NO_CONTENT);
   }
