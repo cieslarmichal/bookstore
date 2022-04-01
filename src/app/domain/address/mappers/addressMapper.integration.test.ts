@@ -31,10 +31,6 @@ describe('AddressMapper', () => {
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
-  });
-
   describe('Map address', () => {
     it('map address from entity to dto', async () => {
       expect.assertions(1);

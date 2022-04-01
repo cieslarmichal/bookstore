@@ -51,10 +51,6 @@ describe('AddressService', () => {
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
-  });
-
   describe('Create address', () => {
     it('creates address in database', async () => {
       expect.assertions(1);
