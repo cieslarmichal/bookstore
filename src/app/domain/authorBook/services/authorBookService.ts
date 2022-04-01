@@ -1,4 +1,4 @@
-import { Filter, LoggerService } from '../../../shared';
+import { Filter, LoggerService, PostgresUnitOfWork } from '../../../shared';
 import { AuthorDto } from '../../author/dtos';
 import { AuthorNotFound } from '../../author/errors';
 import { AuthorService } from '../../author/services/authorService';
@@ -8,23 +8,26 @@ import { BookService } from '../../book/services/bookService';
 import { PaginationData } from '../../shared';
 import { AuthorBookDto } from '../dtos';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
-import { AuthorBookRepository } from '../repositories/authorBookRepository';
+import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';
 import { CreateAuthorBookData, RemoveAuthorBookData } from './types';
 
 export class AuthorBookService {
   public constructor(
-    private readonly authorBookRepository: AuthorBookRepository,
+    private readonly authorBookRepositoryFactory: AuthorBookRepositoryFactory,
     private readonly authorService: AuthorService,
     private readonly bookService: BookService,
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createAuthorBook(authorBookData: CreateAuthorBookData): Promise<AuthorBookDto> {
+  public async createAuthorBook(
+    unitOfWork: PostgresUnitOfWork,
+    authorBookData: CreateAuthorBookData,
+  ): Promise<AuthorBookDto> {
     const { authorId, bookId } = authorBookData;
 
     this.loggerService.debug('Creating authorBook...', { authorId, bookId });
 
-    const author = await this.authorService.findAuthor(authorId);
+    const author = await this.authorService.findAuthor(unitOfWork, authorId);
 
     if (!author) {
       throw new AuthorNotFound({ id: authorId });
@@ -36,13 +39,17 @@ export class AuthorBookService {
       throw new BookNotFound({ id: bookId });
     }
 
-    const existingAuthorBook = await this.authorBookRepository.findOne({ authorId, bookId });
+    const { entityManager } = unitOfWork;
+
+    const authorBookRepository = this.authorBookRepositoryFactory.create(entityManager);
+
+    const existingAuthorBook = await authorBookRepository.findOne({ authorId, bookId });
 
     if (existingAuthorBook) {
       throw new AuthorBookAlreadyExists({ authorId, bookId });
     }
 
-    const authorBook = await this.authorBookRepository.createOne(authorBookData);
+    const authorBook = await authorBookRepository.createOne(authorBookData);
 
     this.loggerService.info('AuthorBook created.', { authorBookId: authorBook.id });
 
@@ -50,11 +57,12 @@ export class AuthorBookService {
   }
 
   public async findAuthorBooks(
+    unitOfWork: PostgresUnitOfWork,
     authorId: string,
     filters: Filter[],
     paginationData: PaginationData,
   ): Promise<BookDto[]> {
-    const author = await this.authorService.findAuthor(authorId);
+    const author = await this.authorService.findAuthor(unitOfWork, authorId);
 
     if (!author) {
       throw new AuthorNotFound({ id: authorId });
@@ -64,6 +72,7 @@ export class AuthorBookService {
   }
 
   public async findBookAuthors(
+    unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
@@ -74,21 +83,25 @@ export class AuthorBookService {
       throw new BookNotFound({ id: bookId });
     }
 
-    return this.authorService.findAuthorsByBookId(bookId, filters, paginationData);
+    return this.authorService.findAuthorsByBookId(unitOfWork, bookId, filters, paginationData);
   }
 
-  public async removeAuthorBook(authorBookData: RemoveAuthorBookData): Promise<void> {
+  public async removeAuthorBook(unitOfWork: PostgresUnitOfWork, authorBookData: RemoveAuthorBookData): Promise<void> {
     const { authorId, bookId } = authorBookData;
 
     this.loggerService.debug('Removing authorBook...', { authorId, bookId });
 
-    const authorBook = await this.authorBookRepository.findOne({ authorId, bookId });
+    const { entityManager } = unitOfWork;
+
+    const authorBookRepository = this.authorBookRepositoryFactory.create(entityManager);
+
+    const authorBook = await authorBookRepository.findOne({ authorId, bookId });
 
     if (!authorBook) {
       throw new AuthorBookNotFound({ authorId, bookId });
     }
 
-    await this.authorBookRepository.removeOne(authorBook.id);
+    await authorBookRepository.removeOne(authorBook.id);
 
     this.loggerService.info(`AuthorBook removed.`, { authorBookId: authorBook.id });
   }

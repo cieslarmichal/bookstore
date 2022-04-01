@@ -1,4 +1,4 @@
-import { Filter } from '../../../shared';
+import { Filter, PostgresUnitOfWork } from '../../../shared';
 import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
@@ -9,23 +9,26 @@ import { CategoryService } from '../../category/services/categoryService';
 import { PaginationData } from '../../shared';
 import { BookCategoryDto } from '../dtos';
 import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
-import { BookCategoryRepository } from '../repositories/bookCategoryRepository';
+import { BookCategoryRepositoryFactory } from '../repositories/bookCategoryRepositoryFactory';
 import { CreateBookCategoryData, RemoveBookCategoryData } from './types';
 
 export class BookCategoryService {
   public constructor(
-    private readonly bookCategoryRepository: BookCategoryRepository,
+    private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
     private readonly categoryService: CategoryService,
     private readonly bookService: BookService,
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createBookCategory(bookCategoryData: CreateBookCategoryData): Promise<BookCategoryDto> {
+  public async createBookCategory(
+    unitOfWork: PostgresUnitOfWork,
+    bookCategoryData: CreateBookCategoryData,
+  ): Promise<BookCategoryDto> {
     const { bookId, categoryId } = bookCategoryData;
 
     this.loggerService.debug('Creating bookCategory...', { bookId, categoryId });
 
-    const book = await this.bookService.findBook(bookId);
+    const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
@@ -37,13 +40,17 @@ export class BookCategoryService {
       throw new CategoryNotFound({ id: categoryId });
     }
 
-    const existingBookCategory = await this.bookCategoryRepository.findOne({ bookId, categoryId });
+    const { entityManager } = unitOfWork;
+
+    const bookCategoryRepository = this.bookCategoryRepositoryFactory.create(entityManager);
+
+    const existingBookCategory = await bookCategoryRepository.findOne({ bookId, categoryId });
 
     if (existingBookCategory) {
       throw new BookCategoryAlreadyExists({ bookId, categoryId });
     }
 
-    const bookCategory = await this.bookCategoryRepository.createOne(bookCategoryData);
+    const bookCategory = await bookCategoryRepository.createOne(bookCategoryData);
 
     this.loggerService.info('BookCategory created.', { bookCategoryId: bookCategory.id });
 
@@ -51,11 +58,12 @@ export class BookCategoryService {
   }
 
   public async findCategoriesOfBook(
+    unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
   ): Promise<CategoryDto[]> {
-    const book = await this.bookService.findBook(bookId);
+    const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
       throw new BookNotFound({ id: bookId });
@@ -65,6 +73,7 @@ export class BookCategoryService {
   }
 
   public async findBooksFromCategory(
+    unitOfWork: PostgresUnitOfWork,
     categoryId: string,
     filters: Filter[],
     paginationData: PaginationData,
@@ -75,21 +84,28 @@ export class BookCategoryService {
       throw new CategoryNotFound({ id: categoryId });
     }
 
-    return this.bookService.findBooksByCategoryId(categoryId, filters, paginationData);
+    return this.bookService.findBooksByCategoryId(unitOfWork, categoryId, filters, paginationData);
   }
 
-  public async removeBookCategory(bookCategoryData: RemoveBookCategoryData): Promise<void> {
+  public async removeBookCategory(
+    unitOfWork: PostgresUnitOfWork,
+    bookCategoryData: RemoveBookCategoryData,
+  ): Promise<void> {
     const { bookId, categoryId } = bookCategoryData;
 
     this.loggerService.debug('Removing bookCategory...', { bookId, categoryId });
 
-    const bookCategory = await this.bookCategoryRepository.findOne({ bookId, categoryId });
+    const { entityManager } = unitOfWork;
+
+    const bookCategoryRepository = this.bookCategoryRepositoryFactory.create(entityManager);
+
+    const bookCategory = await bookCategoryRepository.findOne({ bookId, categoryId });
 
     if (!bookCategory) {
       throw new BookCategoryNotFound({ bookId, categoryId });
     }
 
-    await this.bookCategoryRepository.removeOne(bookCategory.id);
+    await bookCategoryRepository.removeOne(bookCategory.id);
 
     this.loggerService.info(`BookCategory removed.`, { bookCategoryId: bookCategory.id });
   }

@@ -1,7 +1,8 @@
+import { PostgresUnitOfWork } from '../../../shared';
 import { LoggerService } from '../../../shared/logger/services/loggerService';
 import { UserDto } from '../dtos';
 import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../errors';
-import { UserRepository } from '../repositories/userRepository';
+import { UserRepositoryFactory } from '../repositories/userRepositoryFactory';
 import { HashService } from './hashService';
 import { TokenService } from './tokenService';
 import {
@@ -15,18 +16,25 @@ export type AccessToken = string;
 
 export class UserService {
   public constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepositoryFactory: UserRepositoryFactory,
     private readonly hashService: HashService,
     private readonly tokenService: TokenService,
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async registerUserByEmail(userData: RegisterUserByEmailData): Promise<UserDto> {
+  public async registerUserByEmail(
+    unitOfWork: PostgresUnitOfWork,
+    userData: RegisterUserByEmailData,
+  ): Promise<UserDto> {
     const { email, password } = userData;
 
     this.loggerService.debug('Registering user...', { email });
 
-    const existingUser = await this.userRepository.findOne({ email });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const existingUser = await userRepository.findOne({ email });
 
     if (existingUser) {
       throw new UserAlreadyExists({ email });
@@ -34,19 +42,23 @@ export class UserService {
 
     const hashedPassword = await this.hashService.hash(password);
 
-    const user = await this.userRepository.createOne({ email, password: hashedPassword });
+    const user = await userRepository.createOne({ email, password: hashedPassword });
 
     this.loggerService.info('User registered.', { email });
 
     return user;
   }
 
-  public async registerUserByPhoneNumber(userData: RegisterUserByPhoneNumberData) {
+  public async registerUserByPhoneNumber(unitOfWork: PostgresUnitOfWork, userData: RegisterUserByPhoneNumberData) {
     const { phoneNumber, password } = userData;
 
     this.loggerService.debug('Registering user...', { phoneNumber });
 
-    const existingUser = await this.userRepository.findOne({ phoneNumber });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const existingUser = await userRepository.findOne({ phoneNumber });
 
     if (existingUser) {
       throw new UserAlreadyExists({ phoneNumber });
@@ -54,19 +66,23 @@ export class UserService {
 
     const hashedPassword = await this.hashService.hash(password);
 
-    const user = await this.userRepository.createOne({ phoneNumber, password: hashedPassword });
+    const user = await userRepository.createOne({ phoneNumber, password: hashedPassword });
 
     this.loggerService.info('User registered.', { phoneNumber });
 
     return user;
   }
 
-  public async loginUserByEmail(userData: LoginUserByEmailData): Promise<AccessToken> {
+  public async loginUserByEmail(unitOfWork: PostgresUnitOfWork, userData: LoginUserByEmailData): Promise<AccessToken> {
     const { email, password } = userData;
 
     this.loggerService.debug('Logging user...', { email });
 
-    const user = await this.userRepository.findOne({ email });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const user = await userRepository.findOne({ email });
 
     if (!user) {
       throw new UserNotFound({ email });
@@ -85,12 +101,19 @@ export class UserService {
     return accessToken;
   }
 
-  public async loginUserByPhoneNumber(userData: LoginUserByPhoneNumberData): Promise<AccessToken> {
+  public async loginUserByPhoneNumber(
+    unitOfWork: PostgresUnitOfWork,
+    userData: LoginUserByPhoneNumberData,
+  ): Promise<AccessToken> {
     const { phoneNumber, password } = userData;
 
     this.loggerService.debug('Logging user...', { phoneNumber });
 
-    const user = await this.userRepository.findOne({ phoneNumber });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const user = await userRepository.findOne({ phoneNumber });
 
     if (!user) {
       throw new UserNotFound({ phoneNumber });
@@ -109,10 +132,14 @@ export class UserService {
     return accessToken;
   }
 
-  public async setPassword(userId: string, newPassword: string): Promise<UserDto> {
+  public async setPassword(unitOfWork: PostgresUnitOfWork, userId: string, newPassword: string): Promise<UserDto> {
     this.loggerService.debug('Setting password...', { userId });
 
-    const user = await this.userRepository.findOne({ id: userId });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
       throw new UserNotFound({ id: userId });
@@ -120,17 +147,21 @@ export class UserService {
 
     const hashedPassword = await this.hashService.hash(newPassword);
 
-    const updatedUser = await this.userRepository.updateOne(userId, { password: hashedPassword });
+    const updatedUser = await userRepository.updateOne(userId, { password: hashedPassword });
 
     this.loggerService.info('Password set.', { userId });
 
     return updatedUser;
   }
 
-  public async setEmail(userId: string, email: string): Promise<UserDto> {
+  public async setEmail(unitOfWork: PostgresUnitOfWork, userId: string, email: string): Promise<UserDto> {
     this.loggerService.debug('Setting email...', { userId });
 
-    const user = await this.userRepository.findOne({ id: userId });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
       throw new UserNotFound({ id: userId });
@@ -140,23 +171,27 @@ export class UserService {
       throw new EmailAlreadySet({ userId, email });
     }
 
-    const existingUserWithTargetEmail = await this.userRepository.findOne({ email });
+    const existingUserWithTargetEmail = await userRepository.findOne({ email });
 
     if (existingUserWithTargetEmail) {
       throw new UserAlreadyExists({ email });
     }
 
-    const updatedUser = await this.userRepository.updateOne(userId, { email });
+    const updatedUser = await userRepository.updateOne(userId, { email });
 
     this.loggerService.info('Email set.', { userId });
 
     return updatedUser;
   }
 
-  public async setPhoneNumber(userId: string, phoneNumber: string): Promise<UserDto> {
+  public async setPhoneNumber(unitOfWork: PostgresUnitOfWork, userId: string, phoneNumber: string): Promise<UserDto> {
     this.loggerService.debug('Setting phone number...', { userId });
 
-    const user = await this.userRepository.findOne({ id: userId });
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
       throw new UserNotFound({ id: userId });
@@ -166,21 +201,25 @@ export class UserService {
       throw new PhoneNumberAlreadySet({ userId, phoneNumber });
     }
 
-    const existingUserWithTargetPhoneNumber = await this.userRepository.findOne({ phoneNumber });
+    const existingUserWithTargetPhoneNumber = await userRepository.findOne({ phoneNumber });
 
     if (existingUserWithTargetPhoneNumber) {
       throw new UserAlreadyExists({ phoneNumber });
     }
 
-    const updatedUser = await this.userRepository.updateOne(userId, { phoneNumber });
+    const updatedUser = await userRepository.updateOne(userId, { phoneNumber });
 
     this.loggerService.info('Phone number set.', { userId });
 
     return updatedUser;
   }
 
-  public async findUser(userId: string): Promise<UserDto> {
-    const user = await this.userRepository.findOneById(userId);
+  public async findUser(unitOfWork: PostgresUnitOfWork, userId: string): Promise<UserDto> {
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    const user = await userRepository.findOneById(userId);
 
     if (!user) {
       throw new UserNotFound({ id: userId });
@@ -189,10 +228,14 @@ export class UserService {
     return user;
   }
 
-  public async removeUser(userId: string): Promise<void> {
+  public async removeUser(unitOfWork: PostgresUnitOfWork, userId: string): Promise<void> {
     this.loggerService.debug('Removing user...', { userId });
 
-    await this.userRepository.removeOne(userId);
+    const { entityManager } = unitOfWork;
+
+    const userRepository = this.userRepositoryFactory.create(entityManager);
+
+    await userRepository.removeOne(userId);
 
     this.loggerService.info('User removed.', { userId });
   }
