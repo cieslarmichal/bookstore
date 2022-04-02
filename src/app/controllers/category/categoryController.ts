@@ -79,7 +79,7 @@ export class CategoryController {
     const createCategoryBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateCategoryBodyDto);
 
     const categoryDto = await unitOfWork.runInTransaction(async () => {
-      const category = await this.categoryService.createCategory(createCategoryBodyDto);
+      const category = await this.categoryService.createCategory(unitOfWork, createCategoryBodyDto);
 
       return category;
     });
@@ -95,7 +95,7 @@ export class CategoryController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryParamDto);
 
     const categoryDto = await unitOfWork.runInTransaction(async () => {
-      const category = await this.categoryService.findCategory(id);
+      const category = await this.categoryService.findCategory(unitOfWork, id);
 
       return category;
     });
@@ -113,7 +113,7 @@ export class CategoryController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const categoriesDto = await unitOfWork.runInTransaction(async () => {
-      const categories = await this.categoryService.findCategories(filters, paginationData);
+      const categories = await this.categoryService.findCategories(unitOfWork, filters, paginationData);
 
       return categories;
     });
@@ -129,7 +129,7 @@ export class CategoryController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveCategoryParamDto);
 
     await unitOfWork.runInTransaction(async () => {
-      await this.categoryService.removeCategory(id);
+      await this.categoryService.removeCategory(unitOfWork, id);
     });
 
     return new RemoveCategoryResponseDto(StatusCodes.NO_CONTENT);

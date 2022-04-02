@@ -1,4 +1,3 @@
-import { AddressRepository } from '../repositories/addressRepository';
 import { AddressService } from './addressService';
 import { AddressTestDataGenerator } from '../testDataGenerators/addressTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
@@ -9,19 +8,20 @@ import { AddressNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
-import { CustomerRepository } from '../../customer/repositories/customerRepository';
 import { CUSTOMER_REPOSITORY_FACTORY } from '../../customer/customerInjectionSymbols';
 import { CustomerModule } from '../../customer/customerModule';
-import { UserRepository } from '../../user/repositories/userRepository';
 import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';
 import { UserModule } from '../../user/userModule';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
+import { AddressRepositoryFactory } from '../repositories/addressRepositoryFactory';
+import { CustomerRepositoryFactory } from '../../customer/repositories/customerRepositoryFactory';
+import { UserRepositoryFactory } from '../../user/repositories/userRepositoryFactory';
 
 describe('AddressService', () => {
   let addressService: AddressService;
-  let addressRepository: AddressRepository;
-  let customerRepository: CustomerRepository;
-  let userRepository: UserRepository;
+  let addressRepositoryFactory: AddressRepositoryFactory;
+  let customerRepositoryFactory: CustomerRepositoryFactory;
+  let userRepositoryFactory: UserRepositoryFactory;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let postgresHelper: PostgresHelper;
@@ -40,8 +40,8 @@ describe('AddressService', () => {
 
     addressService = container.resolve(ADDRESS_SERVICE);
     addressRepositoryFactory = container.resolve(ADDRESS_REPOSITORY_FACTORY);
-    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
-    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
+    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
+    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
 
     postgresHelper = new PostgresHelper(container);
 
@@ -54,9 +54,15 @@ describe('AddressService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+
         const { email, password, role } = userTestDataGenerator.generateData();
 
+        const userRepository = userRepositoryFactory.create(entityManager);
+
         const user = await userRepository.createOne({ email, password, role });
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
@@ -75,6 +81,8 @@ describe('AddressService', () => {
           customerId: customer.id,
         });
 
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
         const addressDto = await addressRepository.findOneById(createdAddressDto.id);
 
         expect(addressDto).not.toBeNull();
@@ -87,14 +95,22 @@ describe('AddressService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+
         const { email, password, role } = userTestDataGenerator.generateData();
 
+        const userRepository = userRepositoryFactory.create(entityManager);
+
         const user = await userRepository.createOne({ email, password, role });
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
           addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
 
         const address = await addressRepository.createOne({
           firstName,
@@ -134,7 +150,11 @@ describe('AddressService', () => {
       expect.assertions(3);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+
         const { email, password, role } = userTestDataGenerator.generateData();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
 
         const user1 = await userRepository.createOne({ email, password, role });
 
@@ -142,12 +162,16 @@ describe('AddressService', () => {
 
         const user2 = await userRepository.createOne({ email: otherEmail, password, role });
 
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
         const customer1 = await customerRepository.createOne({ userId: user1.id });
 
         const customer2 = await customerRepository.createOne({ userId: user2.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
           addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
 
         const address1 = await addressRepository.createOne({
           firstName,
@@ -204,14 +228,22 @@ describe('AddressService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+
         const { email, password, role } = userTestDataGenerator.generateData();
 
+        const userRepository = userRepositoryFactory.create(entityManager);
+
         const user = await userRepository.createOne({ email, password, role });
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
           addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
 
         await addressRepository.createOne({
           firstName,
@@ -268,14 +300,22 @@ describe('AddressService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+
         const { email, password, role } = userTestDataGenerator.generateData();
 
+        const userRepository = userRepositoryFactory.create(entityManager);
+
         const user = await userRepository.createOne({ email, password, role });
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
           addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
 
         const address = await addressRepository.createOne({
           firstName,

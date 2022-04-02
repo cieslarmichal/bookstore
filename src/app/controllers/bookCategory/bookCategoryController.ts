@@ -91,7 +91,7 @@ export class BookCategoryController {
     );
 
     const bookCategoryDto = await unitOfWork.runInTransaction(async () => {
-      const bookCategory = await this.bookCategoryService.createBookCategory(createBookCategoryData);
+      const bookCategory = await this.bookCategoryService.createBookCategory(unitOfWork, createBookCategoryData);
       return bookCategory;
     });
 
@@ -110,7 +110,12 @@ export class BookCategoryController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const categoriesDto = await unitOfWork.runInTransaction(async () => {
-      const categories = await this.bookCategoryService.findCategoriesOfBook(bookId, filters, paginationData);
+      const categories = await this.bookCategoryService.findCategoriesOfBook(
+        unitOfWork,
+        bookId,
+        filters,
+        paginationData,
+      );
 
       return categories;
     });
@@ -130,7 +135,12 @@ export class BookCategoryController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const booksDto = await unitOfWork.runInTransaction(async () => {
-      const books = await this.bookCategoryService.findBooksFromCategory(categoryId, filters, paginationData);
+      const books = await this.bookCategoryService.findBooksFromCategory(
+        unitOfWork,
+        categoryId,
+        filters,
+        paginationData,
+      );
 
       return books;
     });
@@ -154,7 +164,7 @@ export class BookCategoryController {
     );
 
     await unitOfWork.runInTransaction(async () => {
-      await this.bookCategoryService.removeBookCategory(removeBookCategoryData);
+      await this.bookCategoryService.removeBookCategory(unitOfWork, removeBookCategoryData);
     });
 
     return new RemoveBookCategoryResponseDto(StatusCodes.NO_CONTENT);

@@ -91,7 +91,7 @@ export class AuthorBookController {
     );
 
     const authorBookDto = await unitOfWork.runInTransaction(async () => {
-      const authorBook = await this.authorBookService.createAuthorBook(createAuthorBookData);
+      const authorBook = await this.authorBookService.createAuthorBook(unitOfWork, createAuthorBookData);
 
       return authorBook;
     });
@@ -111,7 +111,7 @@ export class AuthorBookController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const booksDto = await unitOfWork.runInTransaction(async () => {
-      const books = await this.authorBookService.findAuthorBooks(authorId, filters, paginationData);
+      const books = await this.authorBookService.findAuthorBooks(unitOfWork, authorId, filters, paginationData);
 
       return books;
     });
@@ -131,7 +131,7 @@ export class AuthorBookController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const authorsDto = await unitOfWork.runInTransaction(async () => {
-      const authors = await this.authorBookService.findBookAuthors(bookId, filters, paginationData);
+      const authors = await this.authorBookService.findBookAuthors(unitOfWork, bookId, filters, paginationData);
 
       return authors;
     });
@@ -155,7 +155,7 @@ export class AuthorBookController {
     );
 
     await unitOfWork.runInTransaction(async () => {
-      await this.authorBookService.removeAuthorBook(removeAuthorBookData);
+      await this.authorBookService.removeAuthorBook(unitOfWork, removeAuthorBookData);
     });
 
     return new RemoveAuthorBookResponseDto(StatusCodes.NO_CONTENT);

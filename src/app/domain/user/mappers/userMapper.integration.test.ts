@@ -1,4 +1,3 @@
-import { EntityManager } from 'typeorm';
 import { User } from '../entities/user';
 import { UserMapper } from './userMapper';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
@@ -9,12 +8,11 @@ import { UserModule } from '../userModule';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { USER_MAPPER } from '../userInjectionSymbols';
-import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 
 describe('UserMapper', () => {
   let userMapper: UserMapper;
   let userTestDataGenerator: UserTestDataGenerator;
-  let entityManager: EntityManager;
+  let postgresHelper: PostgresHelper;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,7 +20,8 @@ describe('UserMapper', () => {
     const container = await createDIContainer([DbModule, UserModule, LoggerModule]);
 
     userMapper = container.resolve(USER_MAPPER);
-    entityManager = container.resolve(ENTITY_MANAGER);
+
+    postgresHelper = new PostgresHelper(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });
@@ -35,26 +34,30 @@ describe('UserMapper', () => {
     it('map user from entity to dto', async () => {
       expect.assertions(1);
 
-      const { email, password, phoneNumber } = userTestDataGenerator.generateData();
+      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const createdUser = entityManager.create(User, {
-        email,
-        password,
-        phoneNumber,
-      });
+        const { email, password, phoneNumber } = userTestDataGenerator.generateData();
 
-      const savedUser = await entityManager.save(createdUser);
+        const createdUser = entityManager.create(User, {
+          email,
+          password,
+          phoneNumber,
+        });
 
-      const userDto = userMapper.mapEntityToDto(savedUser);
+        const savedUser = await entityManager.save(createdUser);
 
-      expect(userDto).toEqual({
-        id: savedUser.id,
-        createdAt: savedUser.createdAt,
-        updatedAt: savedUser.updatedAt,
-        email: savedUser.email,
-        phoneNumber: savedUser.phoneNumber,
-        password: savedUser.password,
-        role: savedUser.role,
+        const userDto = userMapper.mapEntityToDto(savedUser);
+
+        expect(userDto).toEqual({
+          id: savedUser.id,
+          createdAt: savedUser.createdAt,
+          updatedAt: savedUser.updatedAt,
+          email: savedUser.email,
+          phoneNumber: savedUser.phoneNumber,
+          password: savedUser.password,
+          role: savedUser.role,
+        });
       });
     });
   });

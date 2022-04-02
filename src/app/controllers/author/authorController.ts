@@ -94,7 +94,7 @@ export class AuthorController {
     const createAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAuthorBodyDto);
 
     const authorDto = await unitOfWork.runInTransaction(async () => {
-      const author = await this.authorService.createAuthor(createAuthorBodyDto);
+      const author = await this.authorService.createAuthor(unitOfWork, createAuthorBodyDto);
 
       return author;
     });
@@ -110,7 +110,7 @@ export class AuthorController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorParamDto);
 
     const authorDto = await unitOfWork.runInTransaction(async () => {
-      const author = await this.authorService.findAuthor(id);
+      const author = await this.authorService.findAuthor(unitOfWork, id);
 
       return author;
     });
@@ -128,7 +128,7 @@ export class AuthorController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const authorsDto = await unitOfWork.runInTransaction(async () => {
-      const authors = await this.authorService.findAuthors(filters, paginationData);
+      const authors = await this.authorService.findAuthors(unitOfWork, filters, paginationData);
 
       return authors;
     });
@@ -146,7 +146,7 @@ export class AuthorController {
     const updateAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateAuthorBodyDto);
 
     const authorDto = await unitOfWork.runInTransaction(async () => {
-      const author = await this.authorService.updateAuthor(id, updateAuthorBodyDto);
+      const author = await this.authorService.updateAuthor(unitOfWork, id, updateAuthorBodyDto);
 
       return author;
     });
@@ -162,7 +162,7 @@ export class AuthorController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAuthorParamDto);
 
     await unitOfWork.runInTransaction(async () => {
-      await this.authorService.removeAuthor(id);
+      await this.authorService.removeAuthor(unitOfWork, id);
     });
 
     return new RemoveAuthorResponseDto(StatusCodes.NO_CONTENT);

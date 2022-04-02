@@ -122,13 +122,13 @@ export class UserController {
 
       if (request.body.email) {
         registerUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, RegisterUserByEmailBodyDto);
-        user = await this.userService.registerUserByEmail(registerUserBodyDto);
+        user = await this.userService.registerUserByEmail(unitOfWork, registerUserBodyDto);
       } else {
         registerUserBodyDto = RecordToInstanceTransformer.strictTransform(
           request.body,
           RegisterUserByPhoneNumberBodyDto,
         );
-        user = await this.userService.registerUserByPhoneNumber(registerUserBodyDto);
+        user = await this.userService.registerUserByPhoneNumber(unitOfWork, registerUserBodyDto);
       }
 
       return user;
@@ -157,10 +157,10 @@ export class UserController {
 
       if (request.body.email) {
         loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByEmailBodyDto);
-        token = await this.userService.loginUserByEmail(loginUserBodyDto);
+        token = await this.userService.loginUserByEmail(unitOfWork, loginUserBodyDto);
       } else {
         loginUserBodyDto = RecordToInstanceTransformer.strictTransform(request.body, LoginUserByPhoneNumberBodyDto);
-        token = await this.userService.loginUserByPhoneNumber(loginUserBodyDto);
+        token = await this.userService.loginUserByPhoneNumber(unitOfWork, loginUserBodyDto);
       }
 
       return token;
@@ -185,7 +185,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setPassword(userId, password);
+      await this.userService.setPassword(unitOfWork, userId, password);
     });
 
     return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
@@ -208,7 +208,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setPhoneNumber(userId, phoneNumber);
+      await this.userService.setPhoneNumber(unitOfWork, userId, phoneNumber);
     });
 
     return new SetUserPasswordResponseDto(StatusCodes.NO_CONTENT);
@@ -228,7 +228,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setEmail(userId, email);
+      await this.userService.setEmail(unitOfWork, userId, email);
     });
 
     return new SetUserEmailResponseDto(StatusCodes.NO_CONTENT);
@@ -246,7 +246,7 @@ export class UserController {
     }
 
     const userDto = await unitOfWork.runInTransaction(async () => {
-      const user = await this.userService.findUser(targetUserId);
+      const user = await this.userService.findUser(unitOfWork, targetUserId);
 
       return user;
     });
@@ -275,7 +275,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.removeUser(targetUserId);
+      await this.userService.removeUser(unitOfWork, targetUserId);
     });
 
     return new RemoveUserResponseDto(StatusCodes.NO_CONTENT);

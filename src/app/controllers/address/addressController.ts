@@ -84,7 +84,7 @@ export class AddressController {
     const createAddressBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAddressBodyDto);
 
     const addressDto = await unitOfWork.runInTransaction(async () => {
-      const address = await this.addressService.createAddress(createAddressBodyDto);
+      const address = await this.addressService.createAddress(unitOfWork, createAddressBodyDto);
 
       return address;
     });
@@ -105,12 +105,12 @@ export class AddressController {
       let customer: CustomerDto;
 
       try {
-        customer = await this.customerService.findCustomer({ userId });
+        customer = await this.customerService.findCustomer(unitOfWork, { userId });
       } catch (error) {
         throw new UserIsNotACustomer({ userId });
       }
 
-      const address = await this.addressService.findAddress(id);
+      const address = await this.addressService.findAddress(unitOfWork, id);
 
       if (address.customerId !== customer.id && role === UserRole.user) {
         throw new CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress({
@@ -135,7 +135,7 @@ export class AddressController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const addressesDto = await unitOfWork.runInTransaction(async () => {
-      const addresses = await this.addressService.findAddresses(filters, paginationData);
+      const addresses = await this.addressService.findAddresses(unitOfWork, filters, paginationData);
 
       return addresses;
     });
@@ -151,7 +151,7 @@ export class AddressController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAddressParamDto);
 
     await unitOfWork.runInTransaction(async () => {
-      await this.addressService.removeAddress(id);
+      await this.addressService.removeAddress(unitOfWork, id);
     });
 
     return new RemoveAddressResponseDto(StatusCodes.NO_CONTENT);

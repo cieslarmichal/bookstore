@@ -1,4 +1,3 @@
-import { AuthorBookRepository } from '../repositories/authorBookRepository';
 import { AuthorBookService } from './authorBookService';
 import { AuthorBookTestDataGenerator } from '../testDataGenerators/authorBookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
@@ -10,20 +9,21 @@ import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
 import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
-import { AuthorRepository } from '../../author/repositories/authorRepository';
-import { BookRepository } from '../../book/repositories/bookRepository';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
 import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
 import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
+import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';
+import { AuthorRepositoryFactory } from '../../author/repositories/authorRepositoryFactory';
+import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
 
 describe('AuthorBookService', () => {
   let authorBookService: AuthorBookService;
-  let authorBookRepository: AuthorBookRepository;
-  let authorRepository: AuthorRepository;
-  let bookRepository: BookRepository;
+  let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
+  let authorRepositoryFactory: AuthorRepositoryFactory;
+  let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
@@ -42,11 +42,10 @@ describe('AuthorBookService', () => {
       UnitOfWorkModule,
     ]);
 
-    const entityManager = container.resolve(ENTITY_MANAGER);
     authorBookService = container.resolve(AUTHOR_BOOK_SERVICE);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY).create(entityManager);
-    authorRepository = container.resolve(AUTHOR_REPOSITORY_FACTORY).create(entityManager);
-    bookRepository = container.resolve(BOOK_REPOSITORY_FACTORY).create(entityManager);
+    authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
+    authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
+    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
 
     postgresHelper = new PostgresHelper(container);
 
@@ -64,6 +63,11 @@ describe('AuthorBookService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+        const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
+
         const { firstName, lastName } = authorTestDataGenerator.generateData();
 
         const author = await authorRepository.createOne({
@@ -96,6 +100,10 @@ describe('AuthorBookService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const { firstName, lastName } = authorTestDataGenerator.generateData();
 
         const author = await authorRepository.createOne({
@@ -135,6 +143,11 @@ describe('AuthorBookService', () => {
       expect.assertions(1);
 
       await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+        const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
+
         const { firstName, lastName } = authorTestDataGenerator.generateData();
 
         const author = await authorRepository.createOne({

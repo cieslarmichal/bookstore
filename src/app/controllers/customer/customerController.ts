@@ -67,7 +67,7 @@ export class CustomerController {
     const createCustomerBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateCustomerBodyDto);
 
     const customerDto = await unitOfWork.runInTransaction(async () => {
-      const customer = await this.customerService.createCustomer(createCustomerBodyDto);
+      const customer = await this.customerService.createCustomer(unitOfWork, createCustomerBodyDto);
 
       return customer;
     });
@@ -83,7 +83,7 @@ export class CustomerController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindCustomerParamDto);
 
     const customerDto = await unitOfWork.runInTransaction(async () => {
-      const customer = await this.customerService.findCustomer({ id });
+      const customer = await this.customerService.findCustomer(unitOfWork, { id });
 
       return customer;
     });
@@ -99,7 +99,7 @@ export class CustomerController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveCustomerParamDto);
 
     await unitOfWork.runInTransaction(async () => {
-      await this.customerService.removeCustomer(id);
+      await this.customerService.removeCustomer(unitOfWork, id);
     });
 
     return new RemoveCustomerResponseDto(StatusCodes.NO_CONTENT);

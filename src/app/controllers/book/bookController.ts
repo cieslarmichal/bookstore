@@ -95,7 +95,7 @@ export class BookController {
     const createBookData = RecordToInstanceTransformer.strictTransform(createBookBodyDto, CreateBookData);
 
     const bookDto = await unitOfWork.runInTransaction(async () => {
-      const book = await this.bookService.createBook(createBookData);
+      const book = await this.bookService.createBook(unitOfWork, createBookData);
 
       return book;
     });
@@ -111,7 +111,7 @@ export class BookController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindBookParamDto);
 
     const bookDto = await unitOfWork.runInTransaction(async () => {
-      const book = await this.bookService.findBook(id);
+      const book = await this.bookService.findBook(unitOfWork, id);
 
       return book;
     });
@@ -129,7 +129,7 @@ export class BookController {
     const paginationData = PaginationDataParser.parse(request.query);
 
     const booksDto = await unitOfWork.runInTransaction(async () => {
-      const books = await this.bookService.findBooks(filters, paginationData);
+      const books = await this.bookService.findBooks(unitOfWork, filters, paginationData);
 
       return books;
     });
@@ -149,7 +149,7 @@ export class BookController {
     const updateBookData = RecordToInstanceTransformer.strictTransform(updateBookBodyDto, UpdateBookData);
 
     const bookDto = await unitOfWork.runInTransaction(async () => {
-      const book = await this.bookService.updateBook(id, updateBookData);
+      const book = await this.bookService.updateBook(unitOfWork, id, updateBookData);
 
       return book;
     });
@@ -165,7 +165,7 @@ export class BookController {
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveBookParamDto);
 
     await unitOfWork.runInTransaction(async () => {
-      await this.bookService.removeBook(id);
+      await this.bookService.removeBook(unitOfWork, id);
     });
 
     return new RemoveBookResponseDto(StatusCodes.NO_CONTENT);
