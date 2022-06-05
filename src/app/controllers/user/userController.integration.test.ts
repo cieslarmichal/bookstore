@@ -10,7 +10,7 @@ import { Server } from '../../../server';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
 import { StatusCodes } from 'http-status-codes';
 import { HashService } from '../../domain/user/services/hashService';
-import { AuthHelper } from '../../../integration/helpers';
+import { AuthHelper, UnitOfWorkMock } from '../../../integration/helpers';
 import { BookModule } from '../../domain/book/bookModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
@@ -35,6 +35,7 @@ describe(`UserController (${baseUrl})`, () => {
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
+  let unitOfWorkMock: UnitOfWorkMock;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -63,9 +64,12 @@ describe(`UserController (${baseUrl})`, () => {
     userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
     hashService = container.resolve(HASH_SERVICE);
 
-    const app = new App(container);
-
     authHelper = new AuthHelper(container);
+
+    unitOfWorkMock = new UnitOfWorkMock(container);
+    unitOfWorkMock.mock();
+
+    const app = new App(container);
 
     server = new Server(app.instance);
 
