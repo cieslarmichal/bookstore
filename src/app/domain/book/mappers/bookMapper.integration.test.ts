@@ -2,18 +2,18 @@ import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { BOOK_MAPPER } from '../bookInjectionSymbols';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,9 +22,13 @@ describe('BookMapper', () => {
 
     bookMapper = container.resolve(BOOK_MAPPER);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     bookTestDataGenerator = new BookTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Map book', () => {

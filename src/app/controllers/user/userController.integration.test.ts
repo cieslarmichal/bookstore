@@ -10,7 +10,7 @@ import { Server } from '../../../server';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
 import { StatusCodes } from 'http-status-codes';
 import { HashService } from '../../domain/user/services/hashService';
-import { AuthHelper, UnitOfWorkMock } from '../../../integration/helpers';
+import { AuthHelper, TestTransactionExternalRunner, UnitOfWorkMock } from '../../../integration/helpers';
 import { BookModule } from '../../domain/book/bookModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
@@ -36,6 +36,7 @@ describe(`UserController (${baseUrl})`, () => {
   let server: Server;
   let authHelper: AuthHelper;
   let unitOfWorkMock: UnitOfWorkMock;
+  let testTransactionRunner: TestTransactionExternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -59,15 +60,11 @@ describe(`UserController (${baseUrl})`, () => {
       UnitOfWorkModule,
     ]);
 
-    const entityManager = container.resolve(ENTITY_MANAGER);
+    testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    userRepository = container.resolve(USER_REPOSITORY_FACTORY).create(entityManager);
     hashService = container.resolve(HASH_SERVICE);
 
     authHelper = new AuthHelper(container);
-
-    unitOfWorkMock = new UnitOfWorkMock(container);
-    unitOfWorkMock.mock();
 
     const app = new App(container);
 
@@ -86,13 +83,15 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { email } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(registerUrl).send({
-        email,
+        const response = await request(server.instance).post(registerUrl).send({
+          email,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns unprocessable entity when user with given email already exists', async () => {

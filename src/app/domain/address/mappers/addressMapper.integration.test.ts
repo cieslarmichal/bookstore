@@ -2,10 +2,10 @@ import { Address } from '../entities/address';
 import { AddressMapper } from './addressMapper';
 import { AddressTestDataGenerator } from '../testDataGenerators/addressTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AddressModule } from '../addressModule';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { ADDRESS_MAPPER } from '../addressInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
@@ -16,7 +16,7 @@ describe('AddressMapper', () => {
   let addressMapper: AddressMapper;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -25,10 +25,14 @@ describe('AddressMapper', () => {
 
     addressMapper = container.resolve(ADDRESS_MAPPER);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Map address', () => {

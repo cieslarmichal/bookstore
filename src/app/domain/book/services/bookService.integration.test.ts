@@ -4,6 +4,7 @@ import { ConfigLoader } from '../../../../configLoader';
 import {
   BetweenFilter,
   createDIContainer,
+  dbManager,
   EqualFilter,
   LessThanOrEqualFilter,
   UnitOfWorkModule,
@@ -12,7 +13,7 @@ import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { BookNotFound } from '../errors';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { CategoryModule } from '../../category/categoryModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
@@ -41,7 +42,7 @@ describe('BookService', () => {
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -64,11 +65,15 @@ describe('BookService', () => {
     bookCategoryRepositoryFactory = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY);
     categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create book', () => {

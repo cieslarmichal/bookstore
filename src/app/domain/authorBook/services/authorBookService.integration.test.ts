@@ -1,12 +1,12 @@
 import { AuthorBookService } from './authorBookService';
 import { AuthorBookTestDataGenerator } from '../testDataGenerators/authorBookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
@@ -27,7 +27,7 @@ describe('AuthorBookService', () => {
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -47,11 +47,15 @@ describe('AuthorBookService', () => {
     authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
     bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create authorBook', () => {

@@ -1,7 +1,7 @@
 import { UserService } from './userService';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { UserModule } from '../userModule';
 import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../errors';
@@ -11,7 +11,7 @@ import { UserDto } from '../dtos';
 import { UserRole } from '../types';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { HASH_SERVICE, TOKEN_SERVICE, USER_REPOSITORY_FACTORY, USER_SERVICE } from '../userInjectionSymbols';
-import { TestTransactionRunner } from '../../../../integration/helpers';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers';
 import { UserRepositoryFactory } from '../repositories/userRepositoryFactory';
 
 describe('UserService', () => {
@@ -20,7 +20,7 @@ describe('UserService', () => {
   let tokenService: TokenService;
   let hashService: HashService;
   let userTestDataGenerator: UserTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -32,9 +32,13 @@ describe('UserService', () => {
     tokenService = container.resolve(TOKEN_SERVICE);
     hashService = container.resolve(HASH_SERVICE);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Register user by email', () => {

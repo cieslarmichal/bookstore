@@ -1,11 +1,11 @@
 import { CustomerService } from './customerService';
 import { CustomerTestDataGenerator } from '../testDataGenerators/customerTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { CustomerModule } from '../customerModule';
 import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { CUSTOMER_REPOSITORY_FACTORY, CUSTOMER_SERVICE } from '../customerInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
@@ -20,7 +20,7 @@ describe('CustomerService', () => {
   let userRepositoryFactory: UserRepositoryFactory;
   let customerTestDataGenerator: CustomerTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -31,10 +31,14 @@ describe('CustomerService', () => {
     customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
     userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     customerTestDataGenerator = new CustomerTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create customer', () => {

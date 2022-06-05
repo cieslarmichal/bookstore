@@ -1,11 +1,11 @@
 import { BookCategoryService } from './bookCategoryService';
 import { BookCategoryTestDataGenerator } from '../testDataGenerators/bookCategoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookCategoryModule } from '../bookCategoryModule';
 import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
@@ -26,7 +26,7 @@ describe('BookCategoryService', () => {
   let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -45,11 +45,15 @@ describe('BookCategoryService', () => {
     categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
     bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create bookCategory', () => {

@@ -4,13 +4,13 @@ import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerat
 import { ConfigLoader } from '../../../../configLoader';
 import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../shared';
 import { UserModule } from '../userModule';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { USER_MAPPER } from '../userInjectionSymbols';
 
 describe('UserMapper', () => {
   let userMapper: UserMapper;
   let userTestDataGenerator: UserTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -19,7 +19,7 @@ describe('UserMapper', () => {
 
     userMapper = container.resolve(USER_MAPPER);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });

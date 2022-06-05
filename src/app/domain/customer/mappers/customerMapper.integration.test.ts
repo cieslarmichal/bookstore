@@ -1,10 +1,10 @@
 import { Customer } from '../entities/customer';
 import { CustomerMapper } from './customerMapper';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { CustomerModule } from '../customerModule';
-import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { CUSTOMER_MAPPER } from '../customerInjectionSymbols';
 import { User } from '../../user/entities/user';
@@ -13,7 +13,7 @@ import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDat
 describe('CustomerMapper', () => {
   let customerMapper: CustomerMapper;
   let userTestDataGenerator: UserTestDataGenerator;
-  let testTransactionRunner: TestTransactionRunner;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,9 +22,13 @@ describe('CustomerMapper', () => {
 
     customerMapper = container.resolve(CUSTOMER_MAPPER);
 
-    testTransactionRunner = new TestTransactionRunner(container);
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
+  });
+
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Map customer', () => {
