@@ -5,7 +5,7 @@ import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { Author } from '../../author/entities/author';
@@ -17,7 +17,7 @@ describe('AuthorBookMapper', () => {
   let authorBookMapper: AuthorBookMapper;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -32,21 +32,17 @@ describe('AuthorBookMapper', () => {
 
     authorBookMapper = container.resolve(AUTHOR_BOOK_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
-  });
-
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
   });
 
   describe('Map authorBook', () => {
     it('map authorBook from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();

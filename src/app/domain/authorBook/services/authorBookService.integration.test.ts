@@ -6,7 +6,7 @@ import { DbModule } from '../../../shared';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
@@ -27,7 +27,7 @@ describe('AuthorBookService', () => {
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -47,22 +47,18 @@ describe('AuthorBookService', () => {
     authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
     bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
-  });
-
   describe('Create authorBook', () => {
     it('creates authorBook in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -99,7 +95,7 @@ describe('AuthorBookService', () => {
     it('should not create authorBook and throw if authorBook with the authorId and bookId exists', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -142,7 +138,7 @@ describe('AuthorBookService', () => {
     it('removes authorBook from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -181,7 +177,7 @@ describe('AuthorBookService', () => {
     it('should throw if authorBook with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { authorId, bookId } = authorBookTestDataGenerator.generateData();
 
         try {

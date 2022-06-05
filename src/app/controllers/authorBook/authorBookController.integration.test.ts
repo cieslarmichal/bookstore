@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, UnitOfWorkModule } from '../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
@@ -11,7 +11,6 @@ import { Server } from '../../../server';
 import { AuthorBookRepository } from '../../domain/authorBook/repositories/authorBookRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
@@ -85,7 +84,7 @@ describe(`AuthorBookController`, () => {
   afterEach(async () => {
     server.close();
 
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Create authorBook', () => {

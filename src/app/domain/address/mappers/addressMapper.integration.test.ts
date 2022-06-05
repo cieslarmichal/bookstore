@@ -5,7 +5,7 @@ import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AddressModule } from '../addressModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { ADDRESS_MAPPER } from '../addressInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
@@ -16,7 +16,7 @@ describe('AddressMapper', () => {
   let addressMapper: AddressMapper;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -25,7 +25,7 @@ describe('AddressMapper', () => {
 
     addressMapper = container.resolve(ADDRESS_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
@@ -35,7 +35,7 @@ describe('AddressMapper', () => {
     it('map address from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();
@@ -88,7 +88,7 @@ describe('AddressMapper', () => {
     it('map address from entity to dto with optional fields', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();

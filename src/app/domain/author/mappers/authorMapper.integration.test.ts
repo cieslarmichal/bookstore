@@ -6,14 +6,14 @@ import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { AUTHOR_MAPPER } from '../authorInjectionSymbols';
 
 describe('AuthorMapper', () => {
   let authorMapper: AuthorMapper;
   let authorTestDataGenerator: AuthorTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,7 +22,7 @@ describe('AuthorMapper', () => {
 
     authorMapper = container.resolve(AUTHOR_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
   });
@@ -31,7 +31,7 @@ describe('AuthorMapper', () => {
     it('map author from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -59,7 +59,7 @@ describe('AuthorMapper', () => {
     it('maps a author with optional field from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName, about } = authorTestDataGenerator.generateData();

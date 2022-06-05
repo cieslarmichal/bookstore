@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { CustomerTestDataGenerator } from '../../domain/customer/testDataGenerators/customerTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, UnitOfWorkModule } from '../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
@@ -10,7 +10,6 @@ import { Server } from '../../../server';
 import { CustomerRepository } from '../../domain/customer/repositories/customerRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
@@ -23,7 +22,7 @@ import { USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols'
 import { CUSTOMER_REPOSITORY_FACTORY } from '../../domain/customer/customerInjectionSymbols';
 import { CustomerModule } from '../../domain/customer/customerModule';
 import { AddressModule } from '../../domain/address/addressModule';
-import { ENTITY_MANAGER } from 'src/app/shared/db/dbInjectionSymbols';
+import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const baseUrl = '/customers';
 
@@ -75,7 +74,7 @@ describe(`CustomerController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Create customer', () => {

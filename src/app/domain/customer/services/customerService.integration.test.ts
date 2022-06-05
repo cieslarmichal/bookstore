@@ -5,7 +5,7 @@ import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { CustomerModule } from '../customerModule';
 import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { CUSTOMER_REPOSITORY_FACTORY, CUSTOMER_SERVICE } from '../customerInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
@@ -20,7 +20,7 @@ describe('CustomerService', () => {
   let userRepositoryFactory: UserRepositoryFactory;
   let customerTestDataGenerator: CustomerTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -31,7 +31,7 @@ describe('CustomerService', () => {
     customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
     userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     customerTestDataGenerator = new CustomerTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
@@ -41,7 +41,7 @@ describe('CustomerService', () => {
     it('creates customer in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
@@ -61,7 +61,7 @@ describe('CustomerService', () => {
     it('throws if customer with userId already exists in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
@@ -85,7 +85,7 @@ describe('CustomerService', () => {
     it('finds customer by id in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
@@ -105,7 +105,7 @@ describe('CustomerService', () => {
     it('finds customer by userId in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
@@ -125,7 +125,7 @@ describe('CustomerService', () => {
     it('should throw if customer with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = customerTestDataGenerator.generateData();
 
         try {
@@ -141,7 +141,7 @@ describe('CustomerService', () => {
     it('removes customer from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
@@ -163,7 +163,7 @@ describe('CustomerService', () => {
     it('should throw if customer with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = customerTestDataGenerator.generateData();
 
         try {

@@ -2,39 +2,37 @@ import { User } from '../entities/user';
 import { UserMapper } from './userMapper';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../shared';
 import { UserModule } from '../userModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { USER_MAPPER } from '../userInjectionSymbols';
 
 describe('UserMapper', () => {
   let userMapper: UserMapper;
   let userTestDataGenerator: UserTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, UserModule, LoggerModule]);
+    const container = await createDIContainer([DbModule, UserModule, LoggerModule, UnitOfWorkModule]);
 
     userMapper = container.resolve(USER_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
   afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Map user', () => {
     it('map user from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, phoneNumber } = userTestDataGenerator.generateData();

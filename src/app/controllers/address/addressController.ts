@@ -22,7 +22,7 @@ import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMid
 import { CustomerService } from '../../domain/customer/services/customerService';
 import { UserRole } from '../../domain/user/types';
 import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress, UserIsNotACustomer } from './errors';
-import { CustomerDto } from 'src/app/domain/customer/dtos';
+import { CustomerDto } from '../../domain/customer/dtos';
 
 const ADDRESSES_PATH = '/addresses';
 const ADDRESSES_PATH_WITH_ID = `${ADDRESSES_PATH}/:id`;

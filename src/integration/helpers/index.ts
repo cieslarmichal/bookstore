@@ -1,2 +1,2 @@
 export * from './authHelper';
-export * from './postgresHelper';
+export * from './unitOfWorkHelper';

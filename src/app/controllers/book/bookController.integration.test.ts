@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, UnitOfWorkModule } from '../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
@@ -10,7 +10,6 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { Server } from '../../../server';
 import { BookRepository } from '../../domain/book/repositories/bookRepository';
 import { StatusCodes } from 'http-status-codes';
-import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { UserModule } from '../../domain/user/userModule';
@@ -71,7 +70,7 @@ describe(`BookController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Create book', () => {

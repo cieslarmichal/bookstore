@@ -5,7 +5,7 @@ import { createDIContainer, EqualFilter, UnitOfWorkModule } from '../../../share
 import { DbModule } from '../../../shared';
 import { AddressModule } from '../addressModule';
 import { AddressNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
 import { CUSTOMER_REPOSITORY_FACTORY } from '../../customer/customerInjectionSymbols';
@@ -24,7 +24,7 @@ describe('AddressService', () => {
   let userRepositoryFactory: UserRepositoryFactory;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -43,7 +43,7 @@ describe('AddressService', () => {
     customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
     userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
@@ -53,7 +53,7 @@ describe('AddressService', () => {
     it('creates address in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();
@@ -94,7 +94,7 @@ describe('AddressService', () => {
     it('finds address by id in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();
@@ -133,7 +133,7 @@ describe('AddressService', () => {
     it('should throw if address with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = addressTestDataGenerator.generateData();
 
         try {
@@ -149,7 +149,7 @@ describe('AddressService', () => {
     it('finds addresses by customerId', async () => {
       expect.assertions(3);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();
@@ -227,7 +227,7 @@ describe('AddressService', () => {
     it('finds addresses by customerId limited by pagination', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();
@@ -299,7 +299,7 @@ describe('AddressService', () => {
     it('removes address from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();
@@ -340,7 +340,7 @@ describe('AddressService', () => {
     it('should throw if address with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = addressTestDataGenerator.generateData();
 
         try {

@@ -2,14 +2,13 @@ import { ConfigLoader } from '../../../configLoader';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { UserModule } from '../../domain/user/userModule';
 import { ControllersModule } from '../controllersModule';
 import { Server } from '../../../server';
 import { UserRepository } from '../../domain/user/repositories/userRepository';
 import { StatusCodes } from 'http-status-codes';
-import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { HashService } from '../../domain/user/services/hashService';
 import { AuthHelper } from '../../../integration/helpers';
 import { BookModule } from '../../domain/book/bookModule';
@@ -21,7 +20,7 @@ import { HASH_SERVICE, USER_REPOSITORY_FACTORY } from '../../domain/user/userInj
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
-import { ENTITY_MANAGER } from 'src/app/shared/db/dbInjectionSymbols';
+import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -56,6 +55,7 @@ describe(`UserController (${baseUrl})`, () => {
       BookCategoryModule,
       AddressModule,
       CustomerModule,
+      UnitOfWorkModule,
     ]);
 
     const entityManager = container.resolve(ENTITY_MANAGER);
@@ -75,7 +75,7 @@ describe(`UserController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Register user by email', () => {

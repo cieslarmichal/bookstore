@@ -6,7 +6,7 @@ import { DbModule } from '../../../shared';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
@@ -25,7 +25,7 @@ describe('CategoryService', () => {
   let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -45,7 +45,7 @@ describe('CategoryService', () => {
     bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
     bookCategoryRepositoryFactory = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
@@ -55,7 +55,7 @@ describe('CategoryService', () => {
     it('creates category in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -74,7 +74,7 @@ describe('CategoryService', () => {
     it('should not create category and throw if category with the same name exists', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -99,7 +99,7 @@ describe('CategoryService', () => {
     it('finds category by id in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -118,7 +118,7 @@ describe('CategoryService', () => {
     it('should throw if category with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = categoryTestDataGenerator.generateData();
 
         try {
@@ -134,7 +134,7 @@ describe('CategoryService', () => {
     it('finds categories by condition in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -159,7 +159,7 @@ describe('CategoryService', () => {
     it('finds categories by bookId with condition in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -217,7 +217,7 @@ describe('CategoryService', () => {
     it('removes category from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -238,7 +238,7 @@ describe('CategoryService', () => {
     it('should throw if category with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = categoryTestDataGenerator.generateData();
 
         try {

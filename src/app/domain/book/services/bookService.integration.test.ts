@@ -12,7 +12,7 @@ import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { BookNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { CategoryModule } from '../../category/categoryModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
@@ -41,7 +41,7 @@ describe('BookService', () => {
   let bookTestDataGenerator: BookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -64,7 +64,7 @@ describe('BookService', () => {
     bookCategoryRepositoryFactory = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY);
     categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     bookTestDataGenerator = new BookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
@@ -75,7 +75,7 @@ describe('BookService', () => {
     it('creates book in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -100,7 +100,7 @@ describe('BookService', () => {
     it('finds book by id in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -123,7 +123,7 @@ describe('BookService', () => {
     it('should throw if book with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = bookTestDataGenerator.generateData();
 
         try {
@@ -139,7 +139,7 @@ describe('BookService', () => {
     it('finds books by title in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -176,7 +176,7 @@ describe('BookService', () => {
     it('finds books by release year in database', async () => {
       expect.assertions(3);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -225,7 +225,7 @@ describe('BookService', () => {
     it('finds books by price in database', async () => {
       expect.assertions(3);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -273,7 +273,7 @@ describe('BookService', () => {
     it('finds books by format in database', async () => {
       expect.assertions(3);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -322,7 +322,7 @@ describe('BookService', () => {
     it('finds books by language in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -357,7 +357,7 @@ describe('BookService', () => {
     it('finds books in database limited by pagination', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -398,7 +398,7 @@ describe('BookService', () => {
     it('finds books by authorId with filtering in database', async () => {
       expect.assertions(3);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -465,7 +465,7 @@ describe('BookService', () => {
     it('finds books by categoryId with conditions in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -527,7 +527,7 @@ describe('BookService', () => {
     it('updates book in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -553,7 +553,7 @@ describe('BookService', () => {
     it('should not update book and throw if book with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, price } = bookTestDataGenerator.generateData();
 
         try {
@@ -569,7 +569,7 @@ describe('BookService', () => {
     it('removes book from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -594,7 +594,7 @@ describe('BookService', () => {
     it('should throw if book with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = bookTestDataGenerator.generateData();
 
         try {

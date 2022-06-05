@@ -6,7 +6,7 @@ import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 import { AuthorNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
@@ -24,7 +24,7 @@ describe('AuthorService', () => {
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -43,7 +43,7 @@ describe('AuthorService', () => {
     bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
     authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
@@ -53,7 +53,7 @@ describe('AuthorService', () => {
     it('creates author in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -73,7 +73,7 @@ describe('AuthorService', () => {
     it('finds author by id in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -91,7 +91,7 @@ describe('AuthorService', () => {
     it('should throw if author with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = authorTestDataGenerator.generateData();
 
         try {
@@ -107,7 +107,7 @@ describe('AuthorService', () => {
     it('finds authors by one condition in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -133,7 +133,7 @@ describe('AuthorService', () => {
     it('finds authors by two conditions in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -163,7 +163,7 @@ describe('AuthorService', () => {
     it('finds authors in database limited by pagination', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
@@ -194,7 +194,7 @@ describe('AuthorService', () => {
     it('finds authors by book id with filtering in database', async () => {
       expect.assertions(4);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -253,7 +253,7 @@ describe('AuthorService', () => {
     it('updates author in database', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -271,7 +271,7 @@ describe('AuthorService', () => {
     it('should not update author and throw if author with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, about } = authorTestDataGenerator.generateData();
 
         try {
@@ -287,7 +287,7 @@ describe('AuthorService', () => {
     it('removes author from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -306,7 +306,7 @@ describe('AuthorService', () => {
     it('should throw if author with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = authorTestDataGenerator.generateData();
 
         try {

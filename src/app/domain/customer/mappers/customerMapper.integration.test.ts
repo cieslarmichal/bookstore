@@ -4,7 +4,7 @@ import { ConfigLoader } from '../../../../configLoader';
 import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { CustomerModule } from '../customerModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { CUSTOMER_MAPPER } from '../customerInjectionSymbols';
 import { User } from '../../user/entities/user';
@@ -13,7 +13,7 @@ import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDat
 describe('CustomerMapper', () => {
   let customerMapper: CustomerMapper;
   let userTestDataGenerator: UserTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,7 +22,7 @@ describe('CustomerMapper', () => {
 
     customerMapper = container.resolve(CUSTOMER_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });
@@ -31,7 +31,7 @@ describe('CustomerMapper', () => {
     it('map customer from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userTestDataGenerator.generateData();

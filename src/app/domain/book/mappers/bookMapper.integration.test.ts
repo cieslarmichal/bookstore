@@ -6,14 +6,14 @@ import { createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { BOOK_MAPPER } from '../bookInjectionSymbols';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,7 +22,7 @@ describe('BookMapper', () => {
 
     bookMapper = container.resolve(BOOK_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     bookTestDataGenerator = new BookTestDataGenerator();
   });
@@ -31,7 +31,7 @@ describe('BookMapper', () => {
     it('map book from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
@@ -65,7 +65,7 @@ describe('BookMapper', () => {
     it('maps a book with optional field from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { title, releaseYear, language, format, description, price } = bookTestDataGenerator.generateData();

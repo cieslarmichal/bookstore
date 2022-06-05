@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { AddressTestDataGenerator } from '../../domain/address/testDataGenerators/addressTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, UnitOfWorkModule } from '../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { AddressModule } from '../../domain/address/addressModule';
 import { ControllersModule } from '../controllersModule';
@@ -11,7 +11,6 @@ import { Server } from '../../../server';
 import { AddressRepository } from '../../domain/address/repositories/addressRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
@@ -79,7 +78,7 @@ describe(`AddressController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Create address', () => {
@@ -175,9 +174,13 @@ describe(`AddressController (${baseUrl})`, () => {
     it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      const { email, password, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+      const user = await userRepository.createOne({ email, password, role });
+
+      const accessToken = authHelper.mockAuth({ userId: user.id, role });
+
+      await customerRepository.createOne({ userId: user.id });
 
       const { id } = addressTestDataGenerator.generateData();
 

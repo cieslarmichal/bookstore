@@ -2,18 +2,16 @@ import { Category } from '../entities/category';
 import { CategoryMapper } from './categoryMapper';
 import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule } from '../../../shared';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { TestTransactionRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionRunner';
 import { CATEGORY_MAPPER } from '../categoryInjectionSymbols';
 
 describe('CategoryMapper', () => {
   let categoryMapper: CategoryMapper;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -22,7 +20,7 @@ describe('CategoryMapper', () => {
 
     categoryMapper = container.resolve(CATEGORY_MAPPER);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
@@ -31,7 +29,7 @@ describe('CategoryMapper', () => {
     it('map category from entity to dto', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { name } = categoryTestDataGenerator.generateData();

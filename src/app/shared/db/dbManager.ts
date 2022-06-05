@@ -8,8 +8,8 @@ import { BookCategory } from '../../domain/bookCategory/entities/bookCategory';
 import { Address } from '../../domain/address/entities/address';
 import { Customer } from '../../domain/customer/entities/customer';
 
-class DbManager {
-  private connection: Connection;
+export class DbManager {
+  private connection: Connection | null;
 
   public async getConnection(): Promise<Connection> {
     if (this.connection) {
@@ -31,7 +31,9 @@ class DbManager {
   }
 
   public async closeConnection(): Promise<void> {
-    await this.connection.close();
+    await this.connection?.close();
+
+    this.connection = null;
   }
 }
 

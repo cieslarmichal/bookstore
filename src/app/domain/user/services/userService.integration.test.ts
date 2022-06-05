@@ -11,7 +11,7 @@ import { UserDto } from '../dtos';
 import { UserRole } from '../types';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
 import { HASH_SERVICE, TOKEN_SERVICE, USER_REPOSITORY_FACTORY, USER_SERVICE } from '../userInjectionSymbols';
-import { PostgresHelper } from '../../../../integration/helpers';
+import { TestTransactionRunner } from '../../../../integration/helpers';
 import { UserRepositoryFactory } from '../repositories/userRepositoryFactory';
 
 describe('UserService', () => {
@@ -20,7 +20,7 @@ describe('UserService', () => {
   let tokenService: TokenService;
   let hashService: HashService;
   let userTestDataGenerator: UserTestDataGenerator;
-  let postgresHelper: PostgresHelper;
+  let testTransactionRunner: TestTransactionRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -32,7 +32,7 @@ describe('UserService', () => {
     tokenService = container.resolve(TOKEN_SERVICE);
     hashService = container.resolve(HASH_SERVICE);
 
-    postgresHelper = new PostgresHelper(container);
+    testTransactionRunner = new TestTransactionRunner(container);
 
     userTestDataGenerator = new UserTestDataGenerator();
   });
@@ -41,7 +41,7 @@ describe('UserService', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -61,7 +61,7 @@ describe('UserService', () => {
     it('should not create user and throw if user with the same email already exists', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -88,7 +88,7 @@ describe('UserService', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -108,7 +108,7 @@ describe('UserService', () => {
     it('should not create user and throw if user with the same phone number already exists', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -135,7 +135,7 @@ describe('UserService', () => {
     it('should return access token', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -163,7 +163,7 @@ describe('UserService', () => {
     it('should throw if user with given email does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { email, password } = userTestDataGenerator.generateData();
 
         try {
@@ -180,7 +180,7 @@ describe('UserService', () => {
     it('should throw if user password does not match db password', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -209,7 +209,7 @@ describe('UserService', () => {
     it('should return access token', async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -237,7 +237,7 @@ describe('UserService', () => {
     it('should throw if user with given email does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { phoneNumber, password } = userTestDataGenerator.generateData();
 
         try {
@@ -254,7 +254,7 @@ describe('UserService', () => {
     it('should throw if user password does not match db password', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -283,7 +283,7 @@ describe('UserService', () => {
     it(`should update user's password in db`, async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -310,7 +310,7 @@ describe('UserService', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, password } = userTestDataGenerator.generateData();
 
         try {
@@ -326,7 +326,7 @@ describe('UserService', () => {
     it(`should update user's email in db`, async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -349,7 +349,7 @@ describe('UserService', () => {
     it(`should throw if user already has email set in db`, async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -371,7 +371,7 @@ describe('UserService', () => {
     it(`should throw if email is already assigned to different user in db`, async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -398,7 +398,7 @@ describe('UserService', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, email } = userTestDataGenerator.generateData();
 
         try {
@@ -414,7 +414,7 @@ describe('UserService', () => {
     it(`should update user's phone number in db`, async () => {
       expect.assertions(2);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -437,7 +437,7 @@ describe('UserService', () => {
     it(`should throw if user already has phone number set in db`, async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -459,7 +459,7 @@ describe('UserService', () => {
     it(`should throw if phone number is already assigned to different user in db`, async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -486,7 +486,7 @@ describe('UserService', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, phoneNumber } = userTestDataGenerator.generateData();
 
         try {
@@ -502,7 +502,7 @@ describe('UserService', () => {
     it('finds user by id in database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -522,7 +522,7 @@ describe('UserService', () => {
     it('should throw if user with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = userTestDataGenerator.generateData();
 
         try {
@@ -538,7 +538,7 @@ describe('UserService', () => {
     it('removes user from database', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -560,7 +560,7 @@ describe('UserService', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await postgresHelper.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = userTestDataGenerator.generateData();
 
         try {
