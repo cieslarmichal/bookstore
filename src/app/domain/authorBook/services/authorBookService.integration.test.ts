@@ -1,32 +1,33 @@
-import { AuthorBookRepository } from '../repositories/authorBookRepository';
 import { AuthorBookService } from './authorBookService';
 import { AuthorBookTestDataGenerator } from '../testDataGenerators/authorBookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
-import { AuthorRepository } from '../../author/repositories/authorRepository';
-import { BookRepository } from '../../book/repositories/bookRepository';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { AUTHOR_BOOK_REPOSITORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
-import { AUTHOR_REPOSITORY } from '../../author/authorInjectionSymbols';
-import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
+import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';
+import { AuthorRepositoryFactory } from '../../author/repositories/authorRepositoryFactory';
+import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
 
 describe('AuthorBookService', () => {
   let authorBookService: AuthorBookService;
-  let authorBookRepository: AuthorBookRepository;
-  let authorRepository: AuthorRepository;
-  let bookRepository: BookRepository;
+  let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
+  let authorRepositoryFactory: AuthorRepositoryFactory;
+  let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -38,86 +39,102 @@ describe('AuthorBookService', () => {
       AuthorModule,
       AuthorBookModule,
       LoggerModule,
+      UnitOfWorkModule,
     ]);
 
     authorBookService = container.resolve(AUTHOR_BOOK_SERVICE);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
-    authorRepository = container.resolve(AUTHOR_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
+    authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
+    authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
+    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
+
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create authorBook', () => {
     it('creates authorBook in database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+        const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-      const author = await authorRepository.createOne({
-        firstName,
-        lastName,
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+        const author = await authorRepository.createOne({
+          firstName,
+          lastName,
+        });
+
+        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+        const book = await bookRepository.createOne({
+          title,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
+
+        const createdAuthorBookDto = await authorBookService.createAuthorBook(unitOfWork, {
+          authorId: author.id,
+          bookId: book.id,
+        });
+
+        const authorBookDto = await authorBookRepository.findOneById(createdAuthorBookDto.id);
+
+        expect(authorBookDto).not.toBeNull();
       });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const book = await bookRepository.createOne({
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
-
-      const createdAuthorBookDto = await authorBookService.createAuthorBook({
-        authorId: author.id,
-        bookId: book.id,
-      });
-
-      const authorBookDto = await authorBookRepository.findOneById(createdAuthorBookDto.id);
-
-      expect(authorBookDto).not.toBeNull();
     });
 
     it('should not create authorBook and throw if authorBook with the authorId and bookId exists', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
 
-      const author = await authorRepository.createOne({
-        firstName,
-        lastName,
-      });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const author = await authorRepository.createOne({
+          firstName,
+          lastName,
+        });
 
-      const book = await bookRepository.createOne({
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-      await authorBookService.createAuthorBook({
-        authorId: author.id,
-        bookId: book.id,
-      });
+        const book = await bookRepository.createOne({
+          title,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
 
-      try {
-        await authorBookService.createAuthorBook({
+        await authorBookService.createAuthorBook(unitOfWork, {
           authorId: author.id,
           bookId: book.id,
         });
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthorBookAlreadyExists);
-      }
+
+        try {
+          await authorBookService.createAuthorBook(unitOfWork, {
+            authorId: author.id,
+            bookId: book.id,
+          });
+        } catch (error) {
+          expect(error).toBeInstanceOf(AuthorBookAlreadyExists);
+        }
+      });
     });
   });
 
@@ -125,45 +142,54 @@ describe('AuthorBookService', () => {
     it('removes authorBook from database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+        const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-      const author = await authorRepository.createOne({
-        firstName,
-        lastName,
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
+
+        const author = await authorRepository.createOne({
+          firstName,
+          lastName,
+        });
+
+        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+        const book = await bookRepository.createOne({
+          title,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
+
+        const authorBook = await authorBookRepository.createOne({
+          authorId: author.id,
+          bookId: book.id,
+        });
+
+        await authorBookService.removeAuthorBook(unitOfWork, { authorId: author.id, bookId: book.id });
+
+        const authorBookDto = await authorBookRepository.findOneById(authorBook.id);
+
+        expect(authorBookDto).toBeNull();
       });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const book = await bookRepository.createOne({
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
-
-      const authorBook = await authorBookRepository.createOne({
-        authorId: author.id,
-        bookId: book.id,
-      });
-
-      await authorBookService.removeAuthorBook({ authorId: author.id, bookId: book.id });
-
-      const authorBookDto = await authorBookRepository.findOneById(authorBook.id);
-
-      expect(authorBookDto).toBeNull();
     });
 
     it('should throw if authorBook with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { authorId, bookId } = authorBookTestDataGenerator.generateData();
 
-      try {
-        await authorBookService.removeAuthorBook({ authorId, bookId });
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthorBookNotFound);
-      }
+        try {
+          await authorBookService.removeAuthorBook(unitOfWork, { authorId, bookId });
+        } catch (error) {
+          expect(error).toBeInstanceOf(AuthorBookNotFound);
+        }
+      });
     });
   });
 });

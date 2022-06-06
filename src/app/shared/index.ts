@@ -6,3 +6,4 @@ export * from './di';
 export * from './errors';
 export * from './filter';
 export * from './logger';
+export * from './unitOfWork';

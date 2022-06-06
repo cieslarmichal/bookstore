@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { AuthorService } from '../../domain/author/services/authorService';
-import { RecordToInstanceTransformer } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { authorErrorMiddleware } from './middlewares';
@@ -32,7 +32,11 @@ const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
 export class AuthorController {
   public readonly router = express.Router();
 
-  public constructor(private readonly authorService: AuthorService, authMiddleware: AuthMiddleware) {
+  public constructor(
+    private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    private readonly authorService: AuthorService,
+    authMiddleware: AuthMiddleware,
+  ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
@@ -85,9 +89,15 @@ export class AuthorController {
   }
 
   public async createAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const createAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAuthorBodyDto);
 
-    const authorDto = await this.authorService.createAuthor(createAuthorBodyDto);
+    const authorDto = await unitOfWork.runInTransaction(async () => {
+      const author = await this.authorService.createAuthor(unitOfWork, createAuthorBodyDto);
+
+      return author;
+    });
 
     const responseData = new CreateAuthorResponseData(authorDto);
 
@@ -95,9 +105,15 @@ export class AuthorController {
   }
 
   public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorParamDto);
 
-    const authorDto = await this.authorService.findAuthor(id);
+    const authorDto = await unitOfWork.runInTransaction(async () => {
+      const author = await this.authorService.findAuthor(unitOfWork, id);
+
+      return author;
+    });
 
     const responseData = new FindAuthorResponseData(authorDto);
 
@@ -105,11 +121,17 @@ export class AuthorController {
   }
 
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAuthorsFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const authorsDto = await this.authorService.findAuthors(filters, paginationData);
+    const authorsDto = await unitOfWork.runInTransaction(async () => {
+      const authors = await this.authorService.findAuthors(unitOfWork, filters, paginationData);
+
+      return authors;
+    });
 
     const responseData = new FindAuthorsResponseData(authorsDto);
 
@@ -117,11 +139,17 @@ export class AuthorController {
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, UpdateAuthorParamDto);
 
     const updateAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateAuthorBodyDto);
 
-    const authorDto = await this.authorService.updateAuthor(id, updateAuthorBodyDto);
+    const authorDto = await unitOfWork.runInTransaction(async () => {
+      const author = await this.authorService.updateAuthor(unitOfWork, id, updateAuthorBodyDto);
+
+      return author;
+    });
 
     const responseData = new UpdateAuthorResponseData(authorDto);
 
@@ -129,9 +157,13 @@ export class AuthorController {
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAuthorParamDto);
 
-    await this.authorService.removeAuthor(id);
+    await unitOfWork.runInTransaction(async () => {
+      await this.authorService.removeAuthor(unitOfWork, id);
+    });
 
     return new RemoveAuthorResponseDto(StatusCodes.NO_CONTENT);
   }

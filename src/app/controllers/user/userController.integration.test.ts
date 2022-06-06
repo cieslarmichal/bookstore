@@ -2,22 +2,21 @@ import { ConfigLoader } from '../../../configLoader';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer } from '../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../shared';
 import { DbModule } from '../../shared';
 import { UserModule } from '../../domain/user/userModule';
 import { ControllersModule } from '../controllersModule';
 import { Server } from '../../../server';
-import { UserRepository } from '../../domain/user/repositories/userRepository';
+import { UserRepositoryFactory } from '../../domain/user/repositories/userRepositoryFactory';
 import { StatusCodes } from 'http-status-codes';
-import { PostgresHelper } from '../../../integration/helpers/postgresHelper/postgresHelper';
 import { HashService } from '../../domain/user/services/hashService';
-import { AuthHelper } from '../../../integration/helpers';
+import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { BookModule } from '../../domain/book/bookModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../shared/logger/loggerModule';
-import { HASH_SERVICE, USER_REPOSITORY } from '../../domain/user/userInjectionSymbols';
+import { HASH_SERVICE, USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
@@ -30,11 +29,12 @@ const setEmailUrl = `${baseUrl}/set-email`;
 const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
 describe(`UserController (${baseUrl})`, () => {
-  let userRepository: UserRepository;
   let hashService: HashService;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
+  let testTransactionRunner: TestTransactionExternalRunner;
+  let userRepositoryFactory: UserRepositoryFactory;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -55,14 +55,18 @@ describe(`UserController (${baseUrl})`, () => {
       BookCategoryModule,
       AddressModule,
       CustomerModule,
+      UnitOfWorkModule,
     ]);
 
-    userRepository = container.resolve(USER_REPOSITORY);
+    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
+
+    testTransactionRunner = new TestTransactionExternalRunner(container);
+
     hashService = container.resolve(HASH_SERVICE);
 
-    const app = new App(container);
-
     authHelper = new AuthHelper(container);
+
+    const app = new App(container);
 
     server = new Server(app.instance);
 
@@ -72,48 +76,58 @@ describe(`UserController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    await PostgresHelper.removeDataFromTables();
+    dbManager.closeConnection();
   });
 
   describe('Register user by email', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { email } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(registerUrl).send({
-        email,
+        const response = await request(server.instance).post(registerUrl).send({
+          email,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns unprocessable entity when user with given email already exists', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const response = await request(server.instance).post(registerUrl).send({
-        email,
-        password,
+        const { email, password } = userTestDataGenerator.generateData();
+
+        await userRepository.createOne({ email, password });
+
+        const response = await request(server.instance).post(registerUrl).send({
+          email,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
 
     it('returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(registerUrl).send({
-        email,
-        password,
+        const response = await request(server.instance).post(registerUrl).send({
+          email,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.CREATED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
@@ -121,41 +135,51 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { phoneNumber } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { phoneNumber } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(registerUrl).send({
-        phoneNumber,
+        const response = await request(server.instance).post(registerUrl).send({
+          phoneNumber,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns unprocessable entity when user with given phone number already exists', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      await userRepository.createOne({ phoneNumber, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const response = await request(server.instance).post(registerUrl).send({
-        phoneNumber,
-        password,
+        const { phoneNumber, password } = userTestDataGenerator.generateData();
+
+        await userRepository.createOne({ phoneNumber, password });
+
+        const response = await request(server.instance).post(registerUrl).send({
+          phoneNumber,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
 
     it('returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { phoneNumber, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(registerUrl).send({
-        phoneNumber,
-        password,
+        const response = await request(server.instance).post(registerUrl).send({
+          phoneNumber,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.CREATED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
@@ -163,43 +187,53 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { email } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(loginUrl).send({
-        email,
+        const response = await request(server.instance).post(loginUrl).send({
+          email,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns not found when user with given email does not exist', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(loginUrl).send({
-        email,
-        password,
+        const response = await request(server.instance).post(loginUrl).send({
+          email,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('returns ok when existing credentials are provided', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const hashedPassword = await hashService.hash(password);
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      await userRepository.createOne({ email, password: hashedPassword });
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(loginUrl).send({
-        email,
-        password,
+        const hashedPassword = await hashService.hash(password);
+
+        await userRepository.createOne({ email, password: hashedPassword });
+
+        const response = await request(server.instance).post(loginUrl).send({
+          email,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.OK);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
@@ -207,43 +241,53 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { phoneNumber } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { phoneNumber } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(loginUrl).send({
-        phoneNumber,
+        const response = await request(server.instance).post(loginUrl).send({
+          phoneNumber,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns not found when user with given phone number does not exist', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { phoneNumber, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(loginUrl).send({
-        phoneNumber,
-        password,
+        const response = await request(server.instance).post(loginUrl).send({
+          phoneNumber,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
     });
 
     it('returns ok when existing credentials are provided', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const hashedPassword = await hashService.hash(password);
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      await userRepository.createOne({ phoneNumber, password: hashedPassword });
+        const { phoneNumber, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(loginUrl).send({
-        phoneNumber,
-        password,
+        const hashedPassword = await hashService.hash(password);
+
+        await userRepository.createOne({ phoneNumber, password: hashedPassword });
+
+        const response = await request(server.instance).post(loginUrl).send({
+          phoneNumber,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.OK);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 
@@ -251,89 +295,103 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, password, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setPasswordUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          password,
-        });
+        const response = await request(server.instance)
+          .post(setPasswordUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            password,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, password, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setPasswordUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId,
-          password,
-        });
+        const response = await request(server.instance)
+          .post(setPasswordUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId,
+            password,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(setPasswordUrl).send({
-        userId,
-        password,
+        const response = await request(server.instance).post(setPasswordUrl).send({
+          userId,
+          password,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      const { id: userId, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, password, role } = userTestDataGenerator.generateData();
 
-      const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setPasswordUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: targetUserId,
-          password,
-        });
+        const response = await request(server.instance)
+          .post(setPasswordUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: targetUserId,
+            password,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+      });
     });
 
     it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .post(setPasswordUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          password,
-        });
+        const user = await userRepository.createOne({ email, password });
 
-      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .post(setPasswordUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            password,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+      });
     });
   });
 
@@ -341,132 +399,157 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, email, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, email, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setEmailUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          email,
-        });
+        const response = await request(server.instance)
+          .post(setEmailUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            email,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, email, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, email, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setEmailUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId,
-          email,
-        });
+        const response = await request(server.instance)
+          .post(setEmailUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId,
+            email,
+          });
 
-      console.log(response.body);
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, email } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, email } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(setEmailUrl).send({
-        userId,
-        email,
+        const response = await request(server.instance).post(setEmailUrl).send({
+          userId,
+          email,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      const { id: userId, email, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, email, role } = userTestDataGenerator.generateData();
 
-      const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setEmailUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: targetUserId,
-          email,
-        });
+        const response = await request(server.instance)
+          .post(setEmailUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: targetUserId,
+            email,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+      });
     });
 
     it('returns unprocessable entity when email is already in use by other user', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const user = await userRepository.createOne({ phoneNumber, password });
+        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        await userRepository.createOne({ email, password });
 
-      const response = await request(server.instance)
-        .post(setEmailUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          email,
-        });
+        const user = await userRepository.createOne({ phoneNumber, password });
 
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .post(setEmailUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            email,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+      });
     });
 
     it('returns unprocessable entity when email is already set for target user', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .post(setEmailUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          email,
-        });
+        const user = await userRepository.createOne({ email, password });
 
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .post(setEmailUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            email,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+      });
     });
 
     it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ phoneNumber, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .post(setEmailUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          email,
-        });
+        const user = await userRepository.createOne({ phoneNumber, password });
 
-      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .post(setEmailUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            email,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+      });
     });
   });
 
@@ -474,133 +557,157 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setPhoneNumberUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          phoneNumber,
-        });
+        const response = await request(server.instance)
+          .post(setPhoneNumberUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            phoneNumber,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setPhoneNumberUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId,
-          phoneNumber,
-        });
+        const response = await request(server.instance)
+          .post(setPhoneNumberUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId,
+            phoneNumber,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, phoneNumber } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, phoneNumber } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(setPhoneNumberUrl).send({
-        userId,
-        phoneNumber,
+        const response = await request(server.instance).post(setPhoneNumberUrl).send({
+          userId,
+          phoneNumber,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
 
-      const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .post(setPhoneNumberUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: targetUserId,
-          phoneNumber,
-        });
+        const response = await request(server.instance)
+          .post(setPhoneNumberUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: targetUserId,
+            phoneNumber,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+      });
     });
 
     it('returns unprocessable entity when phone number is already in use by other user', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      await userRepository.createOne({ phoneNumber, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const user = await userRepository.createOne({ email, password });
+        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        await userRepository.createOne({ phoneNumber, password });
 
-      const response = await request(server.instance)
-        .post(setPhoneNumberUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          phoneNumber,
-        });
+        const user = await userRepository.createOne({ email, password });
 
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .post(setPhoneNumberUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            phoneNumber,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+      });
     });
 
     it('returns unprocessable entity when phone number is already set for target user', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ phoneNumber, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { phoneNumber, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .post(setPhoneNumberUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          phoneNumber,
-        });
+        const user = await userRepository.createOne({ phoneNumber, password });
 
-      expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .post(setPhoneNumberUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            phoneNumber,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+      });
     });
 
     it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .post(setPhoneNumberUrl)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          userId: user.id,
-          phoneNumber,
-        });
+        const user = await userRepository.createOne({ email, password });
 
-      console.log(response.body);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
-      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        const response = await request(server.instance)
+          .post(setPhoneNumberUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userId: user.id,
+            phoneNumber,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+      });
     });
   });
 
@@ -608,75 +715,93 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request the userId param is not uuid', async () => {
       expect.assertions(1);
 
-      const userId = 'abc';
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const userId = 'abc';
 
-      const { role } = userTestDataGenerator.generateData();
+        const { role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${userId}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${userId}`)
+          .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${userId}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${userId}`)
+          .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
+        const { email, password } = userTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        const user = await userRepository.createOne({ email, password });
+
+        const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      });
     });
 
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${targetUserId}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${targetUserId}`)
+          .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+      });
     });
 
     it('accepts a request and returns ok when userId is uuid and have corresponding user', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${user.id}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const user = await userRepository.createOne({ email, password });
 
-      expect(response.statusCode).toBe(StatusCodes.OK);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${user.id}`)
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(StatusCodes.OK);
+      });
     });
   });
 
@@ -684,77 +809,95 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when the userId param is not uuid', async () => {
       expect.assertions(1);
 
-      const userId = 'abc';
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const userId = 'abc';
 
-      const { role } = userTestDataGenerator.generateData();
+        const { role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${userId}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${userId}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send();
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${userId}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${userId}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send();
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
+        const { email, password } = userTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        const user = await userRepository.createOne({ email, password });
+
+        const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      });
     });
 
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${targetUserId}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${targetUserId}`)
+          .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+      });
     });
 
     it('accepts a request and returns no content when userId is uuid and corresponds to existing user', async () => {
       expect.assertions(1);
 
-      const { email, password } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+        const { email, password } = userTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${user.id}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const user = await userRepository.createOne({ email, password });
 
-      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
+
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${user.id}`)
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+      });
     });
   });
 });

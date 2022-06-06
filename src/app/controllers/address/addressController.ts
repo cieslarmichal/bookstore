@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { AddressService } from '../../domain/address/services/addressService';
-import { RecordToInstanceTransformer } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { addressErrorMiddleware } from './middlewares';
@@ -22,7 +22,7 @@ import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMid
 import { CustomerService } from '../../domain/customer/services/customerService';
 import { UserRole } from '../../domain/user/types';
 import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress, UserIsNotACustomer } from './errors';
-import { CustomerDto } from 'src/app/domain/customer/dtos';
+import { CustomerDto } from '../../domain/customer/dtos';
 
 const ADDRESSES_PATH = '/addresses';
 const ADDRESSES_PATH_WITH_ID = `${ADDRESSES_PATH}/:id`;
@@ -31,6 +31,7 @@ export class AddressController {
   public readonly router = express.Router();
 
   public constructor(
+    private readonly unitOfWorkFactory: UnitOfWorkFactory,
     private readonly addressService: AddressService,
     private readonly customerService: CustomerService,
     authMiddleware: AuthMiddleware,
@@ -78,9 +79,15 @@ export class AddressController {
   }
 
   public async createAddress(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const createAddressBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAddressBodyDto);
 
-    const addressDto = await this.addressService.createAddress(createAddressBodyDto);
+    const addressDto = await unitOfWork.runInTransaction(async () => {
+      const address = await this.addressService.createAddress(unitOfWork, createAddressBodyDto);
+
+      return address;
+    });
 
     const responseData = new CreateAddressResponseData(addressDto);
 
@@ -88,26 +95,32 @@ export class AddressController {
   }
 
   public async findAddress(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAddressParamDto);
 
-    const addressDto = await this.addressService.findAddress(id);
+    const addressDto = await unitOfWork.runInTransaction(async () => {
+      const { userId, role } = response.locals.authPayload;
 
-    const { userId, role } = response.locals.authPayload;
+      let customer: CustomerDto;
 
-    let customer: CustomerDto;
+      try {
+        customer = await this.customerService.findCustomer(unitOfWork, { userId });
+      } catch (error) {
+        throw new UserIsNotACustomer({ userId });
+      }
 
-    try {
-      customer = await this.customerService.findCustomer({ userId });
-    } catch (error) {
-      throw new UserIsNotACustomer({ userId });
-    }
+      const address = await this.addressService.findAddress(unitOfWork, id);
 
-    if (addressDto.customerId !== customer.id && role === UserRole.user) {
-      throw new CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress({
-        customerId: customer.id,
-        targetCustomerId: addressDto.customerId,
-      });
-    }
+      if (address.customerId !== customer.id && role === UserRole.user) {
+        throw new CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress({
+          customerId: customer.id,
+          targetCustomerId: address.customerId,
+        });
+      }
+
+      return address;
+    });
 
     const responseData = new FindAddressResponseData(addressDto);
 
@@ -115,11 +128,17 @@ export class AddressController {
   }
 
   public async findAddresses(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAddressesFieldsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const addressesDto = await this.addressService.findAddresses(filters, paginationData);
+    const addressesDto = await unitOfWork.runInTransaction(async () => {
+      const addresses = await this.addressService.findAddresses(unitOfWork, filters, paginationData);
+
+      return addresses;
+    });
 
     const responseData = new FindAddressesResponseData(addressesDto);
 
@@ -127,9 +146,13 @@ export class AddressController {
   }
 
   public async deleteAddress(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAddressParamDto);
 
-    await this.addressService.removeAddress(id);
+    await unitOfWork.runInTransaction(async () => {
+      await this.addressService.removeAddress(unitOfWork, id);
+    });
 
     return new RemoveAddressResponseDto(StatusCodes.NO_CONTENT);
   }

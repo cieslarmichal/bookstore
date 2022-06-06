@@ -1,56 +1,57 @@
-import { EntityManager } from 'typeorm';
 import { Category } from '../entities/category';
 import { CategoryMapper } from './categoryMapper';
 import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../shared';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { CATEGORY_MAPPER } from '../categoryInjectionSymbols';
 
 describe('CategoryMapper', () => {
   let categoryMapper: CategoryMapper;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let entityManager: EntityManager;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule]);
+    const container = await createDIContainer([DbModule, CategoryModule, AuthorModule, LoggerModule, UnitOfWorkModule]);
 
     categoryMapper = container.resolve(CATEGORY_MAPPER);
-    entityManager = container.resolve(ENTITY_MANAGER);
+
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Map category', () => {
     it('map category from entity to dto', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const createdCategory = entityManager.create(Category, {
-        name,
-      });
+        const { name } = categoryTestDataGenerator.generateData();
 
-      const savedCategory = await entityManager.save(createdCategory);
+        const createdCategory = entityManager.create(Category, {
+          name,
+        });
 
-      const categoryDto = categoryMapper.mapEntityToDto(savedCategory);
+        const savedCategory = await entityManager.save(createdCategory);
 
-      expect(categoryDto).toEqual({
-        id: savedCategory.id,
-        createdAt: savedCategory.createdAt,
-        updatedAt: savedCategory.updatedAt,
-        name: savedCategory.name,
+        const categoryDto = categoryMapper.mapEntityToDto(savedCategory);
+
+        expect(categoryDto).toEqual({
+          id: savedCategory.id,
+          createdAt: savedCategory.createdAt,
+          updatedAt: savedCategory.updatedAt,
+          name: savedCategory.name,
+        });
       });
     });
   });

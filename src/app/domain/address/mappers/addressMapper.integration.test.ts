@@ -1,14 +1,12 @@
-import { EntityManager } from 'typeorm';
 import { Address } from '../entities/address';
 import { AddressMapper } from './addressMapper';
 import { AddressTestDataGenerator } from '../testDataGenerators/addressTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AddressModule } from '../addressModule';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { ENTITY_MANAGER } from '../../../shared/db/dbInjectionSymbols';
 import { ADDRESS_MAPPER } from '../addressInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
 import { User } from '../../user/entities/user';
@@ -18,121 +16,130 @@ describe('AddressMapper', () => {
   let addressMapper: AddressMapper;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
-  let entityManager: EntityManager;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, AddressModule, LoggerModule]);
+    const container = await createDIContainer([DbModule, AddressModule, LoggerModule, UnitOfWorkModule]);
 
     addressMapper = container.resolve(ADDRESS_MAPPER);
-    entityManager = container.resolve(ENTITY_MANAGER);
+
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Map address', () => {
     it('map address from entity to dto', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const createdUser = entityManager.create(User, { email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const savedUser = await entityManager.save(createdUser);
+        const createdUser = entityManager.create(User, { email, password, role });
 
-      const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
+        const savedUser = await entityManager.save(createdUser);
 
-      const savedCustomer = await entityManager.save(createdCustomer);
+        const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
+        const savedCustomer = await entityManager.save(createdCustomer);
 
-      const createdAddress = entityManager.create(Address, {
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: savedCustomer.id,
-      });
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressTestDataGenerator.generateData();
 
-      const savedAddress = await entityManager.save(createdAddress);
+        const createdAddress = entityManager.create(Address, {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: savedCustomer.id,
+        });
 
-      const addressDto = addressMapper.mapEntityToDto(savedAddress);
+        const savedAddress = await entityManager.save(createdAddress);
 
-      expect(addressDto).toEqual({
-        id: savedAddress.id,
-        createdAt: savedAddress.createdAt,
-        updatedAt: savedAddress.updatedAt,
-        firstName: savedAddress.firstName,
-        lastName: savedAddress.lastName,
-        phoneNumber: savedAddress.phoneNumber,
-        country: savedAddress.country,
-        state: savedAddress.state,
-        city: savedAddress.city,
-        zipCode: savedAddress.zipCode,
-        streetAddress: savedAddress.streetAddress,
-        deliveryInstructions: null,
-        customerId: savedCustomer.id,
+        const addressDto = addressMapper.mapEntityToDto(savedAddress);
+
+        expect(addressDto).toEqual({
+          id: savedAddress.id,
+          createdAt: savedAddress.createdAt,
+          updatedAt: savedAddress.updatedAt,
+          firstName: savedAddress.firstName,
+          lastName: savedAddress.lastName,
+          phoneNumber: savedAddress.phoneNumber,
+          country: savedAddress.country,
+          state: savedAddress.state,
+          city: savedAddress.city,
+          zipCode: savedAddress.zipCode,
+          streetAddress: savedAddress.streetAddress,
+          deliveryInstructions: null,
+          customerId: savedCustomer.id,
+        });
       });
     });
 
     it('map address from entity to dto with optional fields', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const createdUser = entityManager.create(User, { email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const savedUser = await entityManager.save(createdUser);
+        const createdUser = entityManager.create(User, { email, password, role });
 
-      const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
+        const savedUser = await entityManager.save(createdUser);
 
-      const savedCustomer = await entityManager.save(createdCustomer);
+        const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions } =
-        addressTestDataGenerator.generateData();
+        const savedCustomer = await entityManager.save(createdCustomer);
 
-      const createdAddress = entityManager.create(Address, {
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        deliveryInstructions,
-        customerId: savedCustomer.id,
-      });
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions } =
+          addressTestDataGenerator.generateData();
 
-      const savedAddress = await entityManager.save(createdAddress);
+        const createdAddress = entityManager.create(Address, {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          deliveryInstructions,
+          customerId: savedCustomer.id,
+        });
 
-      const addressDto = addressMapper.mapEntityToDto(savedAddress);
+        const savedAddress = await entityManager.save(createdAddress);
 
-      expect(addressDto).toEqual({
-        id: savedAddress.id,
-        createdAt: savedAddress.createdAt,
-        updatedAt: savedAddress.updatedAt,
-        firstName: savedAddress.firstName,
-        lastName: savedAddress.lastName,
-        phoneNumber: savedAddress.phoneNumber,
-        country: savedAddress.country,
-        state: savedAddress.state,
-        city: savedAddress.city,
-        zipCode: savedAddress.zipCode,
-        streetAddress: savedAddress.streetAddress,
-        deliveryInstructions: savedAddress.deliveryInstructions,
-        customerId: savedCustomer.id,
+        const addressDto = addressMapper.mapEntityToDto(savedAddress);
+
+        expect(addressDto).toEqual({
+          id: savedAddress.id,
+          createdAt: savedAddress.createdAt,
+          updatedAt: savedAddress.updatedAt,
+          firstName: savedAddress.firstName,
+          lastName: savedAddress.lastName,
+          phoneNumber: savedAddress.phoneNumber,
+          country: savedAddress.country,
+          state: savedAddress.state,
+          city: savedAddress.city,
+          zipCode: savedAddress.zipCode,
+          streetAddress: savedAddress.streetAddress,
+          deliveryInstructions: savedAddress.deliveryInstructions,
+          customerId: savedCustomer.id,
+        });
       });
     });
   });

@@ -1,59 +1,75 @@
-import { AuthorRepository } from '../repositories/authorRepository';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, EqualFilter } from '../../../shared';
+import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 import { AuthorNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
-import { BookRepository } from '../../book/repositories/bookRepository';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
-import { AuthorBookRepository } from '../../authorBook/repositories/authorBookRepository';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { AUTHOR_REPOSITORY, AUTHOR_SERVICE } from '../authorInjectionSymbols';
-import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
-import { AUTHOR_BOOK_REPOSITORY } from '../../authorBook/authorBookInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY, AUTHOR_SERVICE } from '../authorInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';
+import { AuthorRepositoryFactory } from '../repositories/authorRepositoryFactory';
+import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
+import { AuthorBookRepositoryFactory } from '../../authorBook/repositories/authorBookRepositoryFactory';
 
 describe('AuthorService', () => {
   let authorService: AuthorService;
-  let authorRepository: AuthorRepository;
-  let bookRepository: BookRepository;
-  let authorBookRepository: AuthorBookRepository;
+  let authorRepositoryFactory: AuthorRepositoryFactory;
+  let bookRepositoryFactory: BookRepositoryFactory;
+  let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, AuthorBookModule, LoggerModule]);
+    const container = await createDIContainer([
+      DbModule,
+      BookModule,
+      AuthorModule,
+      AuthorBookModule,
+      LoggerModule,
+      UnitOfWorkModule,
+    ]);
 
     authorService = container.resolve(AUTHOR_SERVICE);
-    authorRepository = container.resolve(AUTHOR_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
-    authorBookRepository = container.resolve(AUTHOR_BOOK_REPOSITORY);
+    authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
+    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
+    authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
+
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create author', () => {
     it('creates author in database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const createdAuthorDto = await authorService.createAuthor({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const authorDto = await authorRepository.findOneById(createdAuthorDto.id);
+        const createdAuthorDto = await authorService.createAuthor(unitOfWork, { firstName, lastName });
 
-      expect(authorDto).not.toBeNull();
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+
+        const authorDto = await authorRepository.findOneById(createdAuthorDto.id);
+
+        expect(authorDto).not.toBeNull();
+      });
     });
   });
 
@@ -61,25 +77,33 @@ describe('AuthorService', () => {
     it('finds author by id in database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const foundAuthor = await authorService.findAuthor(author.id);
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      expect(foundAuthor).not.toBeNull();
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const foundAuthor = await authorService.findAuthor(unitOfWork, author.id);
+
+        expect(foundAuthor).not.toBeNull();
+      });
     });
 
     it('should throw if author with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      const { id } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id } = authorTestDataGenerator.generateData();
 
-      try {
-        await authorService.findAuthor(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthorNotFound);
-      }
+        try {
+          await authorService.findAuthor(unitOfWork, id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AuthorNotFound);
+        }
+      });
     });
   });
 
@@ -87,67 +111,86 @@ describe('AuthorService', () => {
     it('finds authors by one condition in database', async () => {
       expect.assertions(2);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+        const author = await authorRepository.createOne({ firstName, lastName });
 
-      const foundAuthors = await authorService.findAuthors([new EqualFilter('firstName', [firstName])], {
-        page: 1,
-        limit: 5,
+        const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+
+        await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+
+        const foundAuthors = await authorService.findAuthors(unitOfWork, [new EqualFilter('firstName', [firstName])], {
+          page: 1,
+          limit: 5,
+        });
+
+        expect(foundAuthors.length).toBe(1);
+        expect(foundAuthors[0]).toStrictEqual(author);
       });
-
-      expect(foundAuthors.length).toBe(1);
-      expect(foundAuthors[0]).toStrictEqual(author);
     });
 
     it('finds authors by two conditions in database', async () => {
       expect.assertions(2);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+        const author = await authorRepository.createOne({ firstName, lastName });
 
-      const foundAuthors = await authorService.findAuthors(
-        [new EqualFilter('firstName', [firstName]), new EqualFilter('lastName', [lastName])],
-        {
-          page: 1,
-          limit: 5,
-        },
-      );
+        const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
 
-      expect(foundAuthors.length).toBe(1);
-      expect(foundAuthors[0]).toStrictEqual(author);
+        await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+
+        const foundAuthors = await authorService.findAuthors(
+          unitOfWork,
+          [new EqualFilter('firstName', [firstName]), new EqualFilter('lastName', [lastName])],
+          {
+            page: 1,
+            limit: 5,
+          },
+        );
+
+        expect(foundAuthors.length).toBe(1);
+        expect(foundAuthors[0]).toStrictEqual(author);
+      });
     });
 
     it('finds authors in database limited by pagination', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const { lastName: otherLastName } = authorTestDataGenerator.generateData();
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      await authorRepository.createOne({ firstName, lastName: otherLastName });
+        await authorRepository.createOne({ firstName, lastName });
 
-      const { lastName: anotherLastName } = authorTestDataGenerator.generateData();
+        const { lastName: otherLastName } = authorTestDataGenerator.generateData();
 
-      await authorRepository.createOne({ firstName, lastName: anotherLastName });
+        await authorRepository.createOne({ firstName, lastName: otherLastName });
 
-      const foundAuthors = await authorService.findAuthors([new EqualFilter('firstName', [firstName])], {
-        page: 1,
-        limit: 2,
+        const { lastName: anotherLastName } = authorTestDataGenerator.generateData();
+
+        await authorRepository.createOne({ firstName, lastName: anotherLastName });
+
+        const foundAuthors = await authorService.findAuthors(unitOfWork, [new EqualFilter('firstName', [firstName])], {
+          page: 1,
+          limit: 2,
+        });
+
+        expect(foundAuthors.length).toBe(2);
       });
-
-      expect(foundAuthors.length).toBe(2);
     });
   });
 
@@ -155,50 +198,58 @@ describe('AuthorService', () => {
     it('finds authors by book id with filtering in database', async () => {
       expect.assertions(4);
 
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+        const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-      const book = await bookRepository.createOne({
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
+        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+        const book = await bookRepository.createOne({
+          title,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
+
+        const firstAuthorData = authorTestDataGenerator.generateData();
+
+        const firstAuthor = await authorRepository.createOne({
+          firstName: firstAuthorData.firstName,
+          lastName: firstAuthorData.lastName,
+        });
+
+        const secondAuthorData = authorTestDataGenerator.generateData();
+
+        const secondAuthor = await authorRepository.createOne({
+          firstName: secondAuthorData.firstName,
+          lastName: secondAuthorData.lastName,
+        });
+
+        const thirdAuthorData = authorTestDataGenerator.generateData();
+
+        await authorRepository.createOne({
+          firstName: thirdAuthorData.firstName,
+          lastName: thirdAuthorData.lastName,
+        });
+
+        await authorBookRepository.createOne({ bookId: book.id, authorId: firstAuthor.id });
+        await authorBookRepository.createOne({ bookId: book.id, authorId: secondAuthor.id });
+
+        const foundAuthors = await authorService.findAuthorsByBookId(
+          unitOfWork,
+          book.id,
+          [new EqualFilter('firstName', [firstAuthor.firstName])],
+          { page: 1, limit: 5 },
+        );
+
+        expect(foundAuthors).not.toBeNull();
+        expect(foundAuthors.length).toBe(1);
+        expect(foundAuthors[0].firstName).toBe(firstAuthor.firstName);
+        expect(foundAuthors[0].lastName).toBe(firstAuthor.lastName);
       });
-
-      const firstAuthorData = authorTestDataGenerator.generateData();
-
-      const firstAuthor = await authorRepository.createOne({
-        firstName: firstAuthorData.firstName,
-        lastName: firstAuthorData.lastName,
-      });
-
-      const secondAuthorData = authorTestDataGenerator.generateData();
-
-      const secondAuthor = await authorRepository.createOne({
-        firstName: secondAuthorData.firstName,
-        lastName: secondAuthorData.lastName,
-      });
-
-      const thirdAuthorData = authorTestDataGenerator.generateData();
-
-      await authorRepository.createOne({
-        firstName: thirdAuthorData.firstName,
-        lastName: thirdAuthorData.lastName,
-      });
-
-      await authorBookRepository.createOne({ bookId: book.id, authorId: firstAuthor.id });
-      await authorBookRepository.createOne({ bookId: book.id, authorId: secondAuthor.id });
-
-      const foundAuthors = await authorService.findAuthorsByBookId(
-        book.id,
-        [new EqualFilter('firstName', [firstAuthor.firstName])],
-        { page: 1, limit: 5 },
-      );
-
-      expect(foundAuthors).not.toBeNull();
-      expect(foundAuthors.length).toBe(1);
-      expect(foundAuthors[0].firstName).toBe(firstAuthor.firstName);
-      expect(foundAuthors[0].lastName).toBe(firstAuthor.lastName);
     });
   });
 
@@ -206,26 +257,33 @@ describe('AuthorService', () => {
     it('updates author in database', async () => {
       expect.assertions(2);
 
-      const { firstName, lastName, about } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName, about } = authorTestDataGenerator.generateData();
 
-      const updatedAuthor = await authorService.updateAuthor(author.id, { about });
+        const author = await authorRepository.createOne({ firstName, lastName });
 
-      expect(updatedAuthor).not.toBeNull();
-      expect(updatedAuthor.about).toBe(about);
+        const updatedAuthor = await authorService.updateAuthor(unitOfWork, author.id, { about });
+
+        expect(updatedAuthor).not.toBeNull();
+        expect(updatedAuthor.about).toBe(about);
+      });
     });
 
     it('should not update author and throw if author with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id, about } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id, about } = authorTestDataGenerator.generateData();
 
-      try {
-        await authorService.updateAuthor(id, { about });
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthorNotFound);
-      }
+        try {
+          await authorService.updateAuthor(unitOfWork, id, { about });
+        } catch (error) {
+          expect(error).toBeInstanceOf(AuthorNotFound);
+        }
+      });
     });
   });
 
@@ -233,27 +291,34 @@ describe('AuthorService', () => {
     it('removes author from database', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      await authorService.removeAuthor(author.id);
+        const author = await authorRepository.createOne({ firstName, lastName });
 
-      const authorDto = await authorRepository.findOneById(author.id);
+        await authorService.removeAuthor(unitOfWork, author.id);
 
-      expect(authorDto).toBeNull();
+        const authorDto = await authorRepository.findOneById(author.id);
+
+        expect(authorDto).toBeNull();
+      });
     });
 
     it('should throw if author with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id } = authorTestDataGenerator.generateData();
 
-      try {
-        await authorService.removeAuthor(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthorNotFound);
-      }
+        try {
+          await authorService.removeAuthor(unitOfWork, id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AuthorNotFound);
+        }
+      });
     });
   });
 });

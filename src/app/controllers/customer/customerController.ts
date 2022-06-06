@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { CustomerService } from '../../domain/customer/services/customerService';
-import { RecordToInstanceTransformer } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { customerErrorMiddleware } from './middlewares';
@@ -23,7 +23,11 @@ const CUSTOMERS_PATH_WITH_ID = `${CUSTOMERS_PATH}/:id`;
 export class CustomerController {
   public readonly router = express.Router();
 
-  public constructor(private readonly customerService: CustomerService, authMiddleware: AuthMiddleware) {
+  public constructor(
+    private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    private readonly customerService: CustomerService,
+    authMiddleware: AuthMiddleware,
+  ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
@@ -58,9 +62,15 @@ export class CustomerController {
   }
 
   public async createCustomer(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const createCustomerBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateCustomerBodyDto);
 
-    const customerDto = await this.customerService.createCustomer(createCustomerBodyDto);
+    const customerDto = await unitOfWork.runInTransaction(async () => {
+      const customer = await this.customerService.createCustomer(unitOfWork, createCustomerBodyDto);
+
+      return customer;
+    });
 
     const responseData = new CreateCustomerResponseData(customerDto);
 
@@ -68,9 +78,15 @@ export class CustomerController {
   }
 
   public async findCustomer(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindCustomerParamDto);
 
-    const customerDto = await this.customerService.findCustomer({ id });
+    const customerDto = await unitOfWork.runInTransaction(async () => {
+      const customer = await this.customerService.findCustomer(unitOfWork, { id });
+
+      return customer;
+    });
 
     const responseData = new FindCustomerResponseData(customerDto);
 
@@ -78,9 +94,13 @@ export class CustomerController {
   }
 
   public async deleteCustomer(request: Request, response: Response): Promise<ControllerResponse> {
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
     const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveCustomerParamDto);
 
-    await this.customerService.removeCustomer(id);
+    await unitOfWork.runInTransaction(async () => {
+      await this.customerService.removeCustomer(unitOfWork, id);
+    });
 
     return new RemoveCustomerResponseDto(StatusCodes.NO_CONTENT);
   }

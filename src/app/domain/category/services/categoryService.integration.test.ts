@@ -1,30 +1,31 @@
-import { CategoryRepository } from '../repositories/categoryRepository';
 import { CategoryService } from './categoryService';
 import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, EqualFilter } from '../../../shared';
+import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { CATEGORY_REPOSITORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { BookModule } from '../../book/bookModule';
 import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
-import { BookRepository } from '../../book/repositories/bookRepository';
-import { BookCategoryRepository } from '../../bookCategory/repositories/bookCategoryRepository';
-import { BOOK_REPOSITORY } from '../../book/bookInjectionSymbols';
-import { BOOK_CATEGORY_REPOSITORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { CategoryRepositoryFactory } from '../repositories/categoryRepositoryFactory';
+import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
+import { BookCategoryRepositoryFactory } from '../../bookCategory/repositories/bookCategoryRepositoryFactory';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
-  let categoryRepository: CategoryRepository;
-  let bookRepository: BookRepository;
-  let bookCategoryRepository: BookCategoryRepository;
+  let categoryRepositoryFactory: CategoryRepositoryFactory;
+  let bookRepositoryFactory: BookRepositoryFactory;
+  let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -36,52 +37,65 @@ describe('CategoryService', () => {
       CategoryModule,
       AuthorModule,
       LoggerModule,
+      UnitOfWorkModule,
     ]);
 
     categoryService = container.resolve(CATEGORY_SERVICE);
-    categoryRepository = container.resolve(CATEGORY_REPOSITORY);
-    bookRepository = container.resolve(BOOK_REPOSITORY);
-    bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY);
+    categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
+    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
+    bookCategoryRepositoryFactory = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY);
+
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create category', () => {
     it('creates category in database', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-      const createdCategoryDto = await categoryService.createCategory({
-        name,
+        const { name } = categoryTestDataGenerator.generateData();
+
+        const createdCategoryDto = await categoryService.createCategory(unitOfWork, {
+          name,
+        });
+
+        const categoryDto = await categoryRepository.findOneById(createdCategoryDto.id);
+
+        expect(categoryDto).not.toBeNull();
       });
-
-      const categoryDto = await categoryRepository.findOneById(createdCategoryDto.id);
-
-      expect(categoryDto).not.toBeNull();
     });
 
     it('should not create category and throw if category with the same name exists', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-      await categoryRepository.createOne({
-        name,
-      });
+        const { name } = categoryTestDataGenerator.generateData();
 
-      try {
-        await categoryService.createCategory({
+        await categoryRepository.createOne({
           name,
         });
-      } catch (error) {
-        expect(error).toBeInstanceOf(CategoryAlreadyExists);
-      }
+
+        try {
+          await categoryService.createCategory(unitOfWork, {
+            name,
+          });
+        } catch (error) {
+          expect(error).toBeInstanceOf(CategoryAlreadyExists);
+        }
+      });
     });
   });
 
@@ -89,27 +103,34 @@ describe('CategoryService', () => {
     it('finds category by id in database', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-      const category = await categoryRepository.createOne({
-        name,
+        const { name } = categoryTestDataGenerator.generateData();
+
+        const category = await categoryRepository.createOne({
+          name,
+        });
+
+        const foundCategory = await categoryService.findCategory(unitOfWork, category.id);
+
+        expect(foundCategory).not.toBeNull();
       });
-
-      const foundCategory = await categoryService.findCategory(category.id);
-
-      expect(foundCategory).not.toBeNull();
     });
 
     it('should throw if category with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      const { id } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id } = categoryTestDataGenerator.generateData();
 
-      try {
-        await categoryService.findCategory(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(CategoryNotFound);
-      }
+        try {
+          await categoryService.findCategory(unitOfWork, id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(CategoryNotFound);
+        }
+      });
     });
   });
 
@@ -117,19 +138,24 @@ describe('CategoryService', () => {
     it('finds categories by condition in database', async () => {
       expect.assertions(2);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-      const category = await categoryRepository.createOne({
-        name,
+        const { name } = categoryTestDataGenerator.generateData();
+
+        const category = await categoryRepository.createOne({
+          name,
+        });
+
+        const foundCategories = await categoryService.findCategories(unitOfWork, [new EqualFilter('name', [name])], {
+          page: 1,
+          limit: 5,
+        });
+
+        expect(foundCategories.length).toBe(1);
+        expect(foundCategories[0]).toStrictEqual(category);
       });
-
-      const foundCategories = await categoryService.findCategories([new EqualFilter('name', [name])], {
-        page: 1,
-        limit: 5,
-      });
-
-      expect(foundCategories.length).toBe(1);
-      expect(foundCategories[0]).toStrictEqual(category);
     });
   });
 
@@ -137,45 +163,57 @@ describe('CategoryService', () => {
     it('finds categories by bookId with condition in database', async () => {
       expect.assertions(2);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const categoryRepository = categoryRepositoryFactory.create(entityManager);
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+        const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-      const category1 = await categoryRepository.createOne({
-        name,
+        const { name } = categoryTestDataGenerator.generateData();
+
+        const category1 = await categoryRepository.createOne({
+          name,
+        });
+
+        const { name: otherName } = categoryTestDataGenerator.generateData();
+
+        const category2 = await categoryRepository.createOne({
+          name: otherName,
+        });
+
+        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+
+        const book = await bookRepository.createOne({
+          title,
+          releaseYear,
+          language,
+          format,
+          price,
+        });
+
+        await bookCategoryRepository.createOne({
+          categoryId: category1.id,
+          bookId: book.id,
+        });
+
+        await bookCategoryRepository.createOne({
+          categoryId: category2.id,
+          bookId: book.id,
+        });
+
+        const categories = await categoryService.findCategoriesByBookId(
+          unitOfWork,
+          book.id,
+          [new EqualFilter('name', [name])],
+          {
+            page: 1,
+            limit: 5,
+          },
+        );
+
+        expect(categories.length).toBe(1);
+        expect(categories[0]).toStrictEqual(category1);
       });
-
-      const { name: otherName } = categoryTestDataGenerator.generateData();
-
-      const category2 = await categoryRepository.createOne({
-        name: otherName,
-      });
-
-      const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
-
-      const book = await bookRepository.createOne({
-        title,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
-
-      await bookCategoryRepository.createOne({
-        categoryId: category1.id,
-        bookId: book.id,
-      });
-
-      await bookCategoryRepository.createOne({
-        categoryId: category2.id,
-        bookId: book.id,
-      });
-
-      const categories = await categoryService.findCategoriesByBookId(book.id, [new EqualFilter('name', [name])], {
-        page: 1,
-        limit: 5,
-      });
-
-      expect(categories.length).toBe(1);
-      expect(categories[0]).toStrictEqual(category1);
     });
   });
 
@@ -183,29 +221,36 @@ describe('CategoryService', () => {
     it('removes category from database', async () => {
       expect.assertions(1);
 
-      const { name } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
+        const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-      const category = await categoryRepository.createOne({
-        name,
+        const { name } = categoryTestDataGenerator.generateData();
+
+        const category = await categoryRepository.createOne({
+          name,
+        });
+
+        await categoryService.removeCategory(unitOfWork, category.id);
+
+        const categoryDto = await categoryRepository.findOneById(category.id);
+
+        expect(categoryDto).toBeNull();
       });
-
-      await categoryService.removeCategory(category.id);
-
-      const categoryDto = await categoryRepository.findOneById(category.id);
-
-      expect(categoryDto).toBeNull();
     });
 
     it('should throw if category with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id } = categoryTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id } = categoryTestDataGenerator.generateData();
 
-      try {
-        await categoryService.removeCategory(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(CategoryNotFound);
-      }
+        try {
+          await categoryService.removeCategory(unitOfWork, id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(CategoryNotFound);
+        }
+      });
     });
   });
 });

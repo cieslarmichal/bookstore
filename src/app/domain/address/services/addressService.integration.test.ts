@@ -1,76 +1,96 @@
-import { AddressRepository } from '../repositories/addressRepository';
 import { AddressService } from './addressService';
 import { AddressTestDataGenerator } from '../testDataGenerators/addressTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, EqualFilter } from '../../../shared';
+import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../shared';
 import { DbModule } from '../../../shared';
 import { AddressModule } from '../addressModule';
 import { AddressNotFound } from '../errors';
-import { PostgresHelper } from '../../../../integration/helpers/postgresHelper/postgresHelper';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { LoggerModule } from '../../../shared/logger/loggerModule';
-import { ADDRESS_REPOSITORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
-import { CustomerRepository } from '../../customer/repositories/customerRepository';
-import { CUSTOMER_REPOSITORY } from '../../customer/customerInjectionSymbols';
+import { ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY } from '../../customer/customerInjectionSymbols';
 import { CustomerModule } from '../../customer/customerModule';
-import { UserRepository } from '../../user/repositories/userRepository';
-import { USER_REPOSITORY } from '../../user/userInjectionSymbols';
+import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';
 import { UserModule } from '../../user/userModule';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
+import { AddressRepositoryFactory } from '../repositories/addressRepositoryFactory';
+import { CustomerRepositoryFactory } from '../../customer/repositories/customerRepositoryFactory';
+import { UserRepositoryFactory } from '../../user/repositories/userRepositoryFactory';
 
 describe('AddressService', () => {
   let addressService: AddressService;
-  let addressRepository: AddressRepository;
-  let customerRepository: CustomerRepository;
-  let userRepository: UserRepository;
+  let addressRepositoryFactory: AddressRepositoryFactory;
+  let customerRepositoryFactory: CustomerRepositoryFactory;
+  let userRepositoryFactory: UserRepositoryFactory;
   let addressTestDataGenerator: AddressTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
+  let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, AddressModule, LoggerModule, CustomerModule, UserModule]);
+    const container = await createDIContainer([
+      DbModule,
+      AddressModule,
+      LoggerModule,
+      CustomerModule,
+      UserModule,
+      UnitOfWorkModule,
+    ]);
 
     addressService = container.resolve(ADDRESS_SERVICE);
-    addressRepository = container.resolve(ADDRESS_REPOSITORY);
-    customerRepository = container.resolve(CUSTOMER_REPOSITORY);
-    userRepository = container.resolve(USER_REPOSITORY);
+    addressRepositoryFactory = container.resolve(ADDRESS_REPOSITORY_FACTORY);
+    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
+    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
+
+    testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestDataGenerator = new AddressTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
-  afterEach(async () => {
-    await PostgresHelper.removeDataFromTables();
+  afterAll(async () => {
+    dbManager.closeConnection();
   });
 
   describe('Create address', () => {
     it('creates address in database', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const customer = await customerRepository.createOne({ userId: user.id });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
+        const user = await userRepository.createOne({ email, password, role });
 
-      const createdAddressDto = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const customer = await customerRepository.createOne({ userId: user.id });
+
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressTestDataGenerator.generateData();
+
+        const createdAddressDto = await addressService.createAddress(unitOfWork, {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        const addressDto = await addressRepository.findOneById(createdAddressDto.id);
+
+        expect(addressDto).not.toBeNull();
       });
-
-      const addressDto = await addressRepository.findOneById(createdAddressDto.id);
-
-      expect(addressDto).not.toBeNull();
     });
   });
 
@@ -78,42 +98,54 @@ describe('AddressService', () => {
     it('finds address by id in database', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const customer = await customerRepository.createOne({ userId: user.id });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
+        const user = await userRepository.createOne({ email, password, role });
 
-      const address = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const customer = await customerRepository.createOne({ userId: user.id });
+
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        const address = await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        const foundAddress = await addressService.findAddress(unitOfWork, address.id);
+
+        expect(foundAddress).not.toBeNull();
       });
-
-      const foundAddress = await addressService.findAddress(address.id);
-
-      expect(foundAddress).not.toBeNull();
     });
 
     it('should throw if address with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      const { id } = addressTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id } = addressTestDataGenerator.generateData();
 
-      try {
-        await addressService.findAddress(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AddressNotFound);
-      }
+        try {
+          await addressService.findAddress(unitOfWork, id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AddressNotFound);
+        }
+      });
     });
   });
 
@@ -121,121 +153,149 @@ describe('AddressService', () => {
     it('finds addresses by customerId', async () => {
       expect.assertions(3);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user1 = await userRepository.createOne({ email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const { email: otherEmail } = userTestDataGenerator.generateData();
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const user2 = await userRepository.createOne({ email: otherEmail, password, role });
+        const user1 = await userRepository.createOne({ email, password, role });
 
-      const customer1 = await customerRepository.createOne({ userId: user1.id });
+        const { email: otherEmail } = userTestDataGenerator.generateData();
 
-      const customer2 = await customerRepository.createOne({ userId: user2.id });
+        const user2 = await userRepository.createOne({ email: otherEmail, password, role });
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
+        const customerRepository = customerRepositoryFactory.create(entityManager);
 
-      const address1 = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer1.id,
+        const customer1 = await customerRepository.createOne({ userId: user1.id });
+
+        const customer2 = await customerRepository.createOne({ userId: user2.id });
+
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        const address1 = await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer1.id,
+        });
+
+        const address2 = await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer1.id,
+        });
+
+        await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer2.id,
+        });
+
+        const foundAddresses = await addressService.findAddresses(
+          unitOfWork,
+          [new EqualFilter('customerId', [customer1.id])],
+          {
+            page: 1,
+            limit: 5,
+          },
+        );
+
+        expect(foundAddresses.length).toBe(2);
+        expect(foundAddresses[0]).toStrictEqual(address1);
+        expect(foundAddresses[1]).toStrictEqual(address2);
       });
-
-      const address2 = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer1.id,
-      });
-
-      await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer2.id,
-      });
-
-      const foundAddresses = await addressService.findAddresses([new EqualFilter('customerId', [customer1.id])], {
-        page: 1,
-        limit: 5,
-      });
-
-      expect(foundAddresses.length).toBe(2);
-      expect(foundAddresses[0]).toStrictEqual(address1);
-      expect(foundAddresses[1]).toStrictEqual(address2);
     });
 
     it('finds addresses by customerId limited by pagination', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const customer = await customerRepository.createOne({ userId: user.id });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
+        const user = await userRepository.createOne({ email, password, role });
 
-      await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const customer = await customerRepository.createOne({ userId: user.id });
+
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        const foundAddresses = await addressService.findAddresses(
+          unitOfWork,
+          [new EqualFilter('customerId', [customer.id])],
+          {
+            page: 1,
+            limit: 5,
+          },
+        );
+
+        expect(foundAddresses.length).toBe(3);
       });
-
-      await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
-
-      await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
-
-      const foundAddresses = await addressService.findAddresses([new EqualFilter('customerId', [customer.id])], {
-        page: 1,
-        limit: 5,
-      });
-
-      expect(foundAddresses.length).toBe(3);
     });
   });
 
@@ -243,44 +303,56 @@ describe('AddressService', () => {
     it('removes address from database', async () => {
       expect.assertions(1);
 
-      const { email, password, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const user = await userRepository.createOne({ email, password, role });
+        const { email, password, role } = userTestDataGenerator.generateData();
 
-      const customer = await customerRepository.createOne({ userId: user.id });
+        const userRepository = userRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-        addressTestDataGenerator.generateData();
+        const user = await userRepository.createOne({ email, password, role });
 
-      const address = await addressRepository.createOne({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const customer = await customerRepository.createOne({ userId: user.id });
+
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressTestDataGenerator.generateData();
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        const address = await addressRepository.createOne({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        await addressService.removeAddress(unitOfWork, address.id);
+
+        const addressDto = await addressRepository.findOneById(address.id);
+
+        expect(addressDto).toBeNull();
       });
-
-      await addressService.removeAddress(address.id);
-
-      const addressDto = await addressRepository.findOneById(address.id);
-
-      expect(addressDto).toBeNull();
     });
 
     it('should throw if address with given id does not exist', async () => {
       expect.assertions(1);
 
-      const { id } = addressTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { id } = addressTestDataGenerator.generateData();
 
-      try {
-        await addressService.removeAddress(id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AddressNotFound);
-      }
+        try {
+          await addressService.removeAddress(unitOfWork, id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AddressNotFound);
+        }
+      });
     });
   });
 });
