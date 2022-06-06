@@ -11,7 +11,7 @@ import { Server } from '../../../server';
 import { AddressRepository } from '../../domain/address/repositories/addressRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { AuthHelper, UnitOfWorkMock } from '../../../integration/helpers';
+import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
@@ -36,7 +36,6 @@ describe(`AddressController (${baseUrl})`, () => {
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
-  let unitOfWorkMock: UnitOfWorkMock;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -68,9 +67,6 @@ describe(`AddressController (${baseUrl})`, () => {
     customerRepository = container.resolve(CUSTOMER_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
-
-    unitOfWorkMock = new UnitOfWorkMock(container);
-    unitOfWorkMock.mock();
 
     const app = new App(container);
 

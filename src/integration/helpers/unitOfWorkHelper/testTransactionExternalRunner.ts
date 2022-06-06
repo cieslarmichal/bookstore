@@ -18,9 +18,11 @@ export class TestTransactionExternalRunner {
     });
 
     await unitOfWork.runInTransaction(async () => {
+      jest.spyOn(unitOfWork, 'runInTransaction').mockImplementation(async (internalImplementation: any) => {
+        return internalImplementation();
+      });
+
       return callback(unitOfWork);
     });
-
-    return unitOfWork;
   }
 }

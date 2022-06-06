@@ -10,7 +10,7 @@ import { Server } from '../../../server';
 import { BookCategoryRepository } from '../../domain/bookCategory/repositories/bookCategoryRepository';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { AuthHelper, UnitOfWorkMock } from '../../../integration/helpers';
+import { AuthHelper } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
@@ -42,7 +42,6 @@ describe(`BookCategoryController`, () => {
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
-  let unitOfWorkMock: UnitOfWorkMock;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -76,9 +75,6 @@ describe(`BookCategoryController`, () => {
     bookCategoryRepository = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY).create(entityManager);
 
     authHelper = new AuthHelper(container);
-
-    unitOfWorkMock = new UnitOfWorkMock(container);
-    unitOfWorkMock.mock();
 
     const app = new App(container);
 
