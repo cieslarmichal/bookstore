@@ -23,7 +23,7 @@
     "test:ci": "cross-env NODE_ENV=test jest --runInBand --no-cache --coverage --verbose"
   },
   "dependencies": {
-    "awilix": "^7.0.2",
+    "awilix": "^7.0.3",
     "bcrypt": "^5.0.1",
     "bunyan": "^1.8.15",
     "class-transformer": "^0.5.1",
