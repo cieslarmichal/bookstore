@@ -8,10 +8,10 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { AuthorRepository } from '../../domain/author/repositories/authorRepository';
+import { AuthorRepositoryFactory } from '../../domain/author/repositories/authorRepositoryFactory';
 import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { AuthHelper } from '../../../integration/helpers';
+import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
@@ -20,16 +20,16 @@ import { AUTHOR_REPOSITORY_FACTORY } from '../../domain/author/authorInjectionSy
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
-import { ENTITY_MANAGER } from '../../shared/db/dbInjectionSymbols';
 
 const baseUrl = '/authors';
 
 describe(`AuthorController (${baseUrl})`, () => {
-  let authorRepository: AuthorRepository;
+  let authorRepositoryFactory: AuthorRepositoryFactory;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
+  let testTransactionRunner: TestTransactionExternalRunner;
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -54,9 +54,9 @@ describe(`AuthorController (${baseUrl})`, () => {
       UnitOfWorkModule,
     ]);
 
-    const entityManager = container.resolve(ENTITY_MANAGER);
+    authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
 
-    authorRepository = container.resolve(AUTHOR_REPOSITORY_FACTORY).create(entityManager);
+    testTransactionRunner = new TestTransactionExternalRunner(container);
 
     authHelper = new AuthHelper(container);
 
@@ -77,47 +77,59 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { firstName } = authorTestDataGenerator.generateData();
+        const { firstName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        firstName,
+        const response = await request(server.instance)
+          .post(baseUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            firstName,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(baseUrl).send({
-        firstName,
-        lastName,
+        const response = await request(server.instance).post(baseUrl).send({
+          firstName,
+          lastName,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('accepts a request and returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance).post(baseUrl).set('Authorization', `Bearer ${accessToken}`).send({
-        firstName,
-        lastName,
+        const response = await request(server.instance)
+          .post(baseUrl)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            firstName,
+            lastName,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.CREATED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.CREATED);
     });
   });
 
@@ -125,63 +137,79 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request the authorId param is not uuid', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const authorId = 'abc';
+        const authorId = 'abc';
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${authorId}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${authorId}`)
+          .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${id}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${id}`)
+          .set('Authorization', `Bearer ${accessToken}`);
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      });
     });
 
     it('accepts a request and returns ok when authorId is uuid and have corresponding author', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}/${author.id}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.OK);
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const response = await request(server.instance)
+          .get(`${baseUrl}/${author.id}`)
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(StatusCodes.OK);
+      });
     });
   });
 
@@ -189,32 +217,40 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const response = await request(server.instance).get(`${baseUrl}`);
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const response = await request(server.instance).get(`${baseUrl}`);
 
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      });
     });
 
     it('returns authors with filtering provided', async () => {
       expect.assertions(2);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      await authorRepository.createOne({ firstName, lastName });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { firstName: otherFirstName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      await authorRepository.createOne({ firstName: otherFirstName, lastName });
+        await authorRepository.createOne({ firstName, lastName });
 
-      const response = await request(server.instance)
-        .get(`${baseUrl}?filter=["firstName||eq||${firstName}"]`)
-        .set('Authorization', `Bearer ${accessToken}`);
+        const { firstName: otherFirstName } = authorTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.OK);
-      expect(response.body.data.authors.length).toBe(1);
+        await authorRepository.createOne({ firstName: otherFirstName, lastName });
+
+        const response = await request(server.instance)
+          .get(`${baseUrl}?filter=["firstName||eq||${firstName}"]`)
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.body.data.authors.length).toBe(1);
+      });
     });
   });
 
@@ -222,99 +258,117 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when provided not allowed properties in body', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id, firstName } = authorTestDataGenerator.generateData();
+        const { id, firstName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .patch(`${baseUrl}/${id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          firstName,
-        });
+        const response = await request(server.instance)
+          .patch(`${baseUrl}/${id}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            firstName,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const authorId = 'abc';
+        const authorId = 'abc';
 
-      const { about } = authorTestDataGenerator.generateData();
+        const { about } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .patch(`${baseUrl}/${authorId}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          about,
-        });
+        const response = await request(server.instance)
+          .patch(`${baseUrl}/${authorId}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            about,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id, about } = authorTestDataGenerator.generateData();
+        const { id, about } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .patch(`${baseUrl}/${id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          about,
-        });
+        const response = await request(server.instance)
+          .patch(`${baseUrl}/${id}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            about,
+          });
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const { about } = authorTestDataGenerator.generateData();
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance).patch(`${baseUrl}/${author.id}`).send({
-        about,
+        const { about } = authorTestDataGenerator.generateData();
+
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const response = await request(server.instance).patch(`${baseUrl}/${author.id}`).send({
+          about,
+        });
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
       });
-
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
     });
 
     it('accepts a request and returns ok when authorId is uuid and corresponds to existing author', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const { about } = authorTestDataGenerator.generateData();
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .patch(`${baseUrl}/${author.id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          about,
-        });
+        const { about } = authorTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.OK);
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const response = await request(server.instance)
+          .patch(`${baseUrl}/${author.id}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            about,
+          });
+
+        expect(response.statusCode).toBe(StatusCodes.OK);
+      });
     });
   });
 
@@ -322,66 +376,82 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const authorId = 'abc';
+        const authorId = 'abc';
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${authorId}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${authorId}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send();
 
-      expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+      });
     });
 
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorTestDataGenerator.generateData();
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${id}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send();
 
-      expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+      });
     });
 
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const response = await request(server.instance).delete(`${baseUrl}/${author.id}`).send();
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const response = await request(server.instance).delete(`${baseUrl}/${author.id}`).send();
+
+        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+      });
     });
 
     it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
       expect.assertions(1);
 
-      const { id: userId, role } = userTestDataGenerator.generateData();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const { entityManager } = unitOfWork;
 
-      const accessToken = authHelper.mockAuth({ userId, role });
+        const authorRepository = authorRepositoryFactory.create(entityManager);
 
-      const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { id: userId, role } = userTestDataGenerator.generateData();
 
-      const author = await authorRepository.createOne({ firstName, lastName });
+        const accessToken = authHelper.mockAuth({ userId, role });
 
-      const response = await request(server.instance)
-        .delete(`${baseUrl}/${author.id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
+        const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-      expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        const author = await authorRepository.createOne({ firstName, lastName });
+
+        const response = await request(server.instance)
+          .delete(`${baseUrl}/${author.id}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send();
+
+        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+      });
     });
   });
 });
