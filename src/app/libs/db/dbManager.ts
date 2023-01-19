@@ -3,7 +3,7 @@ import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
 import { Connection, createConnection } from 'typeorm';
 import { User } from '../../domain/user/entities/user';
 import { Category } from '../../domain/category/entities/category';
-import { AuthorBook } from '../../domain/authorBook/entities/authorBook';
+import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
 import { BookCategory } from '../../domain/bookCategory/entities/bookCategory';
 import { AddressEntity } from '../../domain/address/addressEntity';
 import { Customer } from '../../domain/customer/entities/customer';
@@ -23,7 +23,7 @@ export class DbManager {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Book, AuthorEntity, User, Category, AuthorBook, BookCategory, AddressEntity, Customer],
+      entities: [Book, AuthorEntity, User, Category, AuthorBookEntity, BookCategory, AddressEntity, Customer],
       synchronize: true,
     });
 

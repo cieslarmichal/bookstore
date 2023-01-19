@@ -9,7 +9,7 @@ export const AUTHOR_BOOK_TABLE_NAME = 'authorBooks';
   name: AUTHOR_BOOK_TABLE_NAME,
 })
 @Unique('unique_index_authorId_bookId', ['authorId', 'bookId'])
-export class AuthorBook {
+export class AuthorBookEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')

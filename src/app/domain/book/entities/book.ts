@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsString, IsNumber, IsEnum, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
-import { AuthorBook } from '../../authorBook/entities/authorBook';
+import { AuthorBookEntity } from '../../authorBook/contracts/authorBookEntity';
 import { BookCategory } from '../../bookCategory/entities/bookCategory';
 import { BookFormat, BookLanguage } from '../types';
 
@@ -51,8 +51,8 @@ export class Book {
   public price: number;
 
   @IsOptional()
-  @OneToMany(() => AuthorBook, (authorBook) => authorBook.book)
-  public authorBooks?: AuthorBook[] | null;
+  @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.book)
+  public authorBooks?: AuthorBookEntity[] | null;
 
   @IsOptional()
   @OneToMany(() => BookCategory, (bookCategory) => bookCategory.book)

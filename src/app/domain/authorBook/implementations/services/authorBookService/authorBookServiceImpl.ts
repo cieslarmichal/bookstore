@@ -1,17 +1,22 @@
-import { Filter, LoggerService, PostgresUnitOfWork } from '../../../common';
-import { Author } from '../../author/dtos';
-import { AuthorNotFound } from '../../author/errors';
-import { AuthorService } from '../../author/services/authorService';
-import { BookDto } from '../../book/dtos';
-import { BookNotFound } from '../../book/errors';
-import { BookService } from '../../book/services/bookService';
-import { PaginationData } from '../../common';
-import { AuthorBookDto } from '../dtos';
-import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
-import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';
-import { CreateAuthorBookData, RemoveAuthorBookData } from './types';
+import { Filter } from '../../../../../common/filter/filter';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { Author } from '../../../../author/contracts/author';
+import { AuthorService } from '../../../../author/contracts/services/authorService/authorService';
+import { AuthorNotFound } from '../../../../author/errors/authorNotFound';
+import { BookDto } from '../../../../book/dtos';
+import { BookNotFound } from '../../../../book/errors';
+import { BookService } from '../../../../book/services/bookService';
+import { PaginationData } from '../../../../common/paginationData';
+import { AuthorBook } from '../../../contracts/authorBook';
+import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
+import { AuthorBookService } from '../../../contracts/services/authorBookService/authorBookService';
+import { CreateAuthorBookData } from '../../../contracts/services/authorBookService/createAuthorBookData';
+import { RemoveAuthorBookData } from '../../../contracts/services/authorBookService/removeAuthorBookData';
+import { AuthorBookAlreadyExists } from '../../../errors/authorBookAlreadyExists';
+import { AuthorBookNotFound } from '../../../errors/authorBookNotFound';
 
-export class AuthorBookService {
+export class AuthorBookServiceImpl implements AuthorBookService {
   public constructor(
     private readonly authorBookRepositoryFactory: AuthorBookRepositoryFactory,
     private readonly authorService: AuthorService,
@@ -22,7 +27,7 @@ export class AuthorBookService {
   public async createAuthorBook(
     unitOfWork: PostgresUnitOfWork,
     authorBookData: CreateAuthorBookData,
-  ): Promise<AuthorBookDto> {
+  ): Promise<AuthorBook> {
     const { authorId, bookId } = authorBookData;
 
     this.loggerService.debug('Creating authorBook...', { authorId, bookId });

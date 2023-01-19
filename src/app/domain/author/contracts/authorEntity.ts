@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsString, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
-import { AuthorBook } from '../../authorBook/entities/authorBook';
+import { AuthorBookEntity } from '../../authorBook/contracts/authorBookEntity';
 
 export const AUTHOR_TABLE_NAME = 'authors';
 
@@ -37,6 +37,6 @@ export class AuthorEntity {
   public about: string | null;
 
   @IsOptional()
-  @OneToMany(() => AuthorBook, (authorBook) => authorBook.author)
-  public authorBooks?: AuthorBook[] | null;
+  @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.author)
+  public authorBooks?: AuthorBookEntity[] | null;
 }

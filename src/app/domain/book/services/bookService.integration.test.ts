@@ -20,7 +20,7 @@ import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { LoggerModule } from '../../../common/logger/loggerModule';
 import { BOOK_REPOSITORY_FACTORY, BOOK_SERVICE } from '../bookInjectionSymbols';
 import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorSymbols';
-import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookSymbols';
 import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategoryInjectionSymbols';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { CATEGORY_REPOSITORY_FACTORY } from '../../category/categoryInjectionSymbols';

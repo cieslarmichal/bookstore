@@ -22,7 +22,7 @@ import { AuthorBookTestDataGenerator } from '../../domain/authorBook/testDataGen
 import { LoggerModule } from '../../common/logger/loggerModule';
 import { AUTHOR_REPOSITORY_FACTORY } from '../../domain/author/authorSymbols';
 import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookInjectionSymbols';
-import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../domain/authorBook/authorBookInjectionSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../domain/authorBook/authorBookSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';

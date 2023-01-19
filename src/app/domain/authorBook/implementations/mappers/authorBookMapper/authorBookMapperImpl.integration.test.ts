@@ -1,19 +1,19 @@
-import { AuthorBook } from '../entities/authorBook';
-import { AuthorBookMapper } from './authorBookMapper';
-import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
-import { AuthorBookModule } from '../authorBookModule';
-import { AuthorModule } from '../../author/authorModule';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
-import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { AuthorEntity } from '../../author/contracts/authorEntity';
-import { Book } from '../../book/entities/book';
-import { LoggerModule } from '../../../common/logger/loggerModule';
-import { AUTHOR_BOOK_MAPPER } from '../authorBookInjectionSymbols';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { AuthorModule } from '../../../../author/authorModule';
+import { AuthorEntity } from '../../../../author/contracts/authorEntity';
+import { Book } from '../../../../book/entities/book';
+import { BookTestDataGenerator } from '../../../../book/testDataGenerators/bookTestDataGenerator';
+import { AuthorBookModule } from '../../../authorBookModule';
+import { AuthorBook } from '../../../contracts/authorBook';
+import { AuthorBookMapper } from '../../../contracts/mappers/authorBookMapper/authorBookMapper';
 
-describe('AuthorBookMapper', () => {
+describe('AuthorBookMapperImpl', () => {
   let authorBookMapper: AuthorBookMapper;
   let authorTestDataGenerator: AuthorTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
