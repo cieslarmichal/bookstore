@@ -1,7 +1,7 @@
 import { ConfigLoader } from '../../../../../../configLoader';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { createDIContainer } from '../../../../../libs/di/container';
+import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
@@ -22,7 +22,12 @@ describe('BookCategoryMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([PostgresModule, BookCategoryModule, LoggerModule, UnitOfWorkModule]);
+    const container = await createDependencyInjectionContainer([
+      PostgresModule,
+      BookCategoryModule,
+      LoggerModule,
+      UnitOfWorkModule,
+    ]);
 
     bookCategoryMapper = container.resolve(BOOK_CATEGORY_MAPPER);
 

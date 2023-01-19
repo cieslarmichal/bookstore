@@ -1,5 +1,5 @@
 import { AwilixContainer, asClass, Lifetime } from 'awilix';
-import { LoadableModule } from '../../libs/di/loadableModule';
+import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
 import { UserRepositoryFactoryImpl } from './implementations/factories/userRepositoryFactory/userRepositoryFactoryImpl';
 import { UserMapperImpl } from './implementations/mappers/userMapper/userMapperImpl';
 import { HashServiceImpl } from './implementations/services/hashService/hashServiceImpl';
@@ -8,7 +8,7 @@ import { UserServiceImpl } from './implementations/services/userService/userServ
 import { userSymbols } from './userSymbols';
 
 export class UserModule extends LoadableModule {
-  public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
+  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
     container.register({
       [userSymbols.userMapper]: asClass(UserMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [userSymbols.userRepositoryFactory]: asClass(UserRepositoryFactoryImpl, { lifetime: Lifetime.SINGLETON }),

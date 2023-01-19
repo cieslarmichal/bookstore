@@ -1,7 +1,7 @@
 import { createContainer, InjectionMode } from 'awilix';
 import { LoadableModule } from './loadableModule';
 
-export async function createDIContainer(ModuleConstructors: Array<new () => LoadableModule>) {
+export async function createDependencyInjectionContainer(ModuleConstructors: Array<new () => LoadableModule>) {
   const container = createContainer({
     injectionMode: InjectionMode.CLASSIC,
   });
@@ -9,7 +9,7 @@ export async function createDIContainer(ModuleConstructors: Array<new () => Load
   for (const ModuleConstructor of ModuleConstructors) {
     const module = new ModuleConstructor();
 
-    await module.loadDependenciesIntoDIContainer(container);
+    await module.loadDependenciesIntoContainer(container);
   }
 
   return container;

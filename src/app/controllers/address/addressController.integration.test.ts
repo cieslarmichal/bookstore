@@ -17,7 +17,7 @@ import { CustomerModule } from '../../domain/customer/customerModule';
 import { AddressRepositoryFactory } from '../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { CustomerRepositoryFactory } from '../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { UserRepositoryFactory } from '../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-import { createDIContainer } from '../../libs/di/container';
+import { createDependencyInjectionContainer } from '../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper, TestTransactionExternalRunner } from '../../tests/helpers';
@@ -47,7 +47,7 @@ describe(`AddressController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       AddressModule,
       BookModule,

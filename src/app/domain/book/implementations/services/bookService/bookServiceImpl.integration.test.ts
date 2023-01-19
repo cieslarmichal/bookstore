@@ -4,7 +4,7 @@ import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { LessThanOrEqualFilter } from '../../../../../common/filter/lessThanOrEqualFilter';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { createDIContainer } from '../../../../../libs/di/container';
+import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
@@ -42,7 +42,7 @@ describe('BookService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       BookModule,
       AuthorModule,

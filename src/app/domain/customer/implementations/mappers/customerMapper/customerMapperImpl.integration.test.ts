@@ -1,7 +1,7 @@
 import { ConfigLoader } from '../../../../../../configLoader';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { createDIContainer } from '../../../../../libs/di/container';
+import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
@@ -19,7 +19,12 @@ describe('CustomerMapperImpl', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([PostgresModule, CustomerModule, LoggerModule, UnitOfWorkModule]);
+    const container = await createDependencyInjectionContainer([
+      PostgresModule,
+      CustomerModule,
+      LoggerModule,
+      UnitOfWorkModule,
+    ]);
 
     customerMapper = container.resolve(CUSTOMER_MAPPER);
 
