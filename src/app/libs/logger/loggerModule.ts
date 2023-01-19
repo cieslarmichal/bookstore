@@ -1,6 +1,6 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
 import { LoadableModule } from '../dependencyInjection/loadableModule';
-import { loggerSymbols } from './loggerInjectionSymbols';
+import { loggerSymbols } from './loggerSymbols';
 import { LoggerService } from './loggerService';
 
 export class LoggerModule extends LoadableModule {

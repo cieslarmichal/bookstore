@@ -1,4 +1,4 @@
-import { LoggerService } from '../logger';
+import { LoggerService } from '../logger/loggerService';
 import { TransactionCallback } from './transactionCallback';
 
 export abstract class UnitOfWork {

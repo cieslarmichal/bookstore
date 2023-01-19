@@ -1,12 +1,12 @@
-import { LoadableModule } from '../dependencyInjection';
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { UNIT_OF_WORK_FACTORY } from './unitOfWorkInjectionSymbols';
+import { LoadableModule } from '../dependencyInjection/loadableModule';
 import { UnitOfWorkFactory } from './unitOfWorkFactory';
+import { unitOfWorkSymbols } from './unitOfWorkSymbols';
 
 export class UnitOfWorkModule extends LoadableModule {
   public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [UNIT_OF_WORK_FACTORY]: asClass(UnitOfWorkFactory, { lifetime: Lifetime.SINGLETON }),
+      [unitOfWorkSymbols.unitOfWorkFactory]: asClass(UnitOfWorkFactory, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

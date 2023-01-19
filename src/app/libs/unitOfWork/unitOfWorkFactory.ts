@@ -1,5 +1,5 @@
 import { Connection } from 'typeorm';
-import { LoggerService } from '../logger';
+import { LoggerService } from '../logger/loggerService';
 
 import { PostgresUnitOfWork } from './postgresUnitOfWork';
 
