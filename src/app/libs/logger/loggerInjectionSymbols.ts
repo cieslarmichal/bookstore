@@ -1,1 +1,3 @@
-export const LOGGER_SERVICE = 'loggerService';
+export const loggerSymbols = {
+  loggerService: 'loggerService',
+};

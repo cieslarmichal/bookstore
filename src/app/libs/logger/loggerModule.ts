@@ -1,12 +1,12 @@
-import { LoadableModule } from '../dependencyInjection';
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LOGGER_SERVICE } from './loggerInjectionSymbols';
-import { LoggerService } from './services/loggerService';
+import { LoadableModule } from '../dependencyInjection/loadableModule';
+import { loggerSymbols } from './loggerInjectionSymbols';
+import { LoggerService } from './loggerService';
 
 export class LoggerModule extends LoadableModule {
-  public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
+  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [LOGGER_SERVICE]: asClass(LoggerService, { lifetime: Lifetime.SINGLETON }),
+      [loggerSymbols.loggerService]: asClass(LoggerService, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

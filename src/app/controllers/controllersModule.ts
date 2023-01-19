@@ -24,7 +24,7 @@ import { AuthService } from './common';
 import { UserController } from './user/userController';
 
 export class ControllersModule extends LoadableModule {
-  public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
+  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
     container.register({
       [AUTH_SERVICE]: asClass(AuthService, { lifetime: Lifetime.SINGLETON }),
       [AUTH_MIDDLEWARE]: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),
