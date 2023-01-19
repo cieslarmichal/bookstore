@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../configLoader';
-import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
+import { BookTestDataGenerator } from '../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
@@ -16,7 +16,7 @@ import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../common/logger/loggerModule';
-import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';

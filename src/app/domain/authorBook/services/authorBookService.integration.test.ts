@@ -1,24 +1,25 @@
-import { ConfigLoader } from '../../../../../../configLoader';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
-import { createDIContainer } from '../../../../../libs/di/container';
-import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { AuthorModule } from '../../../../author/authorModule';
-import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
-import { BOOK_REPOSITORY_FACTORY } from '../../../../book/bookSymbols';
-import { BookModule } from '../../../../book/bookModule';
-import { BookRepositoryFactory } from '../../../../book/repositories/bookRepositoryFactory';
-import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
-import { CategoryModule } from '../../../../category/categoryModule';
-import { AuthorBookModule } from '../../../authorBookModule';
-import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
-import { AuthorBookService } from '../../../contracts/services/authorBookService/authorBookService';
-import { AuthorBookAlreadyExists } from '../../../errors/authorBookAlreadyExists';
-import { AuthorBookNotFound } from '../../../errors/authorBookNotFound';
+import { AuthorBookService } from './authorBookService';
+import { AuthorBookTestDataGenerator } from '../testDataGenerators/authorBookTestDataGenerator';
+import { ConfigLoader } from '../../../../configLoader';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
+import { AuthorBookModule } from '../authorBookModule';
+import { AuthorModule } from '../../author/authorModule';
+import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
+import { BookModule } from '../../book/bookModule';
+import { CategoryModule } from '../../category/categoryModule';
+import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
+import { BookTestDataGenerator } from '../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { LoggerModule } from '../../../common/logger/loggerModule';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY, AUTHOR_BOOK_SERVICE } from '../authorBookSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../book/bookSymbols';
+import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';
+import { AuthorRepositoryFactory } from '../../author/repositories/authorRepositoryFactory';
+import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
 
-describe('AuthorBookServiceImpl', () => {
+describe('AuthorBookService', () => {
   let authorBookService: AuthorBookService;
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorRepositoryFactory: AuthorRepositoryFactory;

@@ -7,10 +7,10 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { AuthorModule } from '../../../../author/authorModule';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
-import { BOOK_REPOSITORY_FACTORY } from '../../../../book/bookInjectionSymbols';
+import { BOOK_REPOSITORY_FACTORY } from '../../../../book/bookSymbols';
 import { BookModule } from '../../../../book/bookModule';
 import { BookRepositoryFactory } from '../../../../book/repositories/bookRepositoryFactory';
-import { BookTestDataGenerator } from '../../../../book/testDataGenerators/bookTestDataGenerator';
+import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { AuthorBookModule } from '../../../authorBookModule';
 import { AuthorBookAlreadyExists } from '../../../errors/authorBookAlreadyExists';

@@ -4,7 +4,7 @@ import { ConfigLoader } from '../../../../configLoader';
 import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../common';
 import { BookCategoryModule } from '../bookCategoryModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
+import { BookTestDataGenerator } from '../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import { Book } from '../../book/entities/book';
 import { BOOK_CATEGORY_MAPPER } from '../bookCategoryInjectionSymbols';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';

@@ -1,6 +1,6 @@
 import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
-import { BookDto } from './../../../domain/book/dtos/bookDto';
+import { BookDto } from '../../../domain/book/contracts/bookDto';
 
 export class AuthorDto {
   @IsUUID('4')

@@ -1,16 +1,16 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../common';
-import { BOOK_MAPPER, BOOK_REPOSITORY_FACTORY, BOOK_SERVICE } from './bookInjectionSymbols';
-import { BookMapper } from './mappers/bookMapper';
-import { BookRepositoryFactory } from './repositories/bookRepositoryFactory';
-import { BookService } from './services/bookService';
+import { LoadableModule } from '../../libs/di/loadableModule';
+import { bookSymbols } from './bookSymbols';
+import { BookRepositoryFactoryImpl } from './implementations/factories/bookRepositoryFactory/bookRepositoryFactoryImpl';
+import { BookMapperImpl } from './implementations/mappers/bookMapper/bookMapperImpl';
+import { BookServiceImpl } from './implementations/services/bookService/bookServiceImpl';
 
 export class BookModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [BOOK_MAPPER]: asClass(BookMapper, { lifetime: Lifetime.SINGLETON }),
-      [BOOK_REPOSITORY_FACTORY]: asClass(BookRepositoryFactory, { lifetime: Lifetime.SINGLETON }),
-      [BOOK_SERVICE]: asClass(BookService, { lifetime: Lifetime.SINGLETON }),
+      [bookSymbols.bookMapper]: asClass(BookMapperImpl, { lifetime: Lifetime.SINGLETON }),
+      [bookSymbols.bookRepositoryFactory]: asClass(BookRepositoryFactoryImpl, { lifetime: Lifetime.SINGLETON }),
+      [bookSymbols.bookService]: asClass(BookServiceImpl, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }
