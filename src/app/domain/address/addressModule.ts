@@ -1,16 +1,18 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../common';
-import { ADDRESS_MAPPER, ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from './addressInjectionSymbols';
-import { AddressMapper } from './mappers/addressMapper';
-import { AddressRepositoryFactory } from './repositories/addressRepositoryFactory';
-import { AddressService } from './services/addressServiceImpl';
+import { LoadableModule } from '../../libs/di/loadableModule';
+import { addressSymbols } from './addressSymbols';
+import { AddressRepositoryFactoryImpl } from './implementations/factories/addressRepositoryFactory/addressRepositoryFactoryImpl';
+import { AddressMapperImpl } from './implementations/mappers/addressMapper/addressMapperImpl';
+import { AddressServiceImpl } from './implementations/services/addressService/addressServiceImpl';
 
 export class AddressModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [ADDRESS_MAPPER]: asClass(AddressMapper, { lifetime: Lifetime.SINGLETON }),
-      [ADDRESS_REPOSITORY_FACTORY]: asClass(AddressRepositoryFactory, { lifetime: Lifetime.SINGLETON }),
-      [ADDRESS_SERVICE]: asClass(AddressService, { lifetime: Lifetime.SINGLETON }),
+      [addressSymbols.addressMapper]: asClass(AddressMapperImpl, { lifetime: Lifetime.SINGLETON }),
+      [addressSymbols.addressRepositoryFactory]: asClass(AddressRepositoryFactoryImpl, {
+        lifetime: Lifetime.SINGLETON,
+      }),
+      [addressSymbols.addressService]: asClass(AddressServiceImpl, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

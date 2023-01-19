@@ -13,7 +13,7 @@ import { UserRepositoryFactory } from '../../../../user/repositories/userReposit
 import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
 import { USER_REPOSITORY_FACTORY } from '../../../../user/userInjectionSymbols';
 import { UserModule } from '../../../../user/userModule';
-import { ADDRESS_SERVICE, ADDRESS_REPOSITORY_FACTORY } from '../../../addressInjectionSymbols';
+import { ADDRESS_SERVICE, ADDRESS_REPOSITORY_FACTORY } from '../../../addressSymbols';
 import { AddressModule } from '../../../addressModule';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';

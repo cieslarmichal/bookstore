@@ -16,7 +16,7 @@ import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../common/logger/loggerModule';
-import { ADDRESS_REPOSITORY_FACTORY } from '../../domain/address/addressInjectionSymbols';
+import { ADDRESS_REPOSITORY_FACTORY } from '../../domain/address/addressSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { UserRepositoryFactory } from '../../domain/user/repositories/userRepositoryFactory';

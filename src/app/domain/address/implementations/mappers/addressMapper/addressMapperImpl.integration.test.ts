@@ -8,7 +8,7 @@ import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { Customer } from '../../../../customer/entities/customer';
 import { User } from '../../../../user/entities/user';
 import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
-import { ADDRESS_MAPPER } from '../../../addressInjectionSymbols';
+import { ADDRESS_MAPPER } from '../../../addressSymbols';
 import { AddressModule } from '../../../addressModule';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
