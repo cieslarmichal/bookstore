@@ -1,7 +1,7 @@
 import { IsDate, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common';
+import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
 
-export class BookCategoryDto {
+export class BookCategory {
   @IsUUID('4')
   public readonly id: string;
 
@@ -17,5 +17,5 @@ export class BookCategoryDto {
   @IsUUID('4')
   public categoryId: string;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(BookCategoryDto);
+  public static readonly create = RecordToInstanceTransformer.transformFactory(BookCategory);
 }

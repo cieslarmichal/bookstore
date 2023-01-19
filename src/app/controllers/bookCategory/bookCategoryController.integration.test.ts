@@ -17,10 +17,10 @@ import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule
 import { CategoryRepositoryFactory } from '../../domain/category/repositories/categoryRepositoryFactory';
 import { BookRepositoryFactory } from '../../domain/book/repositories/bookRepositoryFactory';
 import { BookTestDataGenerator } from '../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
-import { BookCategoryTestDataGenerator } from '../../domain/bookCategory/testDataGenerators/bookCategoryTestDataGenerator';
+import { BookCategoryTestDataGenerator } from '../../domain/bookCategory/tests/bookCategoryEntityTestDataGenerator/bookCategoryEntityTestDataGenerator';
 import { LoggerModule } from '../../common/logger/loggerModule';
 import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookSymbols';
-import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../domain/bookCategory/bookCategoryInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../domain/bookCategory/bookCategorySymbols';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { CATEGORY_REPOSITORY_FACTORY } from '../../domain/category/categoryInjectionSymbols';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';

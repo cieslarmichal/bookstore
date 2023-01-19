@@ -1,14 +1,17 @@
-import { BookCategory } from '../entities/bookCategory';
-import { BookCategoryMapper } from './bookCategoryMapper';
-import { ConfigLoader } from '../../../../configLoader';
-import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../common';
-import { BookCategoryModule } from '../bookCategoryModule';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { BookTestDataGenerator } from '../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
-import { Book } from '../../book/entities/book';
-import { BOOK_CATEGORY_MAPPER } from '../bookCategoryInjectionSymbols';
-import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
-import { Category } from '../../category/entities/category';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { Book } from '../../../../book/contracts/book';
+import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { Category } from '../../../../category/entities/category';
+import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';
+import { BookCategoryModule } from '../../../bookCategoryModule';
+import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
+import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';
 
 describe('BookCategoryMapper', () => {
   let bookCategoryMapper: BookCategoryMapper;
@@ -60,7 +63,7 @@ describe('BookCategoryMapper', () => {
 
         const savedBook = await entityManager.save(createdBook);
 
-        const createdBookCategory = entityManager.create(BookCategory, {
+        const createdBookCategory = entityManager.create(BookCategoryEntity, {
           bookId: savedBook.id,
           categoryId: savedCategory.id,
         });

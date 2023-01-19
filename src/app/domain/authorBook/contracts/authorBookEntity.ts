@@ -1,7 +1,7 @@
 import { IsOptional, IsDate, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne, Unique } from 'typeorm';
 import { AuthorEntity } from '../../author/contracts/authorEntity';
-import { Book } from '../../book/entities/book';
+import { BookEntity } from '../../book/contracts/bookEntity';
 
 export const AUTHOR_BOOK_TABLE_NAME = 'authorBooks';
 
@@ -33,8 +33,8 @@ export class AuthorBookEntity {
   @Column({ type: 'uuid' })
   public authorId: string;
 
-  @ManyToOne(() => Book, (book) => book.authorBooks, { onDelete: 'CASCADE' })
-  public book?: Book;
+  @ManyToOne(() => BookEntity, (book) => book.authorBooks, { onDelete: 'CASCADE' })
+  public book?: BookEntity;
 
   @IsOptional()
   @IsUUID('4')

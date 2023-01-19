@@ -1,20 +1,18 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../common';
-import {
-  BOOK_CATEGORY_MAPPER,
-  BOOK_CATEGORY_REPOSITORY_FACTORY,
-  BOOK_CATEGORY_SERVICE,
-} from './bookCategoryInjectionSymbols';
-import { BookCategoryMapper } from './mappers/bookCategoryMapper';
-import { BookCategoryRepositoryFactory } from './repositories/bookCategoryRepositoryFactory';
-import { BookCategoryService } from './services/bookCategoryService';
+import { LoadableModule } from '../../libs/di/loadableModule';
+import { bookCategorySymbols } from './bookCategorySymbols';
+import { BookCategoryRepositoryFactoryImpl } from './implementations/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactoryImpl';
+import { BookCategoryMapperImpl } from './implementations/mappers/bookCategoryMapper/bookCategoryMapperImpl';
+import { BookCategoryServiceImpl } from './implementations/services/bookCategoryService/bookCategoryServiceImpl';
 
 export class BookCategoryModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [BOOK_CATEGORY_MAPPER]: asClass(BookCategoryMapper, { lifetime: Lifetime.SINGLETON }),
-      [BOOK_CATEGORY_REPOSITORY_FACTORY]: asClass(BookCategoryRepositoryFactory, { lifetime: Lifetime.SINGLETON }),
-      [BOOK_CATEGORY_SERVICE]: asClass(BookCategoryService, { lifetime: Lifetime.SINGLETON }),
+      [bookCategorySymbols.bookCategoryMapper]: asClass(BookCategoryMapperImpl, { lifetime: Lifetime.SINGLETON }),
+      [bookCategorySymbols.bookCategoryRepositoryFactory]: asClass(BookCategoryRepositoryFactoryImpl, {
+        lifetime: Lifetime.SINGLETON,
+      }),
+      [bookCategorySymbols.bookCategoryService]: asClass(BookCategoryServiceImpl, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

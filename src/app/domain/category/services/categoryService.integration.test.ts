@@ -13,7 +13,7 @@ import { BookTestDataGenerator } from '../../book/tests/bookEntityTestDataGenera
 import { BookModule } from '../../book/bookModule';
 import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
 import { BOOK_REPOSITORY_FACTORY } from '../../book/bookSymbols';
-import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategoryInjectionSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategorySymbols';
 import { CategoryRepositoryFactory } from '../repositories/categoryRepositoryFactory';
 import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
 import { BookCategoryRepositoryFactory } from '../../bookCategory/repositories/bookCategoryRepositoryFactory';

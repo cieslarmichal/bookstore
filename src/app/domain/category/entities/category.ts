@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsString, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
-import { BookCategory } from '../../bookCategory/entities/bookCategory';
+import { BookCategoryEntity } from '../../bookCategory/contracts/bookCategoryEntity';
 
 export const CATEGORY_TABLE_NAME = 'categories';
 
@@ -28,6 +28,6 @@ export class Category {
   public name: string;
 
   @IsOptional()
-  @OneToMany(() => BookCategory, (bookCategory) => bookCategory.category)
-  public bookCategories?: BookCategory[] | null;
+  @OneToMany(() => BookCategoryEntity, (bookCategory) => bookCategory.category)
+  public bookCategories?: BookCategoryEntity[] | null;
 }

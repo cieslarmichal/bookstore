@@ -1,8 +1,8 @@
-import { BookCategory } from '../entities/bookCategory';
+import { BookCategoryEntity } from '../../contracts/bookCategoryEntity';
 import { faker } from '@faker-js/faker';
 
 export class BookCategoryTestDataGenerator {
-  public generateData(): BookCategory {
+  public generateData(): BookCategoryEntity {
     return {
       id: this.generateId(),
       createdAt: this.generateCreatedAt(),

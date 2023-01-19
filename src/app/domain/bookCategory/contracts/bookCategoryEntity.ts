@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne, Unique } from 'typeorm';
-import { Book } from '../../book/entities/book';
+import { BookEntity } from '../../book/contracts/bookEntity';
 import { Category } from '../../category/entities/category';
 
 export const BOOK_CATEGORY_TABLE_NAME = 'bookCategories';
@@ -9,7 +9,7 @@ export const BOOK_CATEGORY_TABLE_NAME = 'bookCategories';
   name: BOOK_CATEGORY_TABLE_NAME,
 })
 @Unique('unique_index_bookId_categoryId', ['bookId', 'categoryId'])
-export class BookCategory {
+export class BookCategoryEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')
@@ -25,8 +25,8 @@ export class BookCategory {
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
 
-  @ManyToOne(() => Book, (book) => book.bookCategories, { onDelete: 'CASCADE' })
-  public book?: Book;
+  @ManyToOne(() => BookEntity, (book) => book.bookCategories, { onDelete: 'CASCADE' })
+  public book?: BookEntity;
 
   @IsOptional()
   @IsUUID('4')

@@ -1,18 +1,22 @@
-import { Filter, PostgresUnitOfWork } from '../../../common';
-import { LoggerService } from '../../../common/logger/services/loggerService';
-import { BookDto } from '../../book/dtos';
-import { BookNotFound } from '../../book/errors';
-import { BookService } from '../../book/services/bookService';
-import { CategoryDto } from '../../category/dtos';
-import { CategoryNotFound } from '../../category/errors';
-import { CategoryService } from '../../category/services/categoryService';
-import { PaginationData } from '../../common';
-import { BookCategoryDto } from '../dtos';
-import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
-import { BookCategoryRepositoryFactory } from '../repositories/bookCategoryRepositoryFactory';
-import { CreateBookCategoryData, RemoveBookCategoryData } from './types';
+import { Filter } from '../../../../../common/filter/filter';
+import { BookDto } from '../../../../../controllers/book/dtos';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { BookService } from '../../../../book/contracts/services/bookService/bookService';
+import { BookNotFound } from '../../../../book/errors/bookNotFound';
+import { CategoryDto } from '../../../../category/dtos';
+import { CategoryNotFound } from '../../../../category/errors';
+import { CategoryService } from '../../../../category/services/categoryService';
+import { PaginationData } from '../../../../common/paginationData';
+import { BookCategory } from '../../../contracts/bookCategory';
+import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
+import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
+import { CreateBookCategoryData } from '../../../contracts/services/bookCategoryService/createBookCategoryData';
+import { RemoveBookCategoryData } from '../../../contracts/services/bookCategoryService/removeBookCategoryData';
+import { BookCategoryAlreadyExists } from '../../../errors/bookCategoryAlreadyExists';
+import { BookCategoryNotFound } from '../../../errors/bookCategoryNotFound';
 
-export class BookCategoryService {
+export class BookCategoryServiceImpl implements BookCategoryService {
   public constructor(
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
     private readonly categoryService: CategoryService,
@@ -23,7 +27,7 @@ export class BookCategoryService {
   public async createBookCategory(
     unitOfWork: PostgresUnitOfWork,
     bookCategoryData: CreateBookCategoryData,
-  ): Promise<BookCategoryDto> {
+  ): Promise<BookCategory> {
     const { bookId, categoryId } = bookCategoryData;
 
     this.loggerService.debug('Creating bookCategory...', { bookId, categoryId });

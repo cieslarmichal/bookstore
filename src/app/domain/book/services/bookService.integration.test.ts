@@ -1,31 +1,36 @@
-import { ConfigLoader } from '../../../../../../configLoader';
-import { BetweenFilter } from '../../../../../common/filter/betweenFilter';
-import { EqualFilter } from '../../../../../common/filter/equalFilter';
-import { LessThanOrEqualFilter } from '../../../../../common/filter/lessThanOrEqualFilter';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
-import { createDIContainer } from '../../../../../libs/di/container';
-import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { AuthorModule } from '../../../../author/authorModule';
-import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
-import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
-import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
-import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../../../bookCategory/bookCategorySymbols';
-import { BookCategoryModule } from '../../../../bookCategory/bookCategoryModule';
-import { BookCategoryRepositoryFactory } from '../../../../bookCategory/repositories/bookCategoryRepositoryFactory';
-import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categoryInjectionSymbols';
-import { CategoryModule } from '../../../../category/categoryModule';
-import { CategoryRepositoryFactory } from '../../../../category/repositories/categoryRepositoryFactory';
-import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';
-import { BookModule } from '../../../bookModule';
-import { BookFormat } from '../../../contracts/bookFormat';
-import { BookLanguage } from '../../../contracts/bookLanguage';
-import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { BookService } from '../../../contracts/services/bookService/bookService';
-import { BookNotFound } from '../../../errors/bookNotFound';
-import { BookTestDataGenerator } from '../../../tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { BookService } from './bookService';
+import { BookTestDataGenerator } from '../tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { ConfigLoader } from '../../../../configLoader';
+import {
+  BetweenFilter,
+  createDIContainer,
+  dbManager,
+  EqualFilter,
+  LessThanOrEqualFilter,
+  UnitOfWorkModule,
+} from '../../../common';
+import { DbModule } from '../../../common';
+import { BookModule } from '../bookModule';
+import { AuthorModule } from '../../author/authorModule';
+import { BookNotFound } from '../errors';
+import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
+import { CategoryModule } from '../../category/categoryModule';
+import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
+import { AuthorBookModule } from '../../authorBook/authorBookModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
+import { BOOK_REPOSITORY_FACTORY, BOOK_SERVICE } from '../bookSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorSymbols';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookSymbols';
+import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategorySymbols';
+import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../category/categoryInjectionSymbols';
+import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
+import { BookFormat, BookLanguage } from '../types';
+import { BookRepositoryFactory } from '../repositories/bookRepositoryFactory';
+import { AuthorRepositoryFactory } from '../../author/repositories/authorRepositoryFactory';
+import { AuthorBookRepositoryFactory } from '../../authorBook/repositories/authorBookRepositoryFactory';
+import { BookCategoryRepositoryFactory } from '../../bookCategory/repositories/bookCategoryRepositoryFactory';
+import { CategoryRepositoryFactory } from '../../category/repositories/categoryRepositoryFactory';
 
 describe('BookService', () => {
   let bookService: BookService;
