@@ -1,24 +1,26 @@
-import { CustomerService } from './customerService';
-import { CustomerTestDataGenerator } from '../testDataGenerators/customerTestDataGenerator';
-import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
-import { CustomerModule } from '../customerModule';
-import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../common/logger/loggerModule';
-import { CUSTOMER_REPOSITORY_FACTORY, CUSTOMER_SERVICE } from '../customerInjectionSymbols';
-import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
-import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';
-import { UserModule } from '../../user/userModule';
-import { CustomerRepositoryFactory } from '../repositories/customerRepositoryFactory';
-import { UserRepositoryFactory } from '../../user/repositories/userRepositoryFactory';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { UserRepositoryFactory } from '../../../../user/repositories/userRepositoryFactory';
+import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
+import { USER_REPOSITORY_FACTORY } from '../../../../user/userInjectionSymbols';
+import { UserModule } from '../../../../user/userModule';
+import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
+import { CustomerService } from '../../../contracts/services/customerService/customerService';
+import { CustomerModule } from '../../../customerModule';
+import { CustomerAlreadyExists } from '../../../errors/customerAlreadyExists';
+import { CustomerNotFound } from '../../../errors/customerNotFound';
+import { CustomerEntityTestDataGenerator } from '../../../tests/customerEntityTestDataGenerator/customerEntityTestDataGenerator';
 
-describe('CustomerService', () => {
+describe('CustomerServiceImpl', () => {
   let customerService: CustomerService;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let customerTestDataGenerator: CustomerTestDataGenerator;
+  let customerTestDataGenerator: CustomerEntityTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
@@ -33,7 +35,7 @@ describe('CustomerService', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    customerTestDataGenerator = new CustomerTestDataGenerator();
+    customerTestDataGenerator = new CustomerEntityTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 

@@ -6,7 +6,7 @@ import { CategoryEntity } from '../../domain/category/contracts/categoryEntity';
 import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
 import { BookCategoryEntity } from '../../domain/bookCategory/contracts/bookCategoryEntity';
 import { AddressEntity } from '../../domain/address/addressEntity';
-import { Customer } from '../../domain/customer/entities/customer';
+import { CustomerEntity } from '../../domain/customer/contracts/customerEntity';
 
 export class DbManager {
   private connection: Connection | null;
@@ -31,7 +31,7 @@ export class DbManager {
         AuthorBookEntity,
         BookCategoryEntity,
         AddressEntity,
-        Customer,
+        CustomerEntity,
       ],
       synchronize: true,
     });

@@ -1,17 +1,20 @@
-import { PostgresUnitOfWork } from '../../../common';
-import { LoggerService } from '../../../common/logger/services/loggerService';
-import { CustomerDto } from '../dtos';
-import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
-import { CustomerRepositoryFactory } from '../repositories/customerRepositoryFactory';
-import { CreateCustomerData, FindCustomerData } from './types';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { Customer } from '../../../contracts/customer';
+import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
+import { CreateCustomerData } from '../../../contracts/services/customerService/createCustomerData';
+import { CustomerService } from '../../../contracts/services/customerService/customerService';
+import { FindCustomerData } from '../../../contracts/services/customerService/findCustomerData';
+import { CustomerAlreadyExists } from '../../../errors/customerAlreadyExists';
+import { CustomerNotFound } from '../../../errors/customerNotFound';
 
-export class CustomerService {
+export class CustomerServiceImpl implements CustomerService {
   public constructor(
     private readonly customerRepositoryFactory: CustomerRepositoryFactory,
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createCustomer(unitOfWork: PostgresUnitOfWork, customerData: CreateCustomerData): Promise<CustomerDto> {
+  public async createCustomer(unitOfWork: PostgresUnitOfWork, customerData: CreateCustomerData): Promise<Customer> {
     const { userId } = customerData;
 
     this.loggerService.debug('Creating customer...', { userId });
@@ -33,7 +36,7 @@ export class CustomerService {
     return customer;
   }
 
-  public async findCustomer(unitOfWork: PostgresUnitOfWork, customerData: FindCustomerData): Promise<CustomerDto> {
+  public async findCustomer(unitOfWork: PostgresUnitOfWork, customerData: FindCustomerData): Promise<Customer> {
     const { entityManager } = unitOfWork;
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);

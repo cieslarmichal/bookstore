@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsString, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne } from 'typeorm';
-import { Customer } from '../../customer/entities/customer';
+import { CustomerEntity } from '../../customer/contracts/customerEntity';
 
 export const ADDRESS_TABLE_NAME = 'addresses';
 
@@ -61,8 +61,8 @@ export class AddressEntity {
   public deliveryInstructions: string | null;
 
   @IsOptional()
-  @ManyToOne(() => Customer, (customer) => customer.addresses, { onDelete: 'CASCADE' })
-  public customer?: Customer | null;
+  @ManyToOne(() => CustomerEntity, (customer) => customer.addresses, { onDelete: 'CASCADE' })
+  public customer?: CustomerEntity | null;
 
   @IsOptional()
   @IsUUID('4')

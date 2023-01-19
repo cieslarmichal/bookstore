@@ -5,7 +5,7 @@ import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { Customer } from '../../../../customer/entities/customer';
+import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { User } from '../../../../user/entities/user';
 import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
 import { ADDRESS_MAPPER } from '../../../addressSymbols';
@@ -50,7 +50,7 @@ describe('AddressMapperImpl', () => {
 
         const savedUser = await entityManager.save(createdUser);
 
-        const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
+        const createdCustomer = entityManager.create(CustomerEntity, { userId: savedUser.id });
 
         const savedCustomer = await entityManager.save(createdCustomer);
 
@@ -103,7 +103,7 @@ describe('AddressMapperImpl', () => {
 
         const savedUser = await entityManager.save(createdUser);
 
-        const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
+        const createdCustomer = entityManager.create(CustomerEntity, { userId: savedUser.id });
 
         const savedCustomer = await entityManager.save(createdCustomer);
 

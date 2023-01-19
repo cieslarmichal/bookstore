@@ -9,7 +9,7 @@ import {
   JoinColumn,
   Column,
 } from 'typeorm';
-import { AddressEntity } from '../../address/addressEntity';
+import { AddressEntity } from '../../address/contracts/addressEntity';
 import { User } from '../../user/entities/user';
 
 export const CUSTOMER_TABLE_NAME = 'customers';
@@ -17,7 +17,7 @@ export const CUSTOMER_TABLE_NAME = 'customers';
 @Entity({
   name: CUSTOMER_TABLE_NAME,
 })
-export class Customer {
+export class CustomerEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')

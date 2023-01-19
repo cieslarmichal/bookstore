@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsString, IsEnum, IsUUID, ValidateIf } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToOne } from 'typeorm';
-import { Customer } from '../../customer/entities/customer';
+import { CustomerEntity } from '../../customer/contracts/customerEntity';
 import { UserRole } from '../types';
 
 export const USER_TABLE_NAME = 'users';
@@ -43,6 +43,6 @@ export class User {
   public role: UserRole;
 
   @IsOptional()
-  @OneToOne(() => Customer, (customer) => customer.user)
-  public customer?: Customer | null;
+  @OneToOne(() => CustomerEntity, (customer) => customer.user)
+  public customer?: CustomerEntity | null;
 }

@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../configLoader';
-import { CustomerTestDataGenerator } from '../../domain/customer/testDataGenerators/customerTestDataGenerator';
+import { CustomerEntityTestDataGenerator } from '../../domain/customer/tests/customerEntityTestDataGenerator/customerEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
@@ -28,7 +28,7 @@ const baseUrl = '/customers';
 describe(`CustomerController (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let customerTestDataGenerator: CustomerTestDataGenerator;
+  let customerTestDataGenerator: CustomerEntityTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -37,7 +37,7 @@ describe(`CustomerController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    customerTestDataGenerator = new CustomerTestDataGenerator();
+    customerTestDataGenerator = new CustomerEntityTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 

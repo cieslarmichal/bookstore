@@ -1,8 +1,8 @@
-import { Customer } from '../entities/customer';
+import { CustomerEntity } from '../../contracts/customerEntity';
 import { faker } from '@faker-js/faker';
 
-export class CustomerTestDataGenerator {
-  public generateData(): Customer {
+export class CustomerEntityTestDataGenerator {
+  public generateData(): CustomerEntity {
     return {
       id: this.generateId(),
       createdAt: this.generateCreatedAt(),

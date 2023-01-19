@@ -1,16 +1,17 @@
-import { Customer } from '../entities/customer';
-import { CustomerMapper } from './customerMapper';
-import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
-import { CustomerModule } from '../customerModule';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../common/logger/loggerModule';
-import { CUSTOMER_MAPPER } from '../customerInjectionSymbols';
-import { User } from '../../user/entities/user';
-import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { User } from '../../../../user/entities/user';
+import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
+import { CustomerEntity } from '../../../contracts/customerEntity';
+import { CustomerMapper } from '../../../contracts/mappers/customerMapper/customerMapper';
+import { CustomerModule } from '../../../customerModule';
 
-describe('CustomerMapper', () => {
+describe('CustomerMapperImpl', () => {
   let customerMapper: CustomerMapper;
   let userTestDataGenerator: UserTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
@@ -44,7 +45,7 @@ describe('CustomerMapper', () => {
 
         const savedUser = await entityManager.save(createdUser);
 
-        const createdCustomer = entityManager.create(Customer, { userId: savedUser.id });
+        const createdCustomer = entityManager.create(CustomerEntity, { userId: savedUser.id });
 
         const savedCustomer = await entityManager.save(createdCustomer);
 
