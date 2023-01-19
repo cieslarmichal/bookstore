@@ -8,7 +8,7 @@ import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { CustomerRepositoryFactory } from '../../domain/customer/repositories/customerRepositoryFactory';
-import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
+import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
@@ -18,8 +18,8 @@ import { LoggerModule } from '../../common/logger/loggerModule';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { UserRepositoryFactory } from '../../domain/user/repositories/userRepositoryFactory';
-import { USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols';
-import { CUSTOMER_REPOSITORY_FACTORY } from '../../domain/customer/customerInjectionSymbols';
+import { USER_REPOSITORY_FACTORY } from '../../domain/user/userSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY } from '../../domain/customer/customerSymbols';
 import { CustomerModule } from '../../domain/customer/customerModule';
 import { AddressModule } from '../../domain/address/addressModule';
 
@@ -29,7 +29,7 @@ describe(`CustomerController (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let customerTestDataGenerator: CustomerEntityTestDataGenerator;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -38,7 +38,7 @@ describe(`CustomerController (${baseUrl})`, () => {
     ConfigLoader.loadConfig();
 
     customerTestDataGenerator = new CustomerEntityTestDataGenerator();
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {

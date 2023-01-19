@@ -1,7 +1,7 @@
 import { Book } from '../../domain/book/entities/book';
 import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
 import { Connection, createConnection } from 'typeorm';
-import { User } from '../../domain/user/entities/user';
+import { UserEntity } from '../../domain/user/contracts/userEntity';
 import { CategoryEntity } from '../../domain/category/contracts/categoryEntity';
 import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
 import { BookCategoryEntity } from '../../domain/bookCategory/contracts/bookCategoryEntity';
@@ -26,7 +26,7 @@ export class DbManager {
       entities: [
         Book,
         AuthorEntity,
-        User,
+        UserEntity,
         CategoryEntity,
         AuthorBookEntity,
         BookCategoryEntity,

@@ -6,8 +6,8 @@ import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { UserRepositoryFactory } from '../../../../user/repositories/userRepositoryFactory';
-import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
-import { USER_REPOSITORY_FACTORY } from '../../../../user/userInjectionSymbols';
+import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { USER_REPOSITORY_FACTORY } from '../../../../user/userSymbols';
 import { UserModule } from '../../../../user/userModule';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
@@ -21,7 +21,7 @@ describe('CustomerServiceImpl', () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let customerTestDataGenerator: CustomerEntityTestDataGenerator;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -36,7 +36,7 @@ describe('CustomerServiceImpl', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     customerTestDataGenerator = new CustomerEntityTestDataGenerator();
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   afterAll(async () => {

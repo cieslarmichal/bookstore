@@ -8,7 +8,7 @@ import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { BookCategoryRepositoryFactory } from '../../domain/bookCategory/repositories/bookCategoryRepositoryFactory';
-import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
+import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
@@ -38,7 +38,7 @@ describe(`BookCategoryController`, () => {
   let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
   let bookTestDataGenerator: BookTestDataGenerator;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -47,7 +47,7 @@ describe(`BookCategoryController`, () => {
     ConfigLoader.loadConfig();
 
     bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
     categoryTestDataGenerator = new CategoryTestDataGenerator();
     bookTestDataGenerator = new BookTestDataGenerator();
   });

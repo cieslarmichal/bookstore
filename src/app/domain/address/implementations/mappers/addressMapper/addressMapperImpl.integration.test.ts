@@ -6,8 +6,8 @@ import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
-import { User } from '../../../../user/entities/user';
-import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
+import { UserEntity } from '../../../../user/contracts/userEntity';
+import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { ADDRESS_MAPPER } from '../../../addressSymbols';
 import { AddressModule } from '../../../addressModule';
 import { AddressEntity } from '../../../contracts/addressEntity';
@@ -17,7 +17,7 @@ import { AddressEntityTestDataGenerator } from '../../../tests/addressEntityTest
 describe('AddressMapperImpl', () => {
   let addressMapper: AddressMapper;
   let addressTestDataGenerator: AddressEntityTestDataGenerator;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -30,7 +30,7 @@ describe('AddressMapperImpl', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestDataGenerator = new AddressEntityTestDataGenerator();
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -46,7 +46,7 @@ describe('AddressMapperImpl', () => {
 
         const { email, password, role } = userTestDataGenerator.generateData();
 
-        const createdUser = entityManager.create(User, { email, password, role });
+        const createdUser = entityManager.create(UserEntity, { email, password, role });
 
         const savedUser = await entityManager.save(createdUser);
 
@@ -99,7 +99,7 @@ describe('AddressMapperImpl', () => {
 
         const { email, password, role } = userTestDataGenerator.generateData();
 
-        const createdUser = entityManager.create(User, { email, password, role });
+        const createdUser = entityManager.create(UserEntity, { email, password, role });
 
         const savedUser = await entityManager.save(createdUser);
 

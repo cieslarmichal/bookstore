@@ -6,12 +6,12 @@ import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { CUSTOMER_REPOSITORY_FACTORY } from '../../../../customer/customerInjectionSymbols';
+import { CUSTOMER_REPOSITORY_FACTORY } from '../../../../customer/customerSymbols';
 import { CustomerModule } from '../../../../customer/customerModule';
 import { CustomerRepositoryFactory } from '../../../../customer/repositories/customerRepositoryFactory';
 import { UserRepositoryFactory } from '../../../../user/repositories/userRepositoryFactory';
-import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
-import { USER_REPOSITORY_FACTORY } from '../../../../user/userInjectionSymbols';
+import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { USER_REPOSITORY_FACTORY } from '../../../../user/userSymbols';
 import { UserModule } from '../../../../user/userModule';
 import { ADDRESS_SERVICE, ADDRESS_REPOSITORY_FACTORY } from '../../../addressSymbols';
 import { AddressModule } from '../../../addressModule';
@@ -26,7 +26,7 @@ describe('AddressServiceImpl', () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let addressTestDataGenerator: AddressEntityTestDataGenerator;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -49,7 +49,7 @@ describe('AddressServiceImpl', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestDataGenerator = new AddressEntityTestDataGenerator();
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   afterAll(async () => {

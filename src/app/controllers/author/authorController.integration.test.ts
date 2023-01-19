@@ -9,7 +9,7 @@ import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { AuthorRepositoryFactory } from '../../domain/author/repositories/authorRepositoryFactory';
-import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
+import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
@@ -26,7 +26,7 @@ const baseUrl = '/authors';
 describe(`AuthorController (${baseUrl})`, () => {
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let authorTestDataGenerator: AuthorTestDataGenerator;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -35,7 +35,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     ConfigLoader.loadConfig();
 
     authorTestDataGenerator = new AuthorTestDataGenerator();
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {

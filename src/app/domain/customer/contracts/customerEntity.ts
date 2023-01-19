@@ -10,7 +10,7 @@ import {
   Column,
 } from 'typeorm';
 import { AddressEntity } from '../../address/contracts/addressEntity';
-import { User } from '../../user/entities/user';
+import { UserEntity } from '../../user/contracts/userEntity';
 
 export const CUSTOMER_TABLE_NAME = 'customers';
 
@@ -38,9 +38,9 @@ export class CustomerEntity {
   public addresses?: AddressEntity[];
 
   @IsOptional()
-  @OneToOne(() => User, (user) => user.customer, { onDelete: 'CASCADE' })
+  @OneToOne(() => UserEntity, (user) => user.customer, { onDelete: 'CASCADE' })
   @JoinColumn()
-  public user: User | null;
+  public user: UserEntity | null;
 
   @IsUUID('4')
   @Column({ type: 'uuid' })

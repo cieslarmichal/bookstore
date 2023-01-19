@@ -5,15 +5,15 @@ import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { User } from '../../../../user/entities/user';
-import { UserTestDataGenerator } from '../../../../user/testDataGenerators/userTestDataGenerator';
+import { UserEntity } from '../../../../user/contracts/userEntity';
+import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerMapper } from '../../../contracts/mappers/customerMapper/customerMapper';
 import { CustomerModule } from '../../../customerModule';
 
 describe('CustomerMapperImpl', () => {
   let customerMapper: CustomerMapper;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -25,7 +25,7 @@ describe('CustomerMapperImpl', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -41,7 +41,7 @@ describe('CustomerMapperImpl', () => {
 
         const { email, password, role } = userTestDataGenerator.generateData();
 
-        const createdUser = entityManager.create(User, { email, password, role });
+        const createdUser = entityManager.create(UserEntity, { email, password, role });
 
         const savedUser = await entityManager.save(createdUser);
 

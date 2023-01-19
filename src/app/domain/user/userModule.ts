@@ -1,26 +1,20 @@
-import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../common';
-import {
-  HASH_SERVICE,
-  TOKEN_SERVICE,
-  USER_MAPPER,
-  USER_REPOSITORY_FACTORY,
-  USER_SERVICE,
-} from './userInjectionSymbols';
-import { UserMapper } from './mappers/userMapper';
-import { UserService } from './services/userService';
-import { HashService } from './services/hashService';
-import { TokenService } from './services/tokenService';
-import { UserRepositoryFactory } from './repositories/userRepositoryFactory';
+import { AwilixContainer, asClass, Lifetime } from 'awilix';
+import { LoadableModule } from '../../libs/di/loadableModule';
+import { UserRepositoryFactoryImpl } from './implementations/factories/userRepositoryFactory/userRepositoryFactoryImpl';
+import { UserMapperImpl } from './implementations/mappers/userMapper/userMapperImpl';
+import { HashServiceImpl } from './implementations/services/hashService/hashServiceImpl';
+import { TokenServiceImpl } from './implementations/services/tokenService/tokenServiceImpl';
+import { UserServiceImpl } from './implementations/services/userService/userServiceImpl';
+import { userSymbols } from './userSymbols';
 
 export class UserModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [USER_MAPPER]: asClass(UserMapper, { lifetime: Lifetime.SINGLETON }),
-      [USER_REPOSITORY_FACTORY]: asClass(UserRepositoryFactory, { lifetime: Lifetime.SINGLETON }),
-      [HASH_SERVICE]: asClass(HashService, { lifetime: Lifetime.SINGLETON }),
-      [TOKEN_SERVICE]: asClass(TokenService, { lifetime: Lifetime.SINGLETON }),
-      [USER_SERVICE]: asClass(UserService, { lifetime: Lifetime.SINGLETON }),
+      [userSymbols.userMapper]: asClass(UserMapperImpl, { lifetime: Lifetime.SINGLETON }),
+      [userSymbols.userRepositoryFactory]: asClass(UserRepositoryFactoryImpl, { lifetime: Lifetime.SINGLETON }),
+      [userSymbols.hashService]: asClass(HashServiceImpl, { lifetime: Lifetime.SINGLETON }),
+      [userSymbols.tokenService]: asClass(TokenServiceImpl, { lifetime: Lifetime.SINGLETON }),
+      [userSymbols.userService]: asClass(UserServiceImpl, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

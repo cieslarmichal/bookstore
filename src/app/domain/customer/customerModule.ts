@@ -1,6 +1,6 @@
 import { AwilixContainer, asClass, Lifetime } from 'awilix';
 import { LoadableModule } from '../../libs/di/loadableModule';
-import { customerSymbols } from './customerInjectionSymbols';
+import { customerSymbols } from './customerSymbols';
 import { CustomerRepositoryFactoryImpl } from './implementations/factories/customerRepositoryFactory/customerRepositoryFactoryImpl';
 import { CustomerMapperImpl } from './implementations/mappers/customerMapper/customerMapperImpl';
 import { CustomerServiceImpl } from './implementations/services/customerService/customerServiceImpl';

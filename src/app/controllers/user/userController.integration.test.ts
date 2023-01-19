@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../configLoader';
-import { UserTestDataGenerator } from '../../domain/user/testDataGenerators/userTestDataGenerator';
+import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
@@ -16,7 +16,7 @@ import { AuthorModule } from '../../domain/author/authorModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
 import { LoggerModule } from '../../common/logger/loggerModule';
-import { HASH_SERVICE, USER_REPOSITORY_FACTORY } from '../../domain/user/userInjectionSymbols';
+import { HASH_SERVICE, USER_REPOSITORY_FACTORY } from '../../domain/user/userSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
@@ -30,7 +30,7 @@ const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
 describe(`UserController (${baseUrl})`, () => {
   let hashService: HashService;
-  let userTestDataGenerator: UserTestDataGenerator;
+  let userTestDataGenerator: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -39,7 +39,7 @@ describe(`UserController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    userTestDataGenerator = new UserTestDataGenerator();
+    userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
