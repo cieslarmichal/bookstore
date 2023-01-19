@@ -18,8 +18,8 @@ import {
   FindAuthorBooksResponseDto,
   FindAuthorBooksParamDto,
 } from './dtos';
-import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { ControllerResponse } from '../controllerResponse';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
 import { supportedFindBooksFieldsFilters } from '../book/dtos/findBooksDto';
 import { supportedFindAuthorsFieldsFilters } from '../author/dtos/findAuthorsDto';
 

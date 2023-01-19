@@ -1,5 +1,5 @@
 import { Filter, LoggerService, PostgresUnitOfWork } from '../../../common';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { BookDto } from '../dtos';
 import { BookNotFound } from '../errors';
 import { BookRepositoryFactory } from '../repositories/bookRepositoryFactory';

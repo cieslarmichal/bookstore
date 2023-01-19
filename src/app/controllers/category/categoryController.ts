@@ -17,8 +17,8 @@ import {
   RemoveCategoryResponseDto,
   supportedFindCategoriesFieldsFilters,
 } from './dtos';
-import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { ControllerResponse } from '../controllerResponse';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
 
 const CATEGORIES_PATH = '/categories';
 const CATEGORIES_PATH_WITH_ID = `${CATEGORIES_PATH}/:id`;

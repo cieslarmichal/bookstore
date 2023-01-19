@@ -5,7 +5,7 @@ import { User } from '../../domain/user/entities/user';
 import { Category } from '../../domain/category/entities/category';
 import { AuthorBook } from '../../domain/authorBook/entities/authorBook';
 import { BookCategory } from '../../domain/bookCategory/entities/bookCategory';
-import { Address } from '../../domain/address/entities/address';
+import { AddressEntity } from '../../domain/address/addressEntity';
 import { Customer } from '../../domain/customer/entities/customer';
 
 export class DbManager {
@@ -23,7 +23,7 @@ export class DbManager {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Book, Author, User, Category, AuthorBook, BookCategory, Address, Customer],
+      entities: [Book, Author, User, Category, AuthorBook, BookCategory, AddressEntity, Customer],
       synchronize: true,
     });
 

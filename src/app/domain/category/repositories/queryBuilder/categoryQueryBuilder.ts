@@ -1,4 +1,4 @@
-import { QueryBuilder } from '../../../shared/queryBuilder';
+import { QueryBuilder } from '../../../common/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Category } from '../../entities/category';
 import { Filter } from '../../../../common';

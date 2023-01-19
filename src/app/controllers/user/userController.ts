@@ -4,7 +4,7 @@ import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { userErrorMiddleware } from './middlewares';
-import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, ControllerResponse, sendResponseMiddleware } from '../common';
 import {
   RegisterUserResponseData,
   RegisterUserResponseDto,

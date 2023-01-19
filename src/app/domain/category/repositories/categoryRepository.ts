@@ -3,7 +3,7 @@ import { CategoryDto } from '../dtos';
 import { Category } from '../entities/category';
 import { CategoryMapper } from '../mappers/categoryMapper';
 import { CategoryNotFound } from '../errors';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { CategoryQueryBuilder } from './queryBuilder';
 import { Filter } from '../../../common';
 

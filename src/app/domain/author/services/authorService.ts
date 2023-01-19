@@ -1,6 +1,6 @@
 import { Filter, PostgresUnitOfWork } from '../../../common';
 import { LoggerService } from '../../../common/logger/services/loggerService';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { AuthorDto } from '../dtos';
 import { AuthorNotFound } from '../errors';
 import { AuthorRepositoryFactory } from '../repositories/authorRepositoryFactory';

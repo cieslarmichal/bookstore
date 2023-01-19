@@ -5,7 +5,7 @@ import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookErrorMiddleware } from './middlewares';
-import { AuthMiddleware, ControllerResponse, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { AuthMiddleware, ControllerResponse, PaginationDataParser, sendResponseMiddleware } from '../common';
 import {
   CreateBookBodyDto,
   CreateBookResponseData,
@@ -23,7 +23,7 @@ import {
   UpdateBookResponseDto,
 } from './dtos';
 import { supportedFindBooksFieldsFilters } from './dtos';
-import { FilterDataParser } from '../shared/filter/filterDataParser';
+import { FilterDataParser } from '../common/filter/filterDataParser';
 
 const BOOKS_PATH = '/books';
 const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;

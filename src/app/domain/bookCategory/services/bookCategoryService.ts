@@ -6,7 +6,7 @@ import { BookService } from '../../book/services/bookService';
 import { CategoryDto } from '../../category/dtos';
 import { CategoryNotFound } from '../../category/errors';
 import { CategoryService } from '../../category/services/categoryService';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { BookCategoryDto } from '../dtos';
 import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
 import { BookCategoryRepositoryFactory } from '../repositories/bookCategoryRepositoryFactory';

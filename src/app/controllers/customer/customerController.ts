@@ -14,8 +14,8 @@ import {
   RemoveCustomerParamDto,
   RemoveCustomerResponseDto,
 } from './dtos';
-import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, sendResponseMiddleware } from '../shared';
+import { ControllerResponse } from '../controllerResponse';
+import { AuthMiddleware, sendResponseMiddleware } from '../common';
 
 const CUSTOMERS_PATH = '/customers';
 const CUSTOMERS_PATH_WITH_ID = `${CUSTOMERS_PATH}/:id`;

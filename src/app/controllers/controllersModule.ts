@@ -19,8 +19,8 @@ import {
   USER_CONTROLLER,
 } from './controllersInjectionSymbols';
 import { CustomerController } from './customer/customerController';
-import { AuthMiddleware } from './shared';
-import { AuthService } from './shared';
+import { AuthMiddleware } from './common';
+import { AuthService } from './common';
 import { UserController } from './user/userController';
 
 export class ControllersModule extends LoadableModule {

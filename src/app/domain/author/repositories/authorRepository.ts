@@ -3,7 +3,7 @@ import { AuthorDto } from '../dtos';
 import { Author } from '../entities/author';
 import { AuthorMapper } from '../mappers/authorMapper';
 import { AuthorNotFound } from '../errors';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { AuthorQueryBuilder } from './queryBuilder';
 import { Filter } from '../../../common';
 

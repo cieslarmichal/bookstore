@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { AddressService } from '../../domain/address/services/addressService';
+import { AddressService } from '../../domain/address/services/addressServiceImpl';
 import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -17,8 +17,8 @@ import {
   RemoveAddressResponseDto,
   supportedFindAddressesFieldsFilters,
 } from './dtos';
-import { ControllerResponse } from '../shared/types/controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../shared';
+import { ControllerResponse } from '../controllerResponse';
+import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
 import { CustomerService } from '../../domain/customer/services/customerService';
 import { UserRole } from '../../domain/user/types';
 import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress, UserIsNotACustomer } from './errors';

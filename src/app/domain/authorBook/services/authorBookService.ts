@@ -5,7 +5,7 @@ import { AuthorService } from '../../author/services/authorService';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { AuthorBookDto } from '../dtos';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
 import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';

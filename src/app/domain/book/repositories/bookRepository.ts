@@ -3,7 +3,7 @@ import { BookDto } from '../dtos';
 import { Book } from '../entities/book';
 import { BookMapper } from '../mappers/bookMapper';
 import { BookNotFound } from '../errors';
-import { PaginationData } from '../../shared';
+import { PaginationData } from '../../common';
 import { BookQueryBuilder } from './queryBuilder';
 import { Filter } from '../../../common';
 

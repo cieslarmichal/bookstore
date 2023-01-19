@@ -9,7 +9,7 @@ import {
   JoinColumn,
   Column,
 } from 'typeorm';
-import { Address } from '../../address/entities/address';
+import { AddressEntity } from '../../address/addressEntity';
 import { User } from '../../user/entities/user';
 
 export const CUSTOMER_TABLE_NAME = 'customers';
@@ -34,8 +34,8 @@ export class Customer {
   public updatedAt: Date;
 
   @IsOptional()
-  @OneToMany(() => Address, (address) => address.customer)
-  public addresses?: Address[];
+  @OneToMany(() => AddressEntity, (address) => address.customer)
+  public addresses?: AddressEntity[];
 
   @IsOptional()
   @OneToOne(() => User, (user) => user.customer, { onDelete: 'CASCADE' })

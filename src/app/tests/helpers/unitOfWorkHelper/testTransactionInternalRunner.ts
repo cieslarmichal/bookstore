@@ -1,5 +1,7 @@
 import { AwilixContainer } from 'awilix';
-import { PostgresUnitOfWork, TransactionCallback, UNIT_OF_WORK_FACTORY } from '../../../app/common';
+import { PostgresUnitOfWork } from '../../../libs/unitOfWork/postgresUnitOfWork';
+import { TransactionCallback } from '../../../libs/unitOfWork/transactionCallback';
+import { UNIT_OF_WORK_FACTORY } from '../../../libs/unitOfWork/unitOfWorkInjectionSymbols';
 
 export class TestTransactionInternalRunner {
   public constructor(private readonly container: AwilixContainer) {}

@@ -1,7 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
-import { errorMiddleware } from './app/middlewares';
-import { jsonMiddleware } from './app/middlewares/jsonMiddleware';
+import { errorMiddleware } from './app/controllers/common/middlewares/middlewares';
+import { jsonMiddleware } from './app/controllers/common/middlewares/middlewares/jsonMiddleware';
 import { AwilixContainer } from 'awilix';
 import {
   ADDRESS_CONTROLLER,

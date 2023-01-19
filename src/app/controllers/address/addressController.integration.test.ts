@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../configLoader';
-import { AddressTestDataGenerator } from '../../domain/address/testDataGenerators/addressTestDataGenerator';
+import { AddressTestDataGenerator } from '../../domain/address/tests/testDataGenerators/addressTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';

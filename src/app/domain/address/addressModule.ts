@@ -3,7 +3,7 @@ import { LoadableModule } from '../../common';
 import { ADDRESS_MAPPER, ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from './addressInjectionSymbols';
 import { AddressMapper } from './mappers/addressMapper';
 import { AddressRepositoryFactory } from './repositories/addressRepositoryFactory';
-import { AddressService } from './services/addressService';
+import { AddressService } from './services/addressServiceImpl';
 
 export class AddressModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
