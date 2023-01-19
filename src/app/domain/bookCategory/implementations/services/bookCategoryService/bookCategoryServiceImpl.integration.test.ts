@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
@@ -33,7 +33,7 @@ describe('BookCategoryService', () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       CategoryModule,
       BookModule,
       BookCategoryModule,
@@ -54,7 +54,7 @@ describe('BookCategoryService', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create bookCategory', () => {

@@ -3,7 +3,7 @@ import { App } from './app';
 import { createDIContainer } from './app/common';
 import { BookModule } from './app/domain/book/bookModule';
 import { AuthorModule } from './app/domain/author/authorModule';
-import { DbModule } from './app/libs/db/dbModule';
+import { PostgresModule } from './app/libs/postgres/postgresModule';
 import { ControllersModule } from './app/controllers/controllersModule';
 import { UserModule } from './app/domain/user/userModule';
 import { ConfigLoader } from './configLoader';
@@ -18,7 +18,7 @@ async function main() {
   ConfigLoader.loadConfig();
 
   const container = await createDIContainer([
-    DbModule,
+    PostgresModule,
     CategoryModule,
     BookModule,
     AuthorModule,

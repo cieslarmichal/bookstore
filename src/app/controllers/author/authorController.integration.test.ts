@@ -1,22 +1,15 @@
 import { ConfigLoader } from '../../../configLoader';
-import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
-import { DbModule } from '../../common';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { AuthorRepositoryFactory } from '../../domain/author/repositories/authorRepositoryFactory';
 import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
-import { LoggerModule } from '../../common/logger/loggerModule';
-import { AUTHOR_REPOSITORY_FACTORY } from '../../domain/author/authorSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../domain/address/addressModule';
 import { CustomerModule } from '../../domain/customer/customerModule';
@@ -40,7 +33,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
   beforeEach(async () => {
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       CategoryModule,
       BookModule,
       AuthorModule,
@@ -70,7 +63,7 @@ describe(`AuthorController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create author', () => {

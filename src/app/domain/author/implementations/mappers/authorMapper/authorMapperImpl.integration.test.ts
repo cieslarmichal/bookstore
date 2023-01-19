@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
@@ -21,7 +21,13 @@ describe('AuthorMapperImpl', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, LoggerModule, UnitOfWorkModule]);
+    const container = await createDIContainer([
+      PostgresModule,
+      BookModule,
+      AuthorModule,
+      LoggerModule,
+      UnitOfWorkModule,
+    ]);
 
     authorMapper = container.resolve(authorSymbols.authorMapper);
 
@@ -29,7 +35,7 @@ describe('AuthorMapperImpl', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Map author', () => {

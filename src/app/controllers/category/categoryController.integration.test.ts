@@ -2,8 +2,8 @@ import { ConfigLoader } from '../../../configLoader';
 import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
-import { DbModule } from '../../common';
+import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { PostgresModule } from '../../common';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
@@ -40,7 +40,7 @@ describe(`CategoryController (${baseUrl})`, () => {
 
   beforeEach(async () => {
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       CategoryModule,
       BookModule,
       AuthorModule,
@@ -70,7 +70,7 @@ describe(`CategoryController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create category', () => {

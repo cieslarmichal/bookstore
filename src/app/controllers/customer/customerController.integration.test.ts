@@ -2,8 +2,8 @@ import { ConfigLoader } from '../../../configLoader';
 import { CustomerEntityTestDataGenerator } from '../../domain/customer/tests/customerEntityTestDataGenerator/customerEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
-import { DbModule } from '../../common';
+import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { PostgresModule } from '../../common';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
@@ -43,7 +43,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
   beforeEach(async () => {
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       BookModule,
       AuthorModule,
       UserModule,
@@ -74,7 +74,7 @@ describe(`CustomerController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create customer', () => {

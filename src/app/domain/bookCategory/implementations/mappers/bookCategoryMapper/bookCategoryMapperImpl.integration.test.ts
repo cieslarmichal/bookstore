@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
@@ -22,7 +22,7 @@ describe('BookCategoryMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookCategoryModule, LoggerModule, UnitOfWorkModule]);
+    const container = await createDIContainer([PostgresModule, BookCategoryModule, LoggerModule, UnitOfWorkModule]);
 
     bookCategoryMapper = container.resolve(BOOK_CATEGORY_MAPPER);
 
@@ -33,7 +33,7 @@ describe('BookCategoryMapper', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Map bookCategory', () => {

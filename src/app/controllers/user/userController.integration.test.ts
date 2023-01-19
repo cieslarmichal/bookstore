@@ -2,8 +2,8 @@ import { ConfigLoader } from '../../../configLoader';
 import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
-import { DbModule } from '../../common';
+import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { PostgresModule } from '../../common';
 import { UserModule } from '../../domain/user/userModule';
 import { ControllersModule } from '../controllersModule';
 import { Server } from '../../../server';
@@ -44,7 +44,7 @@ describe(`UserController (${baseUrl})`, () => {
 
   beforeEach(async () => {
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       CategoryModule,
       BookModule,
       AuthorModule,
@@ -76,7 +76,7 @@ describe(`UserController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Register user by email', () => {

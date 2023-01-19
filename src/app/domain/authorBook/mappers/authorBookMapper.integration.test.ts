@@ -1,8 +1,8 @@
 import { AuthorBookEntity } from '../contracts/authorBookEntity';
 import { AuthorBookMapper } from './authorBookMapper';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
+import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../../common';
+import { PostgresModule } from '../../../common';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
@@ -23,7 +23,7 @@ describe('AuthorBookMapper', () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       AuthorBookModule,
       AuthorModule,
       LoggerModule,
@@ -39,7 +39,7 @@ describe('AuthorBookMapper', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Map authorBook', () => {

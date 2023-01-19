@@ -1,8 +1,8 @@
 import { AuthorBookService } from './authorBookService';
 import { AuthorBookTestDataGenerator } from '../testDataGenerators/authorBookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
+import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../../common';
+import { PostgresModule } from '../../../common';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../errors';
@@ -33,7 +33,7 @@ describe('AuthorBookService', () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       CategoryModule,
       BookModule,
       AuthorModule,
@@ -55,7 +55,7 @@ describe('AuthorBookService', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create authorBook', () => {

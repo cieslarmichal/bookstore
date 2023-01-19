@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
@@ -27,7 +27,13 @@ describe('CustomerServiceImpl', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, CustomerModule, LoggerModule, UserModule, UnitOfWorkModule]);
+    const container = await createDIContainer([
+      PostgresModule,
+      CustomerModule,
+      LoggerModule,
+      UserModule,
+      UnitOfWorkModule,
+    ]);
 
     customerService = container.resolve(CUSTOMER_SERVICE);
     customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
@@ -40,7 +46,7 @@ describe('CustomerServiceImpl', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create customer', () => {

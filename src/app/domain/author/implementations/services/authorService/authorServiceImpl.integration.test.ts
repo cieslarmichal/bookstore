@@ -1,7 +1,7 @@
 import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
@@ -33,7 +33,7 @@ describe('AuthorServiceImpl', () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       BookModule,
       AuthorModule,
       AuthorBookModule,
@@ -50,7 +50,7 @@ describe('AuthorServiceImpl', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create author', () => {

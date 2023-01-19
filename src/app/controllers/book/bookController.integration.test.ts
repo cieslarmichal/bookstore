@@ -2,8 +2,8 @@ import { ConfigLoader } from '../../../configLoader';
 import { BookTestDataGenerator } from '../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
-import { DbModule } from '../../common';
+import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { PostgresModule } from '../../common';
 import { BookModule } from '../../domain/book/bookModule';
 import { ControllersModule } from '../controllersModule';
 import { AuthorModule } from '../../domain/author/authorModule';
@@ -40,7 +40,7 @@ describe(`BookController (${baseUrl})`, () => {
 
   beforeEach(async () => {
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       CategoryModule,
       BookModule,
       AuthorModule,
@@ -70,7 +70,7 @@ describe(`BookController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create book', () => {

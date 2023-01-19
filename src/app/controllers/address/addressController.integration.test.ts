@@ -2,28 +2,30 @@ import { ConfigLoader } from '../../../configLoader';
 import { AddressEntityTestDataGenerator } from '../../domain/address/tests/addressEntityTestDataGenerator/addressTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
-import { DbModule } from '../../common';
 import { AddressModule } from '../../domain/address/addressModule';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
-import { AddressRepositoryFactory } from '../../domain/address/repositories/addressRepositoryFactory';
 import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { StatusCodes } from 'http-status-codes';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
 import { UserModule } from '../../domain/user/userModule';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
-import { LoggerModule } from '../../common/logger/loggerModule';
-import { ADDRESS_REPOSITORY_FACTORY } from '../../domain/address/addressSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../domain/category/categoryModule';
-import { UserRepositoryFactory } from '../../domain/user/repositories/userRepositoryFactory';
-import { CustomerRepositoryFactory } from '../../domain/customer/repositories/customerRepositoryFactory';
-import { USER_REPOSITORY_FACTORY } from '../../domain/user/userSymbols';
-import { CUSTOMER_REPOSITORY_FACTORY } from '../../domain/customer/customerSymbols';
 import { CustomerModule } from '../../domain/customer/customerModule';
+import { AddressRepositoryFactory } from '../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
+import { CustomerRepositoryFactory } from '../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
+import { UserRepositoryFactory } from '../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { createDIContainer } from '../../libs/di/container';
+import { LoggerModule } from '../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../libs/unitOfWork/unitOfWorkModule';
+import { AuthHelper, TestTransactionExternalRunner } from '../../tests/helpers';
+import { postgresConnector } from '../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../libs/postgres/postgresModule';
+import { addressSymbols } from '../../domain/address/addressSymbols';
+import { userSymbols } from '../../domain/user/userSymbols';
+import { customerSymbols } from '../../domain/customer/customerSymbols';
 
 const baseUrl = '/addresses';
 
@@ -46,7 +48,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
   beforeEach(async () => {
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       AddressModule,
       BookModule,
       AuthorModule,
@@ -60,9 +62,9 @@ describe(`AddressController (${baseUrl})`, () => {
       UnitOfWorkModule,
     ]);
 
-    addressRepositoryFactory = container.resolve(ADDRESS_REPOSITORY_FACTORY);
-    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
-    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
+    addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
+    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
+    customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
@@ -78,7 +80,7 @@ describe(`AddressController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create address', () => {

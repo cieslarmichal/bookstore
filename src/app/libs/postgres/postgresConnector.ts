@@ -1,14 +1,14 @@
-import { Book } from '../../domain/book/entities/book';
 import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
 import { Connection, createConnection } from 'typeorm';
 import { UserEntity } from '../../domain/user/contracts/userEntity';
 import { CategoryEntity } from '../../domain/category/contracts/categoryEntity';
 import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
 import { BookCategoryEntity } from '../../domain/bookCategory/contracts/bookCategoryEntity';
-import { AddressEntity } from '../../domain/address/addressEntity';
 import { CustomerEntity } from '../../domain/customer/contracts/customerEntity';
+import { BookEntity } from '../../domain/book/contracts/bookEntity';
+import { AddressEntity } from '../../domain/address/contracts/addressEntity';
 
-export class DbManager {
+export class PostgresConnector {
   private connection: Connection | null;
 
   public async getConnection(): Promise<Connection> {
@@ -24,7 +24,7 @@ export class DbManager {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [
-        Book,
+        BookEntity,
         AuthorEntity,
         UserEntity,
         CategoryEntity,
@@ -46,4 +46,4 @@ export class DbManager {
   }
 }
 
-export const dbManager = new DbManager();
+export const postgresConnector = new PostgresConnector();

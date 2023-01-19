@@ -4,12 +4,12 @@ import { ConfigLoader } from '../../../../configLoader';
 import {
   BetweenFilter,
   createDIContainer,
-  dbManager,
+  postgresConnector,
   EqualFilter,
   LessThanOrEqualFilter,
   UnitOfWorkModule,
 } from '../../../common';
-import { DbModule } from '../../../common';
+import { PostgresModule } from '../../../common';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { BookNotFound } from '../errors';
@@ -48,7 +48,7 @@ describe('BookService', () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       BookModule,
       AuthorModule,
       AuthorBookModule,
@@ -73,7 +73,7 @@ describe('BookService', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create book', () => {

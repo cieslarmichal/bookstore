@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { dbManager } from '../../../../../libs/db/dbManager';
-import { DbModule } from '../../../../../libs/db/dbModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDIContainer } from '../../../../../libs/di/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
@@ -10,6 +10,7 @@ import { BookModule } from '../../../bookModule';
 import { BookEntity } from '../../../contracts/bookEntity';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';
 import { BookTestDataGenerator } from '../../../tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { bookSymbols } from '../../../bookSymbols';
 
 describe('BookMapper', () => {
   let bookMapper: BookMapper;
@@ -19,9 +20,15 @@ describe('BookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([DbModule, BookModule, AuthorModule, LoggerModule, UnitOfWorkModule]);
+    const container = await createDIContainer([
+      PostgresModule,
+      BookModule,
+      AuthorModule,
+      LoggerModule,
+      UnitOfWorkModule,
+    ]);
 
-    bookMapper = container.resolve(BOOK_MAPPER);
+    bookMapper = container.resolve(bookSymbols.bookMapper);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
@@ -29,7 +36,7 @@ describe('BookMapper', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Map book', () => {

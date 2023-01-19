@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
+import { createDIContainer, postgresConnector, EqualFilter, UnitOfWorkModule } from '../../../common';
+import { PostgresModule } from '../../../common';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
@@ -30,7 +30,7 @@ describe('AuthorService', () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([
-      DbModule,
+      PostgresModule,
       BookModule,
       AuthorModule,
       AuthorBookModule,
@@ -50,7 +50,7 @@ describe('AuthorService', () => {
   });
 
   afterAll(async () => {
-    dbManager.closeConnection();
+    postgresConnector.closeConnection();
   });
 
   describe('Create author', () => {
