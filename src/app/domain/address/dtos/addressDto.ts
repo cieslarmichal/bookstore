@@ -1,5 +1,5 @@
 import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 
 export class AddressDto {
   @IsUUID('4')

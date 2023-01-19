@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../domain/user/services/userService';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { userErrorMiddleware } from './middlewares';

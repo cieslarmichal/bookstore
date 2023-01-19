@@ -1,14 +1,14 @@
 import { Server } from './server';
 import { App } from './app';
-import { createDIContainer } from './app/shared';
+import { createDIContainer } from './app/common';
 import { BookModule } from './app/domain/book/bookModule';
 import { AuthorModule } from './app/domain/author/authorModule';
-import { DbModule } from './app/shared/db/dbModule';
+import { DbModule } from './app/libs/db/dbModule';
 import { ControllersModule } from './app/controllers/controllersModule';
 import { UserModule } from './app/domain/user/userModule';
 import { ConfigLoader } from './configLoader';
 import { CategoryModule } from './app/domain/category/categoryModule';
-import { LoggerModule } from './app/shared/logger/loggerModule';
+import { LoggerModule } from './app/common/logger/loggerModule';
 import { AuthorBookModule } from './app/domain/authorBook/authorBookModule';
 import { BookCategoryModule } from './app/domain/bookCategory/bookCategoryModule';
 import { AddressModule } from './app/domain/address/addressModule';

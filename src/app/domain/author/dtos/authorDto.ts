@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 import { BookDto } from '../../book/dtos';
 
 export class AuthorDto {

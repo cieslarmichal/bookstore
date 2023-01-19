@@ -13,7 +13,7 @@ export class CustomerRepository {
 
     const savedCustomer = await this.entityManager.save(customer);
 
-    return this.customerMapper.mapEntityToDto(savedCustomer);
+    return this.customerMapper.map(savedCustomer);
   }
 
   public async findOne(conditions: FindConditions<Customer>): Promise<CustomerDto | null> {
@@ -23,7 +23,7 @@ export class CustomerRepository {
       return null;
     }
 
-    return this.customerMapper.mapEntityToDto(customer);
+    return this.customerMapper.map(customer);
   }
 
   public async findOneById(id: string): Promise<CustomerDto | null> {
@@ -33,7 +33,7 @@ export class CustomerRepository {
   public async findMany(conditions: FindConditions<Customer>): Promise<CustomerDto[]> {
     const customeres = await this.entityManager.find(Customer, conditions);
 
-    return customeres.map((customer) => this.customerMapper.mapEntityToDto(customer));
+    return customeres.map((customer) => this.customerMapper.map(customer));
   }
 
   public async updateOne(id: string, customerData: Partial<Customer>): Promise<CustomerDto> {

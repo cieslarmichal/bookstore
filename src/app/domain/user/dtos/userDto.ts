@@ -1,5 +1,5 @@
 import { IsDate, IsString, IsEnum, IsUUID, IsOptional } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 import { UserRole } from '../types';
 
 export class UserDto {

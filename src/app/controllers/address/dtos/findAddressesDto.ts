@@ -1,4 +1,4 @@
-import { EQUAL_FILTER_NAME } from '../../../shared';
+import { EQUAL_FILTER_NAME } from '../../../common';
 import { AddressDto } from './addressDto';
 
 export const supportedFindAddressesFieldsFilters: Map<string, Array<string>> = new Map(

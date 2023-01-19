@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../shared';
+import { LoadableModule } from '../../common';
 import { CATEGORY_MAPPER, CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from './categoryInjectionSymbols';
 import { CategoryMapper } from './mappers/categoryMapper';
 import { CategoryRepositoryFactory } from './repositories/categoryRepositoryFactory';

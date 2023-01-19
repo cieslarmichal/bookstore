@@ -1,12 +1,12 @@
 import { CustomerService } from './customerService';
 import { CustomerTestDataGenerator } from '../testDataGenerators/customerTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { CustomerModule } from '../customerModule';
 import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { CUSTOMER_REPOSITORY_FACTORY, CUSTOMER_SERVICE } from '../customerInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
 import { USER_REPOSITORY_FACTORY } from '../../user/userInjectionSymbols';

@@ -1,7 +1,7 @@
 import { BookCategory } from '../entities/bookCategory';
 import { BookCategoryMapper } from './bookCategoryMapper';
 import { ConfigLoader } from '../../../../configLoader';
-import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../shared';
+import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../common';
 import { BookCategoryModule } from '../bookCategoryModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
@@ -67,7 +67,7 @@ describe('BookCategoryMapper', () => {
 
         const savedBookCategory = await entityManager.save(createdBookCategory);
 
-        const bookCategoryDto = bookCategoryMapper.mapEntityToDto(savedBookCategory);
+        const bookCategoryDto = bookCategoryMapper.map(savedBookCategory);
 
         expect(bookCategoryDto).toEqual({
           id: savedBookCategory.id,

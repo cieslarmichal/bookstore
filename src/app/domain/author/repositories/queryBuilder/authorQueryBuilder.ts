@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../../shared/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Author } from '../../entities/author';
-import { Filter } from '../../../../shared';
+import { Filter } from '../../../../common';
 
 export class AuthorQueryBuilder extends QueryBuilder<Author> {
   public constructor(entityManager: EntityManager) {

@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../shared';
+import { LoadableModule } from '../../common';
 import { ADDRESS_MAPPER, ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from './addressInjectionSymbols';
 import { AddressMapper } from './mappers/addressMapper';
 import { AddressRepositoryFactory } from './repositories/addressRepositoryFactory';

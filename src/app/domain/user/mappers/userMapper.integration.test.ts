@@ -2,7 +2,7 @@ import { User } from '../entities/user';
 import { UserMapper } from './userMapper';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../shared';
+import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../common';
 import { UserModule } from '../userModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { USER_MAPPER } from '../userInjectionSymbols';
@@ -45,7 +45,7 @@ describe('UserMapper', () => {
 
         const savedUser = await entityManager.save(createdUser);
 
-        const userDto = userMapper.mapEntityToDto(savedUser);
+        const userDto = userMapper.map(savedUser);
 
         expect(userDto).toEqual({
           id: savedUser.id,

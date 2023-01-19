@@ -16,7 +16,7 @@ export class AuthorBookRepository {
 
     const savedAuthorBook = await this.entityManager.save(authorBook);
 
-    return this.authorBookMapper.mapEntityToDto(savedAuthorBook);
+    return this.authorBookMapper.map(savedAuthorBook);
   }
 
   public async findOne(conditions: FindConditions<AuthorBook>): Promise<AuthorBookDto | null> {
@@ -26,7 +26,7 @@ export class AuthorBookRepository {
       return null;
     }
 
-    return this.authorBookMapper.mapEntityToDto(authorBook);
+    return this.authorBookMapper.map(authorBook);
   }
 
   public async findOneById(id: string): Promise<AuthorBookDto | null> {

@@ -1,5 +1,5 @@
-import { PostgresUnitOfWork } from '../../../shared';
-import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../common';
+import { LoggerService } from '../../../common/logger/services/loggerService';
 import { CustomerDto } from '../dtos';
 import { CustomerAlreadyExists, CustomerNotFound } from '../errors';
 import { CustomerRepositoryFactory } from '../repositories/customerRepositoryFactory';

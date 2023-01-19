@@ -1,4 +1,4 @@
-import { DomainError } from '../../../shared/errors/domainError';
+import { ApplicationError } from '../../../common/errors/applicationError';
 
 type UserNotFoundIdContext = {
   readonly id: string;
@@ -11,7 +11,7 @@ type UserNotFoundEmailContext = {
 type UserNotFoundPhoneNumberContext = {
   readonly phoneNumber: string;
 };
-export class UserNotFound extends DomainError<
+export class UserNotFound extends ApplicationError<
   UserNotFoundIdContext | UserNotFoundEmailContext | UserNotFoundPhoneNumberContext
 > {
   public constructor(context: UserNotFoundIdContext | UserNotFoundEmailContext | UserNotFoundPhoneNumberContext) {

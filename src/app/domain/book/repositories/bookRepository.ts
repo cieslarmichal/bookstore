@@ -5,7 +5,7 @@ import { BookMapper } from '../mappers/bookMapper';
 import { BookNotFound } from '../errors';
 import { PaginationData } from '../../shared';
 import { BookQueryBuilder } from './queryBuilder';
-import { Filter } from '../../../shared';
+import { Filter } from '../../../common';
 
 @EntityRepository()
 export class BookRepository {
@@ -16,7 +16,7 @@ export class BookRepository {
 
     const savedBook = await this.entityManager.save(book);
 
-    return this.bookMapper.mapEntityToDto(savedBook);
+    return this.bookMapper.map(savedBook);
   }
 
   public async findOne(conditions: FindConditions<Book>): Promise<BookDto | null> {
@@ -26,7 +26,7 @@ export class BookRepository {
       return null;
     }
 
-    return this.bookMapper.mapEntityToDto(book);
+    return this.bookMapper.map(book);
   }
 
   public async findOneById(id: string): Promise<BookDto | null> {
@@ -44,7 +44,7 @@ export class BookRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return books.map((book) => this.bookMapper.mapEntityToDto(book));
+    return books.map((book) => this.bookMapper.map(book));
   }
 
   public async findManyByAuthorId(
@@ -63,7 +63,7 @@ export class BookRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return books.map((book) => this.bookMapper.mapEntityToDto(book));
+    return books.map((book) => this.bookMapper.map(book));
   }
 
   public async findManyByCategoryId(
@@ -82,7 +82,7 @@ export class BookRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return books.map((book) => this.bookMapper.mapEntityToDto(book));
+    return books.map((book) => this.bookMapper.map(book));
   }
 
   public async updateOne(id: string, bookData: Partial<Book>): Promise<BookDto> {

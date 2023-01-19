@@ -2,7 +2,7 @@ import { Category } from '../entities/category';
 import { CategoryMapper } from './categoryMapper';
 import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../shared';
+import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../common';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
@@ -44,7 +44,7 @@ describe('CategoryMapper', () => {
 
         const savedCategory = await entityManager.save(createdCategory);
 
-        const categoryDto = categoryMapper.mapEntityToDto(savedCategory);
+        const categoryDto = categoryMapper.map(savedCategory);
 
         expect(categoryDto).toEqual({
           id: savedCategory.id,

@@ -1,6 +1,6 @@
 import Logger, { LogLevel } from 'bunyan';
 import bunyan from 'bunyan';
-import { LogContext } from './types/logContext';
+import { LogContext } from './logContext';
 
 export class LoggerService {
   private readonly instance: Logger;

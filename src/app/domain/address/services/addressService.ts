@@ -1,5 +1,5 @@
-import { Filter, PostgresUnitOfWork } from '../../../shared';
-import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { Filter, PostgresUnitOfWork } from '../../../common';
+import { LoggerService } from '../../../common/logger/services/loggerService';
 import { PaginationData } from '../../shared';
 import { AddressDto } from '../dtos';
 import { AddressNotFound } from '../errors';

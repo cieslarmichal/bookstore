@@ -5,7 +5,7 @@ import { AuthorMapper } from '../mappers/authorMapper';
 import { AuthorNotFound } from '../errors';
 import { PaginationData } from '../../shared';
 import { AuthorQueryBuilder } from './queryBuilder';
-import { Filter } from '../../../shared';
+import { Filter } from '../../../common';
 
 @EntityRepository()
 export class AuthorRepository {
@@ -16,7 +16,7 @@ export class AuthorRepository {
 
     const savedAuthor = await this.entityManager.save(author);
 
-    return this.authorMapper.mapEntityToDto(savedAuthor);
+    return this.authorMapper.map(savedAuthor);
   }
 
   public async findOne(conditions: FindConditions<Author>): Promise<AuthorDto | null> {
@@ -26,7 +26,7 @@ export class AuthorRepository {
       return null;
     }
 
-    return this.authorMapper.mapEntityToDto(author);
+    return this.authorMapper.map(author);
   }
 
   public async findOneById(id: string): Promise<AuthorDto | null> {
@@ -44,7 +44,7 @@ export class AuthorRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return authors.map((author) => this.authorMapper.mapEntityToDto(author));
+    return authors.map((author) => this.authorMapper.map(author));
   }
 
   public async findManyByBookId(
@@ -63,7 +63,7 @@ export class AuthorRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return authors.map((author) => this.authorMapper.mapEntityToDto(author));
+    return authors.map((author) => this.authorMapper.map(author));
   }
 
   public async updateOne(id: string, authorData: Partial<Author>): Promise<AuthorDto> {

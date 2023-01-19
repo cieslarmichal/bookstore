@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../shared';
+import { LoadableModule } from '../common';
 import { AddressController } from './address/addressController';
 import { AuthorController } from './author/authorController';
 import { AuthorBookController } from './authorBook/authorBookController';

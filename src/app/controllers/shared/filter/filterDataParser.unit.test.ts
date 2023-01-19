@@ -8,7 +8,7 @@ import {
   LessThanFilter,
   LessThanOrEqualFilter,
   LikeFilter,
-} from '../../../shared';
+} from '../../../common';
 
 describe('FilterDataParser', () => {
   describe('Empty input', () => {

@@ -1,10 +1,10 @@
-import { DomainError } from '../../../shared/errors/domainError';
+import { ApplicationError } from '../../../common/errors/applicationError';
 
 type CategoryNotFoundContext = {
   readonly id: string;
 };
 
-export class CategoryNotFound extends DomainError<CategoryNotFoundContext> {
+export class CategoryNotFound extends ApplicationError<CategoryNotFoundContext> {
   public constructor(context: CategoryNotFoundContext) {
     super('Category not found.', context);
   }

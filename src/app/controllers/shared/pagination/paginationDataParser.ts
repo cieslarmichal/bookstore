@@ -1,5 +1,5 @@
 import { IsNumber, IsOptional } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 import { PaginationData } from './paginationData';
 
 class PaginationDataTemplate {

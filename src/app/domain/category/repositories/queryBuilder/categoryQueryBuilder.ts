@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../../shared/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Category } from '../../entities/category';
-import { Filter } from '../../../../shared';
+import { Filter } from '../../../../common';
 
 export class CategoryQueryBuilder extends QueryBuilder<Category> {
   public constructor(entityManager: EntityManager) {

@@ -1,4 +1,4 @@
-export * from './types';
+export * from './transactionCallback';
 export * from './unitOfWork';
 export * from './postgresUnitOfWork';
 export * from './unitOfWorkFactory';

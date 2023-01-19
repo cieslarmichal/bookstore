@@ -13,7 +13,7 @@ export class UserRepository {
 
     const savedUser = await this.entityManager.save(user);
 
-    return this.userMapper.mapEntityToDto(savedUser);
+    return this.userMapper.map(savedUser);
   }
 
   public async findOne(conditions: FindConditions<User>): Promise<UserDto | null> {
@@ -23,7 +23,7 @@ export class UserRepository {
       return null;
     }
 
-    return this.userMapper.mapEntityToDto(user);
+    return this.userMapper.map(user);
   }
 
   public async findOneById(id: string): Promise<UserDto | null> {
@@ -33,7 +33,7 @@ export class UserRepository {
   public async findMany(conditions: FindConditions<User>): Promise<UserDto[]> {
     const users = await this.entityManager.find(User, conditions);
 
-    return users.map((user) => this.userMapper.mapEntityToDto(user));
+    return users.map((user) => this.userMapper.map(user));
   }
 
   public async updateOne(id: string, userData: Partial<User>): Promise<UserDto> {

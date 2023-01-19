@@ -1,4 +1,4 @@
-import { EQUAL_FILTER_NAME, LIKE_FILTER_NAME } from '../../../shared';
+import { EQUAL_FILTER_NAME, LIKE_FILTER_NAME } from '../../../common';
 import { AuthorDto } from './authorDto';
 
 export const supportedFindAuthorsFieldsFilters: Map<string, Array<string>> = new Map(

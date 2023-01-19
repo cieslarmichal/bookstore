@@ -1,5 +1,5 @@
 import { IsDate, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 
 export class CustomerDto {
   @IsUUID('4')

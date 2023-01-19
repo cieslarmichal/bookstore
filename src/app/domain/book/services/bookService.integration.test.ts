@@ -8,8 +8,8 @@ import {
   EqualFilter,
   LessThanOrEqualFilter,
   UnitOfWorkModule,
-} from '../../../shared';
-import { DbModule } from '../../../shared';
+} from '../../../common';
+import { DbModule } from '../../../common';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { BookNotFound } from '../errors';
@@ -17,7 +17,7 @@ import { TestTransactionInternalRunner } from '../../../../integration/helpers/u
 import { CategoryModule } from '../../category/categoryModule';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { BOOK_REPOSITORY_FACTORY, BOOK_SERVICE } from '../bookInjectionSymbols';
 import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';

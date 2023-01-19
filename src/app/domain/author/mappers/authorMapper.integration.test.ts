@@ -2,12 +2,12 @@ import { Author } from '../entities/author';
 import { AuthorMapper } from './authorMapper';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { AuthorModule } from '../authorModule';
 import { BookModule } from '../../book/bookModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { AUTHOR_MAPPER } from '../authorInjectionSymbols';
 
 describe('AuthorMapper', () => {
@@ -47,7 +47,7 @@ describe('AuthorMapper', () => {
 
         const savedAuthor = await entityManager.save(createdAuthor);
 
-        const authorDto = authorMapper.mapEntityToDto(savedAuthor);
+        const authorDto = authorMapper.map(savedAuthor);
 
         expect(authorDto).toEqual({
           id: savedAuthor.id,
@@ -76,7 +76,7 @@ describe('AuthorMapper', () => {
 
         const savedAuthor = await entityManager.save(createdAuthor);
 
-        const authorDto = authorMapper.mapEntityToDto(savedAuthor);
+        const authorDto = authorMapper.map(savedAuthor);
 
         expect(authorDto).toEqual({
           id: savedAuthor.id,

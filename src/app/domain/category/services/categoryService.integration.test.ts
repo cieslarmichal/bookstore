@@ -1,13 +1,13 @@
 import { CategoryService } from './categoryService';
 import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { CategoryModule } from '../categoryModule';
 import { AuthorModule } from '../../author/authorModule';
 import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { BookModule } from '../../book/bookModule';

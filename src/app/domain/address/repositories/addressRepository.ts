@@ -4,7 +4,7 @@ import { Address } from '../entities/address';
 import { AddressMapper } from '../mappers/addressMapper';
 import { AddressNotFound } from '../errors';
 import { PaginationData } from '../../shared';
-import { Filter } from '../../../shared';
+import { Filter } from '../../../common';
 import { AddressQueryBuilder } from './queryBuilder';
 
 @EntityRepository()
@@ -16,7 +16,7 @@ export class AddressRepository {
 
     const savedAddress = await this.entityManager.save(address);
 
-    return this.addressMapper.mapEntityToDto(savedAddress);
+    return this.addressMapper.map(savedAddress);
   }
 
   public async findOne(conditions: FindConditions<Address>): Promise<AddressDto | null> {
@@ -26,7 +26,7 @@ export class AddressRepository {
       return null;
     }
 
-    return this.addressMapper.mapEntityToDto(address);
+    return this.addressMapper.map(address);
   }
 
   public async findOneById(id: string): Promise<AddressDto | null> {
@@ -44,7 +44,7 @@ export class AddressRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return addresses.map((address) => this.addressMapper.mapEntityToDto(address));
+    return addresses.map((address) => this.addressMapper.map(address));
   }
 
   public async updateOne(id: string, addressData: Partial<Address>): Promise<AddressDto> {

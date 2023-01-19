@@ -1,7 +1,7 @@
 import { QueryBuilder } from '../../../shared/queryBuilder';
 import { EntityManager } from 'typeorm';
 import { Address } from '../../entities/address';
-import { Filter } from '../../../../shared';
+import { Filter } from '../../../../common';
 
 export class AddressQueryBuilder extends QueryBuilder<Address> {
   public constructor(entityManager: EntityManager) {

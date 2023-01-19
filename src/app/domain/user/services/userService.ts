@@ -1,5 +1,5 @@
-import { PostgresUnitOfWork } from '../../../shared';
-import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../common';
+import { LoggerService } from '../../../common/logger/services/loggerService';
 import { UserDto } from '../dtos';
 import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../errors';
 import { UserRepositoryFactory } from '../repositories/userRepositoryFactory';

@@ -1,5 +1,5 @@
 import { IsNumber } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 
 export class PaginationData {
   @IsNumber()

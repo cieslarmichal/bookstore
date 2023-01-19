@@ -1,6 +1,6 @@
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
 import { AuthorModule } from '../authorModule';
@@ -9,7 +9,7 @@ import { AuthorNotFound } from '../errors';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { AUTHOR_REPOSITORY_FACTORY, AUTHOR_SERVICE } from '../authorInjectionSymbols';
 import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';

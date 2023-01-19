@@ -5,7 +5,7 @@ import { CategoryMapper } from '../mappers/categoryMapper';
 import { CategoryNotFound } from '../errors';
 import { PaginationData } from '../../shared';
 import { CategoryQueryBuilder } from './queryBuilder';
-import { Filter } from '../../../shared';
+import { Filter } from '../../../common';
 
 @EntityRepository()
 export class CategoryRepository {
@@ -16,7 +16,7 @@ export class CategoryRepository {
 
     const savedCategory = await this.entityManager.save(category);
 
-    return this.categoryMapper.mapEntityToDto(savedCategory);
+    return this.categoryMapper.map(savedCategory);
   }
 
   public async findOne(conditions: FindConditions<Category>): Promise<CategoryDto | null> {
@@ -26,7 +26,7 @@ export class CategoryRepository {
       return null;
     }
 
-    return this.categoryMapper.mapEntityToDto(category);
+    return this.categoryMapper.map(category);
   }
 
   public async findOneById(id: string): Promise<CategoryDto | null> {
@@ -44,7 +44,7 @@ export class CategoryRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return categories.map((category) => this.categoryMapper.mapEntityToDto(category));
+    return categories.map((category) => this.categoryMapper.map(category));
   }
 
   public async findManyByBookId(
@@ -63,7 +63,7 @@ export class CategoryRepository {
       .take(paginationData.limit)
       .getMany();
 
-    return categories.map((category) => this.categoryMapper.mapEntityToDto(category));
+    return categories.map((category) => this.categoryMapper.map(category));
   }
 
   public async updateOne(id: string, categoryData: Partial<Category>): Promise<CategoryDto> {

@@ -1,12 +1,12 @@
 import { AddressService } from './addressService';
 import { AddressTestDataGenerator } from '../testDataGenerators/addressTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { AddressModule } from '../addressModule';
 import { AddressNotFound } from '../errors';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { ADDRESS_REPOSITORY_FACTORY, ADDRESS_SERVICE } from '../addressInjectionSymbols';
 import { CUSTOMER_REPOSITORY_FACTORY } from '../../customer/customerInjectionSymbols';
 import { CustomerModule } from '../../customer/customerModule';

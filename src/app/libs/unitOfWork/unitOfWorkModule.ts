@@ -1,4 +1,4 @@
-import { LoadableModule } from '../di';
+import { LoadableModule } from '../../libs/di';
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
 import { UNIT_OF_WORK_FACTORY } from './unitOfWorkInjectionSymbols';
 import { UnitOfWorkFactory } from './unitOfWorkFactory';

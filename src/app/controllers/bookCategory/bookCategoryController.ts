@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { BookCategoryService } from '../../domain/bookCategory/services/bookCategoryService';
 import { CreateBookCategoryData, RemoveBookCategoryData } from '../../domain/bookCategory/services/types';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../shared';
+import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { bookCategoryErrorMiddleware } from './middlewares';

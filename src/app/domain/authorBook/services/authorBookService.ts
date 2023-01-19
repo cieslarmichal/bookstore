@@ -1,4 +1,4 @@
-import { Filter, LoggerService, PostgresUnitOfWork } from '../../../shared';
+import { Filter, LoggerService, PostgresUnitOfWork } from '../../../common';
 import { AuthorDto } from '../../author/dtos';
 import { AuthorNotFound } from '../../author/errors';
 import { AuthorService } from '../../author/services/authorService';

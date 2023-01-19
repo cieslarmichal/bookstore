@@ -1,11 +1,11 @@
 import { Customer } from '../entities/customer';
 import { CustomerMapper } from './customerMapper';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { CustomerModule } from '../customerModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { CUSTOMER_MAPPER } from '../customerInjectionSymbols';
 import { User } from '../../user/entities/user';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
@@ -48,7 +48,7 @@ describe('CustomerMapper', () => {
 
         const savedCustomer = await entityManager.save(createdCustomer);
 
-        const customerDto = customerMapper.mapEntityToDto(savedCustomer);
+        const customerDto = customerMapper.map(savedCustomer);
 
         expect(customerDto).toEqual({
           id: savedCustomer.id,

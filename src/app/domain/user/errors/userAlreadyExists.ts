@@ -1,4 +1,4 @@
-import { DomainError } from '../../../shared/errors/domainError';
+import { ApplicationError } from '../../../common/errors/applicationError';
 
 type UserAlreadyExistsEmailContext = {
   readonly email: string;
@@ -8,7 +8,7 @@ type UserAlreadyExistsPhoneNumberContext = {
   readonly phoneNumber: string;
 };
 
-export class UserAlreadyExists extends DomainError<
+export class UserAlreadyExists extends ApplicationError<
   UserAlreadyExistsEmailContext | UserAlreadyExistsPhoneNumberContext
 > {
   public constructor(context: UserAlreadyExistsEmailContext | UserAlreadyExistsPhoneNumberContext) {

@@ -1,4 +1,4 @@
-import { Filter, LoggerService, PostgresUnitOfWork } from '../../../shared';
+import { Filter, LoggerService, PostgresUnitOfWork } from '../../../common';
 import { PaginationData } from '../../shared';
 import { BookDto } from '../dtos';
 import { BookNotFound } from '../errors';

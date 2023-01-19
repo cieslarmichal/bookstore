@@ -1,4 +1,4 @@
-import { LoadableModule } from '../di';
+import { LoadableModule } from '../../libs/di';
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
 import { LOGGER_SERVICE } from './loggerInjectionSymbols';
 import { LoggerService } from './services/loggerService';

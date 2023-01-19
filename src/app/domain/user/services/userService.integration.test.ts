@@ -1,15 +1,15 @@
 import { UserService } from './userService';
 import { UserTestDataGenerator } from '../testDataGenerators/userTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { UserModule } from '../userModule';
 import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../errors';
 import { TokenService } from './tokenService';
 import { HashService } from './hashService';
 import { UserDto } from '../dtos';
 import { UserRole } from '../types';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { HASH_SERVICE, TOKEN_SERVICE, USER_REPOSITORY_FACTORY, USER_SERVICE } from '../userInjectionSymbols';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers';
 import { UserRepositoryFactory } from '../repositories/userRepositoryFactory';

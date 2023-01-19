@@ -2,11 +2,11 @@ import { Address } from '../entities/address';
 import { AddressMapper } from './addressMapper';
 import { AddressTestDataGenerator } from '../testDataGenerators/addressTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { AddressModule } from '../addressModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { ADDRESS_MAPPER } from '../addressInjectionSymbols';
 import { UserTestDataGenerator } from '../../user/testDataGenerators/userTestDataGenerator';
 import { User } from '../../user/entities/user';
@@ -69,7 +69,7 @@ describe('AddressMapper', () => {
 
         const savedAddress = await entityManager.save(createdAddress);
 
-        const addressDto = addressMapper.mapEntityToDto(savedAddress);
+        const addressDto = addressMapper.map(savedAddress);
 
         expect(addressDto).toEqual({
           id: savedAddress.id,
@@ -123,7 +123,7 @@ describe('AddressMapper', () => {
 
         const savedAddress = await entityManager.save(createdAddress);
 
-        const addressDto = addressMapper.mapEntityToDto(savedAddress);
+        const addressDto = addressMapper.map(savedAddress);
 
         expect(addressDto).toEqual({
           id: savedAddress.id,

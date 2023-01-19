@@ -1,15 +1,15 @@
 import { BookCategoryService } from './bookCategoryService';
 import { BookCategoryTestDataGenerator } from '../testDataGenerators/bookCategoryTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { BookCategoryModule } from '../bookCategoryModule';
 import { BookCategoryAlreadyExists, BookCategoryNotFound } from '../errors';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { BookModule } from '../../book/bookModule';
 import { CategoryModule } from '../../category/categoryModule';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
 import { BOOK_CATEGORY_REPOSITORY_FACTORY, BOOK_CATEGORY_SERVICE } from '../bookCategoryInjectionSymbols';

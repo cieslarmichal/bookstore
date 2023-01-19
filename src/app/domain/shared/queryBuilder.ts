@@ -7,7 +7,7 @@ import {
   LessThanFilter,
   LessThanOrEqualFilter,
   LikeFilter,
-} from '../../shared';
+} from '../../common';
 import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
 export abstract class QueryBuilder<T> {

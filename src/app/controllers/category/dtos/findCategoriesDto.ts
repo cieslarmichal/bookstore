@@ -1,4 +1,4 @@
-import { EQUAL_FILTER_NAME, LIKE_FILTER_NAME } from '../../../shared';
+import { EQUAL_FILTER_NAME, LIKE_FILTER_NAME } from '../../../common';
 import { CategoryDto } from './categoryDto';
 
 export const supportedFindCategoriesFieldsFilters: Map<string, Array<string>> = new Map(

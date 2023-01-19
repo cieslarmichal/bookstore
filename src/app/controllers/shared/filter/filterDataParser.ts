@@ -8,7 +8,7 @@ import {
   LESS_THAN_OR_EQUAL_FILTER_NAME,
   LIKE_FILTER_NAME,
   FilterFactory,
-} from '../../../shared';
+} from '../../../common';
 
 const TOKENS_SEPARATOR = '||';
 const VALUES_SEPARATOR = ',';

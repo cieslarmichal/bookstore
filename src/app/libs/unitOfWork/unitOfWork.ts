@@ -1,5 +1,5 @@
 import { LoggerService } from '../logger';
-import { TransactionCallback } from './types';
+import { TransactionCallback } from './transactionCallback';
 
 export abstract class UnitOfWork {
   public constructor(protected readonly loggerService: LoggerService) {}

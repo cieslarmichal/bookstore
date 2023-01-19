@@ -6,7 +6,7 @@ import {
   LESS_THAN_FILTER_NAME,
   LESS_THAN_OR_EQUAL_FILTER_NAME,
   LIKE_FILTER_NAME,
-} from '../../../shared';
+} from '../../../common';
 import { BookDto } from './bookDto';
 
 export const supportedFindBooksFieldsFilters: Map<string, Array<string>> = new Map(

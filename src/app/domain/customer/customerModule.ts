@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../shared';
+import { LoadableModule } from '../../common';
 import { CUSTOMER_MAPPER, CUSTOMER_REPOSITORY_FACTORY, CUSTOMER_SERVICE } from './customerInjectionSymbols';
 import { CustomerMapper } from './mappers/customerMapper';
 import { CustomerRepositoryFactory } from './repositories/customerRepositoryFactory';

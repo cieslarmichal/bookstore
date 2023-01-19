@@ -1,5 +1,5 @@
-import { Filter, PostgresUnitOfWork } from '../../../shared';
-import { LoggerService } from '../../../shared/logger/services/loggerService';
+import { Filter, PostgresUnitOfWork } from '../../../common';
+import { LoggerService } from '../../../common/logger/services/loggerService';
 import { BookDto } from '../../book/dtos';
 import { BookNotFound } from '../../book/errors';
 import { BookService } from '../../book/services/bookService';

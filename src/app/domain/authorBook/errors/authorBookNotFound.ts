@@ -1,4 +1,4 @@
-import { DomainError } from '../../../shared/errors/domainError';
+import { ApplicationError } from '../../../common/errors/applicationError';
 
 type AuthorBookNotFoundCompositeIdContext = {
   readonly authorId: string;
@@ -9,7 +9,7 @@ type AuthorBookNotFoundIdContext = {
   readonly id: string;
 };
 
-export class AuthorBookNotFound extends DomainError<
+export class AuthorBookNotFound extends ApplicationError<
   AuthorBookNotFoundCompositeIdContext | AuthorBookNotFoundIdContext
 > {
   public constructor(context: AuthorBookNotFoundCompositeIdContext | AuthorBookNotFoundIdContext) {

@@ -2,12 +2,12 @@ import { Book } from '../entities/book';
 import { BookMapper } from './bookMapper';
 import { BookTestDataGenerator } from '../testDataGenerators/bookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../shared';
-import { DbModule } from '../../../shared';
+import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
+import { DbModule } from '../../../common';
 import { BookModule } from '../bookModule';
 import { AuthorModule } from '../../author/authorModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../shared/logger/loggerModule';
+import { LoggerModule } from '../../../common/logger/loggerModule';
 import { BOOK_MAPPER } from '../bookInjectionSymbols';
 
 describe('BookMapper', () => {
@@ -50,7 +50,7 @@ describe('BookMapper', () => {
 
         const savedBook = await entityManager.save(createdBook);
 
-        const bookDto = bookMapper.mapEntityToDto(savedBook);
+        const bookDto = bookMapper.map(savedBook);
 
         expect(bookDto).toEqual({
           id: savedBook.id,
@@ -85,7 +85,7 @@ describe('BookMapper', () => {
 
         const savedBook = await entityManager.save(createdBook);
 
-        const bookDto = bookMapper.mapEntityToDto(savedBook);
+        const bookDto = bookMapper.map(savedBook);
 
         expect(bookDto).toEqual({
           id: savedBook.id,

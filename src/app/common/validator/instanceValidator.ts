@@ -1,5 +1,5 @@
 import { validateSync } from 'class-validator';
-import { ValidationError } from './errors';
+import { ValidationError } from './errors/validationError';
 
 export class InstanceValidator {
   public static validateStrictly<T>(objInstance: T): void {
@@ -9,7 +9,7 @@ export class InstanceValidator {
     });
 
     if (validationErrors.length > 0) {
-      throw new ValidationError(validationErrors);
+      throw new ValidationError({ validationErrors });
     }
   }
 
@@ -19,7 +19,7 @@ export class InstanceValidator {
     });
 
     if (validationErrors.length > 0) {
-      throw new ValidationError(validationErrors);
+      throw new ValidationError({ validationErrors });
     }
   }
 }

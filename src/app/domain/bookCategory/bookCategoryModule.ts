@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../shared';
+import { LoadableModule } from '../../common';
 import {
   BOOK_CATEGORY_MAPPER,
   BOOK_CATEGORY_REPOSITORY_FACTORY,

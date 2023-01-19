@@ -1,5 +1,5 @@
 import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../shared';
+import { RecordToInstanceTransformer } from '../../../common';
 import { BookFormat, BookLanguage } from '../../../domain/book/types';
 
 export class BookDto {
