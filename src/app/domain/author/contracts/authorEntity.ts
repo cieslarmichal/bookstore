@@ -7,7 +7,7 @@ export const AUTHOR_TABLE_NAME = 'authors';
 @Entity({
   name: AUTHOR_TABLE_NAME,
 })
-export class Author {
+export class AuthorEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')

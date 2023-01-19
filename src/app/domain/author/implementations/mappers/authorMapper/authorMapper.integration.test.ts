@@ -1,30 +1,31 @@
-import { Author } from '../entities/author';
-import { AuthorMapper } from './authorMapper';
-import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
-import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
-import { AuthorModule } from '../authorModule';
-import { BookModule } from '../../book/bookModule';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../common/logger/loggerModule';
-import { AUTHOR_MAPPER } from '../authorInjectionSymbols';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { BookModule } from '../../../../book/bookModule';
+import { AuthorModule } from '../../../authorModule';
+import { authorSymbols } from '../../../authorSymbols';
+import { AuthorEntity } from '../../../contracts/authorEntity';
+import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';
+import { AuthorEntityTestDataGenerator } from '../../../tests/authorEntityTestDataGenerator/authorEntityTestDataGenerator';
 
-describe('AuthorMapper', () => {
+describe('AuthorMapperImpl', () => {
   let authorMapper: AuthorMapper;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
+
+  const authorEntityTestDataGenerator = new AuthorEntityTestDataGenerator();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
     const container = await createDIContainer([DbModule, BookModule, AuthorModule, LoggerModule, UnitOfWorkModule]);
 
-    authorMapper = container.resolve(AUTHOR_MAPPER);
+    authorMapper = container.resolve(authorSymbols.authorMapper);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
-
-    authorTestDataGenerator = new AuthorTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -38,9 +39,9 @@ describe('AuthorMapper', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestDataGenerator.generateData();
 
-        const createdAuthor = entityManager.create(Author, {
+        const createdAuthor = entityManager.create(AuthorEntity, {
           firstName,
           lastName,
         });
@@ -66,9 +67,9 @@ describe('AuthorMapper', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName, about } = authorTestDataGenerator.generateData();
+        const { firstName, lastName, about } = authorEntityTestDataGenerator.generateData();
 
-        const createdAuthor = entityManager.create(Author, {
+        const createdAuthor = entityManager.create(AuthorEntity, {
           firstName,
           lastName,
           about,

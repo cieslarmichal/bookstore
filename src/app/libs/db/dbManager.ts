@@ -1,5 +1,5 @@
 import { Book } from '../../domain/book/entities/book';
-import { Author } from '../../domain/author/entities/author';
+import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
 import { Connection, createConnection } from 'typeorm';
 import { User } from '../../domain/user/entities/user';
 import { Category } from '../../domain/category/entities/category';
@@ -23,7 +23,7 @@ export class DbManager {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Book, Author, User, Category, AuthorBook, BookCategory, AddressEntity, Customer],
+      entities: [Book, AuthorEntity, User, Category, AuthorBook, BookCategory, AddressEntity, Customer],
       synchronize: true,
     });
 

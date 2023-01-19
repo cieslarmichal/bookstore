@@ -19,7 +19,7 @@ import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorT
 import { AuthorBookModule } from '../../authorBook/authorBookModule';
 import { LoggerModule } from '../../../common/logger/loggerModule';
 import { BOOK_REPOSITORY_FACTORY, BOOK_SERVICE } from '../bookInjectionSymbols';
-import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorSymbols';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';
 import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategoryInjectionSymbols';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';

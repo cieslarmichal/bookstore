@@ -1,18 +1,21 @@
-import { Filter, PostgresUnitOfWork } from '../../../common';
-import { LoggerService } from '../../../common/logger/services/loggerService';
-import { PaginationData } from '../../common';
-import { AuthorDto } from '../dtos';
-import { AuthorNotFound } from '../errors';
-import { AuthorRepositoryFactory } from '../repositories/authorRepositoryFactory';
-import { CreateAuthorData, UpdateAuthorData } from './types';
+import { Filter } from '../../../../../common/filter/filter';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { PaginationData } from '../../../../common/paginationData';
+import { Author } from '../../../contracts/author';
+import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
+import { AuthorService } from '../../../contracts/services/authorService/authorService';
+import { CreateAuthorData } from '../../../contracts/services/authorService/createAuthorData';
+import { UpdateAuthorData } from '../../../contracts/services/authorService/updateAuthorData';
+import { AuthorNotFound } from '../../../errors/authorNotFound';
 
-export class AuthorService {
+export class AuthorServiceImpl implements AuthorService {
   public constructor(
     private readonly authorRepositoryFactory: AuthorRepositoryFactory,
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createAuthor(unitOfWork: PostgresUnitOfWork, authorData: CreateAuthorData): Promise<AuthorDto> {
+  public async createAuthor(unitOfWork: PostgresUnitOfWork, authorData: CreateAuthorData): Promise<Author> {
     this.loggerService.debug('Creating author...');
 
     const { entityManager } = unitOfWork;
@@ -26,7 +29,7 @@ export class AuthorService {
     return author;
   }
 
-  public async findAuthor(unitOfWork: PostgresUnitOfWork, authorId: string): Promise<AuthorDto> {
+  public async findAuthor(unitOfWork: PostgresUnitOfWork, authorId: string): Promise<Author> {
     const { entityManager } = unitOfWork;
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
@@ -44,7 +47,7 @@ export class AuthorService {
     unitOfWork: PostgresUnitOfWork,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<AuthorDto[]> {
+  ): Promise<Author[]> {
     const { entityManager } = unitOfWork;
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
@@ -59,7 +62,7 @@ export class AuthorService {
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<AuthorDto[]> {
+  ): Promise<Author[]> {
     const { entityManager } = unitOfWork;
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
@@ -73,7 +76,7 @@ export class AuthorService {
     unitOfWork: PostgresUnitOfWork,
     authorId: string,
     authorData: UpdateAuthorData,
-  ): Promise<AuthorDto> {
+  ): Promise<Author> {
     this.loggerService.debug('Updating author...', { authorId });
 
     const { entityManager } = unitOfWork;

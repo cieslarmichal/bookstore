@@ -8,7 +8,7 @@ import { AuthorModule } from '../../author/authorModule';
 import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
 import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorTestDataGenerator';
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { Author } from '../../author/entities/author';
+import { AuthorEntity } from '../../author/contracts/authorEntity';
 import { Book } from '../../book/entities/book';
 import { LoggerModule } from '../../../common/logger/loggerModule';
 import { AUTHOR_BOOK_MAPPER } from '../authorBookInjectionSymbols';
@@ -51,7 +51,7 @@ describe('AuthorBookMapper', () => {
 
         const { firstName, lastName } = authorTestDataGenerator.generateData();
 
-        const createdAuthor = entityManager.create(Author, {
+        const createdAuthor = entityManager.create(AuthorEntity, {
           firstName,
           lastName,
         });

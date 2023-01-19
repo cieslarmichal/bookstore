@@ -1,7 +1,7 @@
-import { AddressEntity } from '../../addressEntity';
 import { faker } from '@faker-js/faker';
+import { AddressEntity } from '../../contracts/addressEntity';
 
-export class AddressTestDataGenerator {
+export class AddressEntityTestDataGenerator {
   public generateData(): AddressEntity {
     return {
       id: this.generateId(),

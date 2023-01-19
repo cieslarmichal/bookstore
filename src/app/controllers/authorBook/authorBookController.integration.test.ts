@@ -20,7 +20,7 @@ import { BookRepositoryFactory } from '../../domain/book/repositories/bookReposi
 import { BookTestDataGenerator } from '../../domain/book/testDataGenerators/bookTestDataGenerator';
 import { AuthorBookTestDataGenerator } from '../../domain/authorBook/testDataGenerators/authorBookTestDataGenerator';
 import { LoggerModule } from '../../common/logger/loggerModule';
-import { AUTHOR_REPOSITORY_FACTORY } from '../../domain/author/authorInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../domain/author/authorSymbols';
 import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookInjectionSymbols';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../domain/authorBook/authorBookInjectionSymbols';
 import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';

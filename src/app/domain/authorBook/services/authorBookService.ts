@@ -1,5 +1,5 @@
 import { Filter, LoggerService, PostgresUnitOfWork } from '../../../common';
-import { AuthorDto } from '../../author/dtos';
+import { Author } from '../../author/dtos';
 import { AuthorNotFound } from '../../author/errors';
 import { AuthorService } from '../../author/services/authorService';
 import { BookDto } from '../../book/dtos';
@@ -76,7 +76,7 @@ export class AuthorBookService {
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<AuthorDto[]> {
+  ): Promise<Author[]> {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {

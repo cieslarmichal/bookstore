@@ -13,7 +13,7 @@ import { AuthorTestDataGenerator } from '../../author/testDataGenerators/authorT
 import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
 import { LoggerModule } from '../../../common/logger/loggerModule';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY, AUTHOR_BOOK_SERVICE } from '../authorBookInjectionSymbols';
-import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorInjectionSymbols';
+import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorSymbols';
 import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
 import { AuthorBookRepositoryFactory } from '../repositories/authorBookRepositoryFactory';
 import { AuthorRepositoryFactory } from '../../author/repositories/authorRepositoryFactory';

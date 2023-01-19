@@ -12,11 +12,11 @@ import { ADDRESS_MAPPER } from '../../../addressSymbols';
 import { AddressModule } from '../../../addressModule';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
-import { AddressTestDataGenerator } from '../../../tests/testDataGenerators/addressTestDataGenerator';
+import { AddressEntityTestDataGenerator } from '../../../tests/addressEntityTestDataGenerator/addressTestDataGenerator';
 
 describe('AddressMapperImpl', () => {
   let addressMapper: AddressMapper;
-  let addressTestDataGenerator: AddressTestDataGenerator;
+  let addressTestDataGenerator: AddressEntityTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
@@ -29,7 +29,7 @@ describe('AddressMapperImpl', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    addressTestDataGenerator = new AddressTestDataGenerator();
+    addressTestDataGenerator = new AddressEntityTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 

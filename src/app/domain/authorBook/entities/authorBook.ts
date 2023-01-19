@@ -1,6 +1,6 @@
 import { IsOptional, IsDate, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne, Unique } from 'typeorm';
-import { Author } from '../../author/entities/author';
+import { AuthorEntity } from '../../author/contracts/authorEntity';
 import { Book } from '../../book/entities/book';
 
 export const AUTHOR_BOOK_TABLE_NAME = 'authorBooks';
@@ -25,8 +25,8 @@ export class AuthorBook {
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt: Date;
 
-  @ManyToOne(() => Author, (author) => author.authorBooks, { onDelete: 'CASCADE' })
-  public author?: Author;
+  @ManyToOne(() => AuthorEntity, (author) => author.authorBooks, { onDelete: 'CASCADE' })
+  public author?: AuthorEntity;
 
   @IsOptional()
   @IsUUID('4')

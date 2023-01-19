@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common';
+import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
 import { BookDto } from '../../book/dtos';
 
-export class AuthorDto {
+export class Author {
   @IsUUID('4')
   public readonly id: string;
 
@@ -28,5 +28,5 @@ export class AuthorDto {
   @IsOptional()
   public readonly books: BookDto[] | null;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(AuthorDto);
+  public static readonly create = RecordToInstanceTransformer.transformFactory(Author);
 }

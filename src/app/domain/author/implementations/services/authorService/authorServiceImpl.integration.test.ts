@@ -1,30 +1,33 @@
-import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
-import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
-import { AuthorService } from './authorService';
-import { AuthorModule } from '../authorModule';
-import { BookModule } from '../../book/bookModule';
-import { AuthorNotFound } from '../errors';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { AuthorBookModule } from '../../authorBook/authorBookModule';
-import { BookTestDataGenerator } from '../../book/testDataGenerators/bookTestDataGenerator';
-import { LoggerModule } from '../../../common/logger/loggerModule';
-import { AUTHOR_REPOSITORY_FACTORY, AUTHOR_SERVICE } from '../authorInjectionSymbols';
-import { BOOK_REPOSITORY_FACTORY } from '../../book/bookInjectionSymbols';
-import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookInjectionSymbols';
-import { AuthorRepositoryFactory } from '../repositories/authorRepositoryFactory';
-import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
-import { AuthorBookRepositoryFactory } from '../../authorBook/repositories/authorBookRepositoryFactory';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { EqualFilter } from '../../../../../common/filter/equalFilter';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../../../authorBook/authorBookInjectionSymbols';
+import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
+import { AuthorBookRepositoryFactory } from '../../../../authorBook/repositories/authorBookRepositoryFactory';
+import { BOOK_REPOSITORY_FACTORY } from '../../../../book/bookInjectionSymbols';
+import { BookModule } from '../../../../book/bookModule';
+import { BookRepositoryFactory } from '../../../../book/repositories/bookRepositoryFactory';
+import { BookTestDataGenerator } from '../../../../book/testDataGenerators/bookTestDataGenerator';
+import { AuthorModule } from '../../../authorModule';
+import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
+import { AuthorService } from '../../../contracts/services/authorService/authorService';
+import { AuthorNotFound } from '../../../errors/authorNotFound';
+import { AuthorEntityTestDataGenerator } from '../../../tests/authorEntityTestDataGenerator/authorEntityTestDataGenerator';
 
-describe('AuthorService', () => {
+describe('AuthorServiceImpl', () => {
   let authorService: AuthorService;
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
-  let bookTestDataGenerator: BookTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
+
+  const authorTestDataGenerator = new AuthorEntityTestDataGenerator();
+  const bookTestDataGenerator = new BookTestDataGenerator();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
@@ -44,9 +47,6 @@ describe('AuthorService', () => {
     authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
-
-    authorTestDataGenerator = new AuthorTestDataGenerator();
-    bookTestDataGenerator = new BookTestDataGenerator();
   });
 
   afterAll(async () => {

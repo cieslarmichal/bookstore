@@ -1,26 +1,27 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
-import { AuthorDto } from '../dtos';
-import { Author } from '../entities/author';
-import { AuthorMapper } from '../mappers/authorMapper';
-import { AuthorNotFound } from '../errors';
-import { PaginationData } from '../../common';
-import { AuthorQueryBuilder } from './queryBuilder';
-import { Filter } from '../../../common';
+import { Filter } from '../../../../../common/filter/filter';
+import { PaginationData } from '../../../../common/paginationData';
+import { Author } from '../../../contracts/author';
+import { AuthorEntity } from '../../../contracts/authorEntity';
+import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';
+import { AuthorRepository } from '../../../contracts/repositories/authorRepository/authorRepository';
+import { AuthorNotFound } from '../../../errors/authorNotFound';
+import { AuthorQueryBuilder } from './authorQueryBuilder';
 
 @EntityRepository()
-export class AuthorRepository {
+export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
-  public async createOne(authorData: Partial<Author>): Promise<AuthorDto> {
-    const author = this.entityManager.create(Author, authorData);
+  public async createOne(authorData: Partial<AuthorEntity>): Promise<Author> {
+    const author = this.entityManager.create(AuthorEntity, authorData);
 
     const savedAuthor = await this.entityManager.save(author);
 
     return this.authorMapper.map(savedAuthor);
   }
 
-  public async findOne(conditions: FindConditions<Author>): Promise<AuthorDto | null> {
-    const author = await this.entityManager.findOne(Author, conditions);
+  public async findOne(conditions: FindConditions<AuthorEntity>): Promise<Author | null> {
+    const author = await this.entityManager.findOne(AuthorEntity, conditions);
 
     if (!author) {
       return null;
@@ -29,11 +30,11 @@ export class AuthorRepository {
     return this.authorMapper.map(author);
   }
 
-  public async findOneById(id: string): Promise<AuthorDto | null> {
+  public async findOneById(id: string): Promise<Author | null> {
     return this.findOne({ id });
   }
 
-  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<AuthorDto[]> {
+  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<Author[]> {
     const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
@@ -47,11 +48,7 @@ export class AuthorRepository {
     return authors.map((author) => this.authorMapper.map(author));
   }
 
-  public async findManyByBookId(
-    bookId: string,
-    filters: Filter[],
-    paginationData: PaginationData,
-  ): Promise<AuthorDto[]> {
+  public async findManyByBookId(bookId: string, filters: Filter[], paginationData: PaginationData): Promise<Author[]> {
     const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
@@ -66,16 +63,16 @@ export class AuthorRepository {
     return authors.map((author) => this.authorMapper.map(author));
   }
 
-  public async updateOne(id: string, authorData: Partial<Author>): Promise<AuthorDto> {
+  public async updateOne(id: string, authorData: Partial<AuthorEntity>): Promise<Author> {
     const author = await this.findOneById(id);
 
     if (!author) {
       throw new AuthorNotFound({ id });
     }
 
-    await this.entityManager.update(Author, { id }, authorData);
+    await this.entityManager.update(AuthorEntity, { id }, authorData);
 
-    return this.findOneById(id) as Promise<AuthorDto>;
+    return this.findOneById(id) as Promise<Author>;
   }
 
   public async removeOne(id: string): Promise<void> {
@@ -85,6 +82,6 @@ export class AuthorRepository {
       throw new AuthorNotFound({ id });
     }
 
-    await this.entityManager.delete(Author, { id });
+    await this.entityManager.delete(AuthorEntity, { id });
   }
 }

@@ -18,14 +18,14 @@ import { AddressModule } from '../../../addressModule';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';
 import { AddressNotFound } from '../../../errors/addressNotFound';
-import { AddressTestDataGenerator } from '../../../tests/testDataGenerators/addressTestDataGenerator';
+import { AddressEntityTestDataGenerator } from '../../../tests/addressEntityTestDataGenerator/addressTestDataGenerator';
 
-describe('AddressService', () => {
+describe('AddressServiceImpl', () => {
   let addressService: AddressService;
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let addressTestDataGenerator: AddressTestDataGenerator;
+  let addressTestDataGenerator: AddressEntityTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
@@ -48,7 +48,7 @@ describe('AddressService', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    addressTestDataGenerator = new AddressTestDataGenerator();
+    addressTestDataGenerator = new AddressEntityTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 

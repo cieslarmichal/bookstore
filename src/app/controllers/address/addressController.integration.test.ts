@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../configLoader';
-import { AddressTestDataGenerator } from '../../domain/address/tests/testDataGenerators/addressTestDataGenerator';
+import { AddressEntityTestDataGenerator } from '../../domain/address/tests/addressEntityTestDataGenerator/addressTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
 import { createDIContainer, dbManager, UnitOfWorkModule } from '../../common';
@@ -31,7 +31,7 @@ describe(`AddressController (${baseUrl})`, () => {
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let addressTestDataGenerator: AddressTestDataGenerator;
+  let addressTestDataGenerator: AddressEntityTestDataGenerator;
   let userTestDataGenerator: UserTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -40,7 +40,7 @@ describe(`AddressController (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    addressTestDataGenerator = new AddressTestDataGenerator();
+    addressTestDataGenerator = new AddressEntityTestDataGenerator();
     userTestDataGenerator = new UserTestDataGenerator();
   });
 
