@@ -1,11 +1,11 @@
 import { EntityManager } from 'typeorm';
 import { Filter } from '../../../../../common/filter/filter';
 import { QueryBuilder } from '../../../../common/queryBuilder';
-import { Book } from '../../../contracts/book';
+import { BookEntity } from '../../../contracts/bookEntity';
 
-export class BookQueryBuilder extends QueryBuilder<Book> {
+export class BookQueryBuilder extends QueryBuilder<BookEntity> {
   public constructor(entityManager: EntityManager) {
-    super(entityManager, Book, 'book');
+    super(entityManager, BookEntity, 'book');
   }
 
   public authorConditions(authorId: string): BookQueryBuilder {

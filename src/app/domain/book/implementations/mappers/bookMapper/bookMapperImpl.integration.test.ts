@@ -7,7 +7,7 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { AuthorModule } from '../../../../author/authorModule';
 import { BookModule } from '../../../bookModule';
-import { Book } from '../../../contracts/book';
+import { BookEntity } from '../../../contracts/bookEntity';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';
 import { BookTestDataGenerator } from '../../../tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 
@@ -41,7 +41,7 @@ describe('BookMapper', () => {
 
         const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
 
-        const createdBook = entityManager.create(Book, {
+        const createdBook = entityManager.create(BookEntity, {
           title,
           releaseYear,
           language,
@@ -75,7 +75,7 @@ describe('BookMapper', () => {
 
         const { title, releaseYear, language, format, description, price } = bookTestDataGenerator.generateData();
 
-        const createdBook = entityManager.create(Book, {
+        const createdBook = entityManager.create(BookEntity, {
           title,
           releaseYear,
           language,

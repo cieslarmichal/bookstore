@@ -1,61 +1,36 @@
-import { IsOptional, IsDate, IsString, IsNumber, IsEnum, IsUUID } from 'class-validator';
-import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
-import { AuthorBookEntity } from '../../authorBook/contracts/authorBookEntity';
-import { BookCategory } from '../../bookCategory/entities/bookCategory';
+import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
 import { BookFormat } from './bookFormat';
 import { BookLanguage } from './bookLanguage';
 
-export const BOOK_TABLE_NAME = 'books';
-
-@Entity({
-  name: BOOK_TABLE_NAME,
-})
 export class Book {
-  @IsOptional()
   @IsUUID('4')
-  @PrimaryGeneratedColumn('uuid')
-  public id: string;
+  public readonly id: string;
 
-  @IsOptional()
   @IsDate()
-  @CreateDateColumn({ type: 'timestamp' })
-  public createdAt: Date;
+  public readonly createdAt: Date;
 
-  @IsOptional()
   @IsDate()
-  @UpdateDateColumn({ type: 'timestamp' })
-  public updatedAt: Date;
+  public readonly updatedAt: Date;
 
   @IsString()
-  @Column()
-  public title: string;
+  public readonly title: string;
 
   @IsNumber()
-  @Column()
-  public releaseYear: number;
+  public readonly releaseYear: number;
 
   @IsEnum(BookLanguage)
-  @Column()
-  public language: BookLanguage;
+  public readonly language: BookLanguage;
 
   @IsEnum(BookFormat)
-  @Column()
-  public format: BookFormat;
+  public readonly format: BookFormat;
 
-  @IsOptional()
   @IsString()
-  @Column({ type: 'text', nullable: true })
-  public description: string | null;
+  @IsOptional()
+  public readonly description?: string | null;
 
   @IsNumber()
-  @Column()
-  public price: number;
+  public readonly price: number;
 
-  @IsOptional()
-  @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.book)
-  public authorBooks?: AuthorBookEntity[] | null;
-
-  @IsOptional()
-  @OneToMany(() => BookCategory, (bookCategory) => bookCategory.book)
-  public bookCategories?: BookCategory[] | null;
+  public static readonly create = RecordToInstanceTransformer.transformFactory(Book);
 }

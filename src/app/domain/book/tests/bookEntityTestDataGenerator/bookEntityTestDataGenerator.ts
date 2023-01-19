@@ -1,10 +1,10 @@
 import faker from '@faker-js/faker';
-import { Book } from '../../contracts/book';
+import { BookEntity } from '../../contracts/bookEntity';
 import { BookFormat } from '../../contracts/bookFormat';
 import { BookLanguage } from '../../contracts/bookLanguage';
 
 export class BookTestDataGenerator {
-  public generateData(): Book {
+  public generateData(): BookEntity {
     return {
       id: this.generateId(),
       createdAt: this.generateCreatedAt(),

@@ -1,12 +1,12 @@
+import { BookEntity } from '../../../contracts/bookEntity';
 import { Book } from '../../../contracts/book';
-import { BookDto } from '../../../contracts/bookDto';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';
 
 export class BookMapperImpl implements BookMapper {
-  public map(entity: Book): BookDto {
+  public map(entity: BookEntity): Book {
     const { id, createdAt, updatedAt, title, releaseYear, language, format, description, price } = entity;
 
-    return BookDto.create({
+    return Book.create({
       id,
       createdAt,
       updatedAt,

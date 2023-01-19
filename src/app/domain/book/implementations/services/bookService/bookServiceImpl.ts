@@ -2,7 +2,7 @@ import { Filter } from '../../../../../common/filter/filter';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { PaginationData } from '../../../../common/paginationData';
-import { BookDto } from '../../../contracts/bookDto';
+import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookService } from '../../../contracts/services/bookService/bookService';
 import { CreateBookData } from '../../../contracts/services/bookService/createBookData';
@@ -15,7 +15,7 @@ export class BookServiceImpl implements BookService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createBook(unitOfWork: PostgresUnitOfWork, bookData: CreateBookData): Promise<BookDto> {
+  public async createBook(unitOfWork: PostgresUnitOfWork, bookData: CreateBookData): Promise<Book> {
     this.loggerService.debug('Creating book...');
 
     const { entityManager } = unitOfWork;
@@ -29,7 +29,7 @@ export class BookServiceImpl implements BookService {
     return book;
   }
 
-  public async findBook(unitOfWork: PostgresUnitOfWork, bookId: string): Promise<BookDto> {
+  public async findBook(unitOfWork: PostgresUnitOfWork, bookId: string): Promise<Book> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
@@ -47,7 +47,7 @@ export class BookServiceImpl implements BookService {
     unitOfWork: PostgresUnitOfWork,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<BookDto[]> {
+  ): Promise<Book[]> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
@@ -62,7 +62,7 @@ export class BookServiceImpl implements BookService {
     authorId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<BookDto[]> {
+  ): Promise<Book[]> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
@@ -77,7 +77,7 @@ export class BookServiceImpl implements BookService {
     categoryId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<BookDto[]> {
+  ): Promise<Book[]> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
@@ -87,7 +87,7 @@ export class BookServiceImpl implements BookService {
     return books;
   }
 
-  public async updateBook(unitOfWork: PostgresUnitOfWork, bookId: string, bookData: UpdateBookData): Promise<BookDto> {
+  public async updateBook(unitOfWork: PostgresUnitOfWork, bookId: string, bookData: UpdateBookData): Promise<Book> {
     this.loggerService.debug('Updating book...', { bookId });
 
     const { entityManager } = unitOfWork;

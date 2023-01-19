@@ -1,16 +1,16 @@
 import { FindConditions } from 'typeorm';
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
+import { BookEntity } from '../../bookEntity';
 import { Book } from '../../book';
-import { BookDto } from '../../bookDto';
 
 export interface BookRepository {
-  createOne(bookData: Partial<Book>): Promise<BookDto>;
-  findOne(conditions: FindConditions<Book>): Promise<BookDto | null>;
-  findOneById(id: string): Promise<BookDto | null>;
-  findMany(filters: Filter[], paginationData: PaginationData): Promise<BookDto[]>;
-  findManyByAuthorId(authorId: string, filters: Filter[], paginationData: PaginationData): Promise<BookDto[]>;
-  findManyByCategoryId(categoryId: string, filters: Filter[], paginationData: PaginationData): Promise<BookDto[]>;
-  updateOne(id: string, bookData: Partial<Book>): Promise<BookDto>;
+  createOne(bookData: Partial<BookEntity>): Promise<Book>;
+  findOne(conditions: FindConditions<BookEntity>): Promise<Book | null>;
+  findOneById(id: string): Promise<Book | null>;
+  findMany(filters: Filter[], paginationData: PaginationData): Promise<Book[]>;
+  findManyByAuthorId(authorId: string, filters: Filter[], paginationData: PaginationData): Promise<Book[]>;
+  findManyByCategoryId(categoryId: string, filters: Filter[], paginationData: PaginationData): Promise<Book[]>;
+  updateOne(id: string, bookData: Partial<BookEntity>): Promise<Book>;
   removeOne(id: string): Promise<void>;
 }
