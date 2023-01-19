@@ -1,24 +1,25 @@
-import { CategoryService } from './categoryService';
-import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
-import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, dbManager, EqualFilter, UnitOfWorkModule } from '../../../common';
-import { DbModule } from '../../../common';
-import { CategoryModule } from '../categoryModule';
-import { AuthorModule } from '../../author/authorModule';
-import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { LoggerModule } from '../../../common/logger/loggerModule';
-import { CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from '../categoryInjectionSymbols';
-import { BookTestDataGenerator } from '../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
-import { BookModule } from '../../book/bookModule';
-import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
-import { BOOK_REPOSITORY_FACTORY } from '../../book/bookSymbols';
-import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategorySymbols';
-import { CategoryRepositoryFactory } from '../repositories/categoryRepositoryFactory';
-import { BookRepositoryFactory } from '../../book/repositories/bookRepositoryFactory';
-import { BookCategoryRepositoryFactory } from '../../bookCategory/repositories/bookCategoryRepositoryFactory';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { EqualFilter } from '../../../../../common/filter/equalFilter';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { AuthorModule } from '../../../../author/authorModule';
+import { BookModule } from '../../../../book/bookModule';
+import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { BookCategoryModule } from '../../../../bookCategory/bookCategoryModule';
+import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
+import { CategoryModule } from '../../../categoryModule';
+import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
+import { CategoryService } from '../../../contracts/services/categoryService/categoryService';
+import { CategoryAlreadyExists } from '../../../errors/categoryAlreadyExists';
+import { CategoryNotFound } from '../../../errors/categoryNotFound';
+import { CategoryTestDataGenerator } from '../../../tests/categoryEntityTestDataGenerator/categoryEntityTestDataGenerator';
 
-describe('CategoryService', () => {
+describe('CategoryServiceImpl', () => {
   let categoryService: CategoryService;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;

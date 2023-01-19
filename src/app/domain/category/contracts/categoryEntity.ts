@@ -7,7 +7,7 @@ export const CATEGORY_TABLE_NAME = 'categories';
 @Entity({
   name: CATEGORY_TABLE_NAME,
 })
-export class Category {
+export class CategoryEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')

@@ -1,11 +1,11 @@
-import { QueryBuilder } from '../../../common/queryBuilder';
 import { EntityManager } from 'typeorm';
-import { Category } from '../../entities/category';
-import { Filter } from '../../../../common';
+import { Filter } from '../../../../../common/filter/filter';
+import { QueryBuilder } from '../../../../common/queryBuilder';
+import { CategoryEntity } from '../../../contracts/categoryEntity';
 
-export class CategoryQueryBuilder extends QueryBuilder<Category> {
+export class CategoryQueryBuilder extends QueryBuilder<CategoryEntity> {
   public constructor(entityManager: EntityManager) {
-    super(entityManager, Category, 'category');
+    super(entityManager, CategoryEntity, 'category');
   }
 
   public bookConditions(bookId: string): CategoryQueryBuilder {

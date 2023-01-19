@@ -1,14 +1,17 @@
-import { Category } from '../entities/category';
-import { CategoryMapper } from './categoryMapper';
-import { CategoryTestDataGenerator } from '../testDataGenerators/categoryTestDataGenerator';
-import { ConfigLoader } from '../../../../configLoader';
-import { DbModule, LoggerModule, createDIContainer, UnitOfWorkModule, dbManager } from '../../../common';
-import { CategoryModule } from '../categoryModule';
-import { AuthorModule } from '../../author/authorModule';
-import { TestTransactionInternalRunner } from '../../../../integration/helpers/unitOfWorkHelper/testTransactionInternalRunner';
-import { CATEGORY_MAPPER } from '../categoryInjectionSymbols';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { dbManager } from '../../../../../libs/db/dbManager';
+import { DbModule } from '../../../../../libs/db/dbModule';
+import { createDIContainer } from '../../../../../libs/di/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { AuthorModule } from '../../../../author/authorModule';
+import { CategoryModule } from '../../../categoryModule';
+import { CategoryEntity } from '../../../contracts/categoryEntity';
+import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/categoryMapper';
+import { CategoryTestDataGenerator } from '../../../tests/categoryEntityTestDataGenerator/categoryEntityTestDataGenerator';
 
-describe('CategoryMapper', () => {
+describe('CategoryMapperImpl', () => {
   let categoryMapper: CategoryMapper;
   let categoryTestDataGenerator: CategoryTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
@@ -38,7 +41,7 @@ describe('CategoryMapper', () => {
 
         const { name } = categoryTestDataGenerator.generateData();
 
-        const createdCategory = entityManager.create(Category, {
+        const createdCategory = entityManager.create(CategoryEntity, {
           name,
         });
 

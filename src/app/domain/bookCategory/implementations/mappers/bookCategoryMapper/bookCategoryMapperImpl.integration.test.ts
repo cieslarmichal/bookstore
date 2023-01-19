@@ -7,7 +7,7 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { Book } from '../../../../book/contracts/book';
 import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
-import { Category } from '../../../../category/entities/category';
+import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';
 import { BookCategoryModule } from '../../../bookCategoryModule';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
@@ -45,7 +45,7 @@ describe('BookCategoryMapper', () => {
 
         const { name } = categoryTestDataGenerator.generateData();
 
-        const createdCategory = entityManager.create(Category, {
+        const createdCategory = entityManager.create(CategoryEntity, {
           name,
         });
 

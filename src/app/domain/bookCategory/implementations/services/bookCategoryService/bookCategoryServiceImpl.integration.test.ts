@@ -8,7 +8,7 @@ import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { BookModule } from '../../../../book/bookModule';
 import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
-import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categorySymbols';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { CategoryRepositoryFactory } from '../../../../category/repositories/categoryRepositoryFactory';
 import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';

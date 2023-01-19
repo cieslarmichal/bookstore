@@ -23,7 +23,7 @@ import { AUTHOR_REPOSITORY_FACTORY } from '../../author/authorSymbols';
 import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../authorBook/authorBookSymbols';
 import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../bookCategory/bookCategorySymbols';
 import { CategoryTestDataGenerator } from '../../category/testDataGenerators/categoryTestDataGenerator';
-import { CATEGORY_REPOSITORY_FACTORY } from '../../category/categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../category/categorySymbols';
 import { BookCategoryModule } from '../../bookCategory/bookCategoryModule';
 import { BookFormat, BookLanguage } from '../types';
 import { BookRepositoryFactory } from '../repositories/bookRepositoryFactory';

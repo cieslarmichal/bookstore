@@ -15,7 +15,7 @@ import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/fa
 import { BOOK_CATEGORY_REPOSITORY_FACTORY } from '../../../../bookCategory/bookCategorySymbols';
 import { BookCategoryModule } from '../../../../bookCategory/bookCategoryModule';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategory/repositories/bookCategoryRepositoryFactory';
-import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categoryInjectionSymbols';
+import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categorySymbols';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { CategoryRepositoryFactory } from '../../../../category/repositories/categoryRepositoryFactory';
 import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';

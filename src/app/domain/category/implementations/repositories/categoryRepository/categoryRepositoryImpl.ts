@@ -1,26 +1,27 @@
-import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
-import { CategoryDto } from '../dtos';
-import { Category } from '../entities/category';
-import { CategoryMapper } from '../mappers/categoryMapper';
-import { CategoryNotFound } from '../errors';
-import { PaginationData } from '../../common';
-import { CategoryQueryBuilder } from './queryBuilder';
-import { Filter } from '../../../common';
+import { EntityRepository, EntityManager, FindConditions } from 'typeorm';
+import { Filter } from '../../../../../common/filter/filter';
+import { PaginationData } from '../../../../common/paginationData';
+import { CategoryEntity } from '../../../contracts/categoryEntity';
+import { Category } from '../../../contracts/category';
+import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/categoryMapper';
+import { CategoryRepository } from '../../../contracts/repositories/categoryRepository/categoryRepository';
+import { CategoryNotFound } from '../../../errors/categoryNotFound';
+import { CategoryQueryBuilder } from './categoryQueryBuilder';
 
 @EntityRepository()
-export class CategoryRepository {
+export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}
 
-  public async createOne(categoryData: Partial<Category>): Promise<CategoryDto> {
-    const category = this.entityManager.create(Category, categoryData);
+  public async createOne(categoryData: Partial<CategoryEntity>): Promise<Category> {
+    const category = this.entityManager.create(CategoryEntity, categoryData);
 
     const savedCategory = await this.entityManager.save(category);
 
     return this.categoryMapper.map(savedCategory);
   }
 
-  public async findOne(conditions: FindConditions<Category>): Promise<CategoryDto | null> {
-    const category = await this.entityManager.findOne(Category, conditions);
+  public async findOne(conditions: FindConditions<CategoryEntity>): Promise<Category | null> {
+    const category = await this.entityManager.findOne(CategoryEntity, conditions);
 
     if (!category) {
       return null;
@@ -29,11 +30,11 @@ export class CategoryRepository {
     return this.categoryMapper.map(category);
   }
 
-  public async findOneById(id: string): Promise<CategoryDto | null> {
+  public async findOneById(id: string): Promise<Category | null> {
     return this.findOne({ id });
   }
 
-  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<CategoryDto[]> {
+  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<Category[]> {
     const categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
@@ -51,7 +52,7 @@ export class CategoryRepository {
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<CategoryDto[]> {
+  ): Promise<Category[]> {
     const categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
@@ -66,16 +67,16 @@ export class CategoryRepository {
     return categories.map((category) => this.categoryMapper.map(category));
   }
 
-  public async updateOne(id: string, categoryData: Partial<Category>): Promise<CategoryDto> {
+  public async updateOne(id: string, categoryData: Partial<CategoryEntity>): Promise<Category> {
     const category = await this.findOneById(id);
 
     if (!category) {
       throw new CategoryNotFound({ id });
     }
 
-    await this.entityManager.update(Category, { id }, categoryData);
+    await this.entityManager.update(CategoryEntity, { id }, categoryData);
 
-    return this.findOneById(id) as Promise<CategoryDto>;
+    return this.findOneById(id) as Promise<Category>;
   }
 
   public async removeOne(id: string): Promise<void> {
@@ -85,6 +86,6 @@ export class CategoryRepository {
       throw new CategoryNotFound({ id });
     }
 
-    await this.entityManager.delete(Category, { id });
+    await this.entityManager.delete(CategoryEntity, { id });
   }
 }

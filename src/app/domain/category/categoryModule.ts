@@ -1,16 +1,18 @@
-import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../common';
-import { CATEGORY_MAPPER, CATEGORY_REPOSITORY_FACTORY, CATEGORY_SERVICE } from './categoryInjectionSymbols';
-import { CategoryMapper } from './mappers/categoryMapper';
-import { CategoryRepositoryFactory } from './repositories/categoryRepositoryFactory';
-import { CategoryService } from './services/categoryService';
+import { AwilixContainer, asClass, Lifetime } from 'awilix';
+import { LoadableModule } from '../../libs/di/loadableModule';
+import { categorySymbols } from './categorySymbols';
+import { CategoryRepositoryFactoryImpl } from './implementations/factories/categoryRepositoryFactory/categoryRepositoryFactoryImpl';
+import { CategoryMapperImpl } from './implementations/mappers/categoryMapper/categoryMapperImpl';
+import { CategoryServiceImpl } from './implementations/services/categoryService/categoryServiceImpl';
 
 export class CategoryModule extends LoadableModule {
   public override async loadDependenciesIntoDIContainer(container: AwilixContainer): Promise<void> {
     container.register({
-      [CATEGORY_MAPPER]: asClass(CategoryMapper, { lifetime: Lifetime.SINGLETON }),
-      [CATEGORY_REPOSITORY_FACTORY]: asClass(CategoryRepositoryFactory, { lifetime: Lifetime.SINGLETON }),
-      [CATEGORY_SERVICE]: asClass(CategoryService, { lifetime: Lifetime.SINGLETON }),
+      [categorySymbols.categoryMapper]: asClass(CategoryMapperImpl, { lifetime: Lifetime.SINGLETON }),
+      [categorySymbols.categoryRepositoryFactory]: asClass(CategoryRepositoryFactoryImpl, {
+        lifetime: Lifetime.SINGLETON,
+      }),
+      [categorySymbols.categoryService]: asClass(CategoryServiceImpl, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }

@@ -1,18 +1,21 @@
-import { Filter, PostgresUnitOfWork } from '../../../common';
-import { LoggerService } from '../../../common/logger/services/loggerService';
-import { PaginationData } from '../../common';
-import { CategoryDto } from '../dtos';
-import { CategoryAlreadyExists, CategoryNotFound } from '../errors';
-import { CategoryRepositoryFactory } from '../repositories/categoryRepositoryFactory';
-import { CreateCategoryData } from './types';
+import { Filter } from '../../../../../common/filter/filter';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { PaginationData } from '../../../../common/paginationData';
+import { Category } from '../../../contracts/category';
+import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
+import { CategoryService } from '../../../contracts/services/categoryService/categoryService';
+import { CreateCategoryData } from '../../../contracts/services/categoryService/createCategoryData';
+import { CategoryAlreadyExists } from '../../../errors/categoryAlreadyExists';
+import { CategoryNotFound } from '../../../errors/categoryNotFound';
 
-export class CategoryService {
+export class CategoryServiceImpl implements CategoryService {
   public constructor(
     private readonly categoryRepositoryFactory: CategoryRepositoryFactory,
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createCategory(unitOfWork: PostgresUnitOfWork, categoryData: CreateCategoryData): Promise<CategoryDto> {
+  public async createCategory(unitOfWork: PostgresUnitOfWork, categoryData: CreateCategoryData): Promise<Category> {
     const { name } = categoryData;
 
     this.loggerService.debug('Creating category...', { name });
@@ -34,7 +37,7 @@ export class CategoryService {
     return category;
   }
 
-  public async findCategory(unitOfWork: PostgresUnitOfWork, categoryId: string): Promise<CategoryDto> {
+  public async findCategory(unitOfWork: PostgresUnitOfWork, categoryId: string): Promise<Category> {
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
@@ -52,7 +55,7 @@ export class CategoryService {
     unitOfWork: PostgresUnitOfWork,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<CategoryDto[]> {
+  ): Promise<Category[]> {
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
@@ -67,7 +70,7 @@ export class CategoryService {
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<CategoryDto[]> {
+  ): Promise<Category[]> {
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
