@@ -34,7 +34,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let addressTestFactory: AddressEntityTestFactory;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -43,7 +43,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     ConfigLoader.loadConfig();
 
     addressTestFactory = new AddressEntityTestFactory();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -88,7 +88,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -111,7 +111,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -146,7 +146,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -182,7 +182,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -206,7 +206,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -236,7 +236,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -275,7 +275,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -318,7 +318,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -373,13 +373,13 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
         const user1 = await userRepository.createOne({ email, password, role });
 
-        const { email: otherEmail } = userTestDataGenerator.generateData();
+        const { email: otherEmail } = userEntityTestFactory.generateData();
 
         const user2 = await userRepository.createOne({ email: otherEmail, password, role });
 
@@ -429,7 +429,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -448,7 +448,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -475,7 +475,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -514,7 +514,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 

@@ -6,17 +6,17 @@ import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { Book } from '../../../../book/contracts/book';
-import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { BookEntityTestFactory } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
-import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';
+import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryEntityTestFactory';
 import { BookCategoryModule } from '../../../bookCategoryModule';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';
 
 describe('BookCategoryMapper', () => {
   let bookCategoryMapper: BookCategoryMapper;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let bookTestDataGenerator: BookTestDataGenerator;
+  let categoryEntityTestFactory: CategoryTestDataGenerator;
+  let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -33,8 +33,8 @@ describe('BookCategoryMapper', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
-    bookTestDataGenerator = new BookTestDataGenerator();
+    categoryEntityTestFactory = new CategoryTestDataGenerator();
+    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -48,7 +48,7 @@ describe('BookCategoryMapper', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const createdCategory = entityManager.create(CategoryEntity, {
           name,
@@ -56,7 +56,7 @@ describe('BookCategoryMapper', () => {
 
         const savedCategory = await entityManager.save(createdCategory);
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const createdBook = entityManager.create(Book, {
           title,

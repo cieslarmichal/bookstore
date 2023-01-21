@@ -30,7 +30,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let customerTestDataGenerator: CustomerEntityTestDataGenerator;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -39,7 +39,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
     ConfigLoader.loadConfig();
 
     customerTestDataGenerator = new CustomerEntityTestDataGenerator();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -83,7 +83,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -104,7 +104,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -122,7 +122,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -145,7 +145,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -163,7 +163,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -187,7 +187,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -209,7 +209,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -231,7 +231,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -250,7 +250,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -275,7 +275,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -297,7 +297,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userTestDataGenerator.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 

@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { BookTestDataGenerator } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import request from 'supertest';
 import { App } from '../../../../../../app';
 import { BookModule } from '../../../../../domain/book/bookModule';
@@ -26,8 +26,8 @@ const baseUrl = '/books';
 
 describe(`BookControllerImpl (${baseUrl})`, () => {
   let bookRepositoryFactory: BookRepositoryFactory;
-  let bookTestDataGenerator: BookTestDataGenerator;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let bookEntityTestFactory: BookEntityTestFactory;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -35,8 +35,8 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    bookTestDataGenerator = new BookTestDataGenerator();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    bookEntityTestFactory = new BookEntityTestFactory();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -79,11 +79,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title } = bookTestDataGenerator.generateData();
+        const { title } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -100,7 +100,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const response = await request(server.instance).post(baseUrl).send({
           title,
@@ -118,11 +118,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -145,7 +145,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -163,11 +163,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = bookTestDataGenerator.generateData();
+        const { id } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -185,7 +185,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -209,11 +209,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -251,11 +251,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         await bookRepository.createOne({
           title,
@@ -265,7 +265,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           price,
         });
 
-        const { title: otherTitle } = bookTestDataGenerator.generateData();
+        const { title: otherTitle } = bookEntityTestFactory.create();
 
         await bookRepository.createOne({
           title: otherTitle,
@@ -290,11 +290,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id, title } = bookTestDataGenerator.generateData();
+        const { id, title } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -311,13 +311,13 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
         const bookId = 'abc';
 
-        const { price } = bookTestDataGenerator.generateData();
+        const { price } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${bookId}`)
@@ -334,11 +334,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id, price } = bookTestDataGenerator.generateData();
+        const { id, price } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -359,9 +359,9 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const { price: newPrice } = bookTestDataGenerator.generateData();
+        const { price: newPrice } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -387,13 +387,13 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const { price: newPrice } = bookTestDataGenerator.generateData();
+        const { price: newPrice } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -420,7 +420,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -439,11 +439,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = bookTestDataGenerator.generateData();
+        const { id } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -462,7 +462,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -486,11 +486,11 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,

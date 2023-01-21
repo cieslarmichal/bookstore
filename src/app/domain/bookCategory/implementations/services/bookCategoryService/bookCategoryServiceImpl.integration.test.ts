@@ -7,11 +7,11 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { BookModule } from '../../../../book/bookModule';
 import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { BookEntityTestFactory } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categorySymbols';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { CategoryRepositoryFactory } from '../../../../category/repositories/categoryRepositoryFactory';
-import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryTestDataGenerator';
+import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryEntityTestFactory';
 import { BookCategoryModule } from '../../../bookCategoryModule';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
@@ -25,8 +25,8 @@ describe('BookCategoryService', () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let bookTestDataGenerator: BookTestDataGenerator;
+  let categoryEntityTestFactory: CategoryTestDataGenerator;
+  let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -49,8 +49,8 @@ describe('BookCategoryService', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
-    bookTestDataGenerator = new BookTestDataGenerator();
+    categoryEntityTestFactory = new CategoryTestDataGenerator();
+    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -67,13 +67,13 @@ describe('BookCategoryService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({
           name,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -102,13 +102,13 @@ describe('BookCategoryService', () => {
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({
           name,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -145,13 +145,13 @@ describe('BookCategoryService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({
           name,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,

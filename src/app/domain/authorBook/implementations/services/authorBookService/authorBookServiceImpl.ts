@@ -1,12 +1,12 @@
 import { Filter } from '../../../../../common/filter/filter';
-import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { Author } from '../../../../author/contracts/author';
 import { AuthorService } from '../../../../author/contracts/services/authorService/authorService';
 import { AuthorNotFound } from '../../../../author/errors/authorNotFound';
-import { BookDto } from '../../../../book/dtos';
-import { BookNotFound } from '../../../../book/errors';
-import { BookService } from '../../../../book/services/bookService';
+import { Book } from '../../../../book/contracts/book';
+import { BookService } from '../../../../book/contracts/services/bookService/bookService';
+import { BookNotFound } from '../../../../book/errors/bookNotFound';
 import { PaginationData } from '../../../../common/paginationData';
 import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
@@ -66,7 +66,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     authorId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<BookDto[]> {
+  ): Promise<Book[]> {
     const author = await this.authorService.findAuthor(unitOfWork, authorId);
 
     if (!author) {

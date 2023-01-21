@@ -10,7 +10,7 @@ import { StatusCodes } from 'http-status-codes';
 import { UserModule } from '../../../../../domain/user/userModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
-import { BookTestDataGenerator } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { CustomerModule } from '../../../../../domain/customer/customerModule';
@@ -32,9 +32,9 @@ describe(`AuthorBookControllerImpl`, () => {
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
-  let bookTestDataGenerator: BookTestDataGenerator;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let authorEntityTestFactory: AuthorEntityTestFactory;
+  let bookEntityTestFactory: BookEntityTestFactory;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -43,9 +43,9 @@ describe(`AuthorBookControllerImpl`, () => {
     ConfigLoader.loadConfig();
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
-    authorTestDataGenerator = new AuthorTestDataGenerator();
-    bookTestDataGenerator = new BookTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
+    authorEntityTestFactory = new AuthorEntityTestFactory();
+    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   beforeEach(async () => {
@@ -90,7 +90,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -129,11 +129,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -143,7 +143,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -161,7 +161,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -185,11 +185,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -199,7 +199,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -217,7 +217,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -235,11 +235,11 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${id}/books`)
@@ -257,7 +257,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -275,11 +275,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -303,11 +303,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
           title,
@@ -317,7 +317,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { title: otherTitle } = bookTestDataGenerator.generateData();
+        const { title: otherTitle } = bookEntityTestFactory.create();
 
         const book2 = await bookRepository.createOne({
           title: otherTitle,
@@ -327,7 +327,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -349,7 +349,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -367,11 +367,11 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = bookTestDataGenerator.generateData();
+        const { id } = bookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${id}/authors`)
@@ -389,7 +389,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -413,11 +413,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -447,11 +447,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -461,11 +461,11 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author1 = await authorRepository.createOne({ firstName, lastName });
 
-        const { firstName: otherFirstName } = authorTestDataGenerator.generateData();
+        const { firstName: otherFirstName } = authorEntityTestFactory.generateData();
 
         const author2 = await authorRepository.createOne({ firstName: otherFirstName, lastName });
 
@@ -487,7 +487,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -507,7 +507,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -534,7 +534,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -544,7 +544,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -568,11 +568,11 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -582,7 +582,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 

@@ -26,8 +26,8 @@ const baseUrl = '/categories';
 
 describe(`CategoryControllerImpl (${baseUrl})`, () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let categoryEntityTestFactory: CategoryTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -35,8 +35,8 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    categoryEntityTestFactory = new CategoryTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -79,7 +79,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -96,7 +96,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(baseUrl).send({
           name,
@@ -110,11 +110,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -133,7 +133,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -151,11 +151,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = categoryTestDataGenerator.generateData();
+        const { id } = categoryEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -173,7 +173,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -191,11 +191,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -227,15 +227,15 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         await categoryRepository.createOne({ name });
 
-        const { name: otherName } = categoryTestDataGenerator.generateData();
+        const { name: otherName } = categoryEntityTestFactory.generateData();
 
         await categoryRepository.createOne({ name: otherName });
 
@@ -254,7 +254,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -273,11 +273,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = categoryTestDataGenerator.generateData();
+        const { id } = categoryEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -296,7 +296,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -314,11 +314,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const category = await categoryRepository.createOne({ name });
 

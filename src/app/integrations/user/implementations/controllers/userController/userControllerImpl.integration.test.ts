@@ -31,7 +31,7 @@ const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
 describe(`UserControllerImpl (${baseUrl})`, () => {
   let hashService: HashService;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -40,7 +40,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -85,7 +85,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { email } = userTestDataGenerator.generateData();
+        const { email } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(registerUrl).send({
           email,
@@ -103,7 +103,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         await userRepository.createOne({ email, password });
 
@@ -120,7 +120,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(registerUrl).send({
           email,
@@ -137,7 +137,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { phoneNumber } = userTestDataGenerator.generateData();
+        const { phoneNumber } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(registerUrl).send({
           phoneNumber,
@@ -155,7 +155,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.generateData();
 
         await userRepository.createOne({ phoneNumber, password });
 
@@ -172,7 +172,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { phoneNumber, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(registerUrl).send({
           phoneNumber,
@@ -189,7 +189,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { email } = userTestDataGenerator.generateData();
+        const { email } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(loginUrl).send({
           email,
@@ -203,7 +203,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(loginUrl).send({
           email,
@@ -222,7 +222,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const hashedPassword = await hashService.hash(password);
 
@@ -243,7 +243,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { phoneNumber } = userTestDataGenerator.generateData();
+        const { phoneNumber } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(loginUrl).send({
           phoneNumber,
@@ -257,7 +257,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { phoneNumber, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(loginUrl).send({
           phoneNumber,
@@ -276,7 +276,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.generateData();
 
         const hashedPassword = await hashService.hash(password);
 
@@ -297,7 +297,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password, role } = userTestDataGenerator.generateData();
+        const { id: userId, password, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -316,7 +316,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password, role } = userTestDataGenerator.generateData();
+        const { id: userId, password, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -336,7 +336,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password } = userTestDataGenerator.generateData();
+        const { id: userId, password } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(setPasswordUrl).send({
           userId,
@@ -351,9 +351,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password, role } = userTestDataGenerator.generateData();
+        const { id: userId, password, role } = userEntityTestFactory.generateData();
 
-        const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -377,7 +377,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 
@@ -401,7 +401,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email, role } = userTestDataGenerator.generateData();
+        const { id: userId, email, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -420,7 +420,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email, role } = userTestDataGenerator.generateData();
+        const { id: userId, email, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -440,7 +440,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email } = userTestDataGenerator.generateData();
+        const { id: userId, email } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(setEmailUrl).send({
           userId,
@@ -455,9 +455,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email, role } = userTestDataGenerator.generateData();
+        const { id: userId, email, role } = userEntityTestFactory.generateData();
 
-        const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -481,7 +481,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, email, password } = userEntityTestFactory.generateData();
 
         await userRepository.createOne({ email, password });
 
@@ -509,7 +509,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 
@@ -535,7 +535,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ phoneNumber, password });
 
@@ -559,7 +559,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+        const { id: userId, phoneNumber, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -578,7 +578,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+        const { id: userId, phoneNumber, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -598,7 +598,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber } = userTestDataGenerator.generateData();
+        const { id: userId, phoneNumber } = userEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(setPhoneNumberUrl).send({
           userId,
@@ -613,9 +613,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber, role } = userTestDataGenerator.generateData();
+        const { id: userId, phoneNumber, role } = userEntityTestFactory.generateData();
 
-        const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -639,7 +639,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, email, password } = userEntityTestFactory.generateData();
 
         await userRepository.createOne({ phoneNumber, password });
 
@@ -667,7 +667,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ phoneNumber, password });
 
@@ -693,7 +693,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userTestDataGenerator.generateData();
+        const { phoneNumber, email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 
@@ -719,7 +719,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(async () => {
         const userId = 'abc';
 
-        const { role } = userTestDataGenerator.generateData();
+        const { role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -735,7 +735,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -755,7 +755,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 
@@ -769,9 +769,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
-        const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -791,7 +791,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 
@@ -813,7 +813,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(async () => {
         const userId = 'abc';
 
-        const { role } = userTestDataGenerator.generateData();
+        const { role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -830,7 +830,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -851,7 +851,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 
@@ -865,9 +865,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
-        const { id: targetUserId } = userTestDataGenerator.generateData();
+        const { id: targetUserId } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -887,7 +887,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userTestDataGenerator.generateData();
+        const { email, password } = userEntityTestFactory.generateData();
 
         const user = await userRepository.createOne({ email, password });
 

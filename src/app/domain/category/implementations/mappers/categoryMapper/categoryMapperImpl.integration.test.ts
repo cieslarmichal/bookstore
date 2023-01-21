@@ -13,7 +13,7 @@ import { CategoryTestDataGenerator } from '../../../tests/categoryEntityTestData
 
 describe('CategoryMapperImpl', () => {
   let categoryMapper: CategoryMapper;
-  let categoryTestDataGenerator: CategoryTestDataGenerator;
+  let categoryEntityTestFactory: CategoryTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -31,7 +31,7 @@ describe('CategoryMapperImpl', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    categoryTestDataGenerator = new CategoryTestDataGenerator();
+    categoryEntityTestFactory = new CategoryTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -45,7 +45,7 @@ describe('CategoryMapperImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { name } = categoryTestDataGenerator.generateData();
+        const { name } = categoryEntityTestFactory.generateData();
 
         const createdCategory = entityManager.create(CategoryEntity, {
           name,

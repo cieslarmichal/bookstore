@@ -26,7 +26,7 @@ describe('AddressServiceImpl', () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let addressTestFactory: AddressEntityTestFactory;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -49,7 +49,7 @@ describe('AddressServiceImpl', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestFactory = new AddressEntityTestFactory();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   afterAll(async () => {
@@ -63,7 +63,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -104,7 +104,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -159,13 +159,13 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
         const user1 = await userRepository.createOne({ email, password, role });
 
-        const { email: otherEmail } = userTestDataGenerator.generateData();
+        const { email: otherEmail } = userEntityTestFactory.generateData();
 
         const user2 = await userRepository.createOne({ email: otherEmail, password, role });
 
@@ -237,7 +237,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -309,7 +309,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userTestDataGenerator.generateData();
+        const { email, password, role } = userEntityTestFactory.generateData();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 

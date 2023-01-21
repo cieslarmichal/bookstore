@@ -7,10 +7,7 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { AuthorModule } from '../../../../author/authorModule';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
-import { BOOK_REPOSITORY_FACTORY } from '../../../../book/bookSymbols';
 import { BookModule } from '../../../../book/bookModule';
-import { BookRepositoryFactory } from '../../../../book/repositories/bookRepositoryFactory';
-import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { AuthorBookModule } from '../../../authorBookModule';
 import { AuthorBookAlreadyExists } from '../../../errors/authorBookAlreadyExists';
@@ -24,8 +21,8 @@ describe('AuthorBookService', () => {
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
-  let bookTestDataGenerator: BookTestDataGenerator;
+  let authorEntityTestFactory: AuthorEntityTestFactory;
+  let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -49,8 +46,8 @@ describe('AuthorBookService', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
-    authorTestDataGenerator = new AuthorTestDataGenerator();
-    bookTestDataGenerator = new BookTestDataGenerator();
+    authorEntityTestFactory = new AuthorEntityTestFactory();
+    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -67,14 +64,14 @@ describe('AuthorBookService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({
           firstName,
           lastName,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -103,14 +100,14 @@ describe('AuthorBookService', () => {
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({
           firstName,
           lastName,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -147,14 +144,14 @@ describe('AuthorBookService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({
           firstName,
           lastName,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,

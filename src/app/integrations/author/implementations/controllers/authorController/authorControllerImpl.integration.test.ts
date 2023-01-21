@@ -24,8 +24,8 @@ const baseUrl = '/authors';
 
 describe(`AuthorControllerImpl (${baseUrl})`, () => {
   let authorRepositoryFactory: AuthorRepositoryFactory;
-  let authorTestDataGenerator: AuthorTestDataGenerator;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let authorEntityTestFactory: AuthorEntityTestFactory;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -33,8 +33,8 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    authorTestDataGenerator = new AuthorTestDataGenerator();
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    authorEntityTestFactory = new AuthorEntityTestFactory();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   beforeEach(async () => {
@@ -77,11 +77,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName } = authorTestDataGenerator.generateData();
+        const { firstName } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -98,7 +98,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance).post(baseUrl).send({
           firstName,
@@ -113,11 +113,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -137,7 +137,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -155,11 +155,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -177,7 +177,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -195,11 +195,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -231,15 +231,15 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         await authorRepository.createOne({ firstName, lastName });
 
-        const { firstName: otherFirstName } = authorTestDataGenerator.generateData();
+        const { firstName: otherFirstName } = authorEntityTestFactory.generateData();
 
         await authorRepository.createOne({ firstName: otherFirstName, lastName });
 
@@ -258,11 +258,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id, firstName } = authorTestDataGenerator.generateData();
+        const { id, firstName } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -279,13 +279,13 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
         const authorId = 'abc';
 
-        const { about } = authorTestDataGenerator.generateData();
+        const { about } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${authorId}`)
@@ -302,11 +302,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id, about } = authorTestDataGenerator.generateData();
+        const { id, about } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -327,9 +327,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
-        const { about } = authorTestDataGenerator.generateData();
+        const { about } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -349,13 +349,13 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
-        const { about } = authorTestDataGenerator.generateData();
+        const { about } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -376,7 +376,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -395,11 +395,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorEntityTestFactory.generateData();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -418,7 +418,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -436,11 +436,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userTestDataGenerator.generateData();
+        const { id: userId, role } = userEntityTestFactory.generateData();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.generateData();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 

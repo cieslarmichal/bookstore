@@ -12,7 +12,7 @@ import { UserModule } from '../../../userModule';
 
 describe('UserMapperImpl', () => {
   let userMapper: UserMapper;
-  let userTestDataGenerator: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -29,7 +29,7 @@ describe('UserMapperImpl', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    userTestDataGenerator = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
   afterEach(async () => {
@@ -43,7 +43,7 @@ describe('UserMapperImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, phoneNumber } = userTestDataGenerator.generateData();
+        const { email, password, phoneNumber } = userEntityTestFactory.generateData();
 
         const createdUser = entityManager.create(UserEntity, {
           email,

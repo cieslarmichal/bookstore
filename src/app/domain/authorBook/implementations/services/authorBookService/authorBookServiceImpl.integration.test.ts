@@ -8,7 +8,6 @@ import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { AuthorModule } from '../../../../author/authorModule';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
 import { BookModule } from '../../../../book/bookModule';
-import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { AuthorBookModule } from '../../../authorBookModule';
 import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
@@ -21,6 +20,7 @@ import { AuthorEntityTestFactory } from '../../../../author/tests/factories/auth
 import { authorBookSymbols } from '../../../authorBookSymbols';
 import { authorSymbols } from '../../../../author/authorSymbols';
 import { bookSymbols } from '../../../../book/bookSymbols';
+import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 
 describe('AuthorBookServiceImpl', () => {
   let authorBookService: AuthorBookService;
@@ -29,7 +29,7 @@ describe('AuthorBookServiceImpl', () => {
   let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookEntityTestFactory: AuthorBookEntityTestFactory;
   let authorEntityTestFactory: AuthorEntityTestFactory;
-  let bookTestDataGenerator: BookTestDataGenerator;
+  let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -54,7 +54,7 @@ describe('AuthorBookServiceImpl', () => {
 
     authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
     authorEntityTestFactory = new AuthorEntityTestFactory();
-    bookTestDataGenerator = new BookTestDataGenerator();
+    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -78,7 +78,7 @@ describe('AuthorBookServiceImpl', () => {
           lastName,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -114,7 +114,7 @@ describe('AuthorBookServiceImpl', () => {
           lastName,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
@@ -158,7 +158,7 @@ describe('AuthorBookServiceImpl', () => {
           lastName,
         });
 
-        const { title, releaseYear, language, format, price } = bookTestDataGenerator.generateData();
+        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           title,
