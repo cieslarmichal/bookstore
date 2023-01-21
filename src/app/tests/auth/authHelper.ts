@@ -1,5 +1,5 @@
 import { AwilixContainer } from 'awilix';
-import { AUTH_SERVICE } from '../../../app/controllers/controllersInjectionSymbols';
+import { userSymbols } from '../../domain/user/userSymbols';
 
 export class AuthHelper {
   public constructor(private readonly container: AwilixContainer) {}
@@ -7,8 +7,8 @@ export class AuthHelper {
   public mockAuth(authPayload: { userId: string; role: string }) {
     const fakeToken = 'token';
 
-    const authService = this.container.resolve(AUTH_SERVICE);
-    jest.spyOn(authService, 'verifyAccessToken').mockImplementation(async (token) => {
+    const tokenService = this.container.resolve(userSymbols.tokenService);
+    jest.spyOn(tokenService, 'verifyAccessToken').mockImplementation(async (token) => {
       if (token !== fakeToken) {
         throw new Error('Invalid token.');
       }

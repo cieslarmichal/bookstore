@@ -32,4 +32,12 @@ export class CreateAddressData {
   @IsOptional()
   @IsUUID('4')
   public readonly customerId: string;
+
+  public constructor({ id, email, name }: CreateAddressData) {
+    this.id = id;
+    this.email = email;
+    this.name = name;
+
+    Validator.validate(this);
+  }
 }

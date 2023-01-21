@@ -1,5 +1,10 @@
 export class ApplicationError<Context> extends Error {
-  public constructor(message: string, public readonly context: Context) {
+  public readonly context: Context;
+
+  public constructor(name: string, message: string, context: Context) {
     super(message);
+
+    this.name = name;
+    this.context = context;
   }
 }
