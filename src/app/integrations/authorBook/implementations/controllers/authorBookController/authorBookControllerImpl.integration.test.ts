@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../../../../configLoader';
 import request from 'supertest';
 import { App } from '../../../../../../app';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
-import { ControllersModule } from '../../../../controllersModule';
+import { IntegrationsModule } from '../../../../integrationsModule';
 import { BookModule } from '../../../../../domain/book/bookModule';
 import { Server } from '../../../../../../server';
 import { UserEntityTestDataGenerator } from '../../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
@@ -56,7 +56,7 @@ describe(`AuthorBookControllerImpl`, () => {
       AuthorModule,
       AuthorBookModule,
       UserModule,
-      ControllersModule,
+      IntegrationsModule,
       LoggerModule,
       BookCategoryModule,
       AddressModule,

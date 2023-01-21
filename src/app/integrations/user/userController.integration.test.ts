@@ -5,7 +5,7 @@ import { App } from '../../../app';
 import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
 import { PostgresModule } from '../../common';
 import { UserModule } from '../../domain/user/userModule';
-import { ControllersModule } from '../controllersModule';
+import { IntegrationsModule } from '../integrationsModule';
 import { Server } from '../../../server';
 import { UserRepositoryFactory } from '../../domain/user/repositories/userRepositoryFactory';
 import { StatusCodes } from 'http-status-codes';
@@ -49,7 +49,7 @@ describe(`UserController (${baseUrl})`, () => {
       BookModule,
       AuthorModule,
       UserModule,
-      ControllersModule,
+      IntegrationsModule,
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,

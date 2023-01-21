@@ -22,6 +22,8 @@ export class CategoryControllerImpl implements CategoryController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     private readonly categoryService: CategoryService,
     authMiddleware: AuthMiddleware,
+    private filterDataParser: FilterDataParser,
+    private paginationDataParser: PaginationDataParser,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -92,9 +94,9 @@ export class CategoryControllerImpl implements CategoryController {
   public async findCategories(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findCategoriesFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findCategoriesFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const categories = await unitOfWork.runInTransaction(async () => {
       return this.categoryService.findCategories(unitOfWork, filters, paginationData);

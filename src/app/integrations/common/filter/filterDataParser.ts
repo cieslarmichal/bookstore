@@ -1,24 +1,16 @@
+import { FilterFactory } from '../../../common/filter/filterFactory';
+import { FilterName } from '../../../common/filter/filterName';
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
-import {
-  BETWEEN_FILTER_NAME,
-  EQUAL_FILTER_NAME,
-  GREATER_THAN_FILTER_NAME,
-  GREATER_THAN_OR_EQUAL_FILTER_NAME,
-  LESS_THAN_FILTER_NAME,
-  LESS_THAN_OR_EQUAL_FILTER_NAME,
-  LIKE_FILTER_NAME,
-  FilterFactory,
-} from '../../../common';
-
-const TOKENS_SEPARATOR = '||';
-const VALUES_SEPARATOR = ',';
-const FIELD_NAME_INDEX = 0;
-const OPERATION_NAME_INDEX = 1;
-const VALUES_INDEX = 2;
-const EXPECTED_NUMBER_OF_TOKENS = 3;
 
 export class FilterDataParser {
-  public static parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Array<any> {
+  private readonly tokensSeparator = '||';
+  private readonly valuesSeparator = ',';
+  private readonly fieldNameIndex = 0;
+  private readonly operationNameIndex = 1;
+  private readonly valuesIndex = 2;
+  private readonly numberOfTokensInFilterElement = 3;
+
+  public parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Array<any> {
     if (!filterDataAsJson) {
       return [];
     }
@@ -38,14 +30,14 @@ export class FilterDataParser {
     const filters = new Array<any>();
 
     for (const fieldData of filterData) {
-      const tokens = fieldData.split(TOKENS_SEPARATOR);
+      const tokens = fieldData.split(this.tokensSeparator);
 
-      if (tokens.length != EXPECTED_NUMBER_OF_TOKENS) {
+      if (tokens.length != this.numberOfTokensInFilterElement) {
         throw new InvalidFilterSyntaxError('number of tokens in filter element is not equal 3');
       }
 
-      const fieldName = tokens[FIELD_NAME_INDEX];
-      const filterName = tokens[OPERATION_NAME_INDEX];
+      const fieldName = tokens[this.fieldNameIndex];
+      const filterName = tokens[this.operationNameIndex];
 
       const supportedFieldFilters = supportedFieldsFilters.get(fieldName);
 
@@ -54,18 +46,18 @@ export class FilterDataParser {
       }
 
       switch (filterName) {
-        case EQUAL_FILTER_NAME: {
-          const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR);
+        case FilterName.equal: {
+          const values = tokens[this.valuesIndex].split(this.valuesSeparator);
 
-          filters.push(FilterFactory.create(EQUAL_FILTER_NAME, fieldName, values));
+          filters.push(FilterFactory.create(FilterName.equal, fieldName, values));
 
           break;
         }
-        case LESS_THAN_FILTER_NAME:
-        case LESS_THAN_OR_EQUAL_FILTER_NAME:
-        case GREATER_THAN_FILTER_NAME:
-        case GREATER_THAN_OR_EQUAL_FILTER_NAME: {
-          const value = parseInt(tokens[VALUES_INDEX]);
+        case FilterName.lessThan:
+        case FilterName.lessThanOrEqual:
+        case FilterName.greaterThan:
+        case FilterName.greaterThanOrEqual: {
+          const value = parseInt(tokens[this.valuesIndex]);
 
           if (!value) {
             throw new InvalidFilterSyntaxError('value is not a number');
@@ -75,8 +67,8 @@ export class FilterDataParser {
 
           break;
         }
-        case BETWEEN_FILTER_NAME: {
-          const values = tokens[VALUES_INDEX].split(VALUES_SEPARATOR).map((value) => {
+        case FilterName.between: {
+          const values = tokens[this.valuesIndex].split(this.valuesSeparator).map((value) => {
             const numberValue = parseInt(value);
 
             if (!numberValue) {
@@ -89,14 +81,14 @@ export class FilterDataParser {
             throw new InvalidFilterSyntaxError('number of values is not 2');
           }
 
-          filters.push(FilterFactory.create(BETWEEN_FILTER_NAME, fieldName, values));
+          filters.push(FilterFactory.create(FilterName.between, fieldName, values));
 
           break;
         }
-        case LIKE_FILTER_NAME: {
-          const value = tokens[VALUES_INDEX];
+        case FilterName.like: {
+          const value = tokens[this.valuesIndex];
 
-          filters.push(FilterFactory.create(LIKE_FILTER_NAME, fieldName, value));
+          filters.push(FilterFactory.create(FilterName.like, fieldName, value));
 
           break;
         }

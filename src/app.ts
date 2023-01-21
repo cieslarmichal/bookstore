@@ -12,7 +12,7 @@ import {
   CATEGORY_CONTROLLER,
   CUSTOMER_CONTROLLER,
   USER_CONTROLLER,
-} from './app/integrations/controllersInjectionSymbols';
+} from './app/integrations/integrationsSymbols';
 
 export class App {
   public instance: express.Application;

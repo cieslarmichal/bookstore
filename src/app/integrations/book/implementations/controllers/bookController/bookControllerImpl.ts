@@ -22,6 +22,8 @@ export class BookControllerImpl implements BookController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     private readonly bookService: BookService,
     authMiddleware: AuthMiddleware,
+    private filterDataParser: FilterDataParser,
+    private paginationDataParser: PaginationDataParser,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -108,9 +110,9 @@ export class BookControllerImpl implements BookController {
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findBooksFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findBooksFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
       return this.bookService.findBooks(unitOfWork, filters, paginationData);

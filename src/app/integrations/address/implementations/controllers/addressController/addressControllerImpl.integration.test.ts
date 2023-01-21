@@ -3,7 +3,7 @@ import { AddressEntityTestDataGenerator } from '../../../../../domain/address/te
 import request from 'supertest';
 import { App } from '../../../../../../app';
 import { AddressModule } from '../../../../../domain/address/addressModule';
-import { ControllersModule } from '../../../../controllersModule';
+import { IntegrationsModule } from '../../../../integrationsModule';
 import { BookModule } from '../../../../../domain/book/bookModule';
 import { Server } from '../../../../../../server';
 import { UserEntityTestDataGenerator } from '../../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
@@ -53,7 +53,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
       BookModule,
       AuthorModule,
       UserModule,
-      ControllersModule,
+      IntegrationsModule,
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,

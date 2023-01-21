@@ -1,28 +1,18 @@
-import { IsNumber, IsOptional } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common';
+import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
 import { PaginationData } from './paginationData';
-
-class PaginationDataTemplate {
-  @IsOptional()
-  @IsNumber()
-  public readonly page?: number;
-
-  @IsOptional()
-  @IsNumber()
-  public readonly limit?: number;
-}
-
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = 5;
-const MAX_LIMIT = 20;
+import { PaginationDataTemplate } from './paginationDataTemplate';
 
 export class PaginationDataParser {
-  public static parse(data: Record<string, any>): PaginationData {
+  private readonly defaultPage = 1;
+  private readonly defaultLimit = 5;
+  private readonly maxLimit = 20;
+
+  public parse(data: Record<string, any>): PaginationData {
     const paginationDataTemplete = RecordToInstanceTransformer.transform(data, PaginationDataTemplate);
 
     const paginationData = PaginationData.create({
-      page: paginationDataTemplete.page || DEFAULT_PAGE,
-      limit: paginationDataTemplete.limit || DEFAULT_LIMIT,
+      page: paginationDataTemplete.page || this.defaultPage,
+      limit: paginationDataTemplete.limit || this.defaultLimit,
     });
 
     this.trim(paginationData);
@@ -30,13 +20,13 @@ export class PaginationDataParser {
     return paginationData;
   }
 
-  private static trim(paginationData: PaginationData) {
-    if (paginationData.page < DEFAULT_PAGE) {
-      paginationData.page = DEFAULT_PAGE;
+  private trim(paginationData: PaginationData) {
+    if (paginationData.page < this.defaultPage) {
+      paginationData.page = this.defaultPage;
     }
 
-    if (paginationData.limit > MAX_LIMIT) {
-      paginationData.limit = MAX_LIMIT;
+    if (paginationData.limit > this.maxLimit) {
+      paginationData.limit = this.maxLimit;
     }
   }
 }

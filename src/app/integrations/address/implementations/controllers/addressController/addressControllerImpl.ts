@@ -28,6 +28,8 @@ export class AddressControllerImpl implements AddressController {
     private readonly addressService: AddressService,
     private readonly customerService: CustomerService,
     authMiddleware: AuthMiddleware,
+    private filterDataParser: FilterDataParser,
+    private paginationDataParser: PaginationDataParser,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -139,9 +141,9 @@ export class AddressControllerImpl implements AddressController {
   public async findAddresses(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findAddressesFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findAddressesFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const addresses = await unitOfWork.runInTransaction(async () => {
       return this.addressService.findAddresses(unitOfWork, filters, paginationData);

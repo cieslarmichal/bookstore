@@ -25,6 +25,8 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     private readonly bookCategoryService: BookCategoryService,
     authMiddleware: AuthMiddleware,
+    private filterDataParser: FilterDataParser,
+    private paginationDataParser: PaginationDataParser,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -85,9 +87,9 @@ export class BookCategoryControllerImpl implements BookCategoryController {
 
     const { bookId } = request.params;
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findCategoriesFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findCategoriesFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const categories = await unitOfWork.runInTransaction(async () => {
       return this.bookCategoryService.findCategoriesOfBook(unitOfWork, bookId, filters, paginationData);
@@ -101,9 +103,9 @@ export class BookCategoryControllerImpl implements BookCategoryController {
 
     const { categoryId } = request.params;
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findBooksFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findBooksFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
       return this.bookCategoryService.findBooksFromCategory(unitOfWork, categoryId, filters, paginationData);

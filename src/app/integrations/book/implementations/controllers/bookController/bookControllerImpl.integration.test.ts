@@ -3,7 +3,7 @@ import { BookTestDataGenerator } from '../../../../../domain/book/tests/bookEnti
 import request from 'supertest';
 import { App } from '../../../../../../app';
 import { BookModule } from '../../../../../domain/book/bookModule';
-import { ControllersModule } from '../../../../controllersModule';
+import { IntegrationsModule } from '../../../../integrationsModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { Server } from '../../../../../../server';
 import { StatusCodes } from 'http-status-codes';
@@ -46,7 +46,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       BookModule,
       AuthorModule,
       UserModule,
-      ControllersModule,
+      IntegrationsModule,
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,

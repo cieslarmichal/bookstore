@@ -19,7 +19,7 @@ import { postgresConnector } from '../../../../../libs/postgres/postgresConnecto
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
-import { ControllersModule } from '../../../../controllersModule';
+import { IntegrationsModule } from '../../../../integrationsModule';
 import { Server } from '../../../../../../server';
 
 const baseUrl = '/categories';
@@ -46,7 +46,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       BookModule,
       AuthorModule,
       UserModule,
-      ControllersModule,
+      IntegrationsModule,
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,

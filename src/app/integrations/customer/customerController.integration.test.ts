@@ -4,7 +4,7 @@ import request from 'supertest';
 import { App } from '../../../app';
 import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
 import { PostgresModule } from '../../common';
-import { ControllersModule } from '../controllersModule';
+import { IntegrationsModule } from '../integrationsModule';
 import { BookModule } from '../../domain/book/bookModule';
 import { Server } from '../../../server';
 import { CustomerRepositoryFactory } from '../../domain/customer/repositories/customerRepositoryFactory';
@@ -47,7 +47,7 @@ describe(`CustomerController (${baseUrl})`, () => {
       BookModule,
       AuthorModule,
       UserModule,
-      ControllersModule,
+      IntegrationsModule,
       AuthorBookModule,
       LoggerModule,
       BookCategoryModule,

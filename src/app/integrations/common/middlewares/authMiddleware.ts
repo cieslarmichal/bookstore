@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AuthService } from '../services/authService';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 
 export class AuthMiddleware {
-  public constructor(private readonly authService: AuthService) {}
+  public constructor(private readonly tokenService: TokenService) {}
 
   public async verifyToken(request: Request, response: Response, next: NextFunction) {
     const authHeader = request.headers.authorization;
@@ -23,7 +23,7 @@ export class AuthMiddleware {
     }
 
     try {
-      const payload = await this.authService.verifyAccessToken(token);
+      const payload = await this.tokenService.verifyToken(token);
 
       response.locals.authPayload = payload;
     } catch (error) {

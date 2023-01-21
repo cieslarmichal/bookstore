@@ -24,6 +24,8 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     private readonly authorBookService: AuthorBookService,
     authMiddleware: AuthMiddleware,
+    private filterDataParser: FilterDataParser,
+    private paginationDataParser: PaginationDataParser,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -84,9 +86,9 @@ export class AuthorBookControllerImpl implements AuthorBookController {
 
     const { authorId } = request.params;
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findBooksFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findBooksFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
       return this.authorBookService.findAuthorBooks(unitOfWork, authorId, filters, paginationData);
@@ -100,9 +102,9 @@ export class AuthorBookControllerImpl implements AuthorBookController {
 
     const { bookId } = request.params;
 
-    const filters = FilterDataParser.parse(request.query.filter as string, findAuthorsFilters);
+    const filters = this.filterDataParser.parse(request.query.filter as string, findAuthorsFilters);
 
-    const paginationData = PaginationDataParser.parse(request.query);
+    const paginationData = this.paginationDataParser.parse(request.query);
 
     const authors = await unitOfWork.runInTransaction(async () => {
       return this.authorBookService.findBookAuthors(unitOfWork, bookId, filters, paginationData);
