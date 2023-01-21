@@ -22,7 +22,7 @@ import {
   UpdateBookResponseData,
   UpdateBookResponseDto,
 } from './dtos';
-import { supportedFindBooksFieldsFilters } from './dtos';
+import { findBooksFilters } from './dtos';
 import { FilterDataParser } from '../common/filter/filterDataParser';
 
 const BOOKS_PATH = '/books';
@@ -124,7 +124,7 @@ export class BookController {
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, findBooksFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 

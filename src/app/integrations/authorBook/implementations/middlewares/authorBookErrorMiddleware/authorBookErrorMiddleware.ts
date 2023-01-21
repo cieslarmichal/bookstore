@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AuthorNotFound } from '../../../domain/author/errors';
-import { BookNotFound } from '../../../domain/book/errors';
-import { AuthorBookAlreadyExists, AuthorBookNotFound } from '../../../domain/authorBook/errors';
+import { AuthorNotFound } from '../../../../../domain/author/errors/authorNotFound';
+import { AuthorBookAlreadyExists } from '../../../../../domain/authorBook/errors/authorBookAlreadyExists';
+import { AuthorBookNotFound } from '../../../../../domain/authorBook/errors/authorBookNotFound';
+import { BookNotFound } from '../../../../../domain/book/errors/bookNotFound';
 
 export function authorBookErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
   if (error instanceof AuthorBookAlreadyExists) {

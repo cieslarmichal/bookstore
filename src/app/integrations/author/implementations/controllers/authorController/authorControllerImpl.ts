@@ -1,17 +1,16 @@
 import express, { NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { AuthorService } from '../../../../domain/author/contracts/services/authorService/authorService';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/unitOfWorkFactory';
-import { FilterDataParser } from '../../../common/filter/filterDataParser';
-import { AuthMiddleware } from '../../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../common/pagination/paginationDataParser';
-import { ControllerResponse } from '../../../controllerResponse';
-
-import { AuthorController } from '../../contracts/controllers/authorController/authorController';
-import { findAuthorsFilters } from '../../contracts/controllers/authorController/findAuthorsFilters';
-import { authorErrorMiddleware } from '../middlewares/authorErrorMiddleware/authorErrorMiddleware';
+import { AuthorService } from '../../../../../domain/author/contracts/services/authorService/authorService';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { FilterDataParser } from '../../../../common/filter/filterDataParser';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
+import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { ControllerResponse } from '../../../../controllerResponse';
+import { AuthorController } from '../../../contracts/controllers/authorController/authorController';
+import { findAuthorsFilters } from '../../../contracts/controllers/authorController/findAuthorsFilters';
+import { authorErrorMiddleware } from '../../middlewares/authorErrorMiddleware/authorErrorMiddleware';
 
 const authorsEndpoint = '/authors';
 const authorEndpoint = `${authorsEndpoint}/:id`;

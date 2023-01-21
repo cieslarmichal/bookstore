@@ -20,7 +20,7 @@ import {
 } from './dtos';
 import { ControllerResponse } from '../controllerResponse';
 import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
-import { supportedFindBooksFieldsFilters } from '../book/dtos/findBooksDto';
+import { findBooksFilters } from '../book/dtos/findBooksDto';
 import { supportedFindCategoriesFieldsFilters } from '../category/dtos';
 
 const BOOK_CATEGORIES_PATH = '/books/:bookId/categories';
@@ -130,7 +130,7 @@ export class BookCategoryController {
 
     const { categoryId } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryBooksParamDto);
 
-    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindBooksFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, findBooksFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
