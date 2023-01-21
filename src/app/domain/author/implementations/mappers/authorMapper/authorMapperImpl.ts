@@ -12,7 +12,7 @@ export class AuthorMapperImpl implements AuthorMapper {
       updatedAt,
       firstName,
       lastName,
-      about: about || undefined,
+      about,
     });
   }
 }

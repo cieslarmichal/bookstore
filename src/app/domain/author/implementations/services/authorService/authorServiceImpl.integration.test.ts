@@ -6,18 +6,19 @@ import { createDependencyInjectionContainer } from '../../../../../libs/dependen
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { AUTHOR_BOOK_REPOSITORY_FACTORY } from '../../../../authorBook/authorBookSymbols';
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
-import { AuthorBookRepositoryFactory } from '../../../../authorBook/repositories/authorBookRepositoryFactory';
-import { BOOK_REPOSITORY_FACTORY } from '../../../../book/bookSymbols';
 import { BookModule } from '../../../../book/bookModule';
-import { BookRepositoryFactory } from '../../../../book/repositories/bookRepositoryFactory';
 import { BookTestDataGenerator } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import { AuthorModule } from '../../../authorModule';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
 import { AuthorService } from '../../../contracts/services/authorService/authorService';
 import { AuthorNotFound } from '../../../errors/authorNotFound';
-import { AuthorEntityTestDataGenerator } from '../../../tests/authorEntityTestDataGenerator/authorEntityTestDataGenerator';
+import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
+import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
+import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { authorSymbols } from '../../../authorSymbols';
+import { bookSymbols } from '../../../../book/bookSymbols';
+import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
 
 describe('AuthorServiceImpl', () => {
   let authorService: AuthorService;
@@ -26,7 +27,7 @@ describe('AuthorServiceImpl', () => {
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
-  const authorTestDataGenerator = new AuthorEntityTestDataGenerator();
+  const authorTestDataGenerator = new AuthorEntityTestFactory();
   const bookTestDataGenerator = new BookTestDataGenerator();
 
   beforeAll(async () => {
@@ -41,10 +42,10 @@ describe('AuthorServiceImpl', () => {
       UnitOfWorkModule,
     ]);
 
-    authorService = container.resolve(AUTHOR_SERVICE);
-    authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
-    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
-    authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
+    authorService = container.resolve(authorSymbols.authorService);
+    authorRepositoryFactory = container.resolve(authorSymbols.authorRepositoryFactory);
+    bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
+    authorBookRepositoryFactory = container.resolve(authorBookSymbols.authorBookRepositoryFactory);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
@@ -60,7 +61,7 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.create();
 
         const createdAuthorDto = await authorService.createAuthor(unitOfWork, { firstName, lastName });
 
@@ -80,7 +81,7 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.create();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -96,7 +97,7 @@ describe('AuthorServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorTestDataGenerator.create();
 
         try {
           await authorService.findAuthor(unitOfWork, id);
@@ -114,13 +115,13 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.create();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
-        const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+        const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.create();
 
         await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
 
@@ -140,13 +141,13 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.create();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
-        const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.generateData();
+        const { firstName: otherFirstName, lastName: otherLastName } = authorTestDataGenerator.create();
 
         await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
 
@@ -170,17 +171,17 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.create();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
         await authorRepository.createOne({ firstName, lastName });
 
-        const { lastName: otherLastName } = authorTestDataGenerator.generateData();
+        const { lastName: otherLastName } = authorTestDataGenerator.create();
 
         await authorRepository.createOne({ firstName, lastName: otherLastName });
 
-        const { lastName: anotherLastName } = authorTestDataGenerator.generateData();
+        const { lastName: anotherLastName } = authorTestDataGenerator.create();
 
         await authorRepository.createOne({ firstName, lastName: anotherLastName });
 
@@ -214,21 +215,21 @@ describe('AuthorServiceImpl', () => {
           price,
         });
 
-        const firstAuthorData = authorTestDataGenerator.generateData();
+        const firstAuthorData = authorTestDataGenerator.create();
 
         const firstAuthor = await authorRepository.createOne({
           firstName: firstAuthorData.firstName,
           lastName: firstAuthorData.lastName,
         });
 
-        const secondAuthorData = authorTestDataGenerator.generateData();
+        const secondAuthorData = authorTestDataGenerator.create();
 
         const secondAuthor = await authorRepository.createOne({
           firstName: secondAuthorData.firstName,
           lastName: secondAuthorData.lastName,
         });
 
-        const thirdAuthorData = authorTestDataGenerator.generateData();
+        const thirdAuthorData = authorTestDataGenerator.create();
 
         await authorRepository.createOne({
           firstName: thirdAuthorData.firstName,
@@ -261,7 +262,7 @@ describe('AuthorServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName, about } = authorTestDataGenerator.generateData();
+        const { firstName, lastName, about } = authorTestDataGenerator.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -276,7 +277,7 @@ describe('AuthorServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id, about } = authorTestDataGenerator.generateData();
+        const { id, about } = authorTestDataGenerator.create();
 
         try {
           await authorService.updateAuthor(unitOfWork, id, { about });
@@ -295,7 +296,7 @@ describe('AuthorServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorTestDataGenerator.generateData();
+        const { firstName, lastName } = authorTestDataGenerator.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -311,7 +312,7 @@ describe('AuthorServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = authorTestDataGenerator.generateData();
+        const { id } = authorTestDataGenerator.create();
 
         try {
           await authorService.removeAuthor(unitOfWork, id);

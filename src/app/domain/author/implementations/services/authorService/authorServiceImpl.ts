@@ -1,5 +1,5 @@
 import { Filter } from '../../../../../common/filter/filter';
-import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { PaginationData } from '../../../../common/paginationData';
 import { Author } from '../../../contracts/author';
