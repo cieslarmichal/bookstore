@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { Customer } from '../../../contracts/customer';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';

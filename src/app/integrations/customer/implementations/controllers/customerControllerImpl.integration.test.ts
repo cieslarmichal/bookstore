@@ -11,7 +11,7 @@ import { BookCategoryModule } from '../../../../domain/bookCategory/bookCategory
 import { CategoryModule } from '../../../../domain/category/categoryModule';
 import { CustomerRepositoryFactory } from '../../../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerModule } from '../../../../domain/customer/customerModule';
-import { CustomerEntityTestDataGenerator } from '../../../../domain/customer/tests/customerEntityTestDataGenerator/customerEntityTestDataGenerator';
+import { CustomerEntityTestFactory } from '../../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntityTestDataGenerator } from '../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { UserModule } from '../../../../domain/user/userModule';
@@ -29,7 +29,7 @@ const baseUrl = '/customers';
 describe(`CustomerControllerImpl (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let customerTestDataGenerator: CustomerEntityTestDataGenerator;
+  let customerEntityTestFactory: CustomerEntityTestFactory;
   let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -38,7 +38,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    customerTestDataGenerator = new CustomerEntityTestDataGenerator();
+    customerEntityTestFactory = new CustomerEntityTestFactory();
     userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
@@ -167,7 +167,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = customerTestDataGenerator.generateData();
+        const { id } = customerEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -254,7 +254,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = customerTestDataGenerator.generateData();
+        const { id } = customerEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)

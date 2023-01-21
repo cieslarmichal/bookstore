@@ -5,22 +5,23 @@ import { createDependencyInjectionContainer } from '../../../../../libs/dependen
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { UserRepositoryFactory } from '../../../../user/repositories/userRepositoryFactory';
 import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
-import { USER_REPOSITORY_FACTORY } from '../../../../user/userSymbols';
 import { UserModule } from '../../../../user/userModule';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
 import { CustomerModule } from '../../../customerModule';
 import { CustomerAlreadyExists } from '../../../errors/customerAlreadyExists';
 import { CustomerNotFound } from '../../../errors/customerNotFound';
-import { CustomerEntityTestDataGenerator } from '../../../tests/customerEntityTestDataGenerator/customerEntityTestDataGenerator';
+import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { customerSymbols } from '../../../customerSymbols';
+import { userSymbols } from '../../../../user/userSymbols';
 
 describe('CustomerServiceImpl', () => {
   let customerService: CustomerService;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let customerTestDataGenerator: CustomerEntityTestDataGenerator;
+  let customerEntityTestFactory: CustomerEntityTestFactory;
   let userEntityTestFactory: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
@@ -35,13 +36,13 @@ describe('CustomerServiceImpl', () => {
       UnitOfWorkModule,
     ]);
 
-    customerService = container.resolve(CUSTOMER_SERVICE);
-    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
-    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
+    customerService = container.resolve(customerSymbols.customerService);
+    customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
+    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    customerTestDataGenerator = new CustomerEntityTestDataGenerator();
+    customerEntityTestFactory = new CustomerEntityTestFactory();
     userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
@@ -138,7 +139,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = customerTestDataGenerator.generateData();
+        const { id } = customerEntityTestFactory.create();
 
         try {
           await customerService.findCustomer(unitOfWork, { id });
@@ -176,7 +177,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = customerTestDataGenerator.generateData();
+        const { id } = customerEntityTestFactory.create();
 
         try {
           await customerService.removeCustomer(unitOfWork, id);
