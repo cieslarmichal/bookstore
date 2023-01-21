@@ -7,6 +7,7 @@ describe('AddressMapperImpl', () => {
 
   beforeAll(async () => {
     addressEntityTestFactory = new AddressEntityTestFactory();
+    addressMapperImpl = new AddressMapperImpl();
   });
 
   it('map address entity to address', async () => {

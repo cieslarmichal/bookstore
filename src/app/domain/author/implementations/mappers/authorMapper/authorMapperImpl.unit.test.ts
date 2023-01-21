@@ -7,6 +7,7 @@ describe('AuthorMapperImpl', () => {
 
   beforeAll(async () => {
     authorEntityTestFactory = new AuthorEntityTestFactory();
+    authorMapperImpl = new AuthorMapperImpl();
   });
 
   it('map author entity to author', async () => {
