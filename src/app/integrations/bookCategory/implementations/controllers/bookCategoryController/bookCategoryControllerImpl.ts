@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { BookCategoryService } from '../../../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
-import { findCategoriesFilters } from '../../../../category/dtos/findCategoriesFilters';
+import { findCategoriesFilters } from '../../../../category/contracts/controllers/categoryController/findCategoriesFilters';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';

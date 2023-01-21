@@ -5,7 +5,7 @@ import { AuthorController } from './author/authorController';
 import { AuthorBookController } from './authorBook/authorBookController';
 import { BookController } from './book/bookController';
 import { BookCategoryController } from './bookCategory/bookCategoryController';
-import { CategoryController } from './category/categoryController';
+import { CategoryController } from './category/implementations/controllers/categoryController/categoryControllerImpl';
 import {
   ADDRESS_CONTROLLER,
   AUTHOR_BOOK_CONTROLLER,

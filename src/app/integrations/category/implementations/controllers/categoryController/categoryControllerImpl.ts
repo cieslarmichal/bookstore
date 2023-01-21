@@ -1,29 +1,21 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { CategoryService } from '../../domain/category/services/categoryService';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { categoryErrorMiddleware } from './middlewares';
-import {
-  CreateCategoryBodyDto,
-  CreateCategoryResponseData,
-  CreateCategoryResponseDto,
-  FindCategoriesResponseData,
-  FindCategoriesResponseDto,
-  FindCategoryParamDto,
-  FindCategoryResponseData,
-  FindCategoryResponseDto,
-  RemoveCategoryParamDto,
-  RemoveCategoryResponseDto,
-  findCategoriesFilters,
-} from './dtos';
-import { ControllerResponse } from '../controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
+import { CategoryService } from '../../../../../domain/category/contracts/services/categoryService/categoryService';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { FilterDataParser } from '../../../../common/filter/filterDataParser';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
+import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { ControllerResponse } from '../../../../controllerResponse';
+import { CategoryController } from '../../../contracts/controllers/categoryController/categoryController';
+import { findCategoriesFilters } from '../../../contracts/controllers/categoryController/findCategoriesFilters';
+import { categoryErrorMiddleware } from '../../middlewares/categoryErrorMiddleware/categoryErrorMiddleware';
 
-const CATEGORIES_PATH = '/categories';
-const CATEGORIES_PATH_WITH_ID = `${CATEGORIES_PATH}/:id`;
+const categoriesEndpoint = '/categories';
+const categoryEndpoint = `${categoriesEndpoint}/:id`;
 
-export class CategoryController {
+export class CategoryControllerImpl implements CategoryController {
   public readonly router = express.Router();
 
   public constructor(
@@ -34,7 +26,7 @@ export class CategoryController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      CATEGORIES_PATH,
+      categoriesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createCategoryResponse = await this.createCategory(request, response);
@@ -43,7 +35,7 @@ export class CategoryController {
       }),
     );
     this.router.get(
-      CATEGORIES_PATH_WITH_ID,
+      categoryEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findCategoryResponse = await this.findCategory(request, response);
@@ -52,7 +44,7 @@ export class CategoryController {
       }),
     );
     this.router.get(
-      CATEGORIES_PATH,
+      categoriesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findCategoriesResponse = await this.findCategories(request, response);
@@ -61,7 +53,7 @@ export class CategoryController {
       }),
     );
     this.router.delete(
-      CATEGORIES_PATH_WITH_ID,
+      categoryEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteCategoryResponse = await this.deleteCategory(request, response);
@@ -76,33 +68,25 @@ export class CategoryController {
   public async createCategory(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const createCategoryBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateCategoryBodyDto);
+    const { name } = request.body;
 
-    const categoryDto = await unitOfWork.runInTransaction(async () => {
-      const category = await this.categoryService.createCategory(unitOfWork, createCategoryBodyDto);
-
-      return category;
+    const category = await unitOfWork.runInTransaction(async () => {
+      return this.categoryService.createCategory(unitOfWork, { name });
     });
 
-    const responseData = new CreateCategoryResponseData(categoryDto);
-
-    return new CreateCategoryResponseDto(responseData, StatusCodes.CREATED);
+    return { data: { category }, statusCode: StatusCodes.CREATED };
   }
 
   public async findCategory(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindCategoryParamDto);
+    const { id } = request.params;
 
-    const categoryDto = await unitOfWork.runInTransaction(async () => {
-      const category = await this.categoryService.findCategory(unitOfWork, id);
-
-      return category;
+    const category = await unitOfWork.runInTransaction(async () => {
+      return this.categoryService.findCategory(unitOfWork, id);
     });
 
-    const responseData = new FindCategoryResponseData(categoryDto);
-
-    return new FindCategoryResponseDto(responseData, StatusCodes.OK);
+    return { data: { category }, statusCode: StatusCodes.OK };
   }
 
   public async findCategories(request: Request, response: Response): Promise<ControllerResponse> {
@@ -112,26 +96,22 @@ export class CategoryController {
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const categoriesDto = await unitOfWork.runInTransaction(async () => {
-      const categories = await this.categoryService.findCategories(unitOfWork, filters, paginationData);
-
-      return categories;
+    const categories = await unitOfWork.runInTransaction(async () => {
+      return this.categoryService.findCategories(unitOfWork, filters, paginationData);
     });
 
-    const responseData = new FindCategoriesResponseData(categoriesDto);
-
-    return new FindCategoriesResponseDto(responseData, StatusCodes.OK);
+    return { data: { categories }, statusCode: StatusCodes.OK };
   }
 
   public async deleteCategory(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveCategoryParamDto);
+    const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
       await this.categoryService.removeCategory(unitOfWork, id);
     });
 
-    return new RemoveCategoryResponseDto(StatusCodes.NO_CONTENT);
+    return { statusCode: StatusCodes.NO_CONTENT };
   }
 }
