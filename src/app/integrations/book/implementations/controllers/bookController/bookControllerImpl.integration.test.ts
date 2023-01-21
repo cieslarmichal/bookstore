@@ -1,29 +1,30 @@
-import { ConfigLoader } from '../../../configLoader';
-import { BookTestDataGenerator } from '../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { BookTestDataGenerator } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestDataGenerator';
 import request from 'supertest';
-import { App } from '../../../app';
-import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
-import { PostgresModule } from '../../common';
-import { BookModule } from '../../domain/book/bookModule';
-import { ControllersModule } from '../controllersModule';
-import { AuthorModule } from '../../domain/author/authorModule';
-import { Server } from '../../../server';
-import { BookRepositoryFactory } from '../../domain/book/repositories/bookRepositoryFactory';
+import { App } from '../../../../../../app';
+import { BookModule } from '../../../../../domain/book/bookModule';
+import { ControllersModule } from '../../../../controllersModule';
+import { AuthorModule } from '../../../../../domain/author/authorModule';
+import { Server } from '../../../../../../server';
 import { StatusCodes } from 'http-status-codes';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
-import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
-import { UserModule } from '../../domain/user/userModule';
-import { CategoryModule } from '../../domain/category/categoryModule';
-import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
-import { LoggerModule } from '../../common/logger/loggerModule';
-import { BOOK_REPOSITORY_FACTORY } from '../../domain/book/bookSymbols';
-import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
-import { AddressModule } from '../../domain/address/addressModule';
-import { CustomerModule } from '../../domain/customer/customerModule';
+import { UserEntityTestDataGenerator } from '../../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { UserModule } from '../../../../../domain/user/userModule';
+import { CategoryModule } from '../../../../../domain/category/categoryModule';
+import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
+import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
+import { AddressModule } from '../../../../../domain/address/addressModule';
+import { CustomerModule } from '../../../../../domain/customer/customerModule';
+import { BookRepositoryFactory } from '../../../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
 
 const baseUrl = '/books';
 
-describe(`BookController (${baseUrl})`, () => {
+describe(`BookControllerImpl (${baseUrl})`, () => {
   let bookRepositoryFactory: BookRepositoryFactory;
   let bookTestDataGenerator: BookTestDataGenerator;
   let userTestDataGenerator: UserEntityTestDataGenerator;

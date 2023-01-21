@@ -20,7 +20,7 @@ import {
 } from './dtos';
 import { ControllerResponse } from '../controllerResponse';
 import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
-import { findBooksFilters } from '../book/dtos/findBooksDto';
+import { findBooksFilters } from '../book/contracts/controllers/bookController/findBooksFilters';
 import { supportedFindCategoriesFieldsFilters } from '../category/dtos';
 
 const BOOK_CATEGORIES_PATH = '/books/:bookId/categories';

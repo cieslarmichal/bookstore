@@ -1,34 +1,21 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { BookService } from '../../domain/book/services/bookService';
-import { CreateBookData, UpdateBookData } from '../../domain/book/services/types';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { bookErrorMiddleware } from './middlewares';
-import { AuthMiddleware, ControllerResponse, PaginationDataParser, sendResponseMiddleware } from '../common';
-import {
-  CreateBookBodyDto,
-  CreateBookResponseData,
-  CreateBookResponseDto,
-  FindBookParamDto,
-  FindBookResponseData,
-  FindBookResponseDto,
-  FindBooksResponseData,
-  FindBooksResponseDto,
-  RemoveBookParamDto,
-  RemoveBookResponseDto,
-  UpdateBookBodyDto,
-  UpdateBookParamDto,
-  UpdateBookResponseData,
-  UpdateBookResponseDto,
-} from './dtos';
-import { findBooksFilters } from './dtos';
-import { FilterDataParser } from '../common/filter/filterDataParser';
+import { BookService } from '../../../../../domain/book/contracts/services/bookService/bookService';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { FilterDataParser } from '../../../../common/filter/filterDataParser';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
+import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { ControllerResponse } from '../../../../controllerResponse';
+import { BookController } from '../../../contracts/controllers/bookController/bookController';
+import { findBooksFilters } from '../../../contracts/controllers/bookController/findBooksFilters';
+import { bookErrorMiddleware } from '../../middlewares/bookErrorMiddleware/bookErrorMiddleware';
 
-const BOOKS_PATH = '/books';
-const BOOKS_PATH_WITH_ID = `${BOOKS_PATH}/:id`;
+const booksEndpoint = '/books';
+const bookEndpoint = `${booksEndpoint}/:id`;
 
-export class BookController {
+export class BookControllerImpl implements BookController {
   public readonly router = express.Router();
 
   public constructor(
@@ -39,7 +26,7 @@ export class BookController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      BOOKS_PATH,
+      booksEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createBookResponse = await this.createBook(request, response);
@@ -48,7 +35,7 @@ export class BookController {
       }),
     );
     this.router.get(
-      BOOKS_PATH_WITH_ID,
+      bookEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBookResponse = await this.findBook(request, response);
@@ -57,7 +44,7 @@ export class BookController {
       }),
     );
     this.router.get(
-      BOOKS_PATH,
+      booksEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBooksResponse = await this.findBooks(request, response);
@@ -66,7 +53,7 @@ export class BookController {
       }),
     );
     this.router.patch(
-      BOOKS_PATH_WITH_ID,
+      bookEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateBookResponse = await this.updateBook(request, response);
@@ -75,7 +62,7 @@ export class BookController {
       }),
     );
     this.router.delete(
-      BOOKS_PATH_WITH_ID,
+      bookEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteBookResponse = await this.deleteBook(request, response);
@@ -90,35 +77,32 @@ export class BookController {
   public async createBook(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const createBookBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateBookBodyDto);
+    const { title, releaseYear, language, format, description, price } = request.body;
 
-    const createBookData = RecordToInstanceTransformer.strictTransform(createBookBodyDto, CreateBookData);
-
-    const bookDto = await unitOfWork.runInTransaction(async () => {
-      const book = await this.bookService.createBook(unitOfWork, createBookData);
-
-      return book;
+    const book = await unitOfWork.runInTransaction(async () => {
+      return this.bookService.createBook(unitOfWork, {
+        title,
+        releaseYear,
+        language,
+        format,
+        description,
+        price,
+      });
     });
 
-    const responseData = new CreateBookResponseData(bookDto);
-
-    return new CreateBookResponseDto(responseData, StatusCodes.CREATED);
+    return { data: { book }, statusCode: StatusCodes.CREATED };
   }
 
   public async findBook(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindBookParamDto);
+    const { id } = request.params;
 
-    const bookDto = await unitOfWork.runInTransaction(async () => {
-      const book = await this.bookService.findBook(unitOfWork, id);
-
-      return book;
+    const book = await unitOfWork.runInTransaction(async () => {
+      return this.bookService.findBook(unitOfWork, id);
     });
 
-    const responseData = new FindBookResponseData(bookDto);
-
-    return new FindBookResponseDto(responseData, StatusCodes.OK);
+    return { data: { book }, statusCode: StatusCodes.OK };
   }
 
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
@@ -128,46 +112,36 @@ export class BookController {
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const booksDto = await unitOfWork.runInTransaction(async () => {
-      const books = await this.bookService.findBooks(unitOfWork, filters, paginationData);
-
-      return books;
+    const books = await unitOfWork.runInTransaction(async () => {
+      return this.bookService.findBooks(unitOfWork, filters, paginationData);
     });
 
-    const responseData = new FindBooksResponseData(booksDto);
-
-    return new FindBooksResponseDto(responseData, StatusCodes.OK);
+    return { data: { books }, statusCode: StatusCodes.OK };
   }
 
   public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, UpdateBookParamDto);
+    const { id } = request.params;
 
-    const updateBookBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateBookBodyDto);
+    const { description, price } = request.body;
 
-    const updateBookData = RecordToInstanceTransformer.strictTransform(updateBookBodyDto, UpdateBookData);
-
-    const bookDto = await unitOfWork.runInTransaction(async () => {
-      const book = await this.bookService.updateBook(unitOfWork, id, updateBookData);
-
-      return book;
+    const book = await unitOfWork.runInTransaction(async () => {
+      return this.bookService.updateBook(unitOfWork, id, { description, price });
     });
 
-    const responseData = new UpdateBookResponseData(bookDto);
-
-    return new UpdateBookResponseDto(responseData, StatusCodes.OK);
+    return { data: { book }, statusCode: StatusCodes.OK };
   }
 
   public async deleteBook(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveBookParamDto);
+    const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
       await this.bookService.removeBook(unitOfWork, id);
     });
 
-    return new RemoveBookResponseDto(StatusCodes.NO_CONTENT);
+    return { statusCode: StatusCodes.NO_CONTENT };
   }
 }

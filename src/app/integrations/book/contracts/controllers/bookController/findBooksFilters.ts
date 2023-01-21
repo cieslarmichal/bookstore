@@ -1,4 +1,4 @@
-import { FilterName } from '../../../common/filter/filterName';
+import { FilterName } from '../../../../../common/filter/filterName';
 
 export const findBooksFilters: Map<string, Array<string>> = new Map(
   Object.entries({
