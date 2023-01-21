@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CustomerAlreadyExists, CustomerNotFound } from '../../../domain/customer/errors';
+import { CustomerAlreadyExists } from '../../../../../domain/customer/errors/customerAlreadyExists';
+import { CustomerNotFound } from '../../../../../domain/customer/errors/customerNotFound';
 
 export function customerErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
   if (error instanceof CustomerAlreadyExists) {
