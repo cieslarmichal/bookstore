@@ -10,7 +10,7 @@ import { UserModule } from '../../../../../domain/user/userModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
-import { BookCategoryTestDataGenerator } from '../../../../../domain/bookCategory/tests/bookCategoryEntityTestDataGenerator/bookCategoryEntityTestDataGenerator';
+import { BookCategoryEntityTestFactory } from '../../../../../domain/bookCategory/tests/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
 import { AddressModule } from '../../../../../domain/address/addressModule';
@@ -34,7 +34,7 @@ describe(`BookCategoryController`, () => {
   let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
-  let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
+  let bookCategoryEntityTestFactory: BookCategoryEntityTestFactory;
   let categoryEntityTestFactory: CategoryTestDataGenerator;
   let bookEntityTestFactory: BookEntityTestFactory;
   let userEntityTestFactory: UserEntityTestDataGenerator;
@@ -45,7 +45,7 @@ describe(`BookCategoryController`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
+    bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
     userEntityTestFactory = new UserEntityTestDataGenerator();
     categoryEntityTestFactory = new CategoryTestDataGenerator();
     bookEntityTestFactory = new BookEntityTestFactory();
@@ -112,7 +112,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
+        const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
         const response = await request(server.instance).post(`${booksUrl}/${bookId}/categories/${categoryId}`);
 
@@ -168,7 +168,7 @@ describe(`BookCategoryController`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
+        const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
         const response = await request(server.instance)
           .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
@@ -469,7 +469,7 @@ describe(`BookCategoryController`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
+        const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${booksUrl}/${bookId}/categories/${categoryId}`)

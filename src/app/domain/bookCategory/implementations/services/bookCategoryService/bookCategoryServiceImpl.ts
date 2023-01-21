@@ -1,12 +1,12 @@
 import { Filter } from '../../../../../common/filter/filter';
-import { BookDto } from '../../../../../integrations/book/dtos';
-import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
 import { BookNotFound } from '../../../../book/errors/bookNotFound';
-import { CategoryDto } from '../../../../category/dtos';
-import { CategoryNotFound } from '../../../../category/errors';
-import { CategoryService } from '../../../../category/services/categoryService';
+import { Category } from '../../../../category/contracts/category';
+import { CategoryService } from '../../../../category/contracts/services/categoryService/categoryService';
+import { CategoryNotFound } from '../../../../category/errors/categoryNotFound';
 import { PaginationData } from '../../../../common/paginationData';
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
@@ -66,7 +66,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     bookId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<CategoryDto[]> {
+  ): Promise<Category[]> {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
@@ -81,7 +81,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     categoryId: string,
     filters: Filter[],
     paginationData: PaginationData,
-  ): Promise<BookDto[]> {
+  ): Promise<Book[]> {
     const category = await this.categoryService.findCategory(unitOfWork, categoryId);
 
     if (!category) {

@@ -7,24 +7,26 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { BookModule } from '../../../../book/bookModule';
 import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { BookEntityTestFactory } from '../../../../book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
-import { CATEGORY_REPOSITORY_FACTORY } from '../../../../category/categorySymbols';
 import { CategoryModule } from '../../../../category/categoryModule';
-import { CategoryRepositoryFactory } from '../../../../category/repositories/categoryRepositoryFactory';
-import { CategoryTestDataGenerator } from '../../../../category/testDataGenerators/categoryEntityTestFactory';
 import { BookCategoryModule } from '../../../bookCategoryModule';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
 import { BookCategoryAlreadyExists } from '../../../errors/bookCategoryAlreadyExists';
 import { BookCategoryNotFound } from '../../../errors/bookCategoryNotFound';
-import { BookCategoryTestDataGenerator } from '../../../tests/bookCategoryEntityTestDataGenerator/bookCategoryEntityTestDataGenerator';
+import { BookCategoryEntityTestFactory } from '../../../tests/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
+import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
+import { CategoryTestDataGenerator } from '../../../../category/tests/categoryEntityTestDataGenerator/categoryEntityTestDataGenerator';
+import { bookCategorySymbols } from '../../../bookCategorySymbols';
+import { categorySymbols } from '../../../../category/categorySymbols';
+import { bookSymbols } from '../../../../book/bookSymbols';
 
 describe('BookCategoryService', () => {
   let bookCategoryService: BookCategoryService;
   let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
-  let bookCategoryTestDataGenerator: BookCategoryTestDataGenerator;
+  let bookCategoryEntityTestFactory: BookCategoryEntityTestFactory;
   let categoryEntityTestFactory: CategoryTestDataGenerator;
   let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
@@ -41,14 +43,14 @@ describe('BookCategoryService', () => {
       UnitOfWorkModule,
     ]);
 
-    bookCategoryService = container.resolve(BOOK_CATEGORY_SERVICE);
-    bookCategoryRepositoryFactory = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY);
-    categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
-    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
+    bookCategoryService = container.resolve(bookCategorySymbols.bookCategoryService);
+    bookCategoryRepositoryFactory = container.resolve(bookCategorySymbols.bookCategoryRepositoryFactory);
+    categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
+    bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    bookCategoryTestDataGenerator = new BookCategoryTestDataGenerator();
+    bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
     categoryEntityTestFactory = new CategoryTestDataGenerator();
     bookEntityTestFactory = new BookEntityTestFactory();
   });
@@ -178,7 +180,7 @@ describe('BookCategoryService', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { categoryId, bookId } = bookCategoryTestDataGenerator.generateData();
+        const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
         try {
           await bookCategoryService.removeBookCategory(unitOfWork, { categoryId, bookId });
