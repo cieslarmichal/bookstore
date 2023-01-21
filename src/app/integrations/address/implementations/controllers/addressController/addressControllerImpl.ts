@@ -1,33 +1,26 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { AddressService } from '../../domain/address/services/addressServiceImpl';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { addressErrorMiddleware } from './middlewares';
-import {
-  CreateAddressBodyDto,
-  CreateAddressResponseData,
-  CreateAddressResponseDto,
-  FindAddressesResponseData,
-  FindAddressesResponseDto,
-  FindAddressParamDto,
-  FindAddressResponseData,
-  FindAddressResponseDto,
-  RemoveAddressParamDto,
-  RemoveAddressResponseDto,
-  supportedFindAddressesFieldsFilters,
-} from './dtos';
-import { ControllerResponse } from '../controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
-import { CustomerService } from '../../domain/customer/services/customerService';
-import { UserRole } from '../../domain/user/types';
-import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress, UserIsNotACustomer } from './errors';
-import { CustomerDto } from '../../domain/customer/dtos';
+import { AddressService } from '../../../../../domain/address/contracts/services/addressService/addressService';
+import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
+import { UserRole } from '../../../../../domain/user/contracts/userRole';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { FilterDataParser } from '../../../../common/filter/filterDataParser';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
+import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { ControllerResponse } from '../../../../controllerResponse';
+import { CustomerDto } from '../../../../customer/dtos';
+import { AddressController } from '../../../contracts/controllers/addressController/addressController';
+import { findAddressesFilters } from '../../../contracts/controllers/addressController/findAddressesFilters';
+import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress } from '../../../errors/customerFromTokenAuthPayloadNotMatchingCustomerFromAddress';
+import { UserIsNotCustomer } from '../../../errors/userIsNotCustomer';
+import { addressErrorMiddleware } from '../../middlewares/addressErrorMiddleware/addressErrorMiddleware';
 
-const ADDRESSES_PATH = '/addresses';
-const ADDRESSES_PATH_WITH_ID = `${ADDRESSES_PATH}/:id`;
+const addressesEndpoint = '/addresses';
+const addressEndpoint = `${addressesEndpoint}/:id`;
 
-export class AddressController {
+export class AddressControllerImpl implements AddressController {
   public readonly router = express.Router();
 
   public constructor(
@@ -39,7 +32,7 @@ export class AddressController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      ADDRESSES_PATH,
+      addressesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAddressResponse = await this.createAddress(request, response);
@@ -48,7 +41,7 @@ export class AddressController {
       }),
     );
     this.router.get(
-      ADDRESSES_PATH_WITH_ID,
+      addressEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAddressResponse = await this.findAddress(request, response);
@@ -57,7 +50,7 @@ export class AddressController {
       }),
     );
     this.router.get(
-      ADDRESSES_PATH,
+      addressesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAddressesResponse = await this.findAddresses(request, response);
@@ -66,7 +59,7 @@ export class AddressController {
       }),
     );
     this.router.delete(
-      ADDRESSES_PATH_WITH_ID,
+      addressEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAddressResponse = await this.deleteAddress(request, response);
@@ -81,25 +74,43 @@ export class AddressController {
   public async createAddress(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const createAddressBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAddressBodyDto);
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      country,
+      state,
+      city,
+      zipCode,
+      streetAddress,
+      deliveryInstructions,
+      customerId,
+    } = request.body;
 
-    const addressDto = await unitOfWork.runInTransaction(async () => {
-      const address = await this.addressService.createAddress(unitOfWork, createAddressBodyDto);
-
-      return address;
+    const address = await unitOfWork.runInTransaction(async () => {
+      return this.addressService.createAddress(unitOfWork, {
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        deliveryInstructions,
+        customerId,
+      });
     });
 
-    const responseData = new CreateAddressResponseData(addressDto);
-
-    return new CreateAddressResponseDto(responseData, StatusCodes.CREATED);
+    return { data: { address }, statusCode: StatusCodes.CREATED };
   }
 
   public async findAddress(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAddressParamDto);
+    const { id } = request.params;
 
-    const addressDto = await unitOfWork.runInTransaction(async () => {
+    const address = await unitOfWork.runInTransaction(async () => {
       const { userId, role } = response.locals.authPayload;
 
       let customer: CustomerDto;
@@ -107,53 +118,47 @@ export class AddressController {
       try {
         customer = await this.customerService.findCustomer(unitOfWork, { userId });
       } catch (error) {
-        throw new UserIsNotACustomer({ userId });
+        throw new UserIsNotCustomer({ userId });
       }
 
-      const address = await this.addressService.findAddress(unitOfWork, id);
+      const customerAddress = await this.addressService.findAddress(unitOfWork, id);
 
-      if (address.customerId !== customer.id && role === UserRole.user) {
+      if (customerAddress.customerId !== customer.id && role === UserRole.user) {
         throw new CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress({
           customerId: customer.id,
-          targetCustomerId: address.customerId,
+          targetCustomerId: customerAddress.customerId,
         });
       }
 
-      return address;
+      return customerAddress;
     });
 
-    const responseData = new FindAddressResponseData(addressDto);
-
-    return new FindAddressResponseDto(responseData, StatusCodes.OK);
+    return { data: { address }, statusCode: StatusCodes.OK };
   }
 
   public async findAddresses(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAddressesFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, findAddressesFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const addressesDto = await unitOfWork.runInTransaction(async () => {
-      const addresses = await this.addressService.findAddresses(unitOfWork, filters, paginationData);
-
-      return addresses;
+    const addresses = await unitOfWork.runInTransaction(async () => {
+      return this.addressService.findAddresses(unitOfWork, filters, paginationData);
     });
 
-    const responseData = new FindAddressesResponseData(addressesDto);
-
-    return new FindAddressesResponseDto(responseData, StatusCodes.OK);
+    return { data: { addresses }, statusCode: StatusCodes.OK };
   }
 
   public async deleteAddress(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAddressParamDto);
+    const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
       await this.addressService.removeAddress(unitOfWork, id);
     });
 
-    return new RemoveAddressResponseDto(StatusCodes.NO_CONTENT);
+    return { statusCode: StatusCodes.NO_CONTENT };
   }
 }

@@ -1,5 +1,5 @@
 import { Filter } from '../../../../../common/filter/filter';
-import { BookDto } from '../../../../../controllers/book/dtos';
+import { BookDto } from '../../../../../integrations/book/dtos';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';

@@ -1,4 +1,4 @@
-import { ApplicationError } from '../../../common';
+import { ApplicationError } from '../../../common/errors/applicationError';
 
 type CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddressContext = {
   readonly customerId: string;

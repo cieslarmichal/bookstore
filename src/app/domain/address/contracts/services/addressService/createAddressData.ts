@@ -27,7 +27,7 @@ export class CreateAddressData {
 
   @IsString()
   @IsOptional()
-  public readonly deliveryInstructions?: string | null;
+  public readonly deliveryInstructions?: string | undefined;
 
   @IsOptional()
   @IsUUID('4')

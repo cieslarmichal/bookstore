@@ -4,7 +4,7 @@ import { createDIContainer } from './app/common';
 import { BookModule } from './app/domain/book/bookModule';
 import { AuthorModule } from './app/domain/author/authorModule';
 import { PostgresModule } from './app/libs/postgres/postgresModule';
-import { ControllersModule } from './app/controllers/controllersModule';
+import { ControllersModule } from './app/integrations/controllersModule';
 import { UserModule } from './app/domain/user/userModule';
 import { ConfigLoader } from './configLoader';
 import { CategoryModule } from './app/domain/category/categoryModule';

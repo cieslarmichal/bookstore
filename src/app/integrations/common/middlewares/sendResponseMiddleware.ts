@@ -6,6 +6,7 @@ export function sendResponseMiddleware(request: Request, response: Response, nex
 
   if (!controllerResponse) {
     next();
+
     return;
   }
 
@@ -13,6 +14,7 @@ export function sendResponseMiddleware(request: Request, response: Response, nex
 
   if (!controllerResponse.data) {
     response.send();
+
     return;
   }
 

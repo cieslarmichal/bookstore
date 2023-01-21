@@ -1,7 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
-import { errorMiddleware } from './app/controllers/common/middlewares/middlewares';
-import { jsonMiddleware } from './app/controllers/common/middlewares/middlewares/jsonMiddleware';
+import { errorMiddleware } from './app/integrations/common/middlewares/middlewares';
+import { jsonMiddleware } from './app/integrations/common/middlewares/middlewares/jsonMiddleware';
 import { AwilixContainer } from 'awilix';
 import {
   ADDRESS_CONTROLLER,
@@ -12,7 +12,7 @@ import {
   CATEGORY_CONTROLLER,
   CUSTOMER_CONTROLLER,
   USER_CONTROLLER,
-} from './app/controllers/controllersInjectionSymbols';
+} from './app/integrations/controllersInjectionSymbols';
 
 export class App {
   public instance: express.Application;

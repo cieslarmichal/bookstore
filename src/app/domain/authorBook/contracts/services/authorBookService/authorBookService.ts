@@ -1,5 +1,5 @@
 import { Filter } from '../../../../../common/filter/filter';
-import { AuthorBookDto } from '../../../../../controllers/authorBook/dtos';
+import { AuthorBookDto } from '../../../../../integrations/authorBook/dtos';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { Author } from '../../../../author/contracts/author';
 import { BookDto } from '../../../../book/dtos';
