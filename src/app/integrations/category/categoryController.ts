@@ -15,7 +15,7 @@ import {
   FindCategoryResponseDto,
   RemoveCategoryParamDto,
   RemoveCategoryResponseDto,
-  supportedFindCategoriesFieldsFilters,
+  findCategoriesFilters,
 } from './dtos';
 import { ControllerResponse } from '../controllerResponse';
 import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
@@ -108,7 +108,7 @@ export class CategoryController {
   public async findCategories(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindCategoriesFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, findCategoriesFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
