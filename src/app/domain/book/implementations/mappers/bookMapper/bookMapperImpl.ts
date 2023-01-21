@@ -14,7 +14,7 @@ export class BookMapperImpl implements BookMapper {
       releaseYear,
       language,
       format,
-      description: description || null,
+      description: description || undefined,
       price,
     });
   }

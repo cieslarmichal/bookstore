@@ -29,7 +29,7 @@ import { customerSymbols } from '../../../../../domain/customer/customerSymbols'
 
 const baseUrl = '/addresses';
 
-describe(`AddressController (${baseUrl})`, () => {
+describe(`AddressControllerImpl (${baseUrl})`, () => {
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;

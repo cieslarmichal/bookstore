@@ -1,7 +1,4 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { AuthorBookService } from '../../domain/authorBook/services/authorBookService';
-import { CreateAuthorBookData, RemoveAuthorBookData } from '../../domain/authorBook/services/types';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { authorBookErrorMiddleware } from './middlewares';
@@ -19,9 +16,8 @@ import {
   FindAuthorBooksParamDto,
 } from './dtos';
 import { ControllerResponse } from '../controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
 import { supportedFindBooksFieldsFilters } from '../book/dtos/findBooksDto';
-import { supportedFindAuthorsFieldsFilters } from '../author/dtos/findAuthorsDto';
+import { findAuthorsFilters } from '../author/contracts/controllers/authorController/findAuthorsFilters';
 
 const AUTHOR_BOOKS_PATH = '/authors/:authorId/books';
 const AUTHOR_BOOKS_PATH_WITH_ID = `${AUTHOR_BOOKS_PATH}/:bookId`;
@@ -126,7 +122,7 @@ export class AuthorBookController {
 
     const { bookId } = RecordToInstanceTransformer.strictTransform(request.params, FindBookAuthorsParamDto);
 
-    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAuthorsFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, findAuthorsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 

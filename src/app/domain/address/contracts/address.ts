@@ -37,7 +37,7 @@ export class Address {
 
   @IsOptional()
   @IsString()
-  public readonly deliveryInstructions?: string | null;
+  public readonly deliveryInstructions?: string | undefined;
 
   @IsOptional()
   @IsUUID('4')

@@ -17,7 +17,7 @@ export class CreateBookBodyDto {
 
   @IsString()
   @IsOptional()
-  public readonly description?: string | null;
+  public readonly description?: string | undefined;
 
   @IsNumber()
   public readonly price: number;

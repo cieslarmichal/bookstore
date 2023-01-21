@@ -26,7 +26,7 @@ export class BookDto {
 
   @IsString()
   @IsOptional()
-  public readonly description?: string | null;
+  public readonly description?: string | undefined;
 
   @IsNumber()
   public readonly price: number;

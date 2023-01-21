@@ -1,7 +1,7 @@
 import { AuthorBookService } from './authorBookService';
 import { AuthorBookTestDataGenerator } from '../testDataGenerators/authorBookTestDataGenerator';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../../common';
+import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../../common';
 import { PostgresModule } from '../../../common';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
@@ -32,7 +32,7 @@ describe('AuthorBookService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       CategoryModule,
       BookModule,

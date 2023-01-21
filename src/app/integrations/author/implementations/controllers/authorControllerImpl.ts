@@ -1,35 +1,22 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { AuthorService } from '../../domain/author/services/authorService';
-import { RecordToInstanceTransformer, UnitOfWorkFactory } from '../../common';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { authorErrorMiddleware } from './middlewares';
-import {
-  CreateAuthorBodyDto,
-  CreateAuthorResponseData,
-  CreateAuthorResponseDto,
-  FindAuthorParamDto,
-  FindAuthorResponseData,
-  FindAuthorResponseDto,
-  RemoveAuthorParamDto,
-  RemoveAuthorResponseDto,
-  UpdateAuthorBodyDto,
-  UpdateAuthorParamDto,
-  UpdateAuthorResponseData,
-  UpdateAuthorResponseDto,
-} from './dtos';
-import { ControllerResponse } from '../controllerResponse';
-import { AuthMiddleware, FilterDataParser, PaginationDataParser, sendResponseMiddleware } from '../common';
-import {
-  FindAuthorsResponseData,
-  FindAuthorsResponseDto,
-  supportedFindAuthorsFieldsFilters,
-} from './dtos/findAuthorsDto';
+import { AuthorService } from '../../../../domain/author/contracts/services/authorService/authorService';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/unitOfWorkFactory';
+import { FilterDataParser } from '../../../common/filter/filterDataParser';
+import { AuthMiddleware } from '../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../common/middlewares/sendResponseMiddleware';
+import { PaginationDataParser } from '../../../common/pagination/paginationDataParser';
+import { ControllerResponse } from '../../../controllerResponse';
 
-const AUTHORS_PATH = '/authors';
-const AUTHORS_PATH_WITH_ID = `${AUTHORS_PATH}/:id`;
+import { AuthorController } from '../../contracts/controllers/authorController/authorController';
+import { findAuthorsFilters } from '../../contracts/controllers/authorController/findAuthorsFilters';
+import { authorErrorMiddleware } from '../middlewares/authorErrorMiddleware/authorErrorMiddleware';
 
-export class AuthorController {
+const authorsEndpoint = '/authors';
+const authorEndpoint = `${authorsEndpoint}/:id`;
+
+export class AuthorControllerImpl implements AuthorController {
   public readonly router = express.Router();
 
   public constructor(
@@ -40,7 +27,7 @@ export class AuthorController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      AUTHORS_PATH,
+      authorsEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAuthorResponse = await this.createAuthor(request, response);
@@ -49,7 +36,7 @@ export class AuthorController {
       }),
     );
     this.router.get(
-      AUTHORS_PATH_WITH_ID,
+      authorEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorResponse = await this.findAuthor(request, response);
@@ -58,7 +45,7 @@ export class AuthorController {
       }),
     );
     this.router.get(
-      AUTHORS_PATH,
+      authorsEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorsResponse = await this.findAuthors(request, response);
@@ -67,7 +54,7 @@ export class AuthorController {
       }),
     );
     this.router.patch(
-      AUTHORS_PATH_WITH_ID,
+      authorEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateAuthorResponse = await this.updateAuthor(request, response);
@@ -76,7 +63,7 @@ export class AuthorController {
       }),
     );
     this.router.delete(
-      AUTHORS_PATH_WITH_ID,
+      authorEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAuthorResponse = await this.deleteAuthor(request, response);
@@ -91,80 +78,64 @@ export class AuthorController {
   public async createAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const createAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, CreateAuthorBodyDto);
+    const { firstName, lastName, about } = request.body;
 
-    const authorDto = await unitOfWork.runInTransaction(async () => {
-      const author = await this.authorService.createAuthor(unitOfWork, createAuthorBodyDto);
-
-      return author;
+    const author = await unitOfWork.runInTransaction(async () => {
+      return this.authorService.createAuthor(unitOfWork, { firstName, lastName, about });
     });
 
-    const responseData = new CreateAuthorResponseData(authorDto);
-
-    return new CreateAuthorResponseDto(responseData, StatusCodes.CREATED);
+    return { data: { author }, statusCode: StatusCodes.CREATED };
   }
 
   public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, FindAuthorParamDto);
+    const { id } = request.params;
 
-    const authorDto = await unitOfWork.runInTransaction(async () => {
-      const author = await this.authorService.findAuthor(unitOfWork, id);
-
-      return author;
+    const author = await unitOfWork.runInTransaction(async () => {
+      return this.authorService.findAuthor(unitOfWork, id);
     });
 
-    const responseData = new FindAuthorResponseData(authorDto);
-
-    return new FindAuthorResponseDto(responseData, StatusCodes.OK);
+    return { data: { author }, statusCode: StatusCodes.OK };
   }
 
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = FilterDataParser.parse(request.query.filter as string, supportedFindAuthorsFieldsFilters);
+    const filters = FilterDataParser.parse(request.query.filter as string, findAuthorsFilters);
 
     const paginationData = PaginationDataParser.parse(request.query);
 
-    const authorsDto = await unitOfWork.runInTransaction(async () => {
-      const authors = await this.authorService.findAuthors(unitOfWork, filters, paginationData);
-
-      return authors;
+    const authors = await unitOfWork.runInTransaction(async () => {
+      return this.authorService.findAuthors(unitOfWork, filters, paginationData);
     });
 
-    const responseData = new FindAuthorsResponseData(authorsDto);
-
-    return new FindAuthorsResponseDto(responseData, StatusCodes.OK);
+    return { data: { authors }, statusCode: StatusCodes.OK };
   }
 
   public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, UpdateAuthorParamDto);
+    const { id } = request.params;
 
-    const updateAuthorBodyDto = RecordToInstanceTransformer.strictTransform(request.body, UpdateAuthorBodyDto);
+    const { about } = request.body;
 
-    const authorDto = await unitOfWork.runInTransaction(async () => {
-      const author = await this.authorService.updateAuthor(unitOfWork, id, updateAuthorBodyDto);
-
-      return author;
+    const author = await unitOfWork.runInTransaction(async () => {
+      return this.authorService.updateAuthor(unitOfWork, id, { about });
     });
 
-    const responseData = new UpdateAuthorResponseData(authorDto);
-
-    return new UpdateAuthorResponseDto(responseData, StatusCodes.OK);
+    return { data: { author }, statusCode: StatusCodes.OK };
   }
 
   public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = RecordToInstanceTransformer.strictTransform(request.params, RemoveAuthorParamDto);
+    const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
       await this.authorService.removeAuthor(unitOfWork, id);
     });
 
-    return new RemoveAuthorResponseDto(StatusCodes.NO_CONTENT);
+    return { statusCode: StatusCodes.NO_CONTENT };
   }
 }

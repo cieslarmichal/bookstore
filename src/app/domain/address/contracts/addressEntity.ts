@@ -58,7 +58,7 @@ export class AddressEntity {
   @IsOptional()
   @IsString()
   @Column({ type: 'text', nullable: true })
-  public deliveryInstructions: string | null;
+  public deliveryInstructions: string | undefined;
 
   @IsOptional()
   @ManyToOne(() => CustomerEntity, (customer) => customer.addresses, { onDelete: 'CASCADE' })

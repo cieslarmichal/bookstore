@@ -34,7 +34,7 @@ export class AuthorEntity {
   @IsOptional()
   @IsString()
   @Column({ type: 'text', nullable: true })
-  public about: string | null;
+  public about: string | undefined;
 
   @IsOptional()
   @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.author)

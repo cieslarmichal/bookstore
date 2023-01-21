@@ -21,7 +21,7 @@ export class Author {
 
   @IsString()
   @IsOptional()
-  public readonly about?: string | null;
+  public readonly about?: string | undefined;
 
   @Type(() => BookDto)
   @ValidateNested({ each: true })

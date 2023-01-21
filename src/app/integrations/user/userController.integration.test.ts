@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
 import { PostgresModule } from '../../common';
 import { UserModule } from '../../domain/user/userModule';
 import { ControllersModule } from '../controllersModule';
@@ -43,7 +43,7 @@ describe(`UserController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       CategoryModule,
       BookModule,

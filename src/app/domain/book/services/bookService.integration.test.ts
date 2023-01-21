@@ -3,7 +3,7 @@ import { BookTestDataGenerator } from '../tests/bookEntityTestDataGenerator/book
 import { ConfigLoader } from '../../../../configLoader';
 import {
   BetweenFilter,
-  createDIContainer,
+  createDependencyInjectionContainer,
   postgresConnector,
   EqualFilter,
   LessThanOrEqualFilter,
@@ -47,7 +47,7 @@ describe('BookService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       BookModule,
       AuthorModule,

@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { CustomerEntityTestDataGenerator } from '../../domain/customer/tests/customerEntityTestDataGenerator/customerEntityTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
 import { PostgresModule } from '../../common';
 import { ControllersModule } from '../controllersModule';
 import { BookModule } from '../../domain/book/bookModule';
@@ -42,7 +42,7 @@ describe(`CustomerController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       BookModule,
       AuthorModule,

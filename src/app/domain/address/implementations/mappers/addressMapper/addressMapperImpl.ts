@@ -32,7 +32,7 @@ export class AddressMapperImpl implements AddressMapper {
       city,
       zipCode,
       streetAddress,
-      deliveryInstructions: deliveryInstructions || null,
+      deliveryInstructions: deliveryInstructions || undefined,
       customerId,
     });
   }

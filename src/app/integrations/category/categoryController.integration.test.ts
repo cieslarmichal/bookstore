@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { CategoryTestDataGenerator } from '../../domain/category/testDataGenerators/categoryTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
 import { PostgresModule } from '../../common';
 import { CategoryModule } from '../../domain/category/categoryModule';
 import { ControllersModule } from '../controllersModule';
@@ -39,7 +39,7 @@ describe(`CategoryController (${baseUrl})`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       CategoryModule,
       BookModule,

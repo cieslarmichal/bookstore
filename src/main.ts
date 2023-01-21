@@ -1,6 +1,6 @@
 import { Server } from './server';
 import { App } from './app';
-import { createDIContainer } from './app/common';
+import { createDependencyInjectionContainer } from './app/common';
 import { BookModule } from './app/domain/book/bookModule';
 import { AuthorModule } from './app/domain/author/authorModule';
 import { PostgresModule } from './app/libs/postgres/postgresModule';
@@ -17,7 +17,7 @@ import { CustomerModule } from './app/domain/customer/customerModule';
 async function main() {
   ConfigLoader.loadConfig();
 
-  const container = await createDIContainer([
+  const container = await createDependencyInjectionContainer([
     PostgresModule,
     CategoryModule,
     BookModule,

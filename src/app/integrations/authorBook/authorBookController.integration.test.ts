@@ -2,7 +2,7 @@ import { ConfigLoader } from '../../../configLoader';
 import { AuthorTestDataGenerator } from '../../domain/author/testDataGenerators/authorTestDataGenerator';
 import request from 'supertest';
 import { App } from '../../../app';
-import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../common';
+import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
 import { PostgresModule } from '../../common';
 import { AuthorModule } from '../../domain/author/authorModule';
 import { ControllersModule } from '../controllersModule';
@@ -52,7 +52,7 @@ describe(`AuthorBookController`, () => {
   });
 
   beforeEach(async () => {
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       CategoryModule,
       BookModule,

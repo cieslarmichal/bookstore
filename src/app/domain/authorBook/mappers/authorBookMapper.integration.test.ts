@@ -1,7 +1,7 @@
 import { AuthorBookEntity } from '../contracts/authorBookEntity';
 import { AuthorBookMapper } from './authorBookMapper';
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, postgresConnector, UnitOfWorkModule } from '../../../common';
+import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../../common';
 import { PostgresModule } from '../../../common';
 import { AuthorBookModule } from '../authorBookModule';
 import { AuthorModule } from '../../author/authorModule';
@@ -22,7 +22,7 @@ describe('AuthorBookMapper', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       AuthorBookModule,
       AuthorModule,

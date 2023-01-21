@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../../configLoader';
-import { createDIContainer, postgresConnector, EqualFilter, UnitOfWorkModule } from '../../../common';
+import { createDependencyInjectionContainer, postgresConnector, EqualFilter, UnitOfWorkModule } from '../../../common';
 import { PostgresModule } from '../../../common';
 import { AuthorTestDataGenerator } from '../testDataGenerators/authorTestDataGenerator';
 import { AuthorService } from './authorService';
@@ -29,7 +29,7 @@ describe('AuthorService', () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    const container = await createDIContainer([
+    const container = await createDependencyInjectionContainer([
       PostgresModule,
       BookModule,
       AuthorModule,

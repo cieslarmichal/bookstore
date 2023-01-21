@@ -9,7 +9,7 @@ export class UpdateBookParamDto {
 export class UpdateBookBodyDto {
   @IsString()
   @IsOptional()
-  public readonly description?: string | null;
+  public readonly description?: string | undefined;
 
   @IsNumber()
   @IsOptional()
