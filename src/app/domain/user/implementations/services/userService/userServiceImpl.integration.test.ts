@@ -15,15 +15,16 @@ import { EmailAlreadySet } from '../../../errors/emailAlreadySet';
 import { PhoneNumberAlreadySet } from '../../../errors/phoneNumberAlreadySet';
 import { UserAlreadyExists } from '../../../errors/userAlreadyExists';
 import { UserNotFound } from '../../../errors/userNotFound';
-import { UserEntityTestDataGenerator } from '../../../tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../userModule';
+import { userSymbols } from '../../../userSymbols';
 
 describe('UserServiceImpl', () => {
   let userService: UserService;
   let userRepositoryFactory: UserRepositoryFactory;
   let tokenService: TokenService;
   let hashService: HashService;
-  let userEntityTestFactory: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -36,14 +37,14 @@ describe('UserServiceImpl', () => {
       UnitOfWorkModule,
     ]);
 
-    userService = container.resolve(USER_SERVICE);
-    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
-    tokenService = container.resolve(TOKEN_SERVICE);
-    hashService = container.resolve(HASH_SERVICE);
+    userService = container.resolve(userSymbols.userService);
+    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
+    tokenService = container.resolve(userSymbols.tokenService);
+    hashService = container.resolve(userSymbols.hashService);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    userEntityTestFactory = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -58,7 +59,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         const createdUserDto = await userService.registerUserByEmail(unitOfWork, {
           email,
@@ -78,7 +79,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
           email,
@@ -105,7 +106,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.create();
 
         const createdUserDto = await userService.registerUserByPhoneNumber(unitOfWork, {
           phoneNumber,
@@ -125,7 +126,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
           phoneNumber,
@@ -152,7 +153,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
@@ -177,7 +178,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         try {
           await userService.loginUserByEmail(unitOfWork, {
@@ -197,9 +198,9 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
-        const { password: otherPassword } = userEntityTestFactory.generateData();
+        const { password: otherPassword } = userEntityTestFactory.create();
 
         await userRepository.createOne({
           email,
@@ -226,7 +227,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
@@ -251,7 +252,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { phoneNumber, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.create();
 
         try {
           await userService.loginUserByPhoneNumber(unitOfWork, {
@@ -271,9 +272,9 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.create();
 
-        const { password: otherPassword } = userEntityTestFactory.generateData();
+        const { password: otherPassword } = userEntityTestFactory.create();
 
         await userRepository.createOne({
           phoneNumber,
@@ -300,7 +301,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
@@ -309,7 +310,7 @@ describe('UserServiceImpl', () => {
           password: hashedPassword,
         });
 
-        const { password: newPassword } = userEntityTestFactory.generateData();
+        const { password: newPassword } = userEntityTestFactory.create();
 
         await userService.setPassword(unitOfWork, user.id, newPassword);
 
@@ -324,7 +325,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id, password } = userEntityTestFactory.generateData();
+        const { id, password } = userEntityTestFactory.create();
 
         try {
           await userService.setPassword(unitOfWork, id, password);
@@ -343,7 +344,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
           phoneNumber,
@@ -366,7 +367,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
           email,
@@ -388,7 +389,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, phoneNumber, password } = userEntityTestFactory.generateData();
+        const { email, phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
           email,
@@ -412,7 +413,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id, email } = userEntityTestFactory.generateData();
+        const { id, email } = userEntityTestFactory.create();
 
         try {
           await userService.setEmail(unitOfWork, id, email);
@@ -431,7 +432,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
           email,
@@ -454,7 +455,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.generateData();
+        const { phoneNumber, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
           phoneNumber,
@@ -476,7 +477,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, phoneNumber, password } = userEntityTestFactory.generateData();
+        const { email, phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
           phoneNumber,
@@ -500,7 +501,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id, phoneNumber } = userEntityTestFactory.generateData();
+        const { id, phoneNumber } = userEntityTestFactory.create();
 
         try {
           await userService.setPhoneNumber(unitOfWork, id, phoneNumber);
@@ -519,7 +520,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
           email,
@@ -536,7 +537,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = userEntityTestFactory.generateData();
+        const { id } = userEntityTestFactory.create();
 
         try {
           await userService.findUser(unitOfWork, id);
@@ -555,7 +556,7 @@ describe('UserServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.generateData();
+        const { email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
           email,
@@ -574,7 +575,7 @@ describe('UserServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = userEntityTestFactory.generateData();
+        const { id } = userEntityTestFactory.create();
 
         try {
           await userService.removeUser(unitOfWork, id);

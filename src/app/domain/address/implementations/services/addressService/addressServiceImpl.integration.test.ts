@@ -7,7 +7,7 @@ import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
 import { CustomerModule } from '../../../../customer/customerModule';
-import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../../user/userModule';
 import { AddressModule } from '../../../addressModule';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
@@ -26,7 +26,7 @@ describe('AddressServiceImpl', () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let addressTestFactory: AddressEntityTestFactory;
-  let userEntityTestFactory: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -49,7 +49,7 @@ describe('AddressServiceImpl', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     addressTestFactory = new AddressEntityTestFactory();
-    userEntityTestFactory = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -63,7 +63,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -104,7 +104,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -159,13 +159,13 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
         const user1 = await userRepository.createOne({ email, password, role });
 
-        const { email: otherEmail } = userEntityTestFactory.generateData();
+        const { email: otherEmail } = userEntityTestFactory.create();
 
         const user2 = await userRepository.createOne({ email: otherEmail, password, role });
 
@@ -237,7 +237,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -309,7 +309,7 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 

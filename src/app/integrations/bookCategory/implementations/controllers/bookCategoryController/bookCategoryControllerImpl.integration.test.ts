@@ -4,7 +4,7 @@ import { App } from '../../../../../../app';
 import { IntegrationsModule } from '../../../../integrationsModule';
 import { BookModule } from '../../../../../domain/book/bookModule';
 import { Server } from '../../../../../../server';
-import { UserEntityTestDataGenerator } from '../../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { StatusCodes } from 'http-status-codes';
 import { UserModule } from '../../../../../domain/user/userModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
@@ -37,7 +37,7 @@ describe(`BookCategoryController`, () => {
   let bookCategoryEntityTestFactory: BookCategoryEntityTestFactory;
   let categoryEntityTestFactory: CategoryEntityTestFactory;
   let bookEntityTestFactory: BookEntityTestFactory;
-  let userEntityTestFactory: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestFactory;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -46,7 +46,7 @@ describe(`BookCategoryController`, () => {
     ConfigLoader.loadConfig();
 
     bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
-    userEntityTestFactory = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestFactory();
     categoryEntityTestFactory = new CategoryEntityTestFactory();
     bookEntityTestFactory = new BookEntityTestFactory();
   });
@@ -93,7 +93,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -132,7 +132,7 @@ describe(`BookCategoryController`, () => {
 
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -164,7 +164,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -188,7 +188,7 @@ describe(`BookCategoryController`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -220,7 +220,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -238,7 +238,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -282,7 +282,7 @@ describe(`BookCategoryController`, () => {
 
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -337,7 +337,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -355,7 +355,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -405,7 +405,7 @@ describe(`BookCategoryController`, () => {
 
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -445,7 +445,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -465,7 +465,7 @@ describe(`BookCategoryController`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -528,7 +528,7 @@ describe(`BookCategoryController`, () => {
 
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 

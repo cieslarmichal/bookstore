@@ -5,7 +5,7 @@ import { createDependencyInjectionContainer } from '../../../../../libs/dependen
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../../user/userModule';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
@@ -22,7 +22,7 @@ describe('CustomerServiceImpl', () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let customerEntityTestFactory: CustomerEntityTestFactory;
-  let userEntityTestFactory: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
   beforeAll(async () => {
@@ -43,7 +43,7 @@ describe('CustomerServiceImpl', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     customerEntityTestFactory = new CustomerEntityTestFactory();
-    userEntityTestFactory = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -59,7 +59,7 @@ describe('CustomerServiceImpl', () => {
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -79,7 +79,7 @@ describe('CustomerServiceImpl', () => {
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -103,7 +103,7 @@ describe('CustomerServiceImpl', () => {
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -123,7 +123,7 @@ describe('CustomerServiceImpl', () => {
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -159,7 +159,7 @@ describe('CustomerServiceImpl', () => {
         const userRepository = userRepositoryFactory.create(entityManager);
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 

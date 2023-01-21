@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/services/loggerService';
+import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';

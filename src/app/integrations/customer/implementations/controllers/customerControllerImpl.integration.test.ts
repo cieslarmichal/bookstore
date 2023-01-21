@@ -13,7 +13,7 @@ import { CustomerRepositoryFactory } from '../../../../domain/customer/contracts
 import { CustomerModule } from '../../../../domain/customer/customerModule';
 import { CustomerEntityTestFactory } from '../../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-import { UserEntityTestDataGenerator } from '../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { UserEntityTestFactory } from '../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../../domain/user/userModule';
 import { createDependencyInjectionContainer } from '../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
@@ -30,7 +30,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let customerEntityTestFactory: CustomerEntityTestFactory;
-  let userEntityTestFactory: UserEntityTestDataGenerator;
+  let userEntityTestFactory: UserEntityTestFactory;
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -39,7 +39,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
     ConfigLoader.loadConfig();
 
     customerEntityTestFactory = new CustomerEntityTestFactory();
-    userEntityTestFactory = new UserEntityTestDataGenerator();
+    userEntityTestFactory = new UserEntityTestFactory();
   });
 
   beforeEach(async () => {
@@ -83,7 +83,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -104,7 +104,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -122,7 +122,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -145,7 +145,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -163,7 +163,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -187,7 +187,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -209,7 +209,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -231,7 +231,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -250,7 +250,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.generateData();
+        const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
@@ -275,7 +275,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.generateData();
+        const { email, password, role } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({ email, password, role });
 
@@ -297,7 +297,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, id: userId, role } = userEntityTestFactory.generateData();
+        const { email, password, id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
