@@ -6,26 +6,26 @@ import { createDependencyInjectionContainer } from '../../../../../libs/dependen
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
-import { CUSTOMER_REPOSITORY_FACTORY } from '../../../../customer/customerSymbols';
 import { CustomerModule } from '../../../../customer/customerModule';
-import { CustomerRepositoryFactory } from '../../../../customer/repositories/customerRepositoryFactory';
-import { UserRepositoryFactory } from '../../../../user/repositories/userRepositoryFactory';
 import { UserEntityTestDataGenerator } from '../../../../user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
-import { USER_REPOSITORY_FACTORY } from '../../../../user/userSymbols';
 import { UserModule } from '../../../../user/userModule';
-import { ADDRESS_SERVICE, ADDRESS_REPOSITORY_FACTORY } from '../../../addressSymbols';
 import { AddressModule } from '../../../addressModule';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';
 import { AddressNotFound } from '../../../errors/addressNotFound';
-import { AddressEntityTestDataGenerator } from '../../../tests/addressEntityTestDataGenerator/addressTestDataGenerator';
+import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
+import { CustomerRepositoryFactory } from '../../../../customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
+import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { addressSymbols } from '../../../addressSymbols';
+import { customerSymbols } from '../../../../customer/customerSymbols';
+import { userSymbols } from '../../../../user/userSymbols';
 
 describe('AddressServiceImpl', () => {
   let addressService: AddressService;
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let addressTestDataGenerator: AddressEntityTestDataGenerator;
+  let addressTestFactory: AddressEntityTestFactory;
   let userTestDataGenerator: UserEntityTestDataGenerator;
   let testTransactionRunner: TestTransactionInternalRunner;
 
@@ -41,14 +41,14 @@ describe('AddressServiceImpl', () => {
       UnitOfWorkModule,
     ]);
 
-    addressService = container.resolve(ADDRESS_SERVICE);
-    addressRepositoryFactory = container.resolve(ADDRESS_REPOSITORY_FACTORY);
-    customerRepositoryFactory = container.resolve(CUSTOMER_REPOSITORY_FACTORY);
-    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
+    addressService = container.resolve(addressSymbols.addressService);
+    addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
+    customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
+    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    addressTestDataGenerator = new AddressEntityTestDataGenerator();
+    addressTestFactory = new AddressEntityTestFactory();
     userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
@@ -74,7 +74,7 @@ describe('AddressServiceImpl', () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.create();
 
         const createdAddressDto = await addressService.createAddress(unitOfWork, {
           firstName,
@@ -115,7 +115,7 @@ describe('AddressServiceImpl', () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -141,7 +141,7 @@ describe('AddressServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = addressTestDataGenerator.generateData();
+        const { id } = addressTestFactory.create();
 
         try {
           await addressService.findAddress(unitOfWork, id);
@@ -176,7 +176,7 @@ describe('AddressServiceImpl', () => {
         const customer2 = await customerRepository.createOne({ userId: user2.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -248,7 +248,7 @@ describe('AddressServiceImpl', () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -320,7 +320,7 @@ describe('AddressServiceImpl', () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -348,7 +348,7 @@ describe('AddressServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = addressTestDataGenerator.generateData();
+        const { id } = addressTestFactory.create();
 
         try {
           await addressService.removeAddress(unitOfWork, id);

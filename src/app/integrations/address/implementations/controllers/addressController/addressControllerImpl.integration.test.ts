@@ -1,5 +1,5 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { AddressEntityTestDataGenerator } from '../../../../../domain/address/tests/addressEntityTestDataGenerator/addressTestDataGenerator';
+import { AddressEntityTestFactory } from '../../../../../domain/address/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 import request from 'supertest';
 import { App } from '../../../../../../app';
 import { AddressModule } from '../../../../../domain/address/addressModule';
@@ -33,7 +33,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let addressTestDataGenerator: AddressEntityTestDataGenerator;
+  let addressTestFactory: AddressEntityTestFactory;
   let userTestDataGenerator: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -42,7 +42,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    addressTestDataGenerator = new AddressEntityTestDataGenerator();
+    addressTestFactory = new AddressEntityTestFactory();
     userTestDataGenerator = new UserEntityTestDataGenerator();
   });
 
@@ -118,7 +118,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const response = await request(server.instance).post(baseUrl).send({
           firstName,
@@ -155,7 +155,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -214,7 +214,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         await customerRepository.createOne({ userId: user.id });
 
-        const { id } = addressTestDataGenerator.generateData();
+        const { id } = addressTestFactory.generateData();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -243,7 +243,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -284,7 +284,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -327,7 +327,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -388,7 +388,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer2 = await customerRepository.createOne({ userId: user2.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         await addressRepository.createOne({
           firstName,
@@ -452,7 +452,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = addressTestDataGenerator.generateData();
+        const { id } = addressTestFactory.generateData();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -482,7 +482,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -523,7 +523,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestDataGenerator.generateData();
+          addressTestFactory.generateData();
 
         const address = await addressRepository.createOne({
           firstName,

@@ -9,7 +9,9 @@ import { CategoryControllerImpl } from './category/implementations/controllers/c
 import { FilterDataParser } from './common/filter/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
 import { PaginationDataParser } from './common/pagination/paginationDataParser';
+import { CustomerControllerImpl } from './customer/implementations/controllers/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
+import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
 
 export class IntegrationsModule extends LoadableModule {
   public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
