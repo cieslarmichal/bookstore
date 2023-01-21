@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 import { AddressService } from '../../../../../domain/address/contracts/services/addressService/addressService';
+import { Customer } from '../../../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
@@ -10,7 +11,6 @@ import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
-import { CustomerDto } from '../../../../customer/dtos';
 import { AddressController } from '../../../contracts/controllers/addressController/addressController';
 import { findAddressesFilters } from '../../../contracts/controllers/addressController/findAddressesFilters';
 import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress } from '../../../errors/customerFromTokenAuthPayloadNotMatchingCustomerFromAddress';
@@ -115,7 +115,7 @@ export class AddressControllerImpl implements AddressController {
     const address = await unitOfWork.runInTransaction(async () => {
       const { userId, role } = response.locals.authPayload;
 
-      let customer: CustomerDto;
+      let customer: Customer;
 
       try {
         customer = await this.customerService.findCustomer(unitOfWork, { userId });

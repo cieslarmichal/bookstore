@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { AuthorBookService } from '../../../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { findAuthorsFilters } from '../../../../author/contracts/controllers/authorController/findAuthorsFilters';
-import { findBooksFilters } from '../../../../book/dtos';
+import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';

@@ -21,6 +21,7 @@ import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModul
 import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
 import { IntegrationsModule } from '../../../../integrationsModule';
 import { Server } from '../../../../../../server';
+import { categorySymbols } from '../../../../../domain/category/categorySymbols';
 
 const baseUrl = '/categories';
 
@@ -55,7 +56,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       UnitOfWorkModule,
     ]);
 
-    categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
+    categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

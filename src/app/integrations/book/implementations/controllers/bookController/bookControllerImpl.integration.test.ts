@@ -1,5 +1,4 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import request from 'supertest';
 import { App } from '../../../../../../app';
 import { BookModule } from '../../../../../domain/book/bookModule';
@@ -21,6 +20,8 @@ import { postgresConnector } from '../../../../../libs/postgres/postgresConnecto
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
+import { BookEntityTestFactory } from '../../../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { bookSymbols } from '../../../../../domain/book/bookSymbols';
 
 const baseUrl = '/books';
 
@@ -55,7 +56,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       UnitOfWorkModule,
     ]);
 
-    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
+    bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

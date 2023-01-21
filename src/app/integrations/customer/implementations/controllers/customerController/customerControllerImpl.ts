@@ -1,14 +1,13 @@
 import express, { NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
-import { CustomerService } from '../../../../domain/customer/contracts/services/customerService/customerService';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/unitOfWorkFactory';
-import { AuthMiddleware } from '../../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../common/middlewares/sendResponseMiddleware';
-
-import { ControllerResponse } from '../../../controllerResponse';
-import { CustomerController } from '../../contracts/controllers/customerController/customerController';
-import { customerErrorMiddleware } from '../middlewares/customerErrorMiddleware/customerErrorMiddleware';
+import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
+import { ControllerResponse } from '../../../../controllerResponse';
+import { CustomerController } from '../../../contracts/controllers/customerController/customerController';
+import { customerErrorMiddleware } from '../../middlewares/customerErrorMiddleware/customerErrorMiddleware';
 
 const customersEndpoint = '/customers';
 const customerEndpoint = `${customersEndpoint}/:id`;

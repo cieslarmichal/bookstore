@@ -9,7 +9,6 @@ import { StatusCodes } from 'http-status-codes';
 import { UserModule } from '../../../../../domain/user/userModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
-import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import { BookCategoryEntityTestFactory } from '../../../../../domain/bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
@@ -26,6 +25,10 @@ import { postgresConnector } from '../../../../../libs/postgres/postgresConnecto
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
+import { BookEntityTestFactory } from '../../../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { categorySymbols } from '../../../../../domain/category/categorySymbols';
+import { bookSymbols } from '../../../../../domain/book/bookSymbols';
+import { bookCategorySymbols } from '../../../../../domain/bookCategory/bookCategorySymbols';
 
 const categoriesUrl = '/categories';
 const booksUrl = '/books';
@@ -67,9 +70,9 @@ describe(`BookCategoryController`, () => {
       UnitOfWorkModule,
     ]);
 
-    categoryRepositoryFactory = container.resolve(CATEGORY_REPOSITORY_FACTORY);
-    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
-    bookCategoryRepositoryFactory = container.resolve(BOOK_CATEGORY_REPOSITORY_FACTORY);
+    categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
+    bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
+    bookCategoryRepositoryFactory = container.resolve(bookCategorySymbols.bookCategoryRepositoryFactory);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

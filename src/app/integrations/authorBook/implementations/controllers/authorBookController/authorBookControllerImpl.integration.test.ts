@@ -10,7 +10,6 @@ import { StatusCodes } from 'http-status-codes';
 import { UserModule } from '../../../../../domain/user/userModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
-import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { CustomerModule } from '../../../../../domain/customer/customerModule';
@@ -23,6 +22,12 @@ import { postgresConnector } from '../../../../../libs/postgres/postgresConnecto
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
+import { AuthorEntityTestFactory } from '../../../../../domain/author/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
+import { BookEntityTestFactory } from '../../../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { AuthorBookEntityTestFactory } from '../../../../../domain/authorBook/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
+import { authorSymbols } from '../../../../../domain/author/authorSymbols';
+import { bookSymbols } from '../../../../../domain/book/bookSymbols';
+import { authorBookSymbols } from '../../../../../domain/authorBook/authorBookSymbols';
 
 const authorsUrl = '/authors';
 const booksUrl = '/books';
@@ -31,7 +36,7 @@ describe(`AuthorBookControllerImpl`, () => {
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
-  let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
+  let authorBookEntityTestFactory: AuthorBookEntityTestFactory;
   let authorEntityTestFactory: AuthorEntityTestFactory;
   let bookEntityTestFactory: BookEntityTestFactory;
   let userEntityTestFactory: UserEntityTestFactory;
@@ -42,7 +47,7 @@ describe(`AuthorBookControllerImpl`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
+    authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
     userEntityTestFactory = new UserEntityTestFactory();
     authorEntityTestFactory = new AuthorEntityTestFactory();
     bookEntityTestFactory = new BookEntityTestFactory();
@@ -64,9 +69,9 @@ describe(`AuthorBookControllerImpl`, () => {
       UnitOfWorkModule,
     ]);
 
-    authorRepositoryFactory = container.resolve(AUTHOR_REPOSITORY_FACTORY);
-    bookRepositoryFactory = container.resolve(BOOK_REPOSITORY_FACTORY);
-    authorBookRepositoryFactory = container.resolve(AUTHOR_BOOK_REPOSITORY_FACTORY);
+    authorRepositoryFactory = container.resolve(authorSymbols.authorRepositoryFactory);
+    bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
+    authorBookRepositoryFactory = container.resolve(authorBookSymbols.authorBookRepositoryFactory);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
@@ -109,7 +114,7 @@ describe(`AuthorBookControllerImpl`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+        const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         const response = await request(server.instance).post(`${authorsUrl}/${authorId}/books/${bookId}`);
 
@@ -143,7 +148,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -165,7 +170,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+        const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -199,7 +204,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -239,7 +244,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = authorEntityTestFactory.generateData();
+        const { id } = authorEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${id}/books`)
@@ -257,7 +262,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -279,7 +284,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -327,7 +332,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -461,11 +466,11 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author1 = await authorRepository.createOne({ firstName, lastName });
 
-        const { firstName: otherFirstName } = authorEntityTestFactory.generateData();
+        const { firstName: otherFirstName } = authorEntityTestFactory.create();
 
         const author2 = await authorRepository.createOne({ firstName: otherFirstName, lastName });
 
@@ -511,7 +516,7 @@ describe(`AuthorBookControllerImpl`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+        const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -544,7 +549,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 
@@ -582,7 +587,7 @@ describe(`AuthorBookControllerImpl`, () => {
           price,
         });
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({ firstName, lastName });
 

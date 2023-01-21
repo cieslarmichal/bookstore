@@ -21,6 +21,7 @@ import { postgresConnector } from '../../../../../libs/postgres/postgresConnecto
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
+import { userSymbols } from '../../../../../domain/user/userSymbols';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -59,11 +60,11 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       UnitOfWorkModule,
     ]);
 
-    userRepositoryFactory = container.resolve(USER_REPOSITORY_FACTORY);
+    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    hashService = container.resolve(HASH_SERVICE);
+    hashService = container.resolve(userSymbols.hashService);
 
     authHelper = new AuthHelper(container);
 

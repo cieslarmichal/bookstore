@@ -118,7 +118,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const response = await request(server.instance).post(baseUrl).send({
           firstName,
@@ -155,7 +155,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -214,7 +214,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         await customerRepository.createOne({ userId: user.id });
 
-        const { id } = addressTestFactory.generateData();
+        const { id } = addressTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -243,7 +243,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -284,7 +284,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -327,7 +327,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -388,7 +388,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer2 = await customerRepository.createOne({ userId: user2.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         await addressRepository.createOne({
           firstName,
@@ -452,7 +452,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = addressTestFactory.generateData();
+        const { id } = addressTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -482,7 +482,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -523,7 +523,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.generateData();
+          addressTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,

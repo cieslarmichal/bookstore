@@ -20,7 +20,7 @@ describe('AuthorBookService', () => {
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
-  let authorBookTestDataGenerator: AuthorBookTestDataGenerator;
+  let authorBookEntityTestFactory: AuthorBookTestDataGenerator;
   let authorEntityTestFactory: AuthorEntityTestFactory;
   let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
@@ -45,7 +45,7 @@ describe('AuthorBookService', () => {
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
-    authorBookTestDataGenerator = new AuthorBookTestDataGenerator();
+    authorBookEntityTestFactory = new AuthorBookTestDataGenerator();
     authorEntityTestFactory = new AuthorEntityTestFactory();
     bookEntityTestFactory = new BookEntityTestFactory();
   });
@@ -64,7 +64,7 @@ describe('AuthorBookService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({
           firstName,
@@ -100,7 +100,7 @@ describe('AuthorBookService', () => {
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({
           firstName,
@@ -144,7 +144,7 @@ describe('AuthorBookService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.generateData();
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
         const author = await authorRepository.createOne({
           firstName,
@@ -178,7 +178,7 @@ describe('AuthorBookService', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { authorId, bookId } = authorBookTestDataGenerator.generateData();
+        const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         try {
           await authorBookService.removeAuthorBook(unitOfWork, { authorId, bookId });
