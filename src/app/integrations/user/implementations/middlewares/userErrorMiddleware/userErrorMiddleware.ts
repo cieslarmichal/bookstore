@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { EmailAlreadySet, PhoneNumberAlreadySet, UserAlreadyExists, UserNotFound } from '../../../domain/user/errors';
-import { UserFromTokenAuthPayloadNotMatchingTargetUser } from '../errors';
+import { EmailAlreadySet } from '../../../../../domain/user/errors/emailAlreadySet';
+import { PhoneNumberAlreadySet } from '../../../../../domain/user/errors/phoneNumberAlreadySet';
+import { UserAlreadyExists } from '../../../../../domain/user/errors/userAlreadyExists';
+import { UserNotFound } from '../../../../../domain/user/errors/userNotFound';
+import { UserFromTokenAuthPayloadNotMatchingTargetUser } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUser';
 
 export function userErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
   if (

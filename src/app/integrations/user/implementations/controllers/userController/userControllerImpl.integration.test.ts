@@ -1,25 +1,26 @@
-import { ConfigLoader } from '../../../configLoader';
-import { UserEntityTestDataGenerator } from '../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { UserEntityTestDataGenerator } from '../../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import request from 'supertest';
-import { App } from '../../../app';
-import { createDependencyInjectionContainer, postgresConnector, UnitOfWorkModule } from '../../common';
-import { PostgresModule } from '../../common';
-import { UserModule } from '../../domain/user/userModule';
-import { IntegrationsModule } from '../integrationsModule';
-import { Server } from '../../../server';
-import { UserRepositoryFactory } from '../../domain/user/repositories/userRepositoryFactory';
+import { App } from '../../../../../../app';
+import { UserModule } from '../../../../../domain/user/userModule';
+import { IntegrationsModule } from '../../../../integrationsModule';
+import { Server } from '../../../../../../server';
 import { StatusCodes } from 'http-status-codes';
-import { HashService } from '../../domain/user/services/hashService';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../integration/helpers';
-import { BookModule } from '../../domain/book/bookModule';
-import { AuthorModule } from '../../domain/author/authorModule';
-import { CategoryModule } from '../../domain/category/categoryModule';
-import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
-import { LoggerModule } from '../../common/logger/loggerModule';
-import { HASH_SERVICE, USER_REPOSITORY_FACTORY } from '../../domain/user/userSymbols';
-import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
-import { AddressModule } from '../../domain/address/addressModule';
-import { CustomerModule } from '../../domain/customer/customerModule';
+import { BookModule } from '../../../../../domain/book/bookModule';
+import { AuthorModule } from '../../../../../domain/author/authorModule';
+import { CategoryModule } from '../../../../../domain/category/categoryModule';
+import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
+import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
+import { AddressModule } from '../../../../../domain/address/addressModule';
+import { CustomerModule } from '../../../../../domain/customer/customerModule';
+import { UserRepositoryFactory } from '../../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { HashService } from '../../../../../domain/user/contracts/services/hashService/hashService';
+import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
+import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -28,7 +29,7 @@ const setPasswordUrl = `${baseUrl}/set-password`;
 const setEmailUrl = `${baseUrl}/set-email`;
 const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
-describe(`UserController (${baseUrl})`, () => {
+describe(`UserControllerImpl (${baseUrl})`, () => {
   let hashService: HashService;
   let userTestDataGenerator: UserEntityTestDataGenerator;
   let server: Server;
