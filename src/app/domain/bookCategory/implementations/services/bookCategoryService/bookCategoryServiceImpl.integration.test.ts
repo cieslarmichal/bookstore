@@ -13,10 +13,10 @@ import { BookCategoryRepositoryFactory } from '../../../contracts/factories/book
 import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
 import { BookCategoryAlreadyExists } from '../../../errors/bookCategoryAlreadyExists';
 import { BookCategoryNotFound } from '../../../errors/bookCategoryNotFound';
-import { BookCategoryEntityTestFactory } from '../../../tests/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
+import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryTestDataGenerator } from '../../../../category/tests/categoryEntityTestDataGenerator/categoryEntityTestDataGenerator';
+import { CategoryEntityTestFactory } from '../../../../category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { bookCategorySymbols } from '../../../bookCategorySymbols';
 import { categorySymbols } from '../../../../category/categorySymbols';
 import { bookSymbols } from '../../../../book/bookSymbols';
@@ -27,7 +27,7 @@ describe('BookCategoryService', () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let bookCategoryEntityTestFactory: BookCategoryEntityTestFactory;
-  let categoryEntityTestFactory: CategoryTestDataGenerator;
+  let categoryEntityTestFactory: CategoryEntityTestFactory;
   let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
 
@@ -51,7 +51,7 @@ describe('BookCategoryService', () => {
     testTransactionRunner = new TestTransactionInternalRunner(container);
 
     bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
-    categoryEntityTestFactory = new CategoryTestDataGenerator();
+    categoryEntityTestFactory = new CategoryEntityTestFactory();
     bookEntityTestFactory = new BookEntityTestFactory();
   });
 
@@ -69,7 +69,7 @@ describe('BookCategoryService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({
           name,
@@ -104,7 +104,7 @@ describe('BookCategoryService', () => {
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({
           name,
@@ -147,7 +147,7 @@ describe('BookCategoryService', () => {
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({
           name,

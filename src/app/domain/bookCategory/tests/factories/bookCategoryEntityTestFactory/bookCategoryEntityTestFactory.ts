@@ -1,4 +1,4 @@
-import { BookCategoryEntity } from '../../contracts/bookCategoryEntity';
+import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { faker } from '@faker-js/faker';
 
 export class BookCategoryEntityTestFactory {

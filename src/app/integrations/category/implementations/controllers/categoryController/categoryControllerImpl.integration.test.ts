@@ -9,7 +9,7 @@ import { BookModule } from '../../../../../domain/book/bookModule';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { CategoryRepositoryFactory } from '../../../../../domain/category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryTestDataGenerator } from '../../../../../domain/category/tests/categoryEntityTestDataGenerator/categoryEntityTestDataGenerator';
+import { CategoryEntityTestFactory } from '../../../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerModule } from '../../../../../domain/customer/customerModule';
 import { UserEntityTestDataGenerator } from '../../../../../domain/user/tests/userEntityTestDataGenerator/userEntityTestDataGenerator';
 import { UserModule } from '../../../../../domain/user/userModule';
@@ -26,7 +26,7 @@ const baseUrl = '/categories';
 
 describe(`CategoryControllerImpl (${baseUrl})`, () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
-  let categoryEntityTestFactory: CategoryTestDataGenerator;
+  let categoryEntityTestFactory: CategoryEntityTestFactory;
   let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
   let authHelper: AuthHelper;
@@ -35,7 +35,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
-    categoryEntityTestFactory = new CategoryTestDataGenerator();
+    categoryEntityTestFactory = new CategoryEntityTestFactory();
     userEntityTestFactory = new UserEntityTestDataGenerator();
   });
 
@@ -96,7 +96,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const response = await request(server.instance).post(baseUrl).send({
           name,
@@ -114,7 +114,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -155,7 +155,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = categoryEntityTestFactory.generateData();
+        const { id } = categoryEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -173,7 +173,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -195,7 +195,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -231,11 +231,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         await categoryRepository.createOne({ name });
 
-        const { name: otherName } = categoryEntityTestFactory.generateData();
+        const { name: otherName } = categoryEntityTestFactory.create();
 
         await categoryRepository.createOne({ name: otherName });
 
@@ -277,7 +277,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = categoryEntityTestFactory.generateData();
+        const { id } = categoryEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -296,7 +296,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -318,7 +318,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 

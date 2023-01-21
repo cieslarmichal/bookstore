@@ -10,7 +10,7 @@ import { UserModule } from '../../../../../domain/user/userModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { BookEntityTestFactory } from '../../../../../domain/book/tests/bookEntityTestDataGenerator/bookEntityTestFactoryts';
-import { BookCategoryEntityTestFactory } from '../../../../../domain/bookCategory/tests/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
+import { BookCategoryEntityTestFactory } from '../../../../../domain/bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
 import { AddressModule } from '../../../../../domain/address/addressModule';
@@ -19,7 +19,7 @@ import { BookFormat } from '../../../../../domain/book/contracts/bookFormat';
 import { BookRepositoryFactory } from '../../../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookCategoryRepositoryFactory } from '../../../../../domain/bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { CategoryRepositoryFactory } from '../../../../../domain/category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryTestDataGenerator } from '../../../../../domain/category/tests/categoryEntityTestDataGenerator/categoryEntityTestDataGenerator';
+import { CategoryEntityTestFactory } from '../../../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
@@ -35,7 +35,7 @@ describe(`BookCategoryController`, () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let bookCategoryEntityTestFactory: BookCategoryEntityTestFactory;
-  let categoryEntityTestFactory: CategoryTestDataGenerator;
+  let categoryEntityTestFactory: CategoryEntityTestFactory;
   let bookEntityTestFactory: BookEntityTestFactory;
   let userEntityTestFactory: UserEntityTestDataGenerator;
   let server: Server;
@@ -47,7 +47,7 @@ describe(`BookCategoryController`, () => {
 
     bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
     userEntityTestFactory = new UserEntityTestDataGenerator();
-    categoryEntityTestFactory = new CategoryTestDataGenerator();
+    categoryEntityTestFactory = new CategoryEntityTestFactory();
     bookEntityTestFactory = new BookEntityTestFactory();
   });
 
@@ -146,7 +146,7 @@ describe(`BookCategoryController`, () => {
           price,
         });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -202,7 +202,7 @@ describe(`BookCategoryController`, () => {
           price,
         });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -242,7 +242,7 @@ describe(`BookCategoryController`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = categoryEntityTestFactory.generateData();
+        const { id } = categoryEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${categoriesUrl}/${id}/books`)
@@ -260,7 +260,7 @@ describe(`BookCategoryController`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -314,7 +314,7 @@ describe(`BookCategoryController`, () => {
           price,
         });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -419,11 +419,11 @@ describe(`BookCategoryController`, () => {
           price,
         });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category1 = await categoryRepository.createOne({ name });
 
-        const { name: otherName } = categoryEntityTestFactory.generateData();
+        const { name: otherName } = categoryEntityTestFactory.create();
 
         const category2 = await categoryRepository.createOne({ name: otherName });
 
@@ -502,7 +502,7 @@ describe(`BookCategoryController`, () => {
           price,
         });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 
@@ -542,7 +542,7 @@ describe(`BookCategoryController`, () => {
           price,
         });
 
-        const { name } = categoryEntityTestFactory.generateData();
+        const { name } = categoryEntityTestFactory.create();
 
         const category = await categoryRepository.createOne({ name });
 

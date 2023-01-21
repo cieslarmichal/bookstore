@@ -1,4 +1,4 @@
-import { BookCategoryEntityTestFactory } from '../../../tests/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
+import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookCategoryMapperImpl } from './bookCategoryMapperImpl';
 
 describe('BookCategoryMapperImpl', () => {
