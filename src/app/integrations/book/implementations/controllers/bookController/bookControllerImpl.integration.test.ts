@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
-import { App } from '../../../../../app';
 import { HttpServer } from '../../../../../../server/httpServer';
+import { App } from '../../../../../app';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
