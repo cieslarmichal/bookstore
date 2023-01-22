@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -5,7 +6,7 @@ import { AddressNotFoundError } from '../../../../../domain/address/errors/addre
 import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../../../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
 import { UserIsNotCustomerError } from '../../../errors/userIsNotCustomerError';
 
-export function addressErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction): void {
+export function addressErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof AddressNotFoundError) {
     response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
     return;

@@ -6,8 +6,8 @@ import { BookMapperImpl } from './implementations/mappers/bookMapper/bookMapperI
 import { BookServiceImpl } from './implementations/services/bookService/bookServiceImpl';
 import { Module } from '../../libs/dependencyInjection/module';
 
-export class BookModule extends Module {
-  public override async registerSymbols(container: AwilixContainer): Promise<void> {
+export class BookModule implements Module {
+  public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [bookSymbols.bookMapper]: asClass(BookMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [bookSymbols.bookRepositoryFactory]: asClass(BookRepositoryFactoryImpl, { lifetime: Lifetime.SINGLETON }),

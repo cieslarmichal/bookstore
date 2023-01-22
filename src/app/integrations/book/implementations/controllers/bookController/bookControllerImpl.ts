@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -77,7 +78,7 @@ export class BookControllerImpl implements BookController {
     this.router.use(bookErrorMiddleware);
   }
 
-  public async createBook(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createBook(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { title, releaseYear, language, format, description, price } = request.body;
@@ -96,7 +97,7 @@ export class BookControllerImpl implements BookController {
     return { data: { book }, statusCode: StatusCodes.CREATED };
   }
 
-  public async findBook(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findBook(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
@@ -108,7 +109,7 @@ export class BookControllerImpl implements BookController {
     return { data: { book }, statusCode: StatusCodes.OK };
   }
 
-  public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findBooks(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findBooksFilters);
@@ -122,7 +123,7 @@ export class BookControllerImpl implements BookController {
     return { data: { books }, statusCode: StatusCodes.OK };
   }
 
-  public async updateBook(request: Request, response: Response): Promise<ControllerResponse> {
+  public async updateBook(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
@@ -136,7 +137,7 @@ export class BookControllerImpl implements BookController {
     return { data: { book }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteBook(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteBook(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;

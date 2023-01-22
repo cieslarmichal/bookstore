@@ -1,4 +1,5 @@
-import express, { NextFunction, Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
 
@@ -22,7 +23,7 @@ const addressesEndpoint = '/addresses';
 const addressEndpoint = `${addressesEndpoint}/:id`;
 
 export class AddressControllerImpl implements AddressController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -74,7 +75,7 @@ export class AddressControllerImpl implements AddressController {
     this.router.use(addressErrorMiddleware);
   }
 
-  public async createAddress(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createAddress(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const {
@@ -139,7 +140,7 @@ export class AddressControllerImpl implements AddressController {
     return { data: { address }, statusCode: StatusCodes.OK };
   }
 
-  public async findAddresses(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findAddresses(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findAddressesFilters);
@@ -153,7 +154,7 @@ export class AddressControllerImpl implements AddressController {
     return { data: { addresses }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteAddress(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteAddress(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;

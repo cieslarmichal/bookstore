@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -8,7 +9,7 @@ import { CategoryNotFoundError } from '../../../../../domain/category/errors/cat
 
 export function bookCategoryErrorMiddleware(
   error: Error,
-  request: Request,
+  _request: Request,
   response: Response,
   next: NextFunction,
 ): void {

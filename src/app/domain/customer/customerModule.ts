@@ -6,8 +6,8 @@ import { CustomerMapperImpl } from './implementations/mappers/customerMapper/cus
 import { CustomerServiceImpl } from './implementations/services/customerService/customerServiceImpl';
 import { Module } from '../../libs/dependencyInjection/module';
 
-export class CustomerModule extends Module {
-  public override async registerSymbols(container: AwilixContainer): Promise<void> {
+export class CustomerModule implements Module {
+  public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [customerSymbols.customerMapper]: asClass(CustomerMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [customerSymbols.customerRepositoryFactory]: asClass(CustomerRepositoryFactoryImpl, {

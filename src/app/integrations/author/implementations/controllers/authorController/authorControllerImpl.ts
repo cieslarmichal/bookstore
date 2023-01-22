@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -77,7 +78,7 @@ export class AuthorControllerImpl implements AuthorController {
     this.router.use(authorErrorMiddleware);
   }
 
-  public async createAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { firstName, lastName, about } = request.body;
@@ -89,7 +90,7 @@ export class AuthorControllerImpl implements AuthorController {
     return { data: { author }, statusCode: StatusCodes.CREATED };
   }
 
-  public async findAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
@@ -101,7 +102,7 @@ export class AuthorControllerImpl implements AuthorController {
     return { data: { author }, statusCode: StatusCodes.OK };
   }
 
-  public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findAuthors(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findAuthorsFilters);
@@ -115,7 +116,7 @@ export class AuthorControllerImpl implements AuthorController {
     return { data: { authors }, statusCode: StatusCodes.OK };
   }
 
-  public async updateAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+  public async updateAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
@@ -129,7 +130,7 @@ export class AuthorControllerImpl implements AuthorController {
     return { data: { author }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteAuthor(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;

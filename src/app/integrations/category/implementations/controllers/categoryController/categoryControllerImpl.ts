@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -68,7 +69,7 @@ export class CategoryControllerImpl implements CategoryController {
     this.router.use(categoryErrorMiddleware);
   }
 
-  public async createCategory(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createCategory(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { name } = request.body;
@@ -80,7 +81,7 @@ export class CategoryControllerImpl implements CategoryController {
     return { data: { category }, statusCode: StatusCodes.CREATED };
   }
 
-  public async findCategory(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findCategory(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
@@ -92,7 +93,7 @@ export class CategoryControllerImpl implements CategoryController {
     return { data: { category }, statusCode: StatusCodes.OK };
   }
 
-  public async findCategories(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findCategories(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findCategoriesFilters);
@@ -106,7 +107,7 @@ export class CategoryControllerImpl implements CategoryController {
     return { data: { categories }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteCategory(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteCategory(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;

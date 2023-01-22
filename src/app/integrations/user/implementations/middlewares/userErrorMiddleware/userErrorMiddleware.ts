@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -7,7 +8,7 @@ import { UserAlreadyExistsError } from '../../../../../domain/user/errors/userAl
 import { UserNotFoundError } from '../../../../../domain/user/errors/userNotFoundError';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 
-export function userErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction): void {
+export function userErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (
     error instanceof UserAlreadyExistsError ||
     error instanceof EmailAlreadySetError ||

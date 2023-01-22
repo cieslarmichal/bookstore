@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
-import { describe, it, beforeAll, expect } from 'vitest';
+import { describe, it, beforeAll, expect, afterEach, beforeEach, vi } from 'vitest';
 
 import { App } from '../../../../../../app';
 import { ConfigLoader } from '../../../../../../configLoader';
@@ -19,59 +19,71 @@ import { CustomerModule } from '../../../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../../../domain/customer/customerSymbols';
 import { UserRepositoryFactory } from '../../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModuleConfigTestFactory } from '../../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../../domain/user/userModule';
 import { userSymbols } from '../../../../../domain/user/userSymbols';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
+import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
+import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper } from '../../../../../tests/auth/authHelper';
+import { SpyFactory } from '../../../../../tests/factories/spyFactory';
 import { TestTransactionExternalRunner } from '../../../../../tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/addresses';
 
 describe(`AddressControllerImpl (${baseUrl})`, () => {
+  const spyFactory = new SpyFactory(vi);
+
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let addressTestFactory: AddressEntityTestFactory;
-  let userEntityTestFactory: UserEntityTestFactory;
+
   let server: Server;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
+  let postgresConnector: PostgresConnector;
+
+  const addressEntityTestFactory = new AddressEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
+
+  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
+  const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
-
-    addressTestFactory = new AddressEntityTestFactory();
-    userEntityTestFactory = new UserEntityTestFactory();
   });
 
   beforeEach(async () => {
     const container = await createDependencyInjectionContainer([
-      PostgresModule,
-      AddressModule,
-      BookModule,
-      AuthorModule,
-      UserModule,
-      IntegrationsModule,
-      AuthorBookModule,
-      LoggerModule,
-      BookCategoryModule,
-      CategoryModule,
-      CustomerModule,
-      UnitOfWorkModule,
+      new PostgresModule(postgresModuleConfig),
+      new AddressModule(),
+      new BookModule(),
+      new AuthorModule(),
+      new UserModule(userModuleConfig),
+      new IntegrationsModule(),
+      new AuthorBookModule(),
+      new LoggerModule(loggerModuleConfig),
+      new BookCategoryModule(),
+      new CategoryModule(),
+      new CustomerModule(),
+      new UnitOfWorkModule(),
     ]);
 
     addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
     userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
+    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    authHelper = new AuthHelper(container);
+    authHelper = new AuthHelper(spyFactory, container);
 
     const app = new App(container);
 
@@ -90,7 +102,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async () => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -107,7 +119,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -121,7 +133,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const response = await request(server.instance).post(baseUrl).send({
           firstName,
@@ -142,7 +154,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('accepts a request and returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -158,7 +170,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -184,7 +196,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns bad request the addressId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async () => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -202,7 +214,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -217,7 +229,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         await customerRepository.createOne({ userId: user.id });
 
-        const { id } = addressTestFactory.create();
+        const { id } = addressEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -230,7 +242,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -246,7 +258,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -269,7 +281,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it(`returns forbidden when user requests other customer's address`, async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -287,7 +299,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -312,7 +324,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -330,7 +342,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -357,7 +369,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async () => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const response = await request(server.instance).get(`${baseUrl}`);
 
         expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
@@ -367,7 +379,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns addresses with filtering provided', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -391,7 +403,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer2 = await customerRepository.createOne({ userId: user2.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         await addressRepository.createOne({
           firstName,
@@ -431,7 +443,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns bad request when the addressId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async () => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -450,12 +462,12 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async () => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { id } = addressTestFactory.create();
+        const { id } = addressEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -469,7 +481,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -485,7 +497,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,
@@ -508,7 +520,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -526,7 +538,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const address = await addressRepository.createOne({
           firstName,

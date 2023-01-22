@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -70,7 +71,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     this.router.use(bookCategoryErrorMiddleware);
   }
 
-  public async createBookCategory(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createBookCategory(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { bookId, categoryId } = request.params;
@@ -85,7 +86,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     return { data: { bookCategory }, statusCode: StatusCodes.CREATED };
   }
 
-  public async findBookCategories(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findBookCategories(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { bookId } = request.params;
@@ -101,7 +102,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     return { data: { categories }, statusCode: StatusCodes.OK };
   }
 
-  public async findCategoryBooks(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findCategoryBooks(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { categoryId } = request.params;
@@ -117,7 +118,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     return { data: { books }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteBookCategory(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteBookCategory(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { bookId, categoryId } = request.params;

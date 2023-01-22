@@ -6,8 +6,8 @@ import { CategoryMapperImpl } from './implementations/mappers/categoryMapper/cat
 import { CategoryServiceImpl } from './implementations/services/categoryService/categoryServiceImpl';
 import { Module } from '../../libs/dependencyInjection/module';
 
-export class CategoryModule extends Module {
-  public override async registerSymbols(container: AwilixContainer): Promise<void> {
+export class CategoryModule implements Module {
+  public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [categorySymbols.categoryMapper]: asClass(CategoryMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [categorySymbols.categoryRepositoryFactory]: asClass(CategoryRepositoryFactoryImpl, {

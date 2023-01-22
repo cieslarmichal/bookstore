@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -70,7 +71,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     this.router.use(authorBookErrorMiddleware);
   }
 
-  public async createAuthorBook(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createAuthorBook(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { authorId, bookId } = request.params;
@@ -85,7 +86,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     return { data: { authorBook }, statusCode: StatusCodes.CREATED };
   }
 
-  public async findAuthorBooks(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findAuthorBooks(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { authorId } = request.params;
@@ -101,7 +102,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     return { data: { books }, statusCode: StatusCodes.OK };
   }
 
-  public async findBookAuthors(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findBookAuthors(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { bookId } = request.params;
@@ -117,7 +118,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     return { data: { authors }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteAuthorBook(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteAuthorBook(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { authorId, bookId } = request.params;

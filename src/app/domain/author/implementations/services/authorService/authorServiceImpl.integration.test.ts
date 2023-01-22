@@ -1,12 +1,16 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
+import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
+import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { SpyFactory } from '../../../../../tests/factories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
 import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
@@ -23,31 +27,38 @@ import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 
 describe('AuthorServiceImpl', () => {
+  const spyFactory = new SpyFactory(vi);
+
   let authorService: AuthorService;
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
+  let postgresConnector: PostgresConnector;
 
   const authorEntityTestFactory = new AuthorEntityTestFactory();
   const bookEntityTestFactory = new BookEntityTestFactory();
+
+  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
     const container = await createDependencyInjectionContainer([
-      PostgresModule,
-      BookModule,
-      AuthorModule,
-      AuthorBookModule,
-      LoggerModule,
-      UnitOfWorkModule,
+      new PostgresModule(postgresModuleConfig),
+      new BookModule(),
+      new AuthorModule(),
+      new AuthorBookModule(),
+      new LoggerModule(loggerModuleConfig),
+      new UnitOfWorkModule(),
     ]);
 
     authorService = container.resolve(authorSymbols.authorService);
     authorRepositoryFactory = container.resolve(authorSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
     authorBookRepositoryFactory = container.resolve(authorBookSymbols.authorBookRepositoryFactory);
+    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
@@ -60,7 +71,7 @@ describe('AuthorServiceImpl', () => {
     it('creates author in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorEntityTestFactory.create();
@@ -80,7 +91,7 @@ describe('AuthorServiceImpl', () => {
     it('finds author by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorEntityTestFactory.create();
@@ -98,7 +109,7 @@ describe('AuthorServiceImpl', () => {
     it('should throw if author with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id } = authorEntityTestFactory.create();
 
         try {
@@ -114,7 +125,7 @@ describe('AuthorServiceImpl', () => {
     it('finds authors by one condition in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorEntityTestFactory.create();
@@ -140,7 +151,7 @@ describe('AuthorServiceImpl', () => {
     it('finds authors by two conditions in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorEntityTestFactory.create();
@@ -170,7 +181,7 @@ describe('AuthorServiceImpl', () => {
     it('finds authors in database limited by pagination', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { firstName, lastName } = authorEntityTestFactory.create();
@@ -201,7 +212,7 @@ describe('AuthorServiceImpl', () => {
     it('finds authors by book id with filtering in database', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -259,7 +270,7 @@ describe('AuthorServiceImpl', () => {
     it('updates author in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -277,7 +288,7 @@ describe('AuthorServiceImpl', () => {
     it('should not update author and throw if author with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id, about } = authorEntityTestFactory.create();
 
         try {
@@ -293,7 +304,7 @@ describe('AuthorServiceImpl', () => {
     it('removes author from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -312,7 +323,7 @@ describe('AuthorServiceImpl', () => {
     it('should throw if author with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id } = authorEntityTestFactory.create();
 
         try {

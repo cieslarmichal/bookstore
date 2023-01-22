@@ -1,4 +1,4 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { ConfigLoader } from '../../../../../../configLoader';
 import { BetweenFilter } from '../../../../../common/filter/betweenFilter';
@@ -6,9 +6,13 @@ import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { LessThanOrEqualFilter } from '../../../../../common/filter/lessThanOrEqualFilter';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
+import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
+import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { SpyFactory } from '../../../../../tests/factories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorModule } from '../../../../author/authorModule';
 import { authorSymbols } from '../../../../author/authorSymbols';
@@ -33,30 +37,37 @@ import { BookService } from '../../../contracts/services/bookService/bookService
 import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 import { BookEntityTestFactory } from '../../../tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 
-describe('BookService', () => {
+describe('BookServiceImpl', () => {
+  const spyFactory = new SpyFactory(vi);
+
   let bookService: BookService;
   let bookRepositoryFactory: BookRepositoryFactory;
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
-  let bookEntityTestFactory: BookEntityTestFactory;
-  let authorEntityTestFactory: AuthorEntityTestFactory;
-  let categoryEntityTestFactory: CategoryEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
+  let postgresConnector: PostgresConnector;
+
+  const bookEntityTestFactory = new BookEntityTestFactory();
+  const authorEntityTestFactory = new AuthorEntityTestFactory();
+  const categoryEntityTestFactory = new CategoryEntityTestFactory();
+
+  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
     const container = await createDependencyInjectionContainer([
-      PostgresModule,
-      BookModule,
-      AuthorModule,
-      AuthorBookModule,
-      CategoryModule,
-      BookCategoryModule,
-      LoggerModule,
-      UnitOfWorkModule,
+      new PostgresModule(postgresModuleConfig),
+      new BookModule(),
+      new AuthorModule(),
+      new AuthorBookModule(),
+      new CategoryModule(),
+      new BookCategoryModule(),
+      new LoggerModule(loggerModuleConfig),
+      new UnitOfWorkModule(),
     ]);
 
     bookService = container.resolve(bookSymbols.bookService);
@@ -65,12 +76,9 @@ describe('BookService', () => {
     authorBookRepositoryFactory = container.resolve(authorBookSymbols.authorBookRepositoryFactory);
     bookCategoryRepositoryFactory = container.resolve(bookCategorySymbols.bookCategoryRepositoryFactory);
     categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
+    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
-
-    bookEntityTestFactory = new BookEntityTestFactory();
-    authorEntityTestFactory = new AuthorEntityTestFactory();
-    categoryEntityTestFactory = new CategoryEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -81,7 +89,7 @@ describe('BookService', () => {
     it('creates book in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -106,7 +114,7 @@ describe('BookService', () => {
     it('finds book by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -129,7 +137,7 @@ describe('BookService', () => {
     it('should throw if book with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id } = bookEntityTestFactory.create();
 
         try {
@@ -145,7 +153,7 @@ describe('BookService', () => {
     it('finds books by title in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -182,7 +190,7 @@ describe('BookService', () => {
     it('finds books by release year in database', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -231,7 +239,7 @@ describe('BookService', () => {
     it('finds books by price in database', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -279,7 +287,7 @@ describe('BookService', () => {
     it('finds books by format in database', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -328,7 +336,7 @@ describe('BookService', () => {
     it('finds books by language in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -363,7 +371,7 @@ describe('BookService', () => {
     it('finds books in database limited by pagination', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -404,7 +412,7 @@ describe('BookService', () => {
     it('finds books by authorId with filtering in database', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -471,7 +479,7 @@ describe('BookService', () => {
     it('finds books by categoryId with conditions in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -533,7 +541,7 @@ describe('BookService', () => {
     it('updates book in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -559,7 +567,7 @@ describe('BookService', () => {
     it('should not update book and throw if book with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id, price } = bookEntityTestFactory.create();
 
         try {
@@ -575,7 +583,7 @@ describe('BookService', () => {
     it('removes book from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -600,7 +608,7 @@ describe('BookService', () => {
     it('should throw if book with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id } = bookEntityTestFactory.create();
 
         try {

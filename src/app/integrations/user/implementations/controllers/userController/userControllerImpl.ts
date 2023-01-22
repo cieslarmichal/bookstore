@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -95,7 +96,7 @@ export class UserControllerImpl implements UserController {
     this.router.use(userErrorMiddleware);
   }
 
-  public async registerUser(request: Request, response: Response): Promise<ControllerResponse> {
+  public async registerUser(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const user = await unitOfWork.runInTransaction(async () => {
@@ -122,7 +123,7 @@ export class UserControllerImpl implements UserController {
     };
   }
 
-  public async loginUser(request: Request, response: Response): Promise<ControllerResponse> {
+  public async loginUser(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const token = await unitOfWork.runInTransaction(async () => {

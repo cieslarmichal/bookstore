@@ -1,12 +1,16 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
+import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
+import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { SpyFactory } from '../../../../../tests/factories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorModule } from '../../../../author/authorModule';
 import { BookModule } from '../../../../book/bookModule';
@@ -25,36 +29,41 @@ import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 
 describe('CategoryServiceImpl', () => {
+  const spyFactory = new SpyFactory(vi);
+
   let categoryService: CategoryService;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
-  let categoryEntityTestFactory: CategoryEntityTestFactory;
-  let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
+  let postgresConnector: PostgresConnector;
+
+  const categoryEntityTestFactory = new CategoryEntityTestFactory();
+  const bookEntityTestFactory = new BookEntityTestFactory();
+
+  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
     const container = await createDependencyInjectionContainer([
-      PostgresModule,
-      BookModule,
-      BookCategoryModule,
-      CategoryModule,
-      AuthorModule,
-      LoggerModule,
-      UnitOfWorkModule,
+      new PostgresModule(postgresModuleConfig),
+      new BookModule(),
+      new BookCategoryModule(),
+      new CategoryModule(),
+      new AuthorModule(),
+      new LoggerModule(loggerModuleConfig),
+      new UnitOfWorkModule(),
     ]);
 
     categoryService = container.resolve(categorySymbols.categoryService);
     categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
     bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
     bookCategoryRepositoryFactory = container.resolve(bookCategorySymbols.bookCategoryRepositoryFactory);
+    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
-
-    categoryEntityTestFactory = new CategoryEntityTestFactory();
-    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -65,7 +74,7 @@ describe('CategoryServiceImpl', () => {
     it('creates category in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -84,7 +93,7 @@ describe('CategoryServiceImpl', () => {
     it('should not create category and throw if category with the same name exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -109,7 +118,7 @@ describe('CategoryServiceImpl', () => {
     it('finds category by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -128,7 +137,7 @@ describe('CategoryServiceImpl', () => {
     it('should throw if category with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id } = categoryEntityTestFactory.create();
 
         try {
@@ -144,7 +153,7 @@ describe('CategoryServiceImpl', () => {
     it('finds categories by condition in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -169,7 +178,7 @@ describe('CategoryServiceImpl', () => {
     it('finds categories by bookId with condition in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -227,7 +236,7 @@ describe('CategoryServiceImpl', () => {
     it('removes category from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -248,7 +257,7 @@ describe('CategoryServiceImpl', () => {
     it('should throw if category with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { id } = categoryEntityTestFactory.create();
 
         try {

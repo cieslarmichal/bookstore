@@ -3,7 +3,7 @@ import { createContainer, InjectionMode, AwilixContainer } from 'awilix';
 
 import { Module } from './module';
 
-export async function createDependencyInjectionContainer(modules: Array<Module>): Promise<AwilixContainer<any>> {
+export async function createDependencyInjectionContainer(modules: Module[]): Promise<AwilixContainer<any>> {
   const container = createContainer({
     injectionMode: InjectionMode.CLASSIC,
   });

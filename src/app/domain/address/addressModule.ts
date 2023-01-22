@@ -6,8 +6,8 @@ import { AddressMapperImpl } from './implementations/mappers/addressMapper/addre
 import { AddressServiceImpl } from './implementations/services/addressService/addressServiceImpl';
 import { Module } from '../../libs/dependencyInjection/module';
 
-export class AddressModule extends Module {
-  public override async registerSymbols(container: AwilixContainer): Promise<void> {
+export class AddressModule implements Module {
+  public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [addressSymbols.addressMapper]: asClass(AddressMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [addressSymbols.addressRepositoryFactory]: asClass(AddressRepositoryFactoryImpl, {

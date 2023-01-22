@@ -1,11 +1,15 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { ConfigLoader } from '../../../../../../configLoader';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
+import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
+import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { SpyFactory } from '../../../../../tests/factories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorModule } from '../../../../author/authorModule';
 import { authorSymbols } from '../../../../author/authorSymbols';
@@ -25,38 +29,42 @@ import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError
 import { AuthorBookEntityTestFactory } from '../../../tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 
 describe('AuthorBookServiceImpl', () => {
+  const spyFactory = new SpyFactory(vi);
+
   let authorBookService: AuthorBookService;
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
-  let authorBookEntityTestFactory: AuthorBookEntityTestFactory;
-  let authorEntityTestFactory: AuthorEntityTestFactory;
-  let bookEntityTestFactory: BookEntityTestFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
+  let postgresConnector: PostgresConnector;
+
+  const authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
+  const authorEntityTestFactory = new AuthorEntityTestFactory();
+  const bookEntityTestFactory = new BookEntityTestFactory();
+
+  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
     const container = await createDependencyInjectionContainer([
-      PostgresModule,
-      CategoryModule,
-      BookModule,
-      AuthorModule,
-      AuthorBookModule,
-      LoggerModule,
-      UnitOfWorkModule,
+      new PostgresModule(postgresModuleConfig),
+      new CategoryModule(),
+      new BookModule(),
+      new AuthorModule(),
+      new AuthorBookModule(),
+      new LoggerModule(loggerModuleConfig),
+      new UnitOfWorkModule(),
     ]);
 
     authorBookService = container.resolve(authorBookSymbols.authorBookService);
     authorBookRepositoryFactory = container.resolve(authorBookSymbols.authorBookRepositoryFactory);
     authorRepositoryFactory = container.resolve(authorSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
+    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
-
-    authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
-    authorEntityTestFactory = new AuthorEntityTestFactory();
-    bookEntityTestFactory = new BookEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -67,7 +75,7 @@ describe('AuthorBookServiceImpl', () => {
     it('creates authorBook in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -104,7 +112,7 @@ describe('AuthorBookServiceImpl', () => {
     it('should not create authorBook and throw if authorBook with the authorId and bookId exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -147,7 +155,7 @@ describe('AuthorBookServiceImpl', () => {
     it('removes authorBook from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
         const bookRepository = bookRepositoryFactory.create(entityManager);
@@ -186,7 +194,7 @@ describe('AuthorBookServiceImpl', () => {
     it('should throw if authorBook with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         try {

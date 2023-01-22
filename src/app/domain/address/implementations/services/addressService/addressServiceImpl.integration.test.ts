@@ -1,18 +1,23 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
+import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
+import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { SpyFactory } from '../../../../../tests/factories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { CustomerRepositoryFactory } from '../../../../customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerModule } from '../../../../customer/customerModule';
 import { customerSymbols } from '../../../../customer/customerSymbols';
 import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModuleConfigTestFactory } from '../../../../user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../user/userModule';
 import { userSymbols } from '../../../../user/userSymbols';
 import { AddressModule } from '../../../addressModule';
@@ -23,35 +28,41 @@ import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 
 describe('AddressServiceImpl', () => {
+  const spyFactory = new SpyFactory(vi);
+
   let addressService: AddressService;
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let addressTestFactory: AddressEntityTestFactory;
-  let userEntityTestFactory: UserEntityTestFactory;
+
   let testTransactionRunner: TestTransactionInternalRunner;
+  let postgresConnector: PostgresConnector;
+
+  const addressEntityTestFactory = new AddressEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
+  const userModuleConfig = new UserModuleConfigTestFactory().create();
+  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
     ConfigLoader.loadConfig();
 
     const container = await createDependencyInjectionContainer([
-      PostgresModule,
-      AddressModule,
-      LoggerModule,
-      CustomerModule,
-      UserModule,
-      UnitOfWorkModule,
+      new PostgresModule(postgresModuleConfig),
+      new AddressModule(),
+      new LoggerModule(loggerModuleConfig),
+      new CustomerModule(),
+      new UserModule(userModuleConfig),
+      new UnitOfWorkModule(),
     ]);
 
     addressService = container.resolve(addressSymbols.addressService);
     addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
     customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
+    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
-
-    addressTestFactory = new AddressEntityTestFactory();
-    userEntityTestFactory = new UserEntityTestFactory();
   });
 
   afterAll(async () => {
@@ -62,21 +73,21 @@ describe('AddressServiceImpl', () => {
     it('creates address in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const createdAddressDto = await addressService.createAddress(unitOfWork, {
           firstName,
@@ -103,21 +114,21 @@ describe('AddressServiceImpl', () => {
     it('finds address by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -142,8 +153,8 @@ describe('AddressServiceImpl', () => {
     it('should throw if address with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = addressTestFactory.create();
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+        const { id } = addressEntityTestFactory.create();
 
         try {
           await addressService.findAddress(unitOfWork, id);
@@ -158,18 +169,18 @@ describe('AddressServiceImpl', () => {
     it('finds addresses by customerId', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const user1 = await userRepository.createOne({ email, password, role });
+        const user1 = await userRepository.createOne({ email: email as string, password, role });
 
         const { email: otherEmail } = userEntityTestFactory.create();
 
-        const user2 = await userRepository.createOne({ email: otherEmail, password, role });
+        const user2 = await userRepository.createOne({ email: otherEmail as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
@@ -178,7 +189,7 @@ describe('AddressServiceImpl', () => {
         const customer2 = await customerRepository.createOne({ userId: user2.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -236,21 +247,21 @@ describe('AddressServiceImpl', () => {
     it('finds addresses by customerId limited by pagination', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -308,21 +319,21 @@ describe('AddressServiceImpl', () => {
     it('removes address from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
         const { email, password, role } = userEntityTestFactory.create();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressTestFactory.create();
+          addressEntityTestFactory.create();
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
@@ -349,8 +360,8 @@ describe('AddressServiceImpl', () => {
     it('should throw if address with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id } = addressTestFactory.create();
+      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+        const { id } = addressEntityTestFactory.create();
 
         try {
           await addressService.removeAddress(unitOfWork, id);

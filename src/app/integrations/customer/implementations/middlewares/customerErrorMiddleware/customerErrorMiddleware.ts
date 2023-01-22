@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { CustomerAlreadyExistsError } from '../../../../../domain/customer/errors/customerAlreadyExistsError';
 import { CustomerNotFoundError } from '../../../../../domain/customer/errors/customerNotFoundError';
 
-export function customerErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction): void {
+export function customerErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof CustomerAlreadyExistsError) {
     response.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ error: error.message });
     return;

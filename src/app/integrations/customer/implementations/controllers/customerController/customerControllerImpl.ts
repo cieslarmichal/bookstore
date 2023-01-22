@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
@@ -54,7 +55,7 @@ export class CustomerControllerImpl implements CustomerController {
     this.router.use(customerErrorMiddleware);
   }
 
-  public async createCustomer(request: Request, response: Response): Promise<ControllerResponse> {
+  public async createCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { userId } = request.body;
@@ -66,7 +67,7 @@ export class CustomerControllerImpl implements CustomerController {
     return { data: { customer }, statusCode: StatusCodes.CREATED };
   }
 
-  public async findCustomer(request: Request, response: Response): Promise<ControllerResponse> {
+  public async findCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
@@ -78,7 +79,7 @@ export class CustomerControllerImpl implements CustomerController {
     return { data: { customer }, statusCode: StatusCodes.OK };
   }
 
-  public async deleteCustomer(request: Request, response: Response): Promise<ControllerResponse> {
+  public async deleteCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const { id } = request.params;
