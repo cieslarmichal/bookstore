@@ -1,13 +1,16 @@
-import request from 'supertest';
 import { StatusCodes } from 'http-status-codes';
+import request from 'supertest';
+
 import { App } from '../../../../../../app';
 import { ConfigLoader } from '../../../../../../configLoader';
+import { Server } from '../../../../../../server';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
 import { BookModule } from '../../../../../domain/book/bookModule';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
+import { categorySymbols } from '../../../../../domain/category/categorySymbols';
 import { CategoryRepositoryFactory } from '../../../../../domain/category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryEntityTestFactory } from '../../../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerModule } from '../../../../../domain/customer/customerModule';
@@ -18,10 +21,9 @@ import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
+import { AuthHelper } from '../../../../../tests/auth/authHelper';
+import { TestTransactionExternalRunner } from '../../../../../tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../../../integrationsModule';
-import { Server } from '../../../../../../server';
-import { categorySymbols } from '../../../../../domain/category/categorySymbols';
 
 const baseUrl = '/categories';
 

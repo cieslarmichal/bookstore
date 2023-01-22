@@ -9,10 +9,10 @@ import { RegisterUserByEmailData } from '../../../contracts/services/userService
 import { RegisterUserByPhoneNumberData } from '../../../contracts/services/userService/registerUserByPhoneNumberData';
 import { UserService } from '../../../contracts/services/userService/userService';
 import { User } from '../../../contracts/user';
-import { EmailAlreadySet } from '../../../errors/emailAlreadySet';
-import { PhoneNumberAlreadySet } from '../../../errors/phoneNumberAlreadySet';
-import { UserAlreadyExists } from '../../../errors/userAlreadyExists';
-import { UserNotFound } from '../../../errors/userNotFound';
+import { EmailAlreadySetError } from '../../../errors/emailAlreadySetError';
+import { PhoneNumberAlreadySetError } from '../../../errors/phoneNumberAlreadySetError';
+import { UserAlreadyExistsError } from '../../../errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../../errors/userNotFoundError';
 
 export class UserServiceImpl implements UserService {
   public constructor(
@@ -34,7 +34,7 @@ export class UserServiceImpl implements UserService {
     const existingUser = await userRepository.findOne({ email });
 
     if (existingUser) {
-      throw new UserAlreadyExists({ email });
+      throw new UserAlreadyExistsError({ email });
     }
 
     const hashedPassword = await this.hashService.hash(password);
@@ -46,7 +46,10 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
-  public async registerUserByPhoneNumber(unitOfWork: PostgresUnitOfWork, userData: RegisterUserByPhoneNumberData) {
+  public async registerUserByPhoneNumber(
+    unitOfWork: PostgresUnitOfWork,
+    userData: RegisterUserByPhoneNumberData,
+  ): Promise<User> {
     const { phoneNumber, password } = userData;
 
     this.loggerService.debug('Registering user...', { phoneNumber });
@@ -58,7 +61,7 @@ export class UserServiceImpl implements UserService {
     const existingUser = await userRepository.findOne({ phoneNumber });
 
     if (existingUser) {
-      throw new UserAlreadyExists({ phoneNumber });
+      throw new UserAlreadyExistsError({ phoneNumber });
     }
 
     const hashedPassword = await this.hashService.hash(password);
@@ -82,13 +85,13 @@ export class UserServiceImpl implements UserService {
     const user = await userRepository.findOne({ email });
 
     if (!user) {
-      throw new UserNotFound({ email });
+      throw new UserNotFoundError({ email });
     }
 
     const passwordIsValid = await this.hashService.compare(password, user.password);
 
     if (!passwordIsValid) {
-      throw new UserNotFound({ email });
+      throw new UserNotFoundError({ email });
     }
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
@@ -113,13 +116,13 @@ export class UserServiceImpl implements UserService {
     const user = await userRepository.findOne({ phoneNumber });
 
     if (!user) {
-      throw new UserNotFound({ phoneNumber });
+      throw new UserNotFoundError({ phoneNumber });
     }
 
     const passwordIsValid = await this.hashService.compare(password, user.password);
 
     if (!passwordIsValid) {
-      throw new UserNotFound({ phoneNumber });
+      throw new UserNotFoundError({ phoneNumber });
     }
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
@@ -139,7 +142,7 @@ export class UserServiceImpl implements UserService {
     const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
-      throw new UserNotFound({ id: userId });
+      throw new UserNotFoundError({ id: userId });
     }
 
     const hashedPassword = await this.hashService.hash(newPassword);
@@ -161,17 +164,17 @@ export class UserServiceImpl implements UserService {
     const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
-      throw new UserNotFound({ id: userId });
+      throw new UserNotFoundError({ id: userId });
     }
 
     if (user.email) {
-      throw new EmailAlreadySet({ userId, email });
+      throw new EmailAlreadySetError({ userId, email });
     }
 
     const existingUserWithTargetEmail = await userRepository.findOne({ email });
 
     if (existingUserWithTargetEmail) {
-      throw new UserAlreadyExists({ email });
+      throw new UserAlreadyExistsError({ email });
     }
 
     const updatedUser = await userRepository.updateOne(userId, { email });
@@ -191,17 +194,17 @@ export class UserServiceImpl implements UserService {
     const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
-      throw new UserNotFound({ id: userId });
+      throw new UserNotFoundError({ id: userId });
     }
 
     if (user.phoneNumber) {
-      throw new PhoneNumberAlreadySet({ userId, phoneNumber });
+      throw new PhoneNumberAlreadySetError({ userId, phoneNumber });
     }
 
     const existingUserWithTargetPhoneNumber = await userRepository.findOne({ phoneNumber });
 
     if (existingUserWithTargetPhoneNumber) {
-      throw new UserAlreadyExists({ phoneNumber });
+      throw new UserAlreadyExistsError({ phoneNumber });
     }
 
     const updatedUser = await userRepository.updateOne(userId, { phoneNumber });
@@ -219,7 +222,7 @@ export class UserServiceImpl implements UserService {
     const user = await userRepository.findOneById(userId);
 
     if (!user) {
-      throw new UserNotFound({ id: userId });
+      throw new UserNotFoundError({ id: userId });
     }
 
     return user;

@@ -7,13 +7,13 @@ export class Server {
     this.instance = http.createServer(listener);
   }
 
-  public listen() {
+  public listen(): void {
     const httpPort = parseInt(process.env.HTTP_PORT as string);
 
     this.instance.listen(httpPort);
   }
 
-  public close() {
+  public close(): void {
     this.instance.close();
   }
 }

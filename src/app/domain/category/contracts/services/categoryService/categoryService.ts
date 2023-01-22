@@ -1,8 +1,8 @@
+import { CreateCategoryData } from './createCategoryData';
 import { Filter } from '../../../../../common/filter/filter';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { PaginationData } from '../../../../common/paginationData';
 import { Category } from '../../category';
-import { CreateCategoryData } from './createCategoryData';
 
 export interface CategoryService {
   createCategory(unitOfWork: PostgresUnitOfWork, categoryData: CreateCategoryData): Promise<Category>;

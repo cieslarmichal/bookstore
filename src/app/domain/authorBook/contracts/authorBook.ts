@@ -1,8 +1,8 @@
-import { IsDate, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
+import { IsDate, IsUuidV4 } from '../../../common/validator/decorators';
+import { Validator } from '../../../common/validator/validator';
 
 export class AuthorBook {
-  @IsUUID('4')
+  @IsUuidV4()
   public readonly id: string;
 
   @IsDate()
@@ -11,11 +11,19 @@ export class AuthorBook {
   @IsDate()
   public readonly updatedAt: Date;
 
-  @IsUUID('4')
+  @IsUuidV4()
   public authorId: string;
 
-  @IsUUID('4')
+  @IsUuidV4()
   public bookId: string;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(AuthorBook);
+  public constructor({ id, createdAt, updatedAt, authorId, bookId }: AuthorBook) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.authorId = authorId;
+    this.bookId = bookId;
+
+    Validator.validate(this);
+  }
 }

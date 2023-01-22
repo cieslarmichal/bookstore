@@ -6,7 +6,7 @@ export class AuthorBookMapperImpl implements AuthorBookMapper {
   public map(entity: AuthorBookEntity): AuthorBook {
     const { id, createdAt, updatedAt, authorId, bookId } = entity;
 
-    return AuthorBook.create({
+    return new AuthorBook({
       id,
       createdAt,
       updatedAt,

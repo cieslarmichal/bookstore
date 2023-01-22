@@ -1,4 +1,4 @@
 export interface ControllerResponse {
-  readonly data?: any;
+  readonly data?: unknown;
   readonly statusCode: number;
 }

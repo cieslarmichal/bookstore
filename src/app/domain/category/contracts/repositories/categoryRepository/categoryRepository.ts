@@ -1,8 +1,9 @@
 import { FindConditions } from 'typeorm';
+
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
-import { CategoryEntity } from '../../categoryEntity';
 import { Category } from '../../category';
+import { CategoryEntity } from '../../categoryEntity';
 
 export interface CategoryRepository {
   createOne(categoryData: Partial<CategoryEntity>): Promise<Category>;

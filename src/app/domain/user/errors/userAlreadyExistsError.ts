@@ -8,10 +8,10 @@ type UserAlreadyExistsPhoneNumberContext = {
   readonly phoneNumber: string;
 };
 
-export class UserAlreadyExists extends ApplicationError<
+export class UserAlreadyExistsError extends ApplicationError<
   UserAlreadyExistsEmailContext | UserAlreadyExistsPhoneNumberContext
 > {
   public constructor(context: UserAlreadyExistsEmailContext | UserAlreadyExistsPhoneNumberContext) {
-    super('User already exists.', context);
+    super('UserAlreadyExistsError', 'User already exists.', context);
   }
 }

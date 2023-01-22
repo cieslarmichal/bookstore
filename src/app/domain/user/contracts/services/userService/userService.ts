@@ -1,9 +1,9 @@
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
-import { User } from '../../user';
 import { LoginUserByEmailData } from './loginUserByEmailData';
 import { LoginUserByPhoneNumberData } from './loginUserByPhoneNumberData';
 import { RegisterUserByEmailData } from './registerUserByEmailData';
 import { RegisterUserByPhoneNumberData } from './registerUserByPhoneNumberData';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { User } from '../../user';
 
 export interface UserService {
   registerUserByEmail(unitOfWork: PostgresUnitOfWork, userData: RegisterUserByEmailData): Promise<User>;

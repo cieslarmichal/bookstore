@@ -1,25 +1,25 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { BookModule } from '../../../../book/bookModule';
+import { bookSymbols } from '../../../../book/bookSymbols';
 import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { CategoryModule } from '../../../../category/categoryModule';
-import { BookCategoryModule } from '../../../bookCategoryModule';
-import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
-import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
-import { BookCategoryAlreadyExists } from '../../../errors/bookCategoryAlreadyExists';
-import { BookCategoryNotFound } from '../../../errors/bookCategoryNotFound';
-import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { CategoryModule } from '../../../../category/categoryModule';
+import { categorySymbols } from '../../../../category/categorySymbols';
 import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryEntityTestFactory } from '../../../../category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { BookCategoryModule } from '../../../bookCategoryModule';
 import { bookCategorySymbols } from '../../../bookCategorySymbols';
-import { categorySymbols } from '../../../../category/categorySymbols';
-import { bookSymbols } from '../../../../book/bookSymbols';
+import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
+import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
+import { BookCategoryAlreadyExistsError } from '../../../errors/bookCategoryAlreadyExistsError';
+import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
+import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 
 describe('BookCategoryService', () => {
   let bookCategoryService: BookCategoryService;
@@ -131,7 +131,7 @@ describe('BookCategoryService', () => {
             bookId: book.id,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(BookCategoryAlreadyExists);
+          expect(error).toBeInstanceOf(BookCategoryAlreadyExistsError);
         }
       });
     });
@@ -185,7 +185,7 @@ describe('BookCategoryService', () => {
         try {
           await bookCategoryService.removeBookCategory(unitOfWork, { categoryId, bookId });
         } catch (error) {
-          expect(error).toBeInstanceOf(BookCategoryNotFound);
+          expect(error).toBeInstanceOf(BookCategoryNotFoundError);
         }
       });
     });

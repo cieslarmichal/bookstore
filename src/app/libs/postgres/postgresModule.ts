@@ -1,5 +1,6 @@
-import { postgresConnector } from './postgresConnector';
 import { asValue, AwilixContainer } from 'awilix';
+
+import { postgresConnector } from './postgresConnector';
 import { postgresSymbols } from './postgresSymbols';
 import { LoadableModule } from '../dependencyInjection/loadableModule';
 

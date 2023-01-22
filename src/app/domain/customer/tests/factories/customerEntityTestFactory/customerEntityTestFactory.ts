@@ -1,5 +1,6 @@
-import { CustomerEntity } from '../../../contracts/customerEntity';
 import { faker } from '@faker-js/faker';
+
+import { CustomerEntity } from '../../../contracts/customerEntity';
 
 export class CustomerEntityTestFactory {
   public create(): CustomerEntity {

@@ -1,5 +1,5 @@
 import { Mapper } from '../../../../../common/mapper/mapper';
-import { CustomerEntity } from '../../customerEntity';
 import { Customer } from '../../customer';
+import { CustomerEntity } from '../../customerEntity';
 
 export type CustomerMapper = Mapper<CustomerEntity, Customer>;

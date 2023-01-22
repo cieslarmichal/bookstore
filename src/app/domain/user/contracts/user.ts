@@ -1,6 +1,7 @@
 import { IsDate, IsString, IsEnum, IsUUID, IsOptional } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
+
 import { UserRole } from './userRole';
+import { Validator } from '../../../common/validator/validator';
 
 export class User {
   @IsUUID('4')
@@ -14,11 +15,11 @@ export class User {
 
   @IsOptional()
   @IsString()
-  public readonly email: string;
+  public readonly email?: string | undefined;
 
   @IsOptional()
   @IsString()
-  public readonly phoneNumber: string;
+  public readonly phoneNumber?: string | undefined;
 
   @IsString()
   public readonly password: string;
@@ -26,5 +27,21 @@ export class User {
   @IsEnum(UserRole)
   public readonly role: UserRole;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(User);
+  public constructor({ id, createdAt, updatedAt, email, phoneNumber, password, role }: User) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.password = password;
+    this.role = role;
+
+    if (email) {
+      this.email = email;
+    }
+
+    if (phoneNumber) {
+      this.phoneNumber = phoneNumber;
+    }
+
+    Validator.validate(this);
+  }
 }

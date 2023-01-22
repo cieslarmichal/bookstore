@@ -1,9 +1,9 @@
+import { CreateAuthorData } from './createAuthorData';
+import { UpdateAuthorData } from './updateAuthorData';
 import { Filter } from '../../../../../common/filter/filter';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { PaginationData } from '../../../../common/paginationData';
 import { Author } from '../../author';
-import { CreateAuthorData } from './createAuthorData';
-import { UpdateAuthorData } from './updateAuthorData';
 
 export interface AuthorService {
   createAuthor(unitOfWork: PostgresUnitOfWork, authorData: CreateAuthorData): Promise<Author>;

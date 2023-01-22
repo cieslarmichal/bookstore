@@ -3,18 +3,18 @@ import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { Author } from '../../../../author/contracts/author';
 import { AuthorService } from '../../../../author/contracts/services/authorService/authorService';
-import { AuthorNotFound } from '../../../../author/errors/authorNotFound';
+import { AuthorNotFoundError } from '../../../../author/errors/authorNotFoundError';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
-import { BookNotFound } from '../../../../book/errors/bookNotFound';
+import { BookNotFoundError } from '../../../../book/errors/bookNotFoundError';
 import { PaginationData } from '../../../../common/paginationData';
 import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { AuthorBookService } from '../../../contracts/services/authorBookService/authorBookService';
 import { CreateAuthorBookData } from '../../../contracts/services/authorBookService/createAuthorBookData';
 import { RemoveAuthorBookData } from '../../../contracts/services/authorBookService/removeAuthorBookData';
-import { AuthorBookAlreadyExists } from '../../../errors/authorBookAlreadyExists';
-import { AuthorBookNotFound } from '../../../errors/authorBookNotFound';
+import { AuthorBookAlreadyExistsError } from '../../../errors/authorBookAlreadyExistsError';
+import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 
 export class AuthorBookServiceImpl implements AuthorBookService {
   public constructor(
@@ -35,13 +35,13 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     const author = await this.authorService.findAuthor(unitOfWork, authorId);
 
     if (!author) {
-      throw new AuthorNotFound({ id: authorId });
+      throw new AuthorNotFoundError({ id: authorId });
     }
 
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
-      throw new BookNotFound({ id: bookId });
+      throw new BookNotFoundError({ id: bookId });
     }
 
     const { entityManager } = unitOfWork;
@@ -51,7 +51,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     const existingAuthorBook = await authorBookRepository.findOne({ authorId, bookId });
 
     if (existingAuthorBook) {
-      throw new AuthorBookAlreadyExists({ authorId, bookId });
+      throw new AuthorBookAlreadyExistsError({ authorId, bookId });
     }
 
     const authorBook = await authorBookRepository.createOne(authorBookData);
@@ -70,7 +70,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     const author = await this.authorService.findAuthor(unitOfWork, authorId);
 
     if (!author) {
-      throw new AuthorNotFound({ id: authorId });
+      throw new AuthorNotFoundError({ id: authorId });
     }
 
     return this.bookService.findBooksByAuthorId(unitOfWork, authorId, filters, paginationData);
@@ -85,7 +85,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
-      throw new BookNotFound({ id: bookId });
+      throw new BookNotFoundError({ id: bookId });
     }
 
     return this.authorService.findAuthorsByBookId(unitOfWork, bookId, filters, paginationData);
@@ -103,7 +103,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     const authorBook = await authorBookRepository.findOne({ authorId, bookId });
 
     if (!authorBook) {
-      throw new AuthorBookNotFound({ authorId, bookId });
+      throw new AuthorBookNotFoundError({ authorId, bookId });
     }
 
     await authorBookRepository.removeOne(authorBook.id);

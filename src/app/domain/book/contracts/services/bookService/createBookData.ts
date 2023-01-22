@@ -1,4 +1,5 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsString, IsEnum, IsNumber, IsOptional } from '../../../../../common/validator/decorators';
+import { Validator } from '../../../../../common/validator/validator';
 import { BookFormat } from '../../bookFormat';
 import { BookLanguage } from '../../bookLanguage';
 
@@ -21,4 +22,18 @@ export class CreateBookData {
 
   @IsNumber()
   public price: number;
+
+  public constructor({ title, releaseYear, language, format, description, price }: CreateBookData) {
+    this.title = title;
+    this.releaseYear = releaseYear;
+    this.language = language;
+    this.format = format;
+    this.price = price;
+
+    if (description) {
+      this.description = description;
+    }
+
+    Validator.validate(this);
+  }
 }

@@ -1,5 +1,5 @@
-import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { AuthorMapperImpl } from './authorMapperImpl';
+import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 
 describe('AuthorMapperImpl', () => {
   let authorMapperImpl: AuthorMapperImpl;

@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+
 import { CategoryEntity } from '../../../contracts/categoryEntity';
 
 export class CategoryEntityTestFactory {

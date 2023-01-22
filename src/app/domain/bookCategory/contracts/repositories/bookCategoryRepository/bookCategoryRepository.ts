@@ -1,6 +1,7 @@
 import { FindConditions } from 'typeorm';
-import { BookCategoryEntity } from '../../bookCategoryEntity';
+
 import { BookCategory } from '../../bookCategory';
+import { BookCategoryEntity } from '../../bookCategoryEntity';
 
 export interface BookCategoryRepository {
   createOne(bookCategoryData: Partial<BookCategoryEntity>): Promise<BookCategory>;

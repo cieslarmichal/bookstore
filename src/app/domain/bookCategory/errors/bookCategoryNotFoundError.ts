@@ -9,10 +9,10 @@ type BookCategoryNotFoundIdContext = {
   readonly id: string;
 };
 
-export class BookCategoryNotFound extends ApplicationError<
+export class BookCategoryNotFoundError extends ApplicationError<
   BookCategoryNotFoundCompositeIdContext | BookCategoryNotFoundIdContext
 > {
   public constructor(context: BookCategoryNotFoundCompositeIdContext | BookCategoryNotFoundIdContext) {
-    super('BookCategory not found.', context);
+    super('BookCategoryNotFoundError', 'BookCategory not found.', context);
   }
 }

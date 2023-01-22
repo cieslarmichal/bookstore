@@ -1,27 +1,29 @@
-import { ConfigLoader } from '../../../../../../configLoader';
-import request from 'supertest';
-import { App } from '../../../../../../app';
-import { BookModule } from '../../../../../domain/book/bookModule';
-import { IntegrationsModule } from '../../../../integrationsModule';
-import { AuthorModule } from '../../../../../domain/author/authorModule';
-import { Server } from '../../../../../../server';
 import { StatusCodes } from 'http-status-codes';
+import request from 'supertest';
+
+import { App } from '../../../../../../app';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { Server } from '../../../../../../server';
+import { AddressModule } from '../../../../../domain/address/addressModule';
+import { AuthorModule } from '../../../../../domain/author/authorModule';
+import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
+import { BookModule } from '../../../../../domain/book/bookModule';
+import { bookSymbols } from '../../../../../domain/book/bookSymbols';
+import { BookRepositoryFactory } from '../../../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { BookEntityTestFactory } from '../../../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
+import { CategoryModule } from '../../../../../domain/category/categoryModule';
+import { CustomerModule } from '../../../../../domain/customer/customerModule';
 import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../../../domain/user/userModule';
-import { CategoryModule } from '../../../../../domain/category/categoryModule';
-import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
-import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
-import { AddressModule } from '../../../../../domain/address/addressModule';
-import { CustomerModule } from '../../../../../domain/customer/customerModule';
-import { BookRepositoryFactory } from '../../../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
-import { BookEntityTestFactory } from '../../../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { bookSymbols } from '../../../../../domain/book/bookSymbols';
+import { AuthHelper } from '../../../../../tests/auth/authHelper';
+import { TestTransactionExternalRunner } from '../../../../../tests/unitOfWork/testTransactionExternalRunner';
+import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/books';
 

@@ -9,10 +9,10 @@ type AuthorBookNotFoundIdContext = {
   readonly id: string;
 };
 
-export class AuthorBookNotFound extends ApplicationError<
+export class AuthorBookNotFoundError extends ApplicationError<
   AuthorBookNotFoundCompositeIdContext | AuthorBookNotFoundIdContext
 > {
   public constructor(context: AuthorBookNotFoundCompositeIdContext | AuthorBookNotFoundIdContext) {
-    super('AuthorBook not found.', context);
+    super('AuthorBookNotFoundError', 'AuthorBook not found.', context);
   }
 }

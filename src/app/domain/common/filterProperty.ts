@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface FilterProperty {
   readonly eq?: any;
   readonly gt?: any;

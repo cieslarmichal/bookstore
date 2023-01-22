@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { BookService } from '../../../../../domain/book/contracts/services/bookService/bookService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
@@ -16,7 +17,7 @@ const booksEndpoint = '/books';
 const bookEndpoint = `${booksEndpoint}/:id`;
 
 export class BookControllerImpl implements BookController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -32,7 +33,7 @@ export class BookControllerImpl implements BookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createBookResponse = await this.createBook(request, response);
-        response.locals.controllerResponse = createBookResponse;
+        response.locals['controllerResponse'] = createBookResponse;
         next();
       }),
     );
@@ -41,7 +42,7 @@ export class BookControllerImpl implements BookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBookResponse = await this.findBook(request, response);
-        response.locals.controllerResponse = findBookResponse;
+        response.locals['controllerResponse'] = findBookResponse;
         next();
       }),
     );
@@ -50,7 +51,7 @@ export class BookControllerImpl implements BookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBooksResponse = await this.findBooks(request, response);
-        response.locals.controllerResponse = findBooksResponse;
+        response.locals['controllerResponse'] = findBooksResponse;
         next();
       }),
     );
@@ -59,7 +60,7 @@ export class BookControllerImpl implements BookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateBookResponse = await this.updateBook(request, response);
-        response.locals.controllerResponse = updateBookResponse;
+        response.locals['controllerResponse'] = updateBookResponse;
         next();
       }),
     );
@@ -68,7 +69,7 @@ export class BookControllerImpl implements BookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteBookResponse = await this.deleteBook(request, response);
-        response.locals.controllerResponse = deleteBookResponse;
+        response.locals['controllerResponse'] = deleteBookResponse;
         next();
       }),
     );
@@ -101,7 +102,7 @@ export class BookControllerImpl implements BookController {
     const { id } = request.params;
 
     const book = await unitOfWork.runInTransaction(async () => {
-      return this.bookService.findBook(unitOfWork, id);
+      return this.bookService.findBook(unitOfWork, id as string);
     });
 
     return { data: { book }, statusCode: StatusCodes.OK };
@@ -110,7 +111,7 @@ export class BookControllerImpl implements BookController {
   public async findBooks(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findBooksFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findBooksFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
@@ -129,7 +130,7 @@ export class BookControllerImpl implements BookController {
     const { description, price } = request.body;
 
     const book = await unitOfWork.runInTransaction(async () => {
-      return this.bookService.updateBook(unitOfWork, id, { description, price });
+      return this.bookService.updateBook(unitOfWork, id as string, { description, price });
     });
 
     return { data: { book }, statusCode: StatusCodes.OK };
@@ -141,7 +142,7 @@ export class BookControllerImpl implements BookController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.bookService.removeBook(unitOfWork, id);
+      await this.bookService.removeBook(unitOfWork, id as string);
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

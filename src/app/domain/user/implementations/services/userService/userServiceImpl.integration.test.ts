@@ -1,20 +1,20 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
 import { TokenService } from '../../../contracts/services/tokenService/tokenService';
 import { UserService } from '../../../contracts/services/userService/userService';
 import { User } from '../../../contracts/user';
 import { UserRole } from '../../../contracts/userRole';
-import { EmailAlreadySet } from '../../../errors/emailAlreadySet';
-import { PhoneNumberAlreadySet } from '../../../errors/phoneNumberAlreadySet';
-import { UserAlreadyExists } from '../../../errors/userAlreadyExists';
-import { UserNotFound } from '../../../errors/userNotFound';
+import { EmailAlreadySetError } from '../../../errors/emailAlreadySetError';
+import { PhoneNumberAlreadySetError } from '../../../errors/phoneNumberAlreadySetError';
+import { UserAlreadyExistsError } from '../../../errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../../errors/userNotFoundError';
 import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../userModule';
 import { userSymbols } from '../../../userSymbols';
@@ -62,7 +62,7 @@ describe('UserServiceImpl', () => {
         const { email, password } = userEntityTestFactory.create();
 
         const createdUserDto = await userService.registerUserByEmail(unitOfWork, {
-          email,
+          email: email as string,
           password,
         });
 
@@ -82,17 +82,17 @@ describe('UserServiceImpl', () => {
         const { email, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
         try {
           await userService.registerUserByEmail(unitOfWork, {
-            email,
+            email: email as string,
             password,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(UserAlreadyExists);
+          expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
       });
     });
@@ -109,7 +109,7 @@ describe('UserServiceImpl', () => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         const createdUserDto = await userService.registerUserByPhoneNumber(unitOfWork, {
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
@@ -129,17 +129,17 @@ describe('UserServiceImpl', () => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
         try {
           await userService.registerUserByPhoneNumber(unitOfWork, {
-            phoneNumber,
+            phoneNumber: phoneNumber as string,
             password,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(UserAlreadyExists);
+          expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
       });
     });
@@ -158,19 +158,19 @@ describe('UserServiceImpl', () => {
         const hashedPassword = await hashService.hash(password);
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password: hashedPassword,
         });
 
         const accessToken = await userService.loginUserByEmail(unitOfWork, {
-          email,
+          email: email as string,
           password,
         });
 
         const data = await tokenService.verifyToken(accessToken);
 
-        expect(data.id).toBe(user.id);
-        expect(data.role).toBe(UserRole.user);
+        expect(data['id']).toBe(user.id);
+        expect(data['role']).toBe(UserRole.user);
       });
     });
 
@@ -182,11 +182,11 @@ describe('UserServiceImpl', () => {
 
         try {
           await userService.loginUserByEmail(unitOfWork, {
-            email,
+            email: email as string,
             password,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -203,17 +203,17 @@ describe('UserServiceImpl', () => {
         const { password: otherPassword } = userEntityTestFactory.create();
 
         await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
         try {
           await userService.loginUserByEmail(unitOfWork, {
-            email,
+            email: email as string,
             password: otherPassword,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -232,19 +232,19 @@ describe('UserServiceImpl', () => {
         const hashedPassword = await hashService.hash(password);
 
         const user = await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password: hashedPassword,
         });
 
         const accessToken = await userService.loginUserByPhoneNumber(unitOfWork, {
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
         const data = await tokenService.verifyToken(accessToken);
 
-        expect(data.id).toBe(user.id);
-        expect(data.role).toBe(UserRole.user);
+        expect(data['id']).toBe(user.id);
+        expect(data['role']).toBe(UserRole.user);
       });
     });
 
@@ -256,11 +256,11 @@ describe('UserServiceImpl', () => {
 
         try {
           await userService.loginUserByPhoneNumber(unitOfWork, {
-            phoneNumber,
+            phoneNumber: phoneNumber as string,
             password,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -277,17 +277,17 @@ describe('UserServiceImpl', () => {
         const { password: otherPassword } = userEntityTestFactory.create();
 
         await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
         try {
           await userService.loginUserByPhoneNumber(unitOfWork, {
-            phoneNumber,
+            phoneNumber: phoneNumber as string,
             password: otherPassword,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -306,7 +306,7 @@ describe('UserServiceImpl', () => {
         const hashedPassword = await hashService.hash(password);
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password: hashedPassword,
         });
 
@@ -330,7 +330,7 @@ describe('UserServiceImpl', () => {
         try {
           await userService.setPassword(unitOfWork, id, password);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -347,11 +347,11 @@ describe('UserServiceImpl', () => {
         const { phoneNumber, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
-        await userService.setEmail(unitOfWork, user.id, email);
+        await userService.setEmail(unitOfWork, user.id, email as string);
 
         const updatedUser = (await userRepository.findOneById(user.id)) as User;
 
@@ -370,14 +370,14 @@ describe('UserServiceImpl', () => {
         const { email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
         try {
-          await userService.setEmail(unitOfWork, user.id, email);
+          await userService.setEmail(unitOfWork, user.id, email as string);
         } catch (error) {
-          expect(error).toBeInstanceOf(EmailAlreadySet);
+          expect(error).toBeInstanceOf(EmailAlreadySetError);
         }
       });
     });
@@ -392,19 +392,19 @@ describe('UserServiceImpl', () => {
         const { email, phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
         const user = await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
         try {
-          await userService.setEmail(unitOfWork, user.id, email);
+          await userService.setEmail(unitOfWork, user.id, email as string);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserAlreadyExists);
+          expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
       });
     });
@@ -416,9 +416,9 @@ describe('UserServiceImpl', () => {
         const { id, email } = userEntityTestFactory.create();
 
         try {
-          await userService.setEmail(unitOfWork, id, email);
+          await userService.setEmail(unitOfWork, id, email as string);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -435,11 +435,11 @@ describe('UserServiceImpl', () => {
         const { phoneNumber, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
-        await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber);
+        await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber as string);
 
         const updatedUser = (await userRepository.findOneById(user.id)) as User;
 
@@ -458,14 +458,14 @@ describe('UserServiceImpl', () => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
         try {
-          await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber);
+          await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber as string);
         } catch (error) {
-          expect(error).toBeInstanceOf(PhoneNumberAlreadySet);
+          expect(error).toBeInstanceOf(PhoneNumberAlreadySetError);
         }
       });
     });
@@ -480,19 +480,19 @@ describe('UserServiceImpl', () => {
         const { email, phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
-          phoneNumber,
+          phoneNumber: phoneNumber as string,
           password,
         });
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
         try {
-          await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber);
+          await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber as string);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserAlreadyExists);
+          expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
       });
     });
@@ -504,9 +504,9 @@ describe('UserServiceImpl', () => {
         const { id, phoneNumber } = userEntityTestFactory.create();
 
         try {
-          await userService.setPhoneNumber(unitOfWork, id, phoneNumber);
+          await userService.setPhoneNumber(unitOfWork, id, phoneNumber as string);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -523,7 +523,7 @@ describe('UserServiceImpl', () => {
         const { email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
@@ -542,7 +542,7 @@ describe('UserServiceImpl', () => {
         try {
           await userService.findUser(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });
@@ -559,7 +559,7 @@ describe('UserServiceImpl', () => {
         const { email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
-          email,
+          email: email as string,
           password,
         });
 
@@ -580,7 +580,7 @@ describe('UserServiceImpl', () => {
         try {
           await userService.removeUser(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(UserNotFound);
+          expect(error).toBeInstanceOf(UserNotFoundError);
         }
       });
     });

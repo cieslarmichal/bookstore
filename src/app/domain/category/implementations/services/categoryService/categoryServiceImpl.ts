@@ -6,8 +6,8 @@ import { Category } from '../../../contracts/category';
 import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryService } from '../../../contracts/services/categoryService/categoryService';
 import { CreateCategoryData } from '../../../contracts/services/categoryService/createCategoryData';
-import { CategoryAlreadyExists } from '../../../errors/categoryAlreadyExists';
-import { CategoryNotFound } from '../../../errors/categoryNotFound';
+import { CategoryAlreadyExistsError } from '../../../errors/categoryAlreadyExistsError';
+import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
 export class CategoryServiceImpl implements CategoryService {
   public constructor(
@@ -27,7 +27,7 @@ export class CategoryServiceImpl implements CategoryService {
     const existingCategory = await categoryRepository.findOne({ name });
 
     if (existingCategory) {
-      throw new CategoryAlreadyExists({ name });
+      throw new CategoryAlreadyExistsError({ name });
     }
 
     const category = await categoryRepository.createOne(categoryData);
@@ -45,7 +45,7 @@ export class CategoryServiceImpl implements CategoryService {
     const category = await categoryRepository.findOneById(categoryId);
 
     if (!category) {
-      throw new CategoryNotFound({ id: categoryId });
+      throw new CategoryNotFoundError({ id: categoryId });
     }
 
     return category;

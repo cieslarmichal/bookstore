@@ -7,7 +7,7 @@ import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepo
 import { AuthorService } from '../../../contracts/services/authorService/authorService';
 import { CreateAuthorData } from '../../../contracts/services/authorService/createAuthorData';
 import { UpdateAuthorData } from '../../../contracts/services/authorService/updateAuthorData';
-import { AuthorNotFound } from '../../../errors/authorNotFound';
+import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
 export class AuthorServiceImpl implements AuthorService {
   public constructor(
@@ -37,7 +37,7 @@ export class AuthorServiceImpl implements AuthorService {
     const author = await authorRepository.findOneById(authorId);
 
     if (!author) {
-      throw new AuthorNotFound({ id: authorId });
+      throw new AuthorNotFoundError({ id: authorId });
     }
 
     return author;

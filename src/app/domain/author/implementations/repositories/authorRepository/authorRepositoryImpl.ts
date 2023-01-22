@@ -1,12 +1,13 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+
+import { AuthorQueryBuilder } from './authorQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
 import { Author } from '../../../contracts/author';
 import { AuthorEntity } from '../../../contracts/authorEntity';
 import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';
 import { AuthorRepository } from '../../../contracts/repositories/authorRepository/authorRepository';
-import { AuthorNotFound } from '../../../errors/authorNotFound';
-import { AuthorQueryBuilder } from './authorQueryBuilder';
+import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
 @EntityRepository()
 export class AuthorRepositoryImpl implements AuthorRepository {
@@ -67,7 +68,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
     const author = await this.findOneById(id);
 
     if (!author) {
-      throw new AuthorNotFound({ id });
+      throw new AuthorNotFoundError({ id });
     }
 
     await this.entityManager.update(AuthorEntity, { id }, authorData);
@@ -79,7 +80,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
     const author = await this.findOneById(id);
 
     if (!author) {
-      throw new AuthorNotFound({ id });
+      throw new AuthorNotFoundError({ id });
     }
 
     await this.entityManager.delete(AuthorEntity, { id });

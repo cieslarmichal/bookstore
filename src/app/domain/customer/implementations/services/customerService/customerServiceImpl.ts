@@ -5,8 +5,8 @@ import { CustomerRepositoryFactory } from '../../../contracts/factories/customer
 import { CreateCustomerData } from '../../../contracts/services/customerService/createCustomerData';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
 import { FindCustomerData } from '../../../contracts/services/customerService/findCustomerData';
-import { CustomerAlreadyExists } from '../../../errors/customerAlreadyExists';
-import { CustomerNotFound } from '../../../errors/customerNotFound';
+import { CustomerAlreadyExistsError } from '../../../errors/customerAlreadyExistsError';
+import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
 export class CustomerServiceImpl implements CustomerService {
   public constructor(
@@ -26,7 +26,7 @@ export class CustomerServiceImpl implements CustomerService {
     const existingCustomer = await customerRepository.findOne({ userId });
 
     if (existingCustomer) {
-      throw new CustomerAlreadyExists({ userId });
+      throw new CustomerAlreadyExistsError({ userId });
     }
 
     const customer = await customerRepository.createOne(customerData);
@@ -44,7 +44,7 @@ export class CustomerServiceImpl implements CustomerService {
     const customer = await customerRepository.findOne(customerData);
 
     if (!customer) {
-      throw new CustomerNotFound({ ...customerData });
+      throw new CustomerNotFoundError({ ...customerData });
     }
 
     return customer;

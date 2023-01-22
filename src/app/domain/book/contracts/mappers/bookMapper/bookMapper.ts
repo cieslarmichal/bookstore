@@ -1,5 +1,5 @@
 import { Mapper } from '../../../../../common/mapper/mapper';
-import { BookEntity } from '../../bookEntity';
 import { Book } from '../../book';
+import { BookEntity } from '../../bookEntity';
 
 export type BookMapper = Mapper<BookEntity, Book>;

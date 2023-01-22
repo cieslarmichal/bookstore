@@ -1,5 +1,5 @@
-import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookCategoryMapperImpl } from './bookCategoryMapperImpl';
+import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 
 describe('BookCategoryMapperImpl', () => {
   let bookCategoryMapperImpl: BookCategoryMapperImpl;

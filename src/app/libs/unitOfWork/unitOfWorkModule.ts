@@ -1,7 +1,8 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../dependencyInjection/loadableModule';
+
 import { UnitOfWorkFactory } from './unitOfWorkFactory';
 import { unitOfWorkSymbols } from './unitOfWorkSymbols';
+import { LoadableModule } from '../dependencyInjection/loadableModule';
 
 export class UnitOfWorkModule extends LoadableModule {
   public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {

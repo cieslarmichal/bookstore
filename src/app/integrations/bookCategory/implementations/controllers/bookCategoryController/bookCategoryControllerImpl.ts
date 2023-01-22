@@ -1,7 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
-
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { BookCategoryService } from '../../../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
@@ -19,7 +19,7 @@ const bookCategoryEndpoint = `${bookCategoriesEndpoint}/:categoryId`;
 const categoryBooksEndpoint = '/categories/:categoryId/books';
 
 export class BookCategoryControllerImpl implements BookCategoryController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -35,7 +35,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createBookCategoryResponse = await this.createBookCategory(request, response);
-        response.locals.controllerResponse = createBookCategoryResponse;
+        response.locals['controllerResponse'] = createBookCategoryResponse;
         next();
       }),
     );
@@ -44,7 +44,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteBookCategoryResponse = await this.deleteBookCategory(request, response);
-        response.locals.controllerResponse = deleteBookCategoryResponse;
+        response.locals['controllerResponse'] = deleteBookCategoryResponse;
         next();
       }),
     );
@@ -53,7 +53,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBookCategoriesResponse = await this.findBookCategories(request, response);
-        response.locals.controllerResponse = findBookCategoriesResponse;
+        response.locals['controllerResponse'] = findBookCategoriesResponse;
         next();
       }),
     );
@@ -62,7 +62,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findCategoryBooksResponse = await this.findCategoryBooks(request, response);
-        response.locals.controllerResponse = findCategoryBooksResponse;
+        response.locals['controllerResponse'] = findCategoryBooksResponse;
         next();
       }),
     );
@@ -76,7 +76,10 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     const { bookId, categoryId } = request.params;
 
     const bookCategory = await unitOfWork.runInTransaction(async () => {
-      return this.bookCategoryService.createBookCategory(unitOfWork, { bookId, categoryId });
+      return this.bookCategoryService.createBookCategory(unitOfWork, {
+        bookId: bookId as string,
+        categoryId: categoryId as string,
+      });
     });
 
     return { data: { bookCategory }, statusCode: StatusCodes.CREATED };
@@ -87,12 +90,12 @@ export class BookCategoryControllerImpl implements BookCategoryController {
 
     const { bookId } = request.params;
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findCategoriesFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findCategoriesFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
     const categories = await unitOfWork.runInTransaction(async () => {
-      return this.bookCategoryService.findCategoriesOfBook(unitOfWork, bookId, filters, paginationData);
+      return this.bookCategoryService.findCategoriesOfBook(unitOfWork, bookId as string, filters, paginationData);
     });
 
     return { data: { categories }, statusCode: StatusCodes.OK };
@@ -103,12 +106,12 @@ export class BookCategoryControllerImpl implements BookCategoryController {
 
     const { categoryId } = request.params;
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findBooksFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findBooksFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
-      return this.bookCategoryService.findBooksFromCategory(unitOfWork, categoryId, filters, paginationData);
+      return this.bookCategoryService.findBooksFromCategory(unitOfWork, categoryId as string, filters, paginationData);
     });
 
     return { data: { books }, statusCode: StatusCodes.OK };
@@ -120,7 +123,10 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     const { bookId, categoryId } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.bookCategoryService.removeBookCategory(unitOfWork, { bookId, categoryId });
+      await this.bookCategoryService.removeBookCategory(unitOfWork, {
+        bookId: bookId as string,
+        categoryId: categoryId as string,
+      });
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

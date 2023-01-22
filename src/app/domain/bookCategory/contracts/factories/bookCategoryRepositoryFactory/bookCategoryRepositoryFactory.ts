@@ -1,4 +1,5 @@
 import { EntityManager } from 'typeorm';
+
 import { BookCategoryRepository } from '../../repositories/bookCategoryRepository/bookCategoryRepository';
 
 export interface BookCategoryRepositoryFactory {

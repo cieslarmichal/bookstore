@@ -1,7 +1,7 @@
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
-import { Customer } from '../../customer';
 import { CreateCustomerData } from './createCustomerData';
 import { FindCustomerData } from './findCustomerData';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { Customer } from '../../customer';
 
 export interface CustomerService {
   createCustomer(unitOfWork: PostgresUnitOfWork, customerData: CreateCustomerData): Promise<Customer>;

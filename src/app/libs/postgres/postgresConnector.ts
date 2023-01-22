@@ -1,15 +1,16 @@
-import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
 import { Connection, createConnection } from 'typeorm';
-import { UserEntity } from '../../domain/user/contracts/userEntity';
-import { CategoryEntity } from '../../domain/category/contracts/categoryEntity';
-import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
-import { BookCategoryEntity } from '../../domain/bookCategory/contracts/bookCategoryEntity';
-import { CustomerEntity } from '../../domain/customer/contracts/customerEntity';
-import { BookEntity } from '../../domain/book/contracts/bookEntity';
+
 import { AddressEntity } from '../../domain/address/contracts/addressEntity';
+import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
+import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
+import { BookEntity } from '../../domain/book/contracts/bookEntity';
+import { BookCategoryEntity } from '../../domain/bookCategory/contracts/bookCategoryEntity';
+import { CategoryEntity } from '../../domain/category/contracts/categoryEntity';
+import { CustomerEntity } from '../../domain/customer/contracts/customerEntity';
+import { UserEntity } from '../../domain/user/contracts/userEntity';
 
 export class PostgresConnector {
-  private connection: Connection | null;
+  private connection: Connection | null = null;
 
   public async getConnection(): Promise<Connection> {
     if (this.connection) {

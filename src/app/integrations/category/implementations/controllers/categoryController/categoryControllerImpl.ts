@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { CategoryService } from '../../../../../domain/category/contracts/services/categoryService/categoryService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
@@ -16,7 +17,7 @@ const categoriesEndpoint = '/categories';
 const categoryEndpoint = `${categoriesEndpoint}/:id`;
 
 export class CategoryControllerImpl implements CategoryController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -32,7 +33,7 @@ export class CategoryControllerImpl implements CategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createCategoryResponse = await this.createCategory(request, response);
-        response.locals.controllerResponse = createCategoryResponse;
+        response.locals['controllerResponse'] = createCategoryResponse;
         next();
       }),
     );
@@ -41,7 +42,7 @@ export class CategoryControllerImpl implements CategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findCategoryResponse = await this.findCategory(request, response);
-        response.locals.controllerResponse = findCategoryResponse;
+        response.locals['controllerResponse'] = findCategoryResponse;
         next();
       }),
     );
@@ -50,7 +51,7 @@ export class CategoryControllerImpl implements CategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findCategoriesResponse = await this.findCategories(request, response);
-        response.locals.controllerResponse = findCategoriesResponse;
+        response.locals['controllerResponse'] = findCategoriesResponse;
         next();
       }),
     );
@@ -59,7 +60,7 @@ export class CategoryControllerImpl implements CategoryController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteCategoryResponse = await this.deleteCategory(request, response);
-        response.locals.controllerResponse = deleteCategoryResponse;
+        response.locals['controllerResponse'] = deleteCategoryResponse;
         next();
       }),
     );
@@ -85,7 +86,7 @@ export class CategoryControllerImpl implements CategoryController {
     const { id } = request.params;
 
     const category = await unitOfWork.runInTransaction(async () => {
-      return this.categoryService.findCategory(unitOfWork, id);
+      return this.categoryService.findCategory(unitOfWork, id as string);
     });
 
     return { data: { category }, statusCode: StatusCodes.OK };
@@ -94,7 +95,7 @@ export class CategoryControllerImpl implements CategoryController {
   public async findCategories(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findCategoriesFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findCategoriesFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
@@ -111,7 +112,7 @@ export class CategoryControllerImpl implements CategoryController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.categoryService.removeCategory(unitOfWork, id);
+      await this.categoryService.removeCategory(unitOfWork, id as string);
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

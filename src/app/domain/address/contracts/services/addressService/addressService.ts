@@ -1,8 +1,8 @@
+import { CreateAddressData } from './createAddressData';
 import { Filter } from '../../../../../common/filter/filter';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { PaginationData } from '../../../../common/paginationData';
 import { Address } from '../../address';
-import { CreateAddressData } from './createAddressData';
 
 export interface AddressService {
   createAddress(unitOfWork: PostgresUnitOfWork, addressData: CreateAddressData): Promise<Address>;

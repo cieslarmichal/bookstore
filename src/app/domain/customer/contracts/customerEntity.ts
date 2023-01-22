@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { IsOptional, IsDate, IsUUID } from 'class-validator';
 import {
   Entity,
@@ -9,28 +10,32 @@ import {
   JoinColumn,
   Column,
 } from 'typeorm';
+
 import { AddressEntity } from '../../address/contracts/addressEntity';
 import { UserEntity } from '../../user/contracts/userEntity';
 
-export const CUSTOMER_TABLE_NAME = 'customers';
+export const customersTableName = 'customers';
 
 @Entity({
-  name: CUSTOMER_TABLE_NAME,
+  name: customersTableName,
 })
 export class CustomerEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')
+  //@ts-ignore
   public id: string;
 
   @IsOptional()
   @IsDate()
   @CreateDateColumn({ type: 'timestamp' })
+  //@ts-ignore
   public createdAt: Date;
 
   @IsOptional()
   @IsDate()
   @UpdateDateColumn({ type: 'timestamp' })
+  //@ts-ignore
   public updatedAt: Date;
 
   @IsOptional()
@@ -40,9 +45,11 @@ export class CustomerEntity {
   @IsOptional()
   @OneToOne(() => UserEntity, (user) => user.customer, { onDelete: 'CASCADE' })
   @JoinColumn()
+  //@ts-ignore
   public user: UserEntity | null;
 
   @IsUUID('4')
   @Column({ type: 'uuid' })
+  //@ts-ignore
   public userId: string;
 }

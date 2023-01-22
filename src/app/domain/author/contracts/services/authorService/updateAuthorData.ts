@@ -1,7 +1,16 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from '../../../../../common/validator/decorators';
+import { Validator } from '../../../../../common/validator/validator';
 
 export class UpdateAuthorData {
-  @IsString()
   @IsOptional()
+  @IsString()
   public about?: string | undefined;
+
+  public constructor({ about }: UpdateAuthorData) {
+    if (about) {
+      this.about = about;
+    }
+
+    Validator.validate(this);
+  }
 }

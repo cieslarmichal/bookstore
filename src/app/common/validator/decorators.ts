@@ -8,6 +8,7 @@ export const IsEnum = validator.IsEnum;
 export const IsBoolean = validator.IsBoolean;
 export const IsString = validator.IsString;
 export const IsNumber = validator.IsNumber;
+export const IsDate = validator.IsDate;
 export const IsUuidV4 = (): PropertyDecorator => validator.IsUUID('4');
 export const IsArray = validator.IsArray;
 export const IsEmail = validator.IsEmail;

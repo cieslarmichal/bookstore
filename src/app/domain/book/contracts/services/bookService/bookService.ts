@@ -1,9 +1,9 @@
+import { CreateBookData } from './createBookData';
+import { UpdateBookData } from './updateBookData';
 import { Filter } from '../../../../../common/filter/filter';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { PaginationData } from '../../../../common/paginationData';
 import { Book } from '../../book';
-import { CreateBookData } from './createBookData';
-import { UpdateBookData } from './updateBookData';
 
 export interface BookService {
   createBook(unitOfWork: PostgresUnitOfWork, bookData: CreateBookData): Promise<Book>;

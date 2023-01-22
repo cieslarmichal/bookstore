@@ -1,9 +1,10 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+
 import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookEntity } from '../../../contracts/authorBookEntity';
 import { AuthorBookMapper } from '../../../contracts/mappers/authorBookMapper/authorBookMapper';
 import { AuthorBookRepository } from '../../../contracts/repositories/authorBookRepository/authorBookRepository';
-import { AuthorBookNotFound } from '../../../errors/authorBookNotFound';
+import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 
 @EntityRepository()
 export class AuthorBookRepositoryImpl implements AuthorBookRepository {
@@ -38,7 +39,7 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
     const authorBook = await this.findOneById(id);
 
     if (!authorBook) {
-      throw new AuthorBookNotFound({ id });
+      throw new AuthorBookNotFoundError({ id });
     }
 
     await this.entityManager.delete(AuthorBookEntity, { id });

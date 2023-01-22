@@ -1,9 +1,10 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+
 import { UserMapper } from '../../../contracts/mappers/userMapper/userMapper';
 import { UserRepository } from '../../../contracts/repositories/userRepository/userRepository';
-import { UserEntity } from '../../../contracts/userEntity';
 import { User } from '../../../contracts/user';
-import { UserNotFound } from '../../../errors/userNotFound';
+import { UserEntity } from '../../../contracts/userEntity';
+import { UserNotFoundError } from '../../../errors/userNotFoundError';
 
 @EntityRepository()
 export class UserRepositoryImpl implements UserRepository {
@@ -41,7 +42,7 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await this.findOneById(id);
 
     if (!user) {
-      throw new UserNotFound({ id });
+      throw new UserNotFoundError({ id });
     }
 
     await this.entityManager.update(UserEntity, { id }, userData);
@@ -53,7 +54,7 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await this.findOneById(id);
 
     if (!user) {
-      throw new UserNotFound({ id });
+      throw new UserNotFoundError({ id });
     }
 
     await this.entityManager.delete(UserEntity, { id });

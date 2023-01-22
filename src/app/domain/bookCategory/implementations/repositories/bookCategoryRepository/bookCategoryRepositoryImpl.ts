@@ -1,9 +1,10 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
-import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
+
 import { BookCategory } from '../../../contracts/bookCategory';
+import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryRepository } from '../../../contracts/repositories/bookCategoryRepository/bookCategoryRepository';
-import { BookCategoryNotFound } from '../../../errors/bookCategoryNotFound';
+import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
 @EntityRepository()
 export class BookCategoryRepositoryImpl implements BookCategoryRepository {
@@ -38,7 +39,7 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
     const bookCategory = await this.findOneById(id);
 
     if (!bookCategory) {
-      throw new BookCategoryNotFound({ id });
+      throw new BookCategoryNotFoundError({ id });
     }
 
     await this.entityManager.delete(BookCategoryEntity, { id });

@@ -1,4 +1,5 @@
 import { EntityManager } from 'typeorm';
+
 import { Filter } from '../../../../../common/filter/filter';
 import { QueryBuilder } from '../../../../common/queryBuilder';
 import { CategoryEntity } from '../../../contracts/categoryEntity';

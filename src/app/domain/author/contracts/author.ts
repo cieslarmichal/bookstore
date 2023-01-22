@@ -1,7 +1,8 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
-import { BookDto } from '../../book/dtos';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
+
+import { IsInstanceOf } from '../../../common/validator/decorators';
+import { Validator } from '../../../common/validator/validator';
+import { Book } from '../../book/contracts/book';
 
 export class Author {
   @IsUUID('4')
@@ -19,14 +20,29 @@ export class Author {
   @IsString()
   public readonly lastName: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   public readonly about?: string | undefined;
 
-  @Type(() => BookDto)
-  @ValidateNested({ each: true })
   @IsOptional()
-  public readonly books: BookDto[] | null;
+  @IsInstanceOf(Book, { each: true })
+  public readonly books?: Book[] | null;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(Author);
+  public constructor({ id, createdAt, updatedAt, firstName, lastName, about, books }: Author) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.firstName = firstName;
+    this.lastName = lastName;
+
+    if (about) {
+      this.about = about;
+    }
+
+    if (books) {
+      this.books = books;
+    }
+
+    Validator.validate(this);
+  }
 }

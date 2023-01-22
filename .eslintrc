@@ -41,16 +41,6 @@
           "order": "asc",
           "caseInsensitive": true
         },
-        "pathGroups": [
-          {
-            "pattern": "@restApi/**",
-            "group": "internal"
-          },
-          {
-            "pattern": "@infrastructure/**",
-            "group": "internal"
-          }
-        ],
         "pathGroupsExcludedImportTypes": ["builtin"]
       }
     ],

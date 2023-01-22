@@ -20,7 +20,7 @@ export class AddressMapperImpl implements AddressMapper {
       customerId,
     } = entity;
 
-    return Address.create({
+    return new Address({
       id,
       createdAt,
       updatedAt,

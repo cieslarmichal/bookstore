@@ -1,7 +1,8 @@
 import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
+
 import { BookFormat } from './bookFormat';
 import { BookLanguage } from './bookLanguage';
+import { Validator } from '../../../common/validator/validator';
 
 export class Book {
   @IsUUID('4')
@@ -32,5 +33,20 @@ export class Book {
   @IsNumber()
   public readonly price: number;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(Book);
+  public constructor({ id, createdAt, updatedAt, title, releaseYear, language, format, description, price }: Book) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.title = title;
+    this.releaseYear = releaseYear;
+    this.language = language;
+    this.format = format;
+    this.price = price;
+
+    if (description) {
+      this.description = description;
+    }
+
+    Validator.validate(this);
+  }
 }

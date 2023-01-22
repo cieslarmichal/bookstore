@@ -1,21 +1,21 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
+import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../../user/userModule';
+import { userSymbols } from '../../../../user/userSymbols';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
 import { CustomerModule } from '../../../customerModule';
-import { CustomerAlreadyExists } from '../../../errors/customerAlreadyExists';
-import { CustomerNotFound } from '../../../errors/customerNotFound';
-import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
-import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { customerSymbols } from '../../../customerSymbols';
-import { userSymbols } from '../../../../user/userSymbols';
+import { CustomerAlreadyExistsError } from '../../../errors/customerAlreadyExistsError';
+import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
+import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 
 describe('CustomerServiceImpl', () => {
   let customerService: CustomerService;
@@ -88,7 +88,7 @@ describe('CustomerServiceImpl', () => {
         try {
           await customerService.createCustomer(unitOfWork, { userId: user.id });
         } catch (error) {
-          expect(error).toBeInstanceOf(CustomerAlreadyExists);
+          expect(error).toBeInstanceOf(CustomerAlreadyExistsError);
         }
       });
     });
@@ -144,7 +144,7 @@ describe('CustomerServiceImpl', () => {
         try {
           await customerService.findCustomer(unitOfWork, { id });
         } catch (error) {
-          expect(error).toBeInstanceOf(CustomerNotFound);
+          expect(error).toBeInstanceOf(CustomerNotFoundError);
         }
       });
     });
@@ -182,7 +182,7 @@ describe('CustomerServiceImpl', () => {
         try {
           await customerService.removeCustomer(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(CustomerNotFound);
+          expect(error).toBeInstanceOf(CustomerNotFoundError);
         }
       });
     });

@@ -3,18 +3,18 @@ import { LoggerService } from '../../../../../libs/logger/loggerService';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
-import { BookNotFound } from '../../../../book/errors/bookNotFound';
+import { BookNotFoundError } from '../../../../book/errors/bookNotFoundError';
 import { Category } from '../../../../category/contracts/category';
 import { CategoryService } from '../../../../category/contracts/services/categoryService/categoryService';
-import { CategoryNotFound } from '../../../../category/errors/categoryNotFound';
+import { CategoryNotFoundError } from '../../../../category/errors/categoryNotFoundError';
 import { PaginationData } from '../../../../common/paginationData';
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
 import { CreateBookCategoryData } from '../../../contracts/services/bookCategoryService/createBookCategoryData';
 import { RemoveBookCategoryData } from '../../../contracts/services/bookCategoryService/removeBookCategoryData';
-import { BookCategoryAlreadyExists } from '../../../errors/bookCategoryAlreadyExists';
-import { BookCategoryNotFound } from '../../../errors/bookCategoryNotFound';
+import { BookCategoryAlreadyExistsError } from '../../../errors/bookCategoryAlreadyExistsError';
+import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
 export class BookCategoryServiceImpl implements BookCategoryService {
   public constructor(
@@ -35,13 +35,13 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
-      throw new BookNotFound({ id: bookId });
+      throw new BookNotFoundError({ id: bookId });
     }
 
     const category = await this.categoryService.findCategory(unitOfWork, categoryId);
 
     if (!category) {
-      throw new CategoryNotFound({ id: categoryId });
+      throw new CategoryNotFoundError({ id: categoryId });
     }
 
     const { entityManager } = unitOfWork;
@@ -51,7 +51,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const existingBookCategory = await bookCategoryRepository.findOne({ bookId, categoryId });
 
     if (existingBookCategory) {
-      throw new BookCategoryAlreadyExists({ bookId, categoryId });
+      throw new BookCategoryAlreadyExistsError({ bookId, categoryId });
     }
 
     const bookCategory = await bookCategoryRepository.createOne(bookCategoryData);
@@ -70,7 +70,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
     if (!book) {
-      throw new BookNotFound({ id: bookId });
+      throw new BookNotFoundError({ id: bookId });
     }
 
     return this.categoryService.findCategoriesByBookId(unitOfWork, bookId, filters, paginationData);
@@ -85,7 +85,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const category = await this.categoryService.findCategory(unitOfWork, categoryId);
 
     if (!category) {
-      throw new CategoryNotFound({ id: categoryId });
+      throw new CategoryNotFoundError({ id: categoryId });
     }
 
     return this.bookService.findBooksByCategoryId(unitOfWork, categoryId, filters, paginationData);
@@ -106,7 +106,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const bookCategory = await bookCategoryRepository.findOne({ bookId, categoryId });
 
     if (!bookCategory) {
-      throw new BookCategoryNotFound({ bookId, categoryId });
+      throw new BookCategoryNotFoundError({ bookId, categoryId });
     }
 
     await bookCategoryRepository.removeOne(bookCategory.id);

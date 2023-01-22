@@ -1,8 +1,9 @@
 import { FindConditions } from 'typeorm';
+
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
-import { BookEntity } from '../../bookEntity';
 import { Book } from '../../book';
+import { BookEntity } from '../../bookEntity';
 
 export interface BookRepository {
   createOne(bookData: Partial<BookEntity>): Promise<Book>;

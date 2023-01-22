@@ -1,15 +1,25 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AuthorNotFound } from '../../../../../domain/author/errors/authorNotFound';
-import { AuthorBookAlreadyExists } from '../../../../../domain/authorBook/errors/authorBookAlreadyExists';
-import { AuthorBookNotFound } from '../../../../../domain/authorBook/errors/authorBookNotFound';
-import { BookNotFound } from '../../../../../domain/book/errors/bookNotFound';
 
-export function authorBookErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
-  if (error instanceof AuthorBookAlreadyExists) {
+import { AuthorNotFoundError } from '../../../../../domain/author/errors/authorNotFoundError';
+import { AuthorBookAlreadyExistsError } from '../../../../../domain/authorBook/errors/authorBookAlreadyExistsError';
+import { AuthorBookNotFoundError } from '../../../../../domain/authorBook/errors/authorBookNotFoundError';
+import { BookNotFoundError } from '../../../../../domain/book/errors/bookNotFoundError';
+
+export function authorBookErrorMiddleware(
+  error: Error,
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): void {
+  if (error instanceof AuthorBookAlreadyExistsError) {
     response.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ error: error.message });
     return;
-  } else if (error instanceof AuthorBookNotFound || error instanceof BookNotFound || error instanceof AuthorNotFound) {
+  } else if (
+    error instanceof AuthorBookNotFoundError ||
+    error instanceof BookNotFoundError ||
+    error instanceof AuthorNotFoundError
+  ) {
     response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
     return;
   }

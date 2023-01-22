@@ -1,6 +1,7 @@
 import { FindConditions } from 'typeorm';
-import { CustomerEntity } from '../../customerEntity';
+
 import { Customer } from '../../customer';
+import { CustomerEntity } from '../../customerEntity';
 
 export interface CustomerRepository {
   createOne(customerData: Partial<CustomerEntity>): Promise<Customer>;

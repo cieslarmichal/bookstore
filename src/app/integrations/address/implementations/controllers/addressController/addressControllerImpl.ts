@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { AddressService } from '../../../../../domain/address/contracts/services/addressService/addressService';
 import { Customer } from '../../../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
@@ -13,8 +14,8 @@ import { PaginationDataParser } from '../../../../common/pagination/paginationDa
 import { ControllerResponse } from '../../../../controllerResponse';
 import { AddressController } from '../../../contracts/controllers/addressController/addressController';
 import { findAddressesFilters } from '../../../contracts/controllers/addressController/findAddressesFilters';
-import { CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress } from '../../../errors/customerFromTokenAuthPayloadNotMatchingCustomerFromAddress';
-import { UserIsNotCustomer } from '../../../errors/userIsNotCustomer';
+import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../../../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
+import { UserIsNotCustomerError } from '../../../errors/userIsNotCustomerError';
 import { addressErrorMiddleware } from '../../middlewares/addressErrorMiddleware/addressErrorMiddleware';
 
 const addressesEndpoint = '/addresses';
@@ -38,7 +39,7 @@ export class AddressControllerImpl implements AddressController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAddressResponse = await this.createAddress(request, response);
-        response.locals.controllerResponse = createAddressResponse;
+        response.locals['controllerResponse'] = createAddressResponse;
         next();
       }),
     );
@@ -47,7 +48,7 @@ export class AddressControllerImpl implements AddressController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAddressResponse = await this.findAddress(request, response);
-        response.locals.controllerResponse = findAddressResponse;
+        response.locals['controllerResponse'] = findAddressResponse;
         next();
       }),
     );
@@ -56,7 +57,7 @@ export class AddressControllerImpl implements AddressController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAddressesResponse = await this.findAddresses(request, response);
-        response.locals.controllerResponse = findAddressesResponse;
+        response.locals['controllerResponse'] = findAddressesResponse;
         next();
       }),
     );
@@ -65,7 +66,7 @@ export class AddressControllerImpl implements AddressController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAddressResponse = await this.deleteAddress(request, response);
-        response.locals.controllerResponse = deleteAddressResponse;
+        response.locals['controllerResponse'] = deleteAddressResponse;
         next();
       }),
     );
@@ -113,22 +114,22 @@ export class AddressControllerImpl implements AddressController {
     const { id } = request.params;
 
     const address = await unitOfWork.runInTransaction(async () => {
-      const { userId, role } = response.locals.authPayload;
+      const { userId, role } = response.locals['authPayload'];
 
       let customer: Customer;
 
       try {
         customer = await this.customerService.findCustomer(unitOfWork, { userId });
       } catch (error) {
-        throw new UserIsNotCustomer({ userId });
+        throw new UserIsNotCustomerError({ userId });
       }
 
-      const customerAddress = await this.addressService.findAddress(unitOfWork, id);
+      const customerAddress = await this.addressService.findAddress(unitOfWork, id as string);
 
       if (customerAddress.customerId !== customer.id && role === UserRole.user) {
-        throw new CustomerFromTokenAuthPayloadNotMatchingCustomerFromAddress({
+        throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
           customerId: customer.id,
-          targetCustomerId: customerAddress.customerId,
+          targetCustomerId: customerAddress.customerId as string,
         });
       }
 
@@ -141,7 +142,7 @@ export class AddressControllerImpl implements AddressController {
   public async findAddresses(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findAddressesFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findAddressesFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
@@ -158,7 +159,7 @@ export class AddressControllerImpl implements AddressController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.addressService.removeAddress(unitOfWork, id);
+      await this.addressService.removeAddress(unitOfWork, id as string);
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

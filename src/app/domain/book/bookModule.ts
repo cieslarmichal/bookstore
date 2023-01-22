@@ -1,9 +1,10 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
+
 import { bookSymbols } from './bookSymbols';
 import { BookRepositoryFactoryImpl } from './implementations/factories/bookRepositoryFactory/bookRepositoryFactoryImpl';
 import { BookMapperImpl } from './implementations/mappers/bookMapper/bookMapperImpl';
 import { BookServiceImpl } from './implementations/services/bookService/bookServiceImpl';
+import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
 
 export class BookModule extends LoadableModule {
   public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {

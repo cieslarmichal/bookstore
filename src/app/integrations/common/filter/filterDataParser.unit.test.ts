@@ -1,3 +1,5 @@
+import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
+import { FilterDataParser } from './filterDataParser';
 import { BetweenFilter } from '../../../common/filter/betweenFilter';
 import { EqualFilter } from '../../../common/filter/equalFilter';
 import { GreaterThanFilter } from '../../../common/filter/greaterThanFilter';
@@ -5,8 +7,6 @@ import { GreaterThanOrEqualFilter } from '../../../common/filter/greaterThanOrEq
 import { LessThanFilter } from '../../../common/filter/lessThanFilter';
 import { LessThanOrEqualFilter } from '../../../common/filter/lessThanOrEqualFilter';
 import { LikeFilter } from '../../../common/filter/likeFilter';
-import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
-import { FilterDataParser } from './filterDataParser';
 
 describe('FilterDataParser', () => {
   const filterFataParser = new FilterDataParser();

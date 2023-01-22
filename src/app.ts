@@ -1,8 +1,8 @@
-import express from 'express';
-import helmet from 'helmet';
-import { errorMiddleware } from './app/integrations/common/middlewares/middlewares';
-import { jsonMiddleware } from './app/integrations/common/middlewares/middlewares/jsonMiddleware';
 import { AwilixContainer } from 'awilix';
+import express, { json, urlencoded } from 'express';
+
+import { errorMiddleware } from './app/integrations/common/middlewares/errorMiddleware';
+import { jsonMiddleware } from './app/integrations/common/middlewares/jsonMiddleware';
 import {
   ADDRESS_CONTROLLER,
   AUTHOR_BOOK_CONTROLLER,
@@ -22,10 +22,9 @@ export class App {
     this.setup();
   }
 
-  private async setup() {
-    this.instance.use(helmet());
-    this.instance.use(express.json());
-    this.instance.use(express.urlencoded({ extended: false }));
+  private async setup(): Promise<void> {
+    this.instance.use(json());
+    this.instance.use(urlencoded({ extended: false }));
     this.instance.use(jsonMiddleware);
 
     const bookController = this.container.resolve(BOOK_CONTROLLER);

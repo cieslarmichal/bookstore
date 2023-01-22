@@ -1,24 +1,24 @@
 import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
+import { CustomerRepositoryFactory } from '../../../../customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerModule } from '../../../../customer/customerModule';
+import { customerSymbols } from '../../../../customer/customerSymbols';
+import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModule } from '../../../../user/userModule';
+import { userSymbols } from '../../../../user/userSymbols';
 import { AddressModule } from '../../../addressModule';
+import { addressSymbols } from '../../../addressSymbols';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';
-import { AddressNotFound } from '../../../errors/addressNotFound';
+import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
-import { CustomerRepositoryFactory } from '../../../../customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
-import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-import { addressSymbols } from '../../../addressSymbols';
-import { customerSymbols } from '../../../../customer/customerSymbols';
-import { userSymbols } from '../../../../user/userSymbols';
 
 describe('AddressServiceImpl', () => {
   let addressService: AddressService;
@@ -146,7 +146,7 @@ describe('AddressServiceImpl', () => {
         try {
           await addressService.findAddress(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(AddressNotFound);
+          expect(error).toBeInstanceOf(AddressNotFoundError);
         }
       });
     });
@@ -353,7 +353,7 @@ describe('AddressServiceImpl', () => {
         try {
           await addressService.removeAddress(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(AddressNotFound);
+          expect(error).toBeInstanceOf(AddressNotFoundError);
         }
       });
     });

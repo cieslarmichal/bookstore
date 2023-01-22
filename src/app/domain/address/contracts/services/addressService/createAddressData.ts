@@ -1,5 +1,20 @@
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 
+import { Validator } from '../../../../../common/validator/validator';
+
+export interface CreateAddressDataInput {
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly phoneNumber: string;
+  readonly country: string;
+  readonly state: string;
+  readonly city: string;
+  readonly zipCode: string;
+  readonly streetAddress: string;
+  readonly deliveryInstructions?: string | undefined;
+  readonly customerId?: string | undefined;
+}
+
 export class CreateAddressData {
   @IsString()
   public readonly firstName: string;
@@ -27,16 +42,40 @@ export class CreateAddressData {
 
   @IsString()
   @IsOptional()
-  public readonly deliveryInstructions?: string | undefined;
+  public readonly deliveryInstructions?: string;
 
   @IsOptional()
   @IsUUID('4')
-  public readonly customerId: string;
+  public readonly customerId?: string;
 
-  public constructor({ id, email, name }: CreateAddressData) {
-    this.id = id;
-    this.email = email;
-    this.name = name;
+  public constructor({
+    firstName,
+    lastName,
+    phoneNumber,
+    country,
+    state,
+    city,
+    zipCode,
+    streetAddress,
+    deliveryInstructions,
+    customerId,
+  }: CreateAddressDataInput) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.phoneNumber = phoneNumber;
+    this.country = country;
+    this.state = state;
+    this.city = city;
+    this.zipCode = zipCode;
+    this.streetAddress = streetAddress;
+
+    if (deliveryInstructions) {
+      this.deliveryInstructions = deliveryInstructions;
+    }
+
+    if (customerId) {
+      this.customerId = customerId;
+    }
 
     Validator.validate(this);
   }

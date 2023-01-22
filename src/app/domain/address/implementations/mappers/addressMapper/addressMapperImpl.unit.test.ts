@@ -1,5 +1,5 @@
-import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 import { AddressMapperImpl } from './addressMapperImpl';
+import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 
 describe('AddressMapperImpl', () => {
   let addressMapperImpl: AddressMapperImpl;

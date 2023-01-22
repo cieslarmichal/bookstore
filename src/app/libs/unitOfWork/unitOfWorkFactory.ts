@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
-import { LoggerService } from '../logger/loggerService';
 
 import { PostgresUnitOfWork } from './postgresUnitOfWork';
+import { LoggerService } from '../logger/loggerService';
 
 export class UnitOfWorkFactory {
   public constructor(private connection: Connection, private readonly loggerService: LoggerService) {}

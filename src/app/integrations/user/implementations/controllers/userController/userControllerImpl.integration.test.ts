@@ -1,27 +1,29 @@
-import { ConfigLoader } from '../../../../../../configLoader';
-import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import request from 'supertest';
-import { App } from '../../../../../../app';
-import { UserModule } from '../../../../../domain/user/userModule';
-import { IntegrationsModule } from '../../../../integrationsModule';
-import { Server } from '../../../../../../server';
 import { StatusCodes } from 'http-status-codes';
-import { BookModule } from '../../../../../domain/book/bookModule';
-import { AuthorModule } from '../../../../../domain/author/authorModule';
-import { CategoryModule } from '../../../../../domain/category/categoryModule';
-import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
-import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
+import request from 'supertest';
+
+import { App } from '../../../../../../app';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { Server } from '../../../../../../server';
 import { AddressModule } from '../../../../../domain/address/addressModule';
+import { AuthorModule } from '../../../../../domain/author/authorModule';
+import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
+import { BookModule } from '../../../../../domain/book/bookModule';
+import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
+import { CategoryModule } from '../../../../../domain/category/categoryModule';
 import { CustomerModule } from '../../../../../domain/customer/customerModule';
 import { UserRepositoryFactory } from '../../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../../../domain/user/contracts/services/hashService/hashService';
+import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModule } from '../../../../../domain/user/userModule';
+import { userSymbols } from '../../../../../domain/user/userSymbols';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
-import { userSymbols } from '../../../../../domain/user/userSymbols';
+import { AuthHelper } from '../../../../../tests/auth/authHelper';
+import { TestTransactionExternalRunner } from '../../../../../tests/unitOfWork/testTransactionExternalRunner';
+import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/users';
 const registerUrl = `${baseUrl}/register`;
@@ -106,7 +108,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ email, password });
+        await userRepository.createOne({ email: email as string, password });
 
         const response = await request(server.instance).post(registerUrl).send({
           email,
@@ -158,7 +160,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { phoneNumber, password } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ phoneNumber, password });
+        await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
 
         const response = await request(server.instance).post(registerUrl).send({
           phoneNumber,
@@ -227,7 +229,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const hashedPassword = await hashService.hash(password);
 
-        await userRepository.createOne({ email, password: hashedPassword });
+        await userRepository.createOne({ email: email as string, password: hashedPassword });
 
         const response = await request(server.instance).post(loginUrl).send({
           email,
@@ -281,7 +283,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const hashedPassword = await hashService.hash(password);
 
-        await userRepository.createOne({ phoneNumber, password: hashedPassword });
+        await userRepository.createOne({ phoneNumber: phoneNumber as string, password: hashedPassword });
 
         const response = await request(server.instance).post(loginUrl).send({
           phoneNumber,
@@ -380,7 +382,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -484,9 +486,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { phoneNumber, email, password } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ email, password });
+        await userRepository.createOne({ email: email as string, password });
 
-        const user = await userRepository.createOne({ phoneNumber, password });
+        const user = await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -512,7 +514,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -538,7 +540,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { phoneNumber, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ phoneNumber, password });
+        const user = await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -642,9 +644,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { phoneNumber, email, password } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ phoneNumber, password });
+        await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -670,7 +672,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { phoneNumber, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ phoneNumber, password });
+        const user = await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -696,7 +698,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { phoneNumber, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -758,7 +760,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
 
@@ -794,7 +796,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -854,7 +856,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
 
@@ -890,7 +892,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const { email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password });
+        const user = await userRepository.createOne({ email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 

@@ -1,12 +1,13 @@
 import { EntityRepository, EntityManager, FindConditions } from 'typeorm';
+
+import { CategoryQueryBuilder } from './categoryQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
-import { CategoryEntity } from '../../../contracts/categoryEntity';
 import { Category } from '../../../contracts/category';
+import { CategoryEntity } from '../../../contracts/categoryEntity';
 import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/categoryMapper';
 import { CategoryRepository } from '../../../contracts/repositories/categoryRepository/categoryRepository';
-import { CategoryNotFound } from '../../../errors/categoryNotFound';
-import { CategoryQueryBuilder } from './categoryQueryBuilder';
+import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
 @EntityRepository()
 export class CategoryRepositoryImpl implements CategoryRepository {
@@ -71,7 +72,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     const category = await this.findOneById(id);
 
     if (!category) {
-      throw new CategoryNotFound({ id });
+      throw new CategoryNotFoundError({ id });
     }
 
     await this.entityManager.update(CategoryEntity, { id }, categoryData);
@@ -83,7 +84,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     const category = await this.findOneById(id);
 
     if (!category) {
-      throw new CategoryNotFound({ id });
+      throw new CategoryNotFoundError({ id });
     }
 
     await this.entityManager.delete(CategoryEntity, { id });

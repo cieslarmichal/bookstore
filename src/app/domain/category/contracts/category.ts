@@ -1,5 +1,6 @@
 import { IsDate, IsString, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
+
+import { Validator } from '../../../common/validator/validator';
 
 export class Category {
   @IsUUID('4')
@@ -14,5 +15,12 @@ export class Category {
   @IsString()
   public readonly name: string;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(Category);
+  public constructor({ id, createdAt, updatedAt, name }: Category) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.name = name;
+
+    Validator.validate(this);
+  }
 }

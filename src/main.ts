@@ -1,20 +1,20 @@
-import { Server } from './server';
 import { App } from './app';
-import { createDependencyInjectionContainer } from './app/common';
-import { BookModule } from './app/domain/book/bookModule';
-import { AuthorModule } from './app/domain/author/authorModule';
-import { PostgresModule } from './app/libs/postgres/postgresModule';
-import { IntegrationsModule } from './app/integrations/integrationsModule';
-import { UserModule } from './app/domain/user/userModule';
-import { ConfigLoader } from './configLoader';
-import { CategoryModule } from './app/domain/category/categoryModule';
-import { LoggerModule } from './app/common/logger/loggerModule';
-import { AuthorBookModule } from './app/domain/authorBook/authorBookModule';
-import { BookCategoryModule } from './app/domain/bookCategory/bookCategoryModule';
 import { AddressModule } from './app/domain/address/addressModule';
+import { AuthorModule } from './app/domain/author/authorModule';
+import { AuthorBookModule } from './app/domain/authorBook/authorBookModule';
+import { BookModule } from './app/domain/book/bookModule';
+import { BookCategoryModule } from './app/domain/bookCategory/bookCategoryModule';
+import { CategoryModule } from './app/domain/category/categoryModule';
 import { CustomerModule } from './app/domain/customer/customerModule';
+import { UserModule } from './app/domain/user/userModule';
+import { IntegrationsModule } from './app/integrations/integrationsModule';
+import { createDependencyInjectionContainer } from './app/libs/dependencyInjection/container';
+import { LoggerModule } from './app/libs/logger/loggerModule';
+import { PostgresModule } from './app/libs/postgres/postgresModule';
+import { ConfigLoader } from './configLoader';
+import { Server } from './server';
 
-async function main() {
+async function main(): Promise<void> {
   ConfigLoader.loadConfig();
 
   const container = await createDependencyInjectionContainer([

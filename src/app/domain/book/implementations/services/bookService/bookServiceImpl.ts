@@ -7,7 +7,7 @@ import { BookRepositoryFactory } from '../../../contracts/factories/bookReposito
 import { BookService } from '../../../contracts/services/bookService/bookService';
 import { CreateBookData } from '../../../contracts/services/bookService/createBookData';
 import { UpdateBookData } from '../../../contracts/services/bookService/updateBookData';
-import { BookNotFound } from '../../../errors/bookNotFound';
+import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 
 export class BookServiceImpl implements BookService {
   public constructor(
@@ -37,7 +37,7 @@ export class BookServiceImpl implements BookService {
     const book = await bookRepository.findOneById(bookId);
 
     if (!book) {
-      throw new BookNotFound({ id: bookId });
+      throw new BookNotFoundError({ id: bookId });
     }
 
     return book;

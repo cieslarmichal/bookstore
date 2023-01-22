@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { AuthorService } from '../../../../../domain/author/contracts/services/authorService/authorService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
@@ -16,7 +17,7 @@ const authorsEndpoint = '/authors';
 const authorEndpoint = `${authorsEndpoint}/:id`;
 
 export class AuthorControllerImpl implements AuthorController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -32,7 +33,7 @@ export class AuthorControllerImpl implements AuthorController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAuthorResponse = await this.createAuthor(request, response);
-        response.locals.controllerResponse = createAuthorResponse;
+        response.locals['controllerResponse'] = createAuthorResponse;
         next();
       }),
     );
@@ -41,7 +42,7 @@ export class AuthorControllerImpl implements AuthorController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorResponse = await this.findAuthor(request, response);
-        response.locals.controllerResponse = findAuthorResponse;
+        response.locals['controllerResponse'] = findAuthorResponse;
         next();
       }),
     );
@@ -50,7 +51,7 @@ export class AuthorControllerImpl implements AuthorController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorsResponse = await this.findAuthors(request, response);
-        response.locals.controllerResponse = findAuthorsResponse;
+        response.locals['controllerResponse'] = findAuthorsResponse;
         next();
       }),
     );
@@ -59,7 +60,7 @@ export class AuthorControllerImpl implements AuthorController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const updateAuthorResponse = await this.updateAuthor(request, response);
-        response.locals.controllerResponse = updateAuthorResponse;
+        response.locals['controllerResponse'] = updateAuthorResponse;
         next();
       }),
     );
@@ -68,7 +69,7 @@ export class AuthorControllerImpl implements AuthorController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAuthorResponse = await this.deleteAuthor(request, response);
-        response.locals.controllerResponse = deleteAuthorResponse;
+        response.locals['controllerResponse'] = deleteAuthorResponse;
         next();
       }),
     );
@@ -94,7 +95,7 @@ export class AuthorControllerImpl implements AuthorController {
     const { id } = request.params;
 
     const author = await unitOfWork.runInTransaction(async () => {
-      return this.authorService.findAuthor(unitOfWork, id);
+      return this.authorService.findAuthor(unitOfWork, id as string);
     });
 
     return { data: { author }, statusCode: StatusCodes.OK };
@@ -103,7 +104,7 @@ export class AuthorControllerImpl implements AuthorController {
   public async findAuthors(request: Request, response: Response): Promise<ControllerResponse> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findAuthorsFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findAuthorsFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
@@ -122,7 +123,7 @@ export class AuthorControllerImpl implements AuthorController {
     const { about } = request.body;
 
     const author = await unitOfWork.runInTransaction(async () => {
-      return this.authorService.updateAuthor(unitOfWork, id, { about });
+      return this.authorService.updateAuthor(unitOfWork, id as string, { about });
     });
 
     return { data: { author }, statusCode: StatusCodes.OK };
@@ -134,7 +135,7 @@ export class AuthorControllerImpl implements AuthorController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.authorService.removeAuthor(unitOfWork, id);
+      await this.authorService.removeAuthor(unitOfWork, id as string);
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

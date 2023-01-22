@@ -1,6 +1,7 @@
+import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
+import { Filter } from '../../../common/filter/filter';
 import { FilterFactory } from '../../../common/filter/filterFactory';
 import { FilterName } from '../../../common/filter/filterName';
-import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 
 export class FilterDataParser {
   private readonly tokensSeparator = '||';
@@ -10,7 +11,7 @@ export class FilterDataParser {
   private readonly valuesIndex = 2;
   private readonly numberOfTokensInFilterElement = 3;
 
-  public parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Array<any> {
+  public parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Filter[] {
     if (!filterDataAsJson) {
       return [];
     }
@@ -24,20 +25,28 @@ export class FilterDataParser {
     try {
       filterData = JSON.parse(filterDataAsJson);
     } catch (error) {
-      throw new InvalidFilterSyntaxError('filter data is not valid json object');
+      throw new InvalidFilterSyntaxError({ errorDetails: 'filter data is not valid json object' });
     }
 
-    const filters = new Array<any>();
+    const filters: Filter[] = [];
 
     for (const fieldData of filterData) {
       const tokens = fieldData.split(this.tokensSeparator);
 
       if (tokens.length != this.numberOfTokensInFilterElement) {
-        throw new InvalidFilterSyntaxError('number of tokens in filter element is not equal 3');
+        throw new InvalidFilterSyntaxError({ errorDetails: 'number of tokens in filter element is not equal 3' });
       }
 
       const fieldName = tokens[this.fieldNameIndex];
       const filterName = tokens[this.operationNameIndex];
+
+      if (!fieldName) {
+        throw new InvalidFilterSyntaxError({ errorDetails: 'field name not defined' });
+      }
+
+      if (!filterName) {
+        throw new InvalidFilterSyntaxError({ errorDetails: 'field name not defined' });
+      }
 
       const supportedFieldFilters = supportedFieldsFilters.get(fieldName);
 
@@ -47,9 +56,15 @@ export class FilterDataParser {
 
       switch (filterName) {
         case FilterName.equal: {
-          const values = tokens[this.valuesIndex].split(this.valuesSeparator);
+          const tokenValues = tokens[this.valuesIndex];
 
-          filters.push(FilterFactory.create(FilterName.equal, fieldName, values));
+          if (!tokenValues) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
+          }
+
+          const splitValues = tokenValues.split(this.valuesSeparator);
+
+          filters.push(FilterFactory.create(FilterName.equal, fieldName, splitValues));
 
           break;
         }
@@ -57,10 +72,16 @@ export class FilterDataParser {
         case FilterName.lessThanOrEqual:
         case FilterName.greaterThan:
         case FilterName.greaterThanOrEqual: {
-          const value = parseInt(tokens[this.valuesIndex]);
+          const tokenValues = tokens[this.valuesIndex];
+
+          if (!tokenValues) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
+          }
+
+          const value = parseInt(tokenValues);
 
           if (!value) {
-            throw new InvalidFilterSyntaxError('value is not a number');
+            throw new InvalidFilterSyntaxError({ errorDetails: 'value is not a number' });
           }
 
           filters.push(FilterFactory.create(filterName, fieldName, value));
@@ -68,20 +89,27 @@ export class FilterDataParser {
           break;
         }
         case FilterName.between: {
-          const values = tokens[this.valuesIndex].split(this.valuesSeparator).map((value) => {
-            const numberValue = parseInt(value);
+          const tokenValues = tokens[this.valuesIndex];
+
+          if (!tokenValues) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
+          }
+
+          const splitValues = tokenValues.split(this.valuesSeparator).map((tokenValue) => {
+            const numberValue = parseInt(tokenValue);
 
             if (!numberValue) {
-              throw new InvalidFilterSyntaxError('one of the values is not a number');
+              throw new InvalidFilterSyntaxError({ errorDetails: 'one of the values is not a number' });
             }
+
             return numberValue;
           });
 
-          if (values.length !== 2) {
-            throw new InvalidFilterSyntaxError('number of values is not 2');
+          if (splitValues.length !== 2) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'number of values is not 2' });
           }
 
-          filters.push(FilterFactory.create(FilterName.between, fieldName, values));
+          filters.push(FilterFactory.create(FilterName.between, fieldName, splitValues));
 
           break;
         }

@@ -1,5 +1,6 @@
 import { IsDate, IsUUID } from 'class-validator';
-import { RecordToInstanceTransformer } from '../../../common/transformer/recordToInstanceTransformer';
+
+import { Validator } from '../../../common/validator/validator';
 
 export class Customer {
   @IsUUID('4')
@@ -14,5 +15,12 @@ export class Customer {
   @IsUUID('4')
   public readonly userId: string;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(Customer);
+  public constructor({ id, createdAt, updatedAt, userId }: Customer) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.userId = userId;
+
+    Validator.validate(this);
+  }
 }

@@ -11,10 +11,10 @@ type UserNotFoundEmailContext = {
 type UserNotFoundPhoneNumberContext = {
   readonly phoneNumber: string;
 };
-export class UserNotFound extends ApplicationError<
+export class UserNotFoundError extends ApplicationError<
   UserNotFoundIdContext | UserNotFoundEmailContext | UserNotFoundPhoneNumberContext
 > {
   public constructor(context: UserNotFoundIdContext | UserNotFoundEmailContext | UserNotFoundPhoneNumberContext) {
-    super('User not found.', context);
+    super('UserNotFoundError', 'User not found.', context);
   }
 }

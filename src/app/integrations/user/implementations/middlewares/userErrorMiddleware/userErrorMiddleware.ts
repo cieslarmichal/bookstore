@@ -1,23 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { EmailAlreadySet } from '../../../../../domain/user/errors/emailAlreadySet';
-import { PhoneNumberAlreadySet } from '../../../../../domain/user/errors/phoneNumberAlreadySet';
-import { UserAlreadyExists } from '../../../../../domain/user/errors/userAlreadyExists';
-import { UserNotFound } from '../../../../../domain/user/errors/userNotFound';
-import { UserFromTokenAuthPayloadNotMatchingTargetUser } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUser';
 
-export function userErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
+import { EmailAlreadySetError } from '../../../../../domain/user/errors/emailAlreadySetError';
+import { PhoneNumberAlreadySetError } from '../../../../../domain/user/errors/phoneNumberAlreadySetError';
+import { UserAlreadyExistsError } from '../../../../../domain/user/errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../../../../domain/user/errors/userNotFoundError';
+import { UserFromAccessTokenNotMatchingTargetUserError } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
+
+export function userErrorMiddleware(error: Error, request: Request, response: Response, next: NextFunction): void {
   if (
-    error instanceof UserAlreadyExists ||
-    error instanceof EmailAlreadySet ||
-    error instanceof PhoneNumberAlreadySet
+    error instanceof UserAlreadyExistsError ||
+    error instanceof EmailAlreadySetError ||
+    error instanceof PhoneNumberAlreadySetError
   ) {
     response.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ error: error.message });
     return;
-  } else if (error instanceof UserNotFound) {
+  } else if (error instanceof UserNotFoundError) {
     response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
     return;
-  } else if (error instanceof UserFromTokenAuthPayloadNotMatchingTargetUser) {
+  } else if (error instanceof UserFromAccessTokenNotMatchingTargetUserError) {
     response.status(StatusCodes.FORBIDDEN).send({ error: error.message });
   }
 

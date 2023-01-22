@@ -6,7 +6,7 @@ import { Address } from '../../../contracts/address';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';
 import { CreateAddressData } from '../../../contracts/services/addressService/createAddressData';
-import { AddressNotFound } from '../../../errors/addressNotFound';
+import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
 export class AddressServiceImpl implements AddressService {
   public constructor(
@@ -33,7 +33,7 @@ export class AddressServiceImpl implements AddressService {
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
-    const address = await addressRepository.createOne(addressData);
+    const address = await addressRepository.createOne({});
 
     this.loggerService.info('Address created.', { addressId: address.id });
 
@@ -48,7 +48,7 @@ export class AddressServiceImpl implements AddressService {
     const address = await addressRepository.findOneById(addressId);
 
     if (!address) {
-      throw new AddressNotFound({ id: addressId });
+      throw new AddressNotFoundError({ id: addressId });
     }
 
     return address;

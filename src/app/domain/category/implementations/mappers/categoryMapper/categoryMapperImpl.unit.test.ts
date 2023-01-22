@@ -1,5 +1,5 @@
-import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CategoryMapperImpl } from './categoryMapperImpl';
+import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 
 describe('CategoryMapperImpl', () => {
   let categoryMapperImpl: CategoryMapperImpl;

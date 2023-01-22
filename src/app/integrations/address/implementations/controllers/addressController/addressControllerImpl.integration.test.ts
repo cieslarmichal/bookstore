@@ -1,31 +1,33 @@
-import { ConfigLoader } from '../../../../../../configLoader';
-import { AddressEntityTestFactory } from '../../../../../domain/address/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
-import request from 'supertest';
-import { App } from '../../../../../../app';
-import { AddressModule } from '../../../../../domain/address/addressModule';
-import { IntegrationsModule } from '../../../../integrationsModule';
-import { BookModule } from '../../../../../domain/book/bookModule';
-import { Server } from '../../../../../../server';
-import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { StatusCodes } from 'http-status-codes';
-import { UserModule } from '../../../../../domain/user/userModule';
+import request from 'supertest';
+
+import { App } from '../../../../../../app';
+import { ConfigLoader } from '../../../../../../configLoader';
+import { Server } from '../../../../../../server';
+import { AddressModule } from '../../../../../domain/address/addressModule';
+import { addressSymbols } from '../../../../../domain/address/addressSymbols';
+import { AddressRepositoryFactory } from '../../../../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
+import { AddressEntityTestFactory } from '../../../../../domain/address/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
+import { BookModule } from '../../../../../domain/book/bookModule';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
-import { CustomerModule } from '../../../../../domain/customer/customerModule';
-import { AddressRepositoryFactory } from '../../../../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { CustomerRepositoryFactory } from '../../../../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
+import { CustomerModule } from '../../../../../domain/customer/customerModule';
+import { customerSymbols } from '../../../../../domain/customer/customerSymbols';
 import { UserRepositoryFactory } from '../../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModule } from '../../../../../domain/user/userModule';
+import { userSymbols } from '../../../../../domain/user/userSymbols';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper, TestTransactionExternalRunner } from '../../../../../tests/helpers';
 import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { addressSymbols } from '../../../../../domain/address/addressSymbols';
-import { userSymbols } from '../../../../../domain/user/userSymbols';
-import { customerSymbols } from '../../../../../domain/customer/customerSymbols';
+import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AuthHelper } from '../../../../../tests/auth/authHelper';
+import { TestTransactionExternalRunner } from '../../../../../tests/unitOfWork/testTransactionExternalRunner';
+import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/addresses';
 
@@ -113,7 +115,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const { email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
@@ -150,7 +152,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
@@ -208,7 +210,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const { email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role });
 
@@ -238,7 +240,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const { email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
@@ -279,7 +281,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
@@ -320,7 +322,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const { email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role });
 
@@ -377,11 +379,11 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const user1 = await userRepository.createOne({ email, password, role });
+        const user1 = await userRepository.createOne({ email: email as string, password, role });
 
         const { email: otherEmail } = userEntityTestFactory.create();
 
-        const user2 = await userRepository.createOne({ email: otherEmail, password, role });
+        const user2 = await userRepository.createOne({ email: otherEmail as string, password, role });
 
         const customer1 = await customerRepository.createOne({ userId: user1.id });
 
@@ -477,7 +479,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const { email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ userId: user.id });
 
@@ -518,7 +520,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const user = await userRepository.createOne({ email, password, role });
+        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ userId: user.id });
 

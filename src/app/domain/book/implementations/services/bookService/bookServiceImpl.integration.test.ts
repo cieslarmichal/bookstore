@@ -2,34 +2,34 @@ import { ConfigLoader } from '../../../../../../configLoader';
 import { BetweenFilter } from '../../../../../common/filter/betweenFilter';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { LessThanOrEqualFilter } from '../../../../../common/filter/lessThanOrEqualFilter';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorModule } from '../../../../author/authorModule';
+import { authorSymbols } from '../../../../author/authorSymbols';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
+import { AuthorEntityTestFactory } from '../../../../author/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
+import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
 import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { BookCategoryModule } from '../../../../bookCategory/bookCategoryModule';
+import { bookCategorySymbols } from '../../../../bookCategory/bookCategorySymbols';
+import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { CategoryModule } from '../../../../category/categoryModule';
+import { categorySymbols } from '../../../../category/categorySymbols';
+import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
+import { CategoryEntityTestFactory } from '../../../../category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { BookModule } from '../../../bookModule';
+import { bookSymbols } from '../../../bookSymbols';
 import { BookFormat } from '../../../contracts/bookFormat';
 import { BookLanguage } from '../../../contracts/bookLanguage';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookService } from '../../../contracts/services/bookService/bookService';
-import { BookNotFound } from '../../../errors/bookNotFound';
-import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
-import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryEntityTestFactory } from '../../../../category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 import { BookEntityTestFactory } from '../../../tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { AuthorEntityTestFactory } from '../../../../author/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
-import { bookSymbols } from '../../../bookSymbols';
-import { authorSymbols } from '../../../../author/authorSymbols';
-import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
-import { bookCategorySymbols } from '../../../../bookCategory/bookCategorySymbols';
-import { categorySymbols } from '../../../../category/categorySymbols';
 
 describe('BookService', () => {
   let bookService: BookService;
@@ -133,7 +133,7 @@ describe('BookService', () => {
         try {
           await bookService.findBook(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(BookNotFound);
+          expect(error).toBeInstanceOf(BookNotFoundError);
         }
       });
     });
@@ -460,7 +460,7 @@ describe('BookService', () => {
 
         expect(foundBooks).not.toBeNull();
         expect(foundBooks.length).toBe(1);
-        expect(foundBooks[0].title).toBe(firstBook.title);
+        expect(foundBooks[0]?.title).toBe(firstBook.title);
       });
     });
   });
@@ -563,7 +563,7 @@ describe('BookService', () => {
         try {
           await bookService.updateBook(unitOfWork, id, { price });
         } catch (error) {
-          expect(error).toBeInstanceOf(BookNotFound);
+          expect(error).toBeInstanceOf(BookNotFoundError);
         }
       });
     });
@@ -604,7 +604,7 @@ describe('BookService', () => {
         try {
           await bookService.removeBook(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(BookNotFound);
+          expect(error).toBeInstanceOf(BookNotFoundError);
         }
       });
     });

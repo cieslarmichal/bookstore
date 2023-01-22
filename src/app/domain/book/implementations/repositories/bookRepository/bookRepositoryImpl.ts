@@ -1,12 +1,13 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+
+import { BookQueryBuilder } from './bookQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
-import { BookEntity } from '../../../contracts/bookEntity';
 import { Book } from '../../../contracts/book';
+import { BookEntity } from '../../../contracts/bookEntity';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';
 import { BookRepository } from '../../../contracts/repositories/bookRepository/bookRepository';
-import { BookNotFound } from '../../../errors/bookNotFound';
-import { BookQueryBuilder } from './bookQueryBuilder';
+import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 
 @EntityRepository()
 export class BookRepositoryImpl implements BookRepository {
@@ -90,7 +91,7 @@ export class BookRepositoryImpl implements BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new BookNotFound({ id });
+      throw new BookNotFoundError({ id });
     }
 
     await this.entityManager.update(BookEntity, { id }, bookData);
@@ -102,7 +103,7 @@ export class BookRepositoryImpl implements BookRepository {
     const book = await this.findOneById(id);
 
     if (!book) {
-      throw new BookNotFound({ id });
+      throw new BookNotFoundError({ id });
     }
 
     await this.entityManager.delete(BookEntity, { id });

@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
@@ -13,7 +14,7 @@ const customersEndpoint = '/customers';
 const customerEndpoint = `${customersEndpoint}/:id`;
 
 export class CustomerControllerImpl implements CustomerController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -27,7 +28,7 @@ export class CustomerControllerImpl implements CustomerController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createCustomerResponse = await this.createCustomer(request, response);
-        response.locals.controllerResponse = createCustomerResponse;
+        response.locals['controllerResponse'] = createCustomerResponse;
         next();
       }),
     );
@@ -36,7 +37,7 @@ export class CustomerControllerImpl implements CustomerController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findCustomerResponse = await this.findCustomer(request, response);
-        response.locals.controllerResponse = findCustomerResponse;
+        response.locals['controllerResponse'] = findCustomerResponse;
         next();
       }),
     );
@@ -45,7 +46,7 @@ export class CustomerControllerImpl implements CustomerController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteCustomerResponse = await this.deleteCustomer(request, response);
-        response.locals.controllerResponse = deleteCustomerResponse;
+        response.locals['controllerResponse'] = deleteCustomerResponse;
         next();
       }),
     );
@@ -71,7 +72,7 @@ export class CustomerControllerImpl implements CustomerController {
     const { id } = request.params;
 
     const customer = await unitOfWork.runInTransaction(async () => {
-      return this.customerService.findCustomer(unitOfWork, { id });
+      return this.customerService.findCustomer(unitOfWork, { id: id as string });
     });
 
     return { data: { customer }, statusCode: StatusCodes.OK };
@@ -83,7 +84,7 @@ export class CustomerControllerImpl implements CustomerController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.customerService.removeCustomer(unitOfWork, id);
+      await this.customerService.removeCustomer(unitOfWork, id as string);
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

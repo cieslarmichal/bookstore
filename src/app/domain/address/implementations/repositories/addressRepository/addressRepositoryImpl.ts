@@ -1,12 +1,13 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+
+import { AddressQueryBuilder } from './addressQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
 import { Address } from '../../../contracts/address';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
 import { AddressRepository } from '../../../contracts/repositories/addressRepository/addressRepository';
-import { AddressNotFound } from '../../../errors/addressNotFound';
-import { AddressQueryBuilder } from './addressQueryBuilder';
+import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
 @EntityRepository()
 export class AddressRepositoryImpl implements AddressRepository {
@@ -52,7 +53,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     const address = await this.findOneById(id);
 
     if (!address) {
-      throw new AddressNotFound({ id });
+      throw new AddressNotFoundError({ id });
     }
 
     await this.entityManager.update(AddressEntity, { id }, addressData);
@@ -64,7 +65,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     const address = await this.findOneById(id);
 
     if (!address) {
-      throw new AddressNotFound({ id });
+      throw new AddressNotFoundError({ id });
     }
 
     await this.entityManager.delete(AddressEntity, { id });

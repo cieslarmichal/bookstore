@@ -1,9 +1,10 @@
 import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
-import { CustomerEntity } from '../../../contracts/customerEntity';
+
 import { Customer } from '../../../contracts/customer';
+import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerMapper } from '../../../contracts/mappers/customerMapper/customerMapper';
 import { CustomerRepository } from '../../../contracts/repositories/customerRepository/customerRepository';
-import { CustomerNotFound } from '../../../errors/customerNotFound';
+import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
 @EntityRepository()
 export class CustomerRepositoryImpl implements CustomerRepository {
@@ -41,7 +42,7 @@ export class CustomerRepositoryImpl implements CustomerRepository {
     const customer = await this.findOneById(id);
 
     if (!customer) {
-      throw new CustomerNotFound({ id });
+      throw new CustomerNotFoundError({ id });
     }
 
     await this.entityManager.update(CustomerEntity, { id }, customerData);
@@ -53,7 +54,7 @@ export class CustomerRepositoryImpl implements CustomerRepository {
     const customer = await this.findOneById(id);
 
     if (!customer) {
-      throw new CustomerNotFound({ id });
+      throw new CustomerNotFoundError({ id });
     }
 
     await this.entityManager.delete(CustomerEntity, { id });

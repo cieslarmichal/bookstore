@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export class DummyFactory {
   public create<T extends object>(): T {
     const proxy = new Proxy({} as any, {

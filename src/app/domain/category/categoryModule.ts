@@ -1,9 +1,10 @@
 import { AwilixContainer, asClass, Lifetime } from 'awilix';
-import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
+
 import { categorySymbols } from './categorySymbols';
 import { CategoryRepositoryFactoryImpl } from './implementations/factories/categoryRepositoryFactory/categoryRepositoryFactoryImpl';
 import { CategoryMapperImpl } from './implementations/mappers/categoryMapper/categoryMapperImpl';
 import { CategoryServiceImpl } from './implementations/services/categoryService/categoryServiceImpl';
+import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
 
 export class CategoryModule extends LoadableModule {
   public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {

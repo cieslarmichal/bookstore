@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SpyInstance, vi } from 'vitest';
 
 type Procedure = (...args: any[]) => any;

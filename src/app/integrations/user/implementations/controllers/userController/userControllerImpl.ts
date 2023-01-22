@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { UserService } from '../../../../../domain/user/contracts/services/userService/userService';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
@@ -8,7 +9,7 @@ import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { UserController } from '../../../contracts/controllers/userController/userController';
-import { UserFromTokenAuthPayloadNotMatchingTargetUser } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUser';
+import { UserFromAccessTokenNotMatchingTargetUserError } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 import { userErrorMiddleware } from '../../middlewares/userErrorMiddleware/userErrorMiddleware';
 
 const usersEndpoint = '/users';
@@ -20,7 +21,7 @@ const setUserPhoneNumberEndpoint = `${usersEndpoint}/set-phone-number`;
 const setUserEmailEndpoint = `${usersEndpoint}/set-email`;
 
 export class UserControllerImpl implements UserController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -33,7 +34,7 @@ export class UserControllerImpl implements UserController {
       registerUserEndpoint,
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const registerUserResponse = await this.registerUser(request, response);
-        response.locals.controllerResponse = registerUserResponse;
+        response.locals['controllerResponse'] = registerUserResponse;
         next();
       }),
     );
@@ -41,7 +42,7 @@ export class UserControllerImpl implements UserController {
       loginUserEndpoint,
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const loginUserResponse = await this.loginUser(request, response);
-        response.locals.controllerResponse = loginUserResponse;
+        response.locals['controllerResponse'] = loginUserResponse;
         next();
       }),
     );
@@ -50,7 +51,7 @@ export class UserControllerImpl implements UserController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const setUserPasswordResponse = await this.setUserPassword(request, response);
-        response.locals.controllerResponse = setUserPasswordResponse;
+        response.locals['controllerResponse'] = setUserPasswordResponse;
         next();
       }),
     );
@@ -59,7 +60,7 @@ export class UserControllerImpl implements UserController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const setUserPhoneNumberResponse = await this.setUserPhoneNumber(request, response);
-        response.locals.controllerResponse = setUserPhoneNumberResponse;
+        response.locals['controllerResponse'] = setUserPhoneNumberResponse;
         next();
       }),
     );
@@ -68,7 +69,7 @@ export class UserControllerImpl implements UserController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const setUserEmailResponse = await this.setUserEmail(request, response);
-        response.locals.controllerResponse = setUserEmailResponse;
+        response.locals['controllerResponse'] = setUserEmailResponse;
         next();
       }),
     );
@@ -77,7 +78,7 @@ export class UserControllerImpl implements UserController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findUserResponse = await this.findUser(request, response);
-        response.locals.controllerResponse = findUserResponse;
+        response.locals['controllerResponse'] = findUserResponse;
         next();
       }),
     );
@@ -86,7 +87,7 @@ export class UserControllerImpl implements UserController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteUserResponse = await this.deleteUser(request, response);
-        response.locals.controllerResponse = deleteUserResponse;
+        response.locals['controllerResponse'] = deleteUserResponse;
         next();
       }),
     );
@@ -142,10 +143,10 @@ export class UserControllerImpl implements UserController {
 
     const { userId: targetUserId, password } = request.body;
 
-    const { userId, role } = response.locals.authPayload;
+    const { userId, role } = response.locals['authPayload'];
 
     if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
     }
 
     await unitOfWork.runInTransaction(async () => {
@@ -160,10 +161,10 @@ export class UserControllerImpl implements UserController {
 
     const { userId: targetUserId, phoneNumber } = request.body;
 
-    const { userId, role } = response.locals.authPayload;
+    const { userId, role } = response.locals['authPayload'];
 
     if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
     }
 
     await unitOfWork.runInTransaction(async () => {
@@ -178,10 +179,10 @@ export class UserControllerImpl implements UserController {
 
     const { userId: targetUserId, email } = request.body;
 
-    const { userId, role } = response.locals.authPayload;
+    const { userId, role } = response.locals['authPayload'];
 
     if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
     }
 
     await unitOfWork.runInTransaction(async () => {
@@ -196,14 +197,14 @@ export class UserControllerImpl implements UserController {
 
     const { id: targetUserId } = request.params;
 
-    const { userId, role } = response.locals.authPayload;
+    const { userId, role } = response.locals['authPayload'];
 
     if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId: targetUserId as string });
     }
 
     const user = await unitOfWork.runInTransaction(async () => {
-      return this.userService.findUser(unitOfWork, targetUserId);
+      return this.userService.findUser(unitOfWork, targetUserId as string);
     });
 
     return {
@@ -225,14 +226,14 @@ export class UserControllerImpl implements UserController {
 
     const { id: targetUserId } = request.params;
 
-    const { userId, role } = response.locals.authPayload;
+    const { userId, role } = response.locals['authPayload'];
 
     if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromTokenAuthPayloadNotMatchingTargetUser({ userId, targetUserId });
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId: targetUserId as string });
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.removeUser(unitOfWork, targetUserId);
+      await this.userService.removeUser(unitOfWork, targetUserId as string);
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

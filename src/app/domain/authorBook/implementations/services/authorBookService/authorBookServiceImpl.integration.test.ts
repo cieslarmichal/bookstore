@@ -1,26 +1,26 @@
 import { ConfigLoader } from '../../../../../../configLoader';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorModule } from '../../../../author/authorModule';
+import { authorSymbols } from '../../../../author/authorSymbols';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
+import { AuthorEntityTestFactory } from '../../../../author/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { BookModule } from '../../../../book/bookModule';
+import { bookSymbols } from '../../../../book/bookSymbols';
+import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { AuthorBookModule } from '../../../authorBookModule';
+import { authorBookSymbols } from '../../../authorBookSymbols';
 import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { AuthorBookService } from '../../../contracts/services/authorBookService/authorBookService';
-import { AuthorBookAlreadyExists } from '../../../errors/authorBookAlreadyExists';
-import { AuthorBookNotFound } from '../../../errors/authorBookNotFound';
-import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { AuthorBookAlreadyExistsError } from '../../../errors/authorBookAlreadyExistsError';
+import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 import { AuthorBookEntityTestFactory } from '../../../tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
-import { AuthorEntityTestFactory } from '../../../../author/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
-import { authorBookSymbols } from '../../../authorBookSymbols';
-import { authorSymbols } from '../../../../author/authorSymbols';
-import { bookSymbols } from '../../../../book/bookSymbols';
-import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 
 describe('AuthorBookServiceImpl', () => {
   let authorBookService: AuthorBookService;
@@ -135,7 +135,7 @@ describe('AuthorBookServiceImpl', () => {
             bookId: book.id,
           });
         } catch (error) {
-          expect(error).toBeInstanceOf(AuthorBookAlreadyExists);
+          expect(error).toBeInstanceOf(AuthorBookAlreadyExistsError);
         }
       });
     });
@@ -190,7 +190,7 @@ describe('AuthorBookServiceImpl', () => {
         try {
           await authorBookService.removeAuthorBook(unitOfWork, { authorId, bookId });
         } catch (error) {
-          expect(error).toBeInstanceOf(AuthorBookNotFound);
+          expect(error).toBeInstanceOf(AuthorBookNotFoundError);
         }
       });
     });

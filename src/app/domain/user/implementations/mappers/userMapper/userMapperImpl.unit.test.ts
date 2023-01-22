@@ -1,5 +1,5 @@
-import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserMapperImpl } from './userMapperImpl';
+import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 
 describe('UserMapperImpl', () => {
   let userMapperImpl: UserMapperImpl;

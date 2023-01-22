@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+
 import { AuthorBookEntity } from '../../../contracts/authorBookEntity';
 
 export class AuthorBookEntityTestFactory {

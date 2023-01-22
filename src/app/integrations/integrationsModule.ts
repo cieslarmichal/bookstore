@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
-import { LoadableModule } from '../libs/dependencyInjection/loadableModule';
+
 import { AddressControllerImpl } from './address/implementations/controllers/addressController/addressControllerImpl';
 import { AuthorControllerImpl } from './author/implementations/controllers/authorController/authorControllerImpl';
 import { AuthorBookControllerImpl } from './authorBook/implementations/controllers/authorBookController/authorBookControllerImpl';
@@ -9,9 +9,10 @@ import { CategoryControllerImpl } from './category/implementations/controllers/c
 import { FilterDataParser } from './common/filter/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
 import { PaginationDataParser } from './common/pagination/paginationDataParser';
-import { CustomerControllerImpl } from './customer/implementations/controllers/customerControllerImpl';
+import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
+import { LoadableModule } from '../libs/dependencyInjection/loadableModule';
 
 export class IntegrationsModule extends LoadableModule {
   public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {

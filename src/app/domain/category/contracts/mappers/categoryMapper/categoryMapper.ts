@@ -1,5 +1,5 @@
 import { Mapper } from '../../../../../common/mapper/mapper';
-import { CategoryEntity } from '../../categoryEntity';
 import { Category } from '../../category';
+import { CategoryEntity } from '../../categoryEntity';
 
 export type CategoryMapper = Mapper<CategoryEntity, Category>;

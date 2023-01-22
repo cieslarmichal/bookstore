@@ -1,4 +1,5 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from '../../../../../common/validator/decorators';
+import { Validator } from '../../../../../common/validator/validator';
 
 export class CreateAuthorData {
   @IsString()
@@ -7,7 +8,18 @@ export class CreateAuthorData {
   @IsString()
   public lastName: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   public about?: string;
+
+  public constructor({ firstName, lastName, about }: CreateAuthorData) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+
+    if (about) {
+      this.about = about;
+    }
+
+    Validator.validate(this);
+  }
 }

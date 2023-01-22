@@ -1,24 +1,24 @@
 import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
-import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
+import { postgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionInternalRunner } from '../../../../../tests/helpers';
+import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
+import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
+import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { BookModule } from '../../../../book/bookModule';
+import { bookSymbols } from '../../../../book/bookSymbols';
+import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { AuthorModule } from '../../../authorModule';
+import { authorSymbols } from '../../../authorSymbols';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
 import { AuthorService } from '../../../contracts/services/authorService/authorService';
-import { AuthorNotFound } from '../../../errors/authorNotFound';
+import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
-import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
-import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { authorSymbols } from '../../../authorSymbols';
-import { bookSymbols } from '../../../../book/bookSymbols';
-import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
-import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 
 describe('AuthorServiceImpl', () => {
   let authorService: AuthorService;
@@ -102,7 +102,7 @@ describe('AuthorServiceImpl', () => {
         try {
           await authorService.findAuthor(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(AuthorNotFound);
+          expect(error).toBeInstanceOf(AuthorNotFoundError);
         }
       });
     });
@@ -197,7 +197,7 @@ describe('AuthorServiceImpl', () => {
 
   describe('Find authors by book id', () => {
     it('finds authors by book id with filtering in database', async () => {
-      expect.assertions(4);
+      expect.assertions(3);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { entityManager } = unitOfWork;
@@ -246,10 +246,9 @@ describe('AuthorServiceImpl', () => {
           { page: 1, limit: 5 },
         );
 
-        expect(foundAuthors).not.toBeNull();
         expect(foundAuthors.length).toBe(1);
-        expect(foundAuthors[0].firstName).toBe(firstAuthor.firstName);
-        expect(foundAuthors[0].lastName).toBe(firstAuthor.lastName);
+        expect(foundAuthors[0]?.firstName).toBe(firstAuthor.firstName);
+        expect(foundAuthors[0]?.lastName).toBe(firstAuthor.lastName);
       });
     });
   });
@@ -282,7 +281,7 @@ describe('AuthorServiceImpl', () => {
         try {
           await authorService.updateAuthor(unitOfWork, id, { about });
         } catch (error) {
-          expect(error).toBeInstanceOf(AuthorNotFound);
+          expect(error).toBeInstanceOf(AuthorNotFoundError);
         }
       });
     });
@@ -317,7 +316,7 @@ describe('AuthorServiceImpl', () => {
         try {
           await authorService.removeAuthor(unitOfWork, id);
         } catch (error) {
-          expect(error).toBeInstanceOf(AuthorNotFound);
+          expect(error).toBeInstanceOf(AuthorNotFoundError);
         }
       });
     });

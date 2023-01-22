@@ -1,45 +1,54 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { IsOptional, IsDate, IsString, IsEnum, IsUUID, ValidateIf } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToOne } from 'typeorm';
-import { CustomerEntity } from '../../customer/contracts/customerEntity';
-import { UserRole } from './userRole';
 
-export const USER_TABLE_NAME = 'users';
+import { UserRole } from './userRole';
+import { CustomerEntity } from '../../customer/contracts/customerEntity';
+
+export const usersTableName = 'users';
 
 @Entity({
-  name: USER_TABLE_NAME,
+  name: usersTableName,
 })
 export class UserEntity {
   @IsOptional()
   @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')
+  //@ts-ignore
   public id: string;
 
   @IsOptional()
   @IsDate()
   @CreateDateColumn({ type: 'timestamp' })
+  //@ts-ignore
   public createdAt: Date;
 
   @IsOptional()
   @IsDate()
   @UpdateDateColumn({ type: 'timestamp' })
+  //@ts-ignore
   public updatedAt: Date;
 
   @ValidateIf((object) => !object.phoneNumber || object.email)
   @IsString()
   @Column({ type: 'text', unique: true, nullable: true })
-  public email: string;
+  //@ts-ignore
+  public email?: string;
 
   @ValidateIf((object) => !object.email || object.phoneNumber)
   @IsString()
   @Column({ type: 'text', unique: true, nullable: true })
-  public phoneNumber: string;
+  //@ts-ignore
+  public phoneNumber?: string;
 
   @IsString()
   @Column()
+  //@ts-ignore
   public password: string;
 
   @IsEnum(UserRole)
   @Column({ default: UserRole.user })
+  //@ts-ignore
   public role: UserRole;
 
   @IsOptional()

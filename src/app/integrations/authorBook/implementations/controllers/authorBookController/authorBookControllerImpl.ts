@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { StatusCodes } from 'http-status-codes';
+
 import { AuthorBookService } from '../../../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { findAuthorsFilters } from '../../../../author/contracts/controllers/authorController/findAuthorsFilters';
@@ -18,7 +19,7 @@ const authorBookEndpoint = `${authorBooksEndpoint}/:bookId`;
 const bookAuthorsEndpoint = '/books/:bookId/authors';
 
 export class AuthorBookControllerImpl implements AuthorBookController {
-  public readonly router = express.Router();
+  public readonly router = Router();
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -34,7 +35,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const createAuthorBookResponse = await this.createAuthorBook(request, response);
-        response.locals.controllerResponse = createAuthorBookResponse;
+        response.locals['controllerResponse'] = createAuthorBookResponse;
         next();
       }),
     );
@@ -43,7 +44,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const deleteAuthorBookResponse = await this.deleteAuthorBook(request, response);
-        response.locals.controllerResponse = deleteAuthorBookResponse;
+        response.locals['controllerResponse'] = deleteAuthorBookResponse;
         next();
       }),
     );
@@ -52,7 +53,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findAuthorBooksResponse = await this.findAuthorBooks(request, response);
-        response.locals.controllerResponse = findAuthorBooksResponse;
+        response.locals['controllerResponse'] = findAuthorBooksResponse;
         next();
       }),
     );
@@ -61,7 +62,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const findBookAuthorsResponse = await this.findBookAuthors(request, response);
-        response.locals.controllerResponse = findBookAuthorsResponse;
+        response.locals['controllerResponse'] = findBookAuthorsResponse;
         next();
       }),
     );
@@ -75,7 +76,10 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     const { authorId, bookId } = request.params;
 
     const authorBook = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.createAuthorBook(unitOfWork, { authorId, bookId });
+      return this.authorBookService.createAuthorBook(unitOfWork, {
+        authorId: authorId as string,
+        bookId: bookId as string,
+      });
     });
 
     return { data: { authorBook }, statusCode: StatusCodes.CREATED };
@@ -86,12 +90,12 @@ export class AuthorBookControllerImpl implements AuthorBookController {
 
     const { authorId } = request.params;
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findBooksFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findBooksFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.findAuthorBooks(unitOfWork, authorId, filters, paginationData);
+      return this.authorBookService.findAuthorBooks(unitOfWork, authorId as string, filters, paginationData);
     });
 
     return { data: { books }, statusCode: StatusCodes.OK };
@@ -102,12 +106,12 @@ export class AuthorBookControllerImpl implements AuthorBookController {
 
     const { bookId } = request.params;
 
-    const filters = this.filterDataParser.parse(request.query.filter as string, findAuthorsFilters);
+    const filters = this.filterDataParser.parse(request.query['filter'] as string, findAuthorsFilters);
 
     const paginationData = this.paginationDataParser.parse(request.query);
 
     const authors = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.findBookAuthors(unitOfWork, bookId, filters, paginationData);
+      return this.authorBookService.findBookAuthors(unitOfWork, bookId as string, filters, paginationData);
     });
 
     return { data: { authors }, statusCode: StatusCodes.OK };
@@ -119,7 +123,10 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     const { authorId, bookId } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.authorBookService.removeAuthorBook(unitOfWork, { authorId, bookId });
+      await this.authorBookService.removeAuthorBook(unitOfWork, {
+        authorId: authorId as string,
+        bookId: bookId as string,
+      });
     });
 
     return { statusCode: StatusCodes.NO_CONTENT };

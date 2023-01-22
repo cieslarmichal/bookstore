@@ -1,32 +1,31 @@
-import {
-  BetweenFilter,
-  EqualFilter,
-  Filter,
-  GreaterThanFilter,
-  GreaterThanOrEqualFilter,
-  LessThanFilter,
-  LessThanOrEqualFilter,
-  LikeFilter,
-} from '../../common';
 import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
+import { BetweenFilter } from '../../common/filter/betweenFilter';
+import { EqualFilter } from '../../common/filter/equalFilter';
+import { Filter } from '../../common/filter/filter';
+import { GreaterThanFilter } from '../../common/filter/greaterThanFilter';
+import { GreaterThanOrEqualFilter } from '../../common/filter/greaterThanOrEqualFilter';
+import { LessThanFilter } from '../../common/filter/lessThanFilter';
+import { LessThanOrEqualFilter } from '../../common/filter/lessThanOrEqualFilter';
+import { LikeFilter } from '../../common/filter/likeFilter';
 
 export abstract class QueryBuilder<T> {
   protected instance: SelectQueryBuilder<T>;
-  private whereApplied: boolean;
+  private whereApplied = false;
 
   public constructor(
     private readonly entityManager: EntityManager,
-    EntityConstructor: new () => T,
+    entityConstructor: new () => T,
     queryBuilderAlias: string,
   ) {
-    this.instance = this.entityManager.getRepository(EntityConstructor).createQueryBuilder(queryBuilderAlias);
+    this.instance = this.entityManager.getRepository(entityConstructor).createQueryBuilder(queryBuilderAlias);
   }
 
   public async getMany(): Promise<T[]> {
     return this.instance.getMany();
   }
 
-  protected equalConditionForProperty(columnName: string, data: string) {
+  protected equalConditionForProperty(columnName: string, data: string): void {
     if (!this.whereApplied) {
       this.equalConditionForPropertyAsFirstWhereCondition(columnName, data);
       this.whereApplied = true;
@@ -35,21 +34,21 @@ export abstract class QueryBuilder<T> {
     }
   }
 
-  private equalConditionForPropertyAsFirstWhereCondition(columnName: string, data: string) {
+  private equalConditionForPropertyAsFirstWhereCondition(columnName: string, data: string): void {
     const paramName = `${columnName}EqualsParameter`;
     this.instance.where(`${columnName} = :${paramName}`, {
       [`${paramName}`]: data,
     });
   }
 
-  private equalConditionForPropertyAsNextWhereCondition(columnName: string, data: string) {
+  private equalConditionForPropertyAsNextWhereCondition(columnName: string, data: string): void {
     const paramName = `${columnName}EqualsParameter`;
     this.instance.where(`${columnName} = :${paramName}`, {
       [`${paramName}`]: data,
     });
   }
 
-  protected partialConditionsForFilter(columnName: string, filter: Filter) {
+  protected partialConditionsForFilter(columnName: string, filter: Filter): void {
     if (!this.whereApplied) {
       this.partialConditionsForFilterPropertyAsFirstWhereCondition(columnName, filter);
       this.whereApplied = true;
@@ -58,7 +57,7 @@ export abstract class QueryBuilder<T> {
     }
   }
 
-  private partialConditionsForFilterPropertyAsFirstWhereCondition(columnName: string, filter: Filter) {
+  private partialConditionsForFilterPropertyAsFirstWhereCondition(columnName: string, filter: Filter): void {
     if (filter instanceof EqualFilter) {
       const paramName = `${columnName}EqualsParameter`;
 
@@ -106,7 +105,7 @@ export abstract class QueryBuilder<T> {
     }
   }
 
-  private partialConditionsForFilterPropertyAsNextWhereCondition(columnName: string, filter: Filter) {
+  private partialConditionsForFilterPropertyAsNextWhereCondition(columnName: string, filter: Filter): void {
     if (filter instanceof EqualFilter) {
       const paramName = `${columnName}EqualsParameter`;
 
