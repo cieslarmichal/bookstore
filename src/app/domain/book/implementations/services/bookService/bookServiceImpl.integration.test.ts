@@ -1,6 +1,5 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { ConfigLoader } from '../../../../../../configLoader';
 import { BetweenFilter } from '../../../../../common/filter/betweenFilter';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { LessThanOrEqualFilter } from '../../../../../common/filter/lessThanOrEqualFilter';
@@ -57,8 +56,6 @@ describe('BookServiceImpl', () => {
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    ConfigLoader.loadConfig();
-
     const container = await createDependencyInjectionContainer([
       new PostgresModule(postgresModuleConfig),
       new BookModule(),

@@ -1,6 +1,5 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { ConfigLoader } from '../../../../../../configLoader';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
@@ -46,8 +45,6 @@ describe('AuthorBookServiceImpl', () => {
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    ConfigLoader.loadConfig();
-
     const container = await createDependencyInjectionContainer([
       new PostgresModule(postgresModuleConfig),
       new CategoryModule(),

@@ -1,6 +1,5 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { ConfigLoader } from '../../../../../../configLoader';
 import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
@@ -45,8 +44,6 @@ describe('CategoryServiceImpl', () => {
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    ConfigLoader.loadConfig();
-
     const container = await createDependencyInjectionContainer([
       new PostgresModule(postgresModuleConfig),
       new BookModule(),

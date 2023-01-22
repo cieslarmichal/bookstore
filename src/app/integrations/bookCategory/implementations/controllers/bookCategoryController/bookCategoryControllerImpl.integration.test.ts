@@ -1,9 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
-import { describe, it, beforeAll, expect, afterEach, beforeEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 
 import { App } from '../../../../../../app';
-import { ConfigLoader } from '../../../../../../configLoader';
 import { Server } from '../../../../../../server';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
@@ -60,10 +59,6 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
   const userModuleConfig = new UserModuleConfigTestFactory().create();
-
-  beforeAll(async () => {
-    ConfigLoader.loadConfig();
-  });
 
   beforeEach(async () => {
     const container = await createDependencyInjectionContainer([
