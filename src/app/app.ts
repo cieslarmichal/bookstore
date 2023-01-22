@@ -1,9 +1,9 @@
 import { AwilixContainer } from 'awilix';
 import express, { json, urlencoded } from 'express';
 
-import { errorMiddleware } from './app/integrations/common/middlewares/errorMiddleware';
-import { jsonMiddleware } from './app/integrations/common/middlewares/jsonMiddleware';
-import { integrationsSymbols } from './app/integrations/integrationsSymbols';
+import { errorMiddleware } from './integrations/common/middlewares/errorMiddleware';
+import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
+import { integrationsSymbols } from './integrations/integrationsSymbols';
 
 export class App {
   public instance: express.Application;

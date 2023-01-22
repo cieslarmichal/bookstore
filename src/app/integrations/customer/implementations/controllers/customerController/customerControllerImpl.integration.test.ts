@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
-import { App } from '../../../../../../app';
-import { Server } from '../../../../../../server';
+import { App } from '../../../../../app';
+import { HttpServer } from '../../../../../../server/httpServer';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
@@ -39,7 +39,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
-  let server: Server;
+  let server: HttpServer;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
   let postgresConnector: PostgresConnector;
@@ -77,7 +77,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
 
     const app = new App(container);
 
-    server = new Server(app.instance);
+    server = new HttpServer(app.instance);
 
     server.listen();
   });

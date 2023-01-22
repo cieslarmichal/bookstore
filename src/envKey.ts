@@ -8,4 +8,6 @@ export enum EnvKey {
   jwtExpiresIn = 'JWT_EXPIRES_IN',
   hashSaltRounds = 'HASH_SALT_ROUNDS',
   logLevel = 'LOG_LEVEL',
+  httpHost = 'HTTP_HOST',
+  httpPort = 'HTTP_PORT',
 }
