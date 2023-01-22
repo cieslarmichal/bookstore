@@ -1,8 +1,11 @@
 import { hash, compare, genSalt } from 'bcrypt';
 
 import { HashService } from '../../../contracts/services/hashService/hashService';
+import { UserModuleConfig } from '../../../userModuleConfig';
 
 export class HashServiceImpl implements HashService {
+  public constructor(private readonly userModuleConfig: UserModuleConfig) {}
+
   public async hash(plainData: string): Promise<string> {
     const salt = await this.generateSalt();
 
@@ -14,8 +17,8 @@ export class HashServiceImpl implements HashService {
   }
 
   private async generateSalt(): Promise<string> {
-    const saltRounds = parseInt(process.env.HASH_SALT_ROUNDS as string);
+    const { hashSaltRounds } = this.userModuleConfig;
 
-    return genSalt(saltRounds);
+    return genSalt(hashSaltRounds);
   }
 }

@@ -10,4 +10,5 @@ export interface AppConfig {
   readonly jwtExpiresIn: string;
   readonly hashSaltRounds: number;
   readonly logLevel: LogLevel;
+  readonly httpPort: number;
 }
