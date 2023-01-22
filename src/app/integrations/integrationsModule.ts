@@ -12,10 +12,10 @@ import { PaginationDataParser } from './common/pagination/paginationDataParser';
 import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
-import { LoadableModule } from '../libs/dependencyInjection/loadableModule';
+import { Module } from '../libs/dependencyInjection/module';
 
-export class IntegrationsModule extends LoadableModule {
-  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
+export class IntegrationsModule extends Module {
+  public override async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [integrationsSymbols.authMiddleware]: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.filterDataParser]: asClass(FilterDataParser, { lifetime: Lifetime.SINGLETON }),

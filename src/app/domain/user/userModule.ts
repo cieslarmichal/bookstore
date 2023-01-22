@@ -6,10 +6,10 @@ import { HashServiceImpl } from './implementations/services/hashService/hashServ
 import { TokenServiceImpl } from './implementations/services/tokenService/tokenServiceImpl';
 import { UserServiceImpl } from './implementations/services/userService/userServiceImpl';
 import { userSymbols } from './userSymbols';
-import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
+import { Module } from '../../libs/dependencyInjection/module';
 
-export class UserModule extends LoadableModule {
-  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
+export class UserModule extends Module {
+  public override async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [userSymbols.userMapper]: asClass(UserMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [userSymbols.userRepositoryFactory]: asClass(UserRepositoryFactoryImpl, { lifetime: Lifetime.SINGLETON }),

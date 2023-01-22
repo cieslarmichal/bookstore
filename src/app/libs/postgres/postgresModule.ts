@@ -2,10 +2,12 @@ import { asValue, AwilixContainer } from 'awilix';
 
 import { postgresConnector } from './postgresConnector';
 import { postgresSymbols } from './postgresSymbols';
-import { LoadableModule } from '../dependencyInjection/loadableModule';
+import { Module } from '../dependencyInjection/module';
 
-export class PostgresModule extends LoadableModule {
-  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
+export class PostgresModule extends Module {
+  public constructor(private readonly config: PostgresConfig) {}
+
+  public override async registerSymbols(container: AwilixContainer): Promise<void> {
     const postgresConnection = await postgresConnector.getConnection();
 
     container.register({

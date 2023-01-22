@@ -1,15 +1,17 @@
 import { AwilixContainer } from 'awilix';
 
 import { userSymbols } from '../../domain/user/userSymbols';
+import { SpyFactory } from '../factories/spyFactory';
 
 export class AuthHelper {
-  public constructor(private readonly container: AwilixContainer) {}
+  public constructor(private readonly spyFactory: SpyFactory, private readonly container: AwilixContainer) {}
 
   public mockAuth(authPayload: { userId: string; role: string }): unknown {
     const fakeToken = 'token';
 
     const tokenService = this.container.resolve(userSymbols.tokenService);
-    jest.spyOn(tokenService, 'verifyAccessToken').mockImplementation(async (token) => {
+
+    this.spyFactory.create(tokenService, 'verifyAccessToken').mockImplementation(async (token) => {
       if (token !== fakeToken) {
         throw new Error('Invalid token.');
       }

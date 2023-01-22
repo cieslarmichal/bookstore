@@ -1,19 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContainer, InjectionMode, AwilixContainer } from 'awilix';
 
-import { LoadableModule } from './loadableModule';
+import { Module } from './module';
 
-export async function createDependencyInjectionContainer(
-  modulesConstructors: Array<new () => LoadableModule>,
-): Promise<AwilixContainer<any>> {
+export async function createDependencyInjectionContainer(modules: Array<Module>): Promise<AwilixContainer<any>> {
   const container = createContainer({
     injectionMode: InjectionMode.CLASSIC,
   });
 
-  for (const moduleConstructor of modulesConstructors) {
-    const module = new moduleConstructor();
-
-    await module.loadDependenciesIntoContainer(container);
+  for (const module of modules) {
+    await module.registerSymbols(container);
   }
 
   return container;

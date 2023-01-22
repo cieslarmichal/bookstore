@@ -1,1 +1,1 @@
-export type LogContext = Record<string, unknown> | null;
+export type LogContext = Record<string, unknown>;

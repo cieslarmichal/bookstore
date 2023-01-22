@@ -4,10 +4,10 @@ import { bookCategorySymbols } from './bookCategorySymbols';
 import { BookCategoryRepositoryFactoryImpl } from './implementations/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactoryImpl';
 import { BookCategoryMapperImpl } from './implementations/mappers/bookCategoryMapper/bookCategoryMapperImpl';
 import { BookCategoryServiceImpl } from './implementations/services/bookCategoryService/bookCategoryServiceImpl';
-import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
+import { Module } from '../../libs/dependencyInjection/module';
 
-export class BookCategoryModule extends LoadableModule {
-  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
+export class BookCategoryModule extends Module {
+  public override async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [bookCategorySymbols.bookCategoryMapper]: asClass(BookCategoryMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [bookCategorySymbols.bookCategoryRepositoryFactory]: asClass(BookCategoryRepositoryFactoryImpl, {

@@ -4,10 +4,10 @@ import { categorySymbols } from './categorySymbols';
 import { CategoryRepositoryFactoryImpl } from './implementations/factories/categoryRepositoryFactory/categoryRepositoryFactoryImpl';
 import { CategoryMapperImpl } from './implementations/mappers/categoryMapper/categoryMapperImpl';
 import { CategoryServiceImpl } from './implementations/services/categoryService/categoryServiceImpl';
-import { LoadableModule } from '../../libs/dependencyInjection/loadableModule';
+import { Module } from '../../libs/dependencyInjection/module';
 
-export class CategoryModule extends LoadableModule {
-  public override async loadDependenciesIntoContainer(container: AwilixContainer): Promise<void> {
+export class CategoryModule extends Module {
+  public override async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [categorySymbols.categoryMapper]: asClass(CategoryMapperImpl, { lifetime: Lifetime.SINGLETON }),
       [categorySymbols.categoryRepositoryFactory]: asClass(CategoryRepositoryFactoryImpl, {
