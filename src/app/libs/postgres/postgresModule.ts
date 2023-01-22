@@ -1,18 +1,31 @@
-import { asValue, AwilixContainer } from 'awilix';
+import { asClass, asFunction, asValue, AwilixContainer, Lifetime } from 'awilix';
 
-import { postgresConnector } from './postgresConnector';
+import { PostgresConnector } from './postgresConnector';
+import { PostgresModuleConfig } from './postgresModuleConfig';
 import { postgresSymbols } from './postgresSymbols';
 import { Module } from '../dependencyInjection/module';
 
-export class PostgresModule extends Module {
-  public constructor(private readonly config: PostgresConfig) {}
+export class PostgresModule implements Module {
+  public constructor(private readonly config: PostgresModuleConfig) {}
 
-  public override async registerSymbols(container: AwilixContainer): Promise<void> {
-    const postgresConnection = await postgresConnector.getConnection();
-
+  public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
-      [postgresSymbols.entityManager]: asValue(postgresConnection.manager),
-      [postgresSymbols.connection]: asValue(postgresConnection),
+      [postgresSymbols.postgresModuleConfig]: asValue(this.config),
+      [postgresSymbols.postgresConnector]: asClass(PostgresConnector, { lifetime: Lifetime.SINGLETON }),
+      [postgresSymbols.entityManager]: asFunction(async () => {
+        const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
+
+        const connection = await postgresConnector.getConnection();
+
+        return connection.manager;
+      }),
+      [postgresSymbols.connection]: asFunction(async () => {
+        const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
+
+        const connection = await postgresConnector.getConnection();
+
+        return connection;
+      }),
     });
   }
 }

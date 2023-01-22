@@ -1,5 +1,6 @@
 import { Connection, createConnection } from 'typeorm';
 
+import { PostgresModuleConfig } from './postgresModuleConfig';
 import { AddressEntity } from '../../domain/address/contracts/addressEntity';
 import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
 import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
@@ -12,18 +13,22 @@ import { UserEntity } from '../../domain/user/contracts/userEntity';
 export class PostgresConnector {
   private connection: Connection | null = null;
 
+  public constructor(private readonly postgresModuleConfig: PostgresModuleConfig) {}
+
   public async getConnection(): Promise<Connection> {
     if (this.connection) {
       return this.connection;
     }
 
+    const { databaseHost, databasePort, databaseUser, databasePassword, databaseName } = this.postgresModuleConfig;
+
     this.connection = await createConnection({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT as string),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      host: databaseHost,
+      port: databasePort,
+      username: databaseUser,
+      password: databasePassword,
+      database: databaseName,
       entities: [
         BookEntity,
         AuthorEntity,
@@ -46,5 +51,3 @@ export class PostgresConnector {
     this.connection = null;
   }
 }
-
-export const postgresConnector = new PostgresConnector();
