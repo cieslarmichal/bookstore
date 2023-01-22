@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
+import { describe, it, beforeAll, expect } from 'vitest';
 
 import { App } from '../../../../../../app';
 import { ConfigLoader } from '../../../../../../configLoader';

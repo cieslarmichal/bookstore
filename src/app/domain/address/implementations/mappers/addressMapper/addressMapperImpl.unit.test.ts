@@ -1,3 +1,5 @@
+import { describe, it, beforeAll, expect } from 'vitest';
+
 import { AddressMapperImpl } from './addressMapperImpl';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 

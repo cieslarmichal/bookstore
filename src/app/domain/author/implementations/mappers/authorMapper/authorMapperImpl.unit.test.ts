@@ -1,3 +1,5 @@
+import { describe, it, beforeAll, expect } from 'vitest';
+
 import { AuthorMapperImpl } from './authorMapperImpl';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 

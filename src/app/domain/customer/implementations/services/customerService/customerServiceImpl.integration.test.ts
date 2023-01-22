@@ -1,3 +1,5 @@
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+
 import { ConfigLoader } from '../../../../../../configLoader';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';

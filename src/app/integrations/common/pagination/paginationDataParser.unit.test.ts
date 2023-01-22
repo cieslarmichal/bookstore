@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { PaginationDataParser } from './paginationDataParser';
 
 const defaultPage = 1;
