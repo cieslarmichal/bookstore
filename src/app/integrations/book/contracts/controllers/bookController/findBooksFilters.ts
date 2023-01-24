@@ -1,25 +1,25 @@
-import { FilterName } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterName';
 
 export const findBooksFilters: Map<string, Array<string>> = new Map(
   Object.entries({
-    title: [FilterName.equal, FilterName.like],
+    title: [FilterSymbol.equal, FilterSymbol.like],
     releaseYear: [
-      FilterName.equal,
-      FilterName.lessThan,
-      FilterName.lessThanOrEqual,
-      FilterName.greaterThan,
-      FilterName.greaterThanOrEqual,
-      FilterName.between,
+      FilterSymbol.equal,
+      FilterSymbol.lessThan,
+      FilterSymbol.lessThanOrEqual,
+      FilterSymbol.greaterThan,
+      FilterSymbol.greaterThanOrEqual,
+      FilterSymbol.between,
     ],
-    language: [FilterName.equal],
-    format: [FilterName.equal],
+    language: [FilterSymbol.equal],
+    format: [FilterSymbol.equal],
     price: [
-      FilterName.equal,
-      FilterName.lessThan,
-      FilterName.lessThanOrEqual,
-      FilterName.greaterThan,
-      FilterName.greaterThanOrEqual,
-      FilterName.between,
+      FilterSymbol.equal,
+      FilterSymbol.lessThan,
+      FilterSymbol.lessThanOrEqual,
+      FilterSymbol.greaterThan,
+      FilterSymbol.greaterThanOrEqual,
+      FilterSymbol.between,
     ],
   }),
 );

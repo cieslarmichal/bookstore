@@ -1,7 +1,7 @@
-import { FilterName } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterSymbol.js';
 
 export const findAddressesFilters = new Map(
   Object.entries({
-    customerId: [FilterName.equal],
+    customerId: [FilterSymbol.equal],
   }),
 );

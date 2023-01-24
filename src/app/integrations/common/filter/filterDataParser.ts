@@ -1,7 +1,7 @@
-import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
-import { Filter } from '../../../common/filter/filter';
-import { FilterFactory } from '../../../common/filter/filterFactory';
-import { FilterName } from '../../../common/filter/filterName';
+import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError.js';
+import { Filter } from '../../../common/filter/filter.js';
+import { FilterName } from '../../../common/filter/filterName.js';
+import { FilterSymbol } from '../../../common/filter/filterSymbol.js';
 
 export class FilterDataParser {
   private readonly tokensSeparator = '||';
@@ -38,24 +38,24 @@ export class FilterDataParser {
       }
 
       const fieldName = tokens[this.fieldNameIndex];
-      const filterName = tokens[this.operationNameIndex];
+      const filterSymbol = tokens[this.operationNameIndex];
 
       if (!fieldName) {
         throw new InvalidFilterSyntaxError({ errorDetails: 'field name not defined' });
       }
 
-      if (!filterName) {
-        throw new InvalidFilterSyntaxError({ errorDetails: 'field name not defined' });
+      if (!filterSymbol) {
+        throw new InvalidFilterSyntaxError({ errorDetails: 'filter symbol not defined' });
       }
 
       const supportedFieldFilters = supportedFieldsFilters.get(fieldName);
 
-      if (!supportedFieldFilters || !supportedFieldFilters.includes(filterName)) {
+      if (!supportedFieldFilters || !supportedFieldFilters.includes(filterSymbol)) {
         continue;
       }
 
-      switch (filterName) {
-        case FilterName.equal: {
+      switch (filterSymbol) {
+        case FilterSymbol.equal: {
           const tokenValues = tokens[this.valuesIndex];
 
           if (!tokenValues) {
@@ -64,14 +64,13 @@ export class FilterDataParser {
 
           const splitValues = tokenValues.split(this.valuesSeparator);
 
-          filters.push(FilterFactory.create(FilterName.equal, fieldName, splitValues));
+          const equalFilter: Filter = { filterName: FilterName.equal, filterSymbol, fieldName, values: splitValues };
+
+          filters.push(equalFilter);
 
           break;
         }
-        case FilterName.lessThan:
-        case FilterName.lessThanOrEqual:
-        case FilterName.greaterThan:
-        case FilterName.greaterThanOrEqual: {
+        case FilterSymbol.lessThan: {
           const tokenValues = tokens[this.valuesIndex];
 
           if (!tokenValues) {
@@ -84,11 +83,85 @@ export class FilterDataParser {
             throw new InvalidFilterSyntaxError({ errorDetails: 'value is not a number' });
           }
 
-          filters.push(FilterFactory.create(filterName, fieldName, value));
+          const lessThanFilter: Filter = { filterName: FilterName.lessThan, filterSymbol, fieldName, value };
+
+          filters.push(lessThanFilter);
 
           break;
         }
-        case FilterName.between: {
+        case FilterSymbol.lessThanOrEqual: {
+          const tokenValues = tokens[this.valuesIndex];
+
+          if (!tokenValues) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
+          }
+
+          const value = parseInt(tokenValues);
+
+          if (!value) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'value is not a number' });
+          }
+
+          const lessThanOrEqualFilter: Filter = {
+            filterName: FilterName.lessThanOrEqual,
+            filterSymbol,
+            fieldName,
+            value,
+          };
+
+          filters.push(lessThanOrEqualFilter);
+
+          break;
+        }
+        case FilterSymbol.greaterThan: {
+          const tokenValues = tokens[this.valuesIndex];
+
+          if (!tokenValues) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
+          }
+
+          const value = parseInt(tokenValues);
+
+          if (!value) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'value is not a number' });
+          }
+
+          const greaterThanFilter: Filter = {
+            filterName: FilterName.greaterThan,
+            filterSymbol,
+            fieldName,
+            value,
+          };
+
+          filters.push(greaterThanFilter);
+
+          break;
+        }
+        case FilterSymbol.greaterThanOrEqual: {
+          const tokenValues = tokens[this.valuesIndex];
+
+          if (!tokenValues) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
+          }
+
+          const value = parseInt(tokenValues);
+
+          if (!value) {
+            throw new InvalidFilterSyntaxError({ errorDetails: 'value is not a number' });
+          }
+
+          const greaterThanOrEqualFilter: Filter = {
+            filterName: FilterName.greaterThanOrEqual,
+            filterSymbol,
+            fieldName,
+            value,
+          };
+
+          filters.push(greaterThanOrEqualFilter);
+
+          break;
+        }
+        case FilterSymbol.between: {
           const tokenValues = tokens[this.valuesIndex];
 
           if (!tokenValues) {
@@ -109,14 +182,29 @@ export class FilterDataParser {
             throw new InvalidFilterSyntaxError({ errorDetails: 'number of values is not 2' });
           }
 
-          filters.push(FilterFactory.create(FilterName.between, fieldName, splitValues));
+          const betweenFilter: Filter = {
+            filterName: FilterName.between,
+            filterSymbol,
+            fieldName,
+            from: splitValues[0] as number,
+            to: splitValues[1] as number,
+          };
+
+          filters.push(betweenFilter);
 
           break;
         }
-        case FilterName.like: {
+        case FilterSymbol.like: {
           const value = tokens[this.valuesIndex];
 
-          filters.push(FilterFactory.create(FilterName.like, fieldName, value));
+          const likeFilter: Filter = {
+            filterName: FilterName.like,
+            filterSymbol,
+            fieldName,
+            value: value as string,
+          };
+
+          filters.push(likeFilter);
 
           break;
         }

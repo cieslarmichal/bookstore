@@ -1,6 +1,6 @@
 import { validateSync } from 'class-validator';
 
-import { ValidationError } from './errors/validationError.js';
+import { ValidationError } from './errors/validationError';
 
 export class Validator {
   public static validate<T extends object>(instance: T): void {

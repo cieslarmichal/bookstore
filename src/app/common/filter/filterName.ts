@@ -1,9 +1,9 @@
 export enum FilterName {
-  equal = 'eq',
-  lessThan = 'lt',
-  lessThanOrEqual = 'lte',
-  greaterThan = 'gt',
-  greaterThanOrEqual = 'gte',
+  equal = 'equal',
+  lessThan = 'lessThan',
+  lessThanOrEqual = 'lessThanOrEqual',
+  greaterThan = 'greaterThan',
+  greaterThanOrEqual = 'greaterThanOrEqual',
   between = 'between',
   like = 'like',
 }

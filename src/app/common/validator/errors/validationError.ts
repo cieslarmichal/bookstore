@@ -1,4 +1,4 @@
-import { ApplicationError } from '../../errors/applicationError.js';
+import { ApplicationError } from '../../errors/applicationError';
 
 interface Context {
   readonly target: unknown;
