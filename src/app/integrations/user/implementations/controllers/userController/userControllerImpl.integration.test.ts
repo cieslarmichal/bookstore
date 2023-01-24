@@ -2,8 +2,9 @@ import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
-import { App } from '../../../../../app';
 import { HttpServer } from '../../../../../../server/httpServer';
+import { HttpServerConfigTestFactory } from '../../../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
+import { App } from '../../../../../app';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
@@ -52,6 +53,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
   const userModuleConfig = new UserModuleConfigTestFactory().create();
+  const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
     const container = await createDependencyInjectionContainer([
@@ -80,7 +82,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
     const app = new App(container);
 
-    server = new HttpServer(app.instance);
+    server = new HttpServer(app.instance, httpServerConfig);
 
     server.listen();
   });

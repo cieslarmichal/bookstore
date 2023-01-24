@@ -1,19 +1,8 @@
 import dotenv from 'dotenv';
 
 import { App } from './app/app';
-import { AddressModule } from './app/domain/address/addressModule';
-import { AuthorModule } from './app/domain/author/authorModule';
-import { AuthorBookModule } from './app/domain/authorBook/authorBookModule';
-import { BookModule } from './app/domain/book/bookModule';
-import { BookCategoryModule } from './app/domain/bookCategory/bookCategoryModule';
-import { CategoryModule } from './app/domain/category/categoryModule';
-import { CustomerModule } from './app/domain/customer/customerModule';
-import { UserModule } from './app/domain/user/userModule';
-import { IntegrationsModule } from './app/integrations/integrationsModule';
-import { createDependencyInjectionContainer } from './app/libs/dependencyInjection/container';
-import { LoggerModule } from './app/libs/logger/loggerModule';
+import { AppConfig } from './app/appConfig';
 import { LogLevel } from './app/libs/logger/logLevel';
-import { PostgresModule } from './app/libs/postgres/postgresModule';
 import { EnvKey } from './envKey';
 import { HttpServer } from './server/httpServer';
 
@@ -62,21 +51,19 @@ async function main(): Promise<void> {
     throw new Error('Missing environment variables');
   }
 
-  const container = await createDependencyInjectionContainer([
-    new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword }),
-    new CategoryModule(),
-    new BookModule(),
-    new AuthorModule(),
-    new UserModule({ jwtSecret, jwtExpiresIn, hashSaltRounds }),
-    new IntegrationsModule(),
-    new AuthorBookModule(),
-    new LoggerModule({ logLevel }),
-    new BookCategoryModule(),
-    new AddressModule(),
-    new CustomerModule(),
-  ]);
+  const appConfig: AppConfig = {
+    jwtSecret,
+    jwtExpiresIn,
+    hashSaltRounds,
+    databaseHost,
+    databasePort,
+    databaseName,
+    databaseUser,
+    databasePassword,
+    logLevel,
+  };
 
-  const app = new App(container);
+  const app = new App(appConfig);
 
   const server = new HttpServer(app.instance, { host: httpHost, port: httpPort });
 
