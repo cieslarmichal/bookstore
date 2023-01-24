@@ -1,4 +1,4 @@
-import { FilterSymbol } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 
 export const findCategoriesFilters: Map<string, Array<string>> = new Map(
   Object.entries({

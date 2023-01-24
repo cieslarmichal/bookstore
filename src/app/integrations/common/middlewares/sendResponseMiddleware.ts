@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
 import { ControllerResponse } from '../../controllerResponse';
 
-export function sendResponseMiddleware(request: Request, response: Response, next: NextFunction): void {
+export function sendResponseMiddleware(_request: Request, response: Response, next: NextFunction): void {
   const controllerResponse: ControllerResponse = response.locals['controllerResponse'];
 
   if (!controllerResponse) {

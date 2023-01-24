@@ -14,8 +14,8 @@ import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
 import { Module } from '../libs/dependencyInjection/module';
 
-export class IntegrationsModule extends Module {
-  public override async registerSymbols(container: AwilixContainer): Promise<void> {
+export class IntegrationsModule implements Module {
+  public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [integrationsSymbols.authMiddleware]: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.filterDataParser]: asClass(FilterDataParser, { lifetime: Lifetime.SINGLETON }),
