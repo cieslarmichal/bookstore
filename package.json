@@ -6,8 +6,11 @@
   "scripts": {
     "build:clean": "rimraf dist",
     "build": "tsc --build tsconfig.build.json",
-    "test": "vitest",
-    "test:watch": "npm run test -- --watch",
+    "build:dev": "tsc --build tsconfig.json",
+    "test:unit": "vitest .unit.test.ts --threads false",
+    "test:unit:watch": "npm run test:unit -- --watch",
+    "test:integration": "vitest .integration.test.ts --threads false",
+    "test:integration:watch": "npm run test:integration -- --watch",
     "test:watch2": "cross-env NODE_ENV=test jest --watch --runInBand --detectOpenHandles"
   },
   "dependencies": {

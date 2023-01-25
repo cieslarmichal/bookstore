@@ -80,7 +80,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
     authHelper = new AuthHelper(spyFactory, container);
 
-    const app = new App(container);
+    const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
     server = new HttpServer(app.instance, httpServerConfig);
 

@@ -1,6 +1,5 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { EqualFilter } from '../../../../../common/filter/equalFilter';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
