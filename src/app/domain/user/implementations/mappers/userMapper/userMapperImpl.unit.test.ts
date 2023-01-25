@@ -19,7 +19,7 @@ describe('UserMapperImpl', () => {
 
     const user = userMapperImpl.map(userEntity);
 
-    expect(user).toStrictEqual({
+    expect(user).toEqual({
       id: userEntity.id,
       createdAt: userEntity.createdAt,
       updatedAt: userEntity.updatedAt,

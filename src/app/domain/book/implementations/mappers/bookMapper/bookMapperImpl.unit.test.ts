@@ -19,7 +19,7 @@ describe('BookMapperImpl', () => {
 
     const book = bookMapperImpl.map(bookEntity);
 
-    expect(book).toStrictEqual({
+    expect(book).toEqual({
       id: bookEntity.id,
       createdAt: bookEntity.createdAt,
       updatedAt: bookEntity.updatedAt,

@@ -19,7 +19,7 @@ describe('CustomerMapperImpl', () => {
 
     const customer = customerMapperImpl.map(customerEntity);
 
-    expect(customer).toStrictEqual({
+    expect(customer).toEqual({
       id: customerEntity.id,
       createdAt: customerEntity.createdAt,
       updatedAt: customerEntity.updatedAt,

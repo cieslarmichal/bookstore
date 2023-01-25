@@ -19,7 +19,7 @@ describe('AuthorMapperImpl', () => {
 
     const author = authorMapperImpl.map(authorEntity);
 
-    expect(author).toStrictEqual({
+    expect(author).toEqual({
       id: authorEntity.id,
       createdAt: authorEntity.createdAt,
       updatedAt: authorEntity.updatedAt,

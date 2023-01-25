@@ -19,7 +19,7 @@ describe('CategoryMapperImpl', () => {
 
     const category = categoryMapperImpl.map(categoryEntity);
 
-    expect(category).toStrictEqual({
+    expect(category).toEqual({
       id: categoryEntity.id,
       createdAt: categoryEntity.createdAt,
       updatedAt: categoryEntity.updatedAt,

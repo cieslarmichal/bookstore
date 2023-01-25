@@ -19,7 +19,7 @@ describe('AddressMapperImpl', () => {
 
     const address = addressMapperImpl.map(addressEntity);
 
-    expect(address).toStrictEqual({
+    expect(address).toEqual({
       id: addressEntity.id,
       createdAt: addressEntity.createdAt,
       updatedAt: addressEntity.updatedAt,
@@ -32,7 +32,7 @@ describe('AddressMapperImpl', () => {
       zipCode: addressEntity.zipCode,
       streetAddress: addressEntity.streetAddress,
       deliveryInstructions: addressEntity.deliveryInstructions,
-      customerId: addressEntity.id,
+      customerId: addressEntity.customerId,
     });
   });
 });

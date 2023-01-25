@@ -23,8 +23,8 @@ describe('AuthorBookMapperImpl', () => {
       id: authorBookEntity.id,
       createdAt: authorBookEntity.createdAt,
       updatedAt: authorBookEntity.updatedAt,
-      authorId: authorBookEntity.id,
-      bookId: authorBookEntity.id,
+      authorId: authorBookEntity.authorId,
+      bookId: authorBookEntity.bookId,
     });
   });
 });

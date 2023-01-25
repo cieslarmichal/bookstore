@@ -294,7 +294,7 @@ describe('FilterDataParser', () => {
     });
 
     it('should return GreaterThanOrEqualFilter when valid syntax is provided and filter is supported', () => {
-      expect.assertions(4);
+      expect.assertions(5);
 
       const filterData = filterFataParser.parse(
         `["price||between||10,20"]`,
