@@ -24,6 +24,7 @@
     "express-async-handler": "^1.2.0",
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^9.0.0",
+    "reflect-metadata": "^0.1.13",
     "tslib": "^2.4.0",
     "typeorm": "^0.2.45"
   },

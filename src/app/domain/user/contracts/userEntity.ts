@@ -42,12 +42,12 @@ export class UserEntity {
   public phoneNumber?: string;
 
   @IsString()
-  @Column()
+  @Column({ type: 'text' })
   //@ts-ignore
   public password: string;
 
   @IsEnum(UserRole)
-  @Column({ default: UserRole.user })
+  @Column({ type: 'enum', enum: [UserRole.admin, UserRole.user], default: UserRole.user })
   //@ts-ignore
   public role: UserRole;
 

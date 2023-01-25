@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import request from 'supertest';
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 

@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
