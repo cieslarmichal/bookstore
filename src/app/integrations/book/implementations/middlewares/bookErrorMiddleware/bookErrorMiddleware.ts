@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { BookNotFoundError } from '../../../../../domain/book/errors/bookNotFoundError';
 
 export function bookErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof BookNotFoundError) {
-    response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
+    response.status(HttpStatusCode.notFound).send({ error: error.message });
     return;
   }
 

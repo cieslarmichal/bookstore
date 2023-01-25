@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AuthorNotFoundError } from '../../../../../domain/author/errors/authorNotFoundError';
 import { AuthorBookAlreadyExistsError } from '../../../../../domain/authorBook/errors/authorBookAlreadyExistsError';
 import { AuthorBookNotFoundError } from '../../../../../domain/authorBook/errors/authorBookNotFoundError';
@@ -14,14 +14,14 @@ export function authorBookErrorMiddleware(
   next: NextFunction,
 ): void {
   if (error instanceof AuthorBookAlreadyExistsError) {
-    response.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ error: error.message });
+    response.status(HttpStatusCode.unprocessableEntity).send({ error: error.message });
     return;
   } else if (
     error instanceof AuthorBookNotFoundError ||
     error instanceof BookNotFoundError ||
     error instanceof AuthorNotFoundError
   ) {
-    response.status(StatusCodes.NOT_FOUND).send({ error: error.message });
+    response.status(HttpStatusCode.notFound).send({ error: error.message });
     return;
   }
 

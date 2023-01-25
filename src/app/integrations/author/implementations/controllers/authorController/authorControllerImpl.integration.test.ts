@@ -1,10 +1,10 @@
-import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { HttpServer } from '../../../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../../../app';
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { authorSymbols } from '../../../../../domain/author/authorSymbols';
@@ -104,7 +104,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
             firstName,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -119,7 +119,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           lastName,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -141,7 +141,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
             lastName,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.CREATED);
+        expect(response.statusCode).toBe(HttpStatusCode.created);
       });
     });
   });
@@ -161,7 +161,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${authorId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -179,7 +179,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -197,7 +197,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -221,7 +221,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${author.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -233,7 +233,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const response = await request(server.instance).get(`${baseUrl}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -261,7 +261,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}?filter=["firstName||eq||${firstName}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
         expect(response.body.data.authors.length).toBe(1);
       });
     });
@@ -285,7 +285,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
             firstName,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -308,7 +308,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
             about,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -329,7 +329,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
             about,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -351,7 +351,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           about,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -380,7 +380,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
             about,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -401,7 +401,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -420,7 +420,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -438,7 +438,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).delete(`${baseUrl}/${author.id}`).send();
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -463,7 +463,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
@@ -64,7 +64,7 @@ export class CustomerControllerImpl implements CustomerController {
       return this.customerService.createCustomer(unitOfWork, { userId });
     });
 
-    return { data: { customer }, statusCode: StatusCodes.CREATED };
+    return { data: { customer }, statusCode: HttpStatusCode.created };
   }
 
   public async findCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -76,7 +76,7 @@ export class CustomerControllerImpl implements CustomerController {
       return this.customerService.findCustomer(unitOfWork, { id: id as string });
     });
 
-    return { data: { customer }, statusCode: StatusCodes.OK };
+    return { data: { customer }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -88,6 +88,6 @@ export class CustomerControllerImpl implements CustomerController {
       await this.customerService.removeCustomer(unitOfWork, id as string);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

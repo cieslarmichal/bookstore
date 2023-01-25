@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AuthorBookService } from '../../../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { findAuthorsFilters } from '../../../../author/contracts/controllers/authorController/findAuthorsFilters';
@@ -83,7 +83,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       });
     });
 
-    return { data: { authorBook }, statusCode: StatusCodes.CREATED };
+    return { data: { authorBook }, statusCode: HttpStatusCode.created };
   }
 
   public async findAuthorBooks(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -99,7 +99,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       return this.authorBookService.findAuthorBooks(unitOfWork, authorId as string, filters, paginationData);
     });
 
-    return { data: { books }, statusCode: StatusCodes.OK };
+    return { data: { books }, statusCode: HttpStatusCode.ok };
   }
 
   public async findBookAuthors(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -115,7 +115,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       return this.authorBookService.findBookAuthors(unitOfWork, bookId as string, filters, paginationData);
     });
 
-    return { data: { authors }, statusCode: StatusCodes.OK };
+    return { data: { authors }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteAuthorBook(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -130,6 +130,6 @@ export class AuthorBookControllerImpl implements AuthorBookController {
       });
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

@@ -1,10 +1,10 @@
-import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
 import { HttpServer } from '../../../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../../../app';
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
@@ -104,7 +104,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           email,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -125,7 +125,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -140,7 +140,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.CREATED);
+        expect(response.statusCode).toBe(HttpStatusCode.created);
       });
     });
   });
@@ -156,7 +156,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           phoneNumber,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -177,7 +177,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -192,7 +192,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.CREATED);
+        expect(response.statusCode).toBe(HttpStatusCode.created);
       });
     });
   });
@@ -208,7 +208,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           email,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -223,7 +223,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -246,7 +246,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -262,7 +262,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           phoneNumber,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -277,7 +277,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -300,7 +300,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -321,7 +321,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             password,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -341,7 +341,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             password,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -356,7 +356,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           password,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -378,7 +378,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             password,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
@@ -404,7 +404,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             password,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });
@@ -425,7 +425,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             email,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -445,7 +445,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             email,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -460,7 +460,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           email,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -482,7 +482,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             email,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
@@ -510,7 +510,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             email,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -536,7 +536,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             email,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -562,7 +562,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             email,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });
@@ -583,7 +583,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             phoneNumber,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -603,7 +603,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             phoneNumber,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -618,7 +618,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           phoneNumber,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -640,7 +640,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             phoneNumber,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
@@ -668,7 +668,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             phoneNumber,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -694,7 +694,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             phoneNumber,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -720,7 +720,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
             phoneNumber,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });
@@ -740,7 +740,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${userId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -756,7 +756,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${userId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -774,7 +774,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -792,7 +792,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${targetUserId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
@@ -814,7 +814,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${user.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -835,7 +835,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -852,7 +852,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -870,7 +870,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -888,7 +888,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .delete(`${baseUrl}/${targetUserId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
@@ -910,7 +910,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
           .delete(`${baseUrl}/${user.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });

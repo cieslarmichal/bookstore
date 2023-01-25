@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AddressService } from '../../../../../domain/address/contracts/services/addressService/addressService';
 import { Customer } from '../../../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
@@ -106,7 +106,7 @@ export class AddressControllerImpl implements AddressController {
       });
     });
 
-    return { data: { address }, statusCode: StatusCodes.CREATED };
+    return { data: { address }, statusCode: HttpStatusCode.created };
   }
 
   public async findAddress(request: Request, response: Response): Promise<ControllerResponse> {
@@ -137,7 +137,7 @@ export class AddressControllerImpl implements AddressController {
       return customerAddress;
     });
 
-    return { data: { address }, statusCode: StatusCodes.OK };
+    return { data: { address }, statusCode: HttpStatusCode.ok };
   }
 
   public async findAddresses(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -151,7 +151,7 @@ export class AddressControllerImpl implements AddressController {
       return this.addressService.findAddresses(unitOfWork, filters, paginationData);
     });
 
-    return { data: { addresses }, statusCode: StatusCodes.OK };
+    return { data: { addresses }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteAddress(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -163,6 +163,6 @@ export class AddressControllerImpl implements AddressController {
       await this.addressService.removeAddress(unitOfWork, id as string);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

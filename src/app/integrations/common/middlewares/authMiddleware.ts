@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 
 export class AuthMiddleware {
@@ -10,7 +10,7 @@ export class AuthMiddleware {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Authorization header not provided' });
+      response.status(HttpStatusCode.unauthorized).send({ error: 'Authorization header not provided' });
 
       return;
     }
@@ -18,7 +18,7 @@ export class AuthMiddleware {
     const token = this.parseToken(authHeader as string);
 
     if (!token) {
-      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Bearer authorization is not set' });
+      response.status(HttpStatusCode.unauthorized).send({ error: 'Bearer authorization is not set' });
 
       return;
     }
@@ -28,7 +28,7 @@ export class AuthMiddleware {
 
       response.locals['authPayload'] = payload;
     } catch (error) {
-      response.status(StatusCodes.UNAUTHORIZED).send({ error: 'Invalid access token' });
+      response.status(HttpStatusCode.unauthorized).send({ error: 'Invalid access token' });
 
       return;
     }

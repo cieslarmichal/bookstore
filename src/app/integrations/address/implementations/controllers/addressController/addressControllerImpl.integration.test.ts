@@ -1,10 +1,10 @@
-import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 
 import { HttpServer } from '../../../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../../../app';
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { addressSymbols } from '../../../../../domain/address/addressSymbols';
 import { AddressRepositoryFactory } from '../../../../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
@@ -109,7 +109,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send({});
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -144,7 +144,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           customerId: customer.id,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -184,7 +184,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
             customerId: customer.id,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.CREATED);
+        expect(response.statusCode).toBe(HttpStatusCode.created);
       });
     });
   });
@@ -204,7 +204,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${addressId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -232,7 +232,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -271,7 +271,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).get(`${baseUrl}/${address.id}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -314,7 +314,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${address.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
@@ -357,7 +357,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${address.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -369,7 +369,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const response = await request(server.instance).get(`${baseUrl}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -430,7 +430,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}?filter=["customerId||eq||${customer1.id}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
         expect(response.body.data.addresses.length).toBe(1);
       });
     });
@@ -452,7 +452,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -471,7 +471,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -510,7 +510,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).delete(`${baseUrl}/${address.id}`).send();
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -554,7 +554,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });

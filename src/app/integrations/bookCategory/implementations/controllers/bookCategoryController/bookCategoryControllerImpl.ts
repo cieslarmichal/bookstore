@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { BookCategoryService } from '../../../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
@@ -83,7 +83,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       });
     });
 
-    return { data: { bookCategory }, statusCode: StatusCodes.CREATED };
+    return { data: { bookCategory }, statusCode: HttpStatusCode.created };
   }
 
   public async findBookCategories(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -99,7 +99,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       return this.bookCategoryService.findCategoriesOfBook(unitOfWork, bookId as string, filters, paginationData);
     });
 
-    return { data: { categories }, statusCode: StatusCodes.OK };
+    return { data: { categories }, statusCode: HttpStatusCode.ok };
   }
 
   public async findCategoryBooks(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -115,7 +115,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       return this.bookCategoryService.findBooksFromCategory(unitOfWork, categoryId as string, filters, paginationData);
     });
 
-    return { data: { books }, statusCode: StatusCodes.OK };
+    return { data: { books }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteBookCategory(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -130,6 +130,6 @@ export class BookCategoryControllerImpl implements BookCategoryController {
       });
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

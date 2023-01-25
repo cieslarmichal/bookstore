@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AuthorService } from '../../../../../domain/author/contracts/services/authorService/authorService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
@@ -87,7 +87,7 @@ export class AuthorControllerImpl implements AuthorController {
       return this.authorService.createAuthor(unitOfWork, { firstName, lastName, about });
     });
 
-    return { data: { author }, statusCode: StatusCodes.CREATED };
+    return { data: { author }, statusCode: HttpStatusCode.created };
   }
 
   public async findAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -99,7 +99,7 @@ export class AuthorControllerImpl implements AuthorController {
       return this.authorService.findAuthor(unitOfWork, id as string);
     });
 
-    return { data: { author }, statusCode: StatusCodes.OK };
+    return { data: { author }, statusCode: HttpStatusCode.ok };
   }
 
   public async findAuthors(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -113,7 +113,7 @@ export class AuthorControllerImpl implements AuthorController {
       return this.authorService.findAuthors(unitOfWork, filters, paginationData);
     });
 
-    return { data: { authors }, statusCode: StatusCodes.OK };
+    return { data: { authors }, statusCode: HttpStatusCode.ok };
   }
 
   public async updateAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -127,7 +127,7 @@ export class AuthorControllerImpl implements AuthorController {
       return this.authorService.updateAuthor(unitOfWork, id as string, { about });
     });
 
-    return { data: { author }, statusCode: StatusCodes.OK };
+    return { data: { author }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteAuthor(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -139,6 +139,6 @@ export class AuthorControllerImpl implements AuthorController {
       await this.authorService.removeAuthor(unitOfWork, id as string);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

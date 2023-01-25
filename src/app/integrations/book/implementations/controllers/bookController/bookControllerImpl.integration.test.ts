@@ -1,10 +1,10 @@
-import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
 import { HttpServer } from '../../../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../../../app';
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
@@ -104,7 +104,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
             title,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -122,7 +122,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           price,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -147,7 +147,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
             price,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.CREATED);
+        expect(response.statusCode).toBe(HttpStatusCode.created);
       });
     });
   });
@@ -167,7 +167,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${bookId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -185,7 +185,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -209,7 +209,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).get(`${baseUrl}/${book.id}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -239,7 +239,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}/${book.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -251,7 +251,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const response = await request(server.instance).get(`${baseUrl}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -291,7 +291,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .get(`${baseUrl}?filter=["title||eq||${title}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
         expect(response.body.data.books.length).toBe(1);
       });
     });
@@ -315,7 +315,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
             title,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -338,7 +338,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
             price,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -359,7 +359,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
             price,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -387,7 +387,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           price: newPrice,
         });
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -422,7 +422,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
             price: newPrice,
           });
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
       });
     });
   });
@@ -443,7 +443,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -462,7 +462,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -486,7 +486,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
 
         const response = await request(server.instance).delete(`${baseUrl}/${book.id}`).send();
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -517,7 +517,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });

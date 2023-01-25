@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { BookService } from '../../../../../domain/book/contracts/services/bookService/bookService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
@@ -94,7 +94,7 @@ export class BookControllerImpl implements BookController {
       });
     });
 
-    return { data: { book }, statusCode: StatusCodes.CREATED };
+    return { data: { book }, statusCode: HttpStatusCode.created };
   }
 
   public async findBook(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -106,7 +106,7 @@ export class BookControllerImpl implements BookController {
       return this.bookService.findBook(unitOfWork, id as string);
     });
 
-    return { data: { book }, statusCode: StatusCodes.OK };
+    return { data: { book }, statusCode: HttpStatusCode.ok };
   }
 
   public async findBooks(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -120,7 +120,7 @@ export class BookControllerImpl implements BookController {
       return this.bookService.findBooks(unitOfWork, filters, paginationData);
     });
 
-    return { data: { books }, statusCode: StatusCodes.OK };
+    return { data: { books }, statusCode: HttpStatusCode.ok };
   }
 
   public async updateBook(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -134,7 +134,7 @@ export class BookControllerImpl implements BookController {
       return this.bookService.updateBook(unitOfWork, id as string, { description, price });
     });
 
-    return { data: { book }, statusCode: StatusCodes.OK };
+    return { data: { book }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteBook(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -146,6 +146,6 @@ export class BookControllerImpl implements BookController {
       await this.bookService.removeBook(unitOfWork, id as string);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

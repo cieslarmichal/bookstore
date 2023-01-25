@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { CategoryService } from '../../../../../domain/category/contracts/services/categoryService/categoryService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
@@ -78,7 +78,7 @@ export class CategoryControllerImpl implements CategoryController {
       return this.categoryService.createCategory(unitOfWork, { name });
     });
 
-    return { data: { category }, statusCode: StatusCodes.CREATED };
+    return { data: { category }, statusCode: HttpStatusCode.created };
   }
 
   public async findCategory(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -90,7 +90,7 @@ export class CategoryControllerImpl implements CategoryController {
       return this.categoryService.findCategory(unitOfWork, id as string);
     });
 
-    return { data: { category }, statusCode: StatusCodes.OK };
+    return { data: { category }, statusCode: HttpStatusCode.ok };
   }
 
   public async findCategories(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -104,7 +104,7 @@ export class CategoryControllerImpl implements CategoryController {
       return this.categoryService.findCategories(unitOfWork, filters, paginationData);
     });
 
-    return { data: { categories }, statusCode: StatusCodes.OK };
+    return { data: { categories }, statusCode: HttpStatusCode.ok };
   }
 
   public async deleteCategory(request: Request, _response: Response): Promise<ControllerResponse> {
@@ -116,6 +116,6 @@ export class CategoryControllerImpl implements CategoryController {
       await this.categoryService.removeCategory(unitOfWork, id as string);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

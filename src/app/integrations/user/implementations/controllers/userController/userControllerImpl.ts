@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { StatusCodes } from 'http-status-codes';
 
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { UserService } from '../../../../../domain/user/contracts/services/userService/userService';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
@@ -119,7 +119,7 @@ export class UserControllerImpl implements UserController {
           role: user.role,
         },
       },
-      statusCode: StatusCodes.CREATED,
+      statusCode: HttpStatusCode.created,
     };
   }
 
@@ -136,7 +136,7 @@ export class UserControllerImpl implements UserController {
       }
     });
 
-    return { data: { token }, statusCode: StatusCodes.OK };
+    return { data: { token }, statusCode: HttpStatusCode.ok };
   }
 
   public async setUserPassword(request: Request, response: Response): Promise<ControllerResponse> {
@@ -154,7 +154,7 @@ export class UserControllerImpl implements UserController {
       await this.userService.setPassword(unitOfWork, userId, password);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 
   public async setUserPhoneNumber(request: Request, response: Response): Promise<ControllerResponse> {
@@ -172,7 +172,7 @@ export class UserControllerImpl implements UserController {
       await this.userService.setPhoneNumber(unitOfWork, userId, phoneNumber);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 
   public async setUserEmail(request: Request, response: Response): Promise<ControllerResponse> {
@@ -190,7 +190,7 @@ export class UserControllerImpl implements UserController {
       await this.userService.setEmail(unitOfWork, userId, email);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 
   public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
@@ -218,7 +218,7 @@ export class UserControllerImpl implements UserController {
           role: user.role,
         },
       },
-      statusCode: StatusCodes.OK,
+      statusCode: HttpStatusCode.ok,
     };
   }
 
@@ -237,6 +237,6 @@ export class UserControllerImpl implements UserController {
       await this.userService.removeUser(unitOfWork, targetUserId as string);
     });
 
-    return { statusCode: StatusCodes.NO_CONTENT };
+    return { statusCode: HttpStatusCode.noContent };
   }
 }

@@ -1,10 +1,10 @@
-import { StatusCodes } from 'http-status-codes';
 import request from 'supertest';
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 
 import { HttpServer } from '../../../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../../../app';
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AddressModule } from '../../../../../domain/address/addressModule';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
@@ -116,7 +116,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -128,7 +128,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const response = await request(server.instance).post(`${booksUrl}/${bookId}/categories/${categoryId}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -168,7 +168,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .post(`${booksUrl}/${book.id}/categories/${category.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+        expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
       });
     });
 
@@ -186,7 +186,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -222,7 +222,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .post(`${booksUrl}/${book.id}/categories/${category.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.CREATED);
+        expect(response.statusCode).toBe(HttpStatusCode.created);
       });
     });
   });
@@ -242,7 +242,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .get(`${categoriesUrl}/${categoryId}/books`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -260,7 +260,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .get(`${categoriesUrl}/${id}/books`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -278,7 +278,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const response = await request(server.instance).get(`${categoriesUrl}/${category.id}/books`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -338,7 +338,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .get(`${categoriesUrl}/${category.id}/books?filter=["format||eq||paperback,hardcover"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
         expect(response.body.data.books.length).toBe(2);
       });
     });
@@ -359,7 +359,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .get(`${booksUrl}/${bookId}/categories`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -377,7 +377,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .get(`${booksUrl}/${id}/categories`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -401,7 +401,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const response = await request(server.instance).get(`${booksUrl}/${book.id}/categories`);
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -446,7 +446,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .get(`${booksUrl}/${book.id}/categories?filter=["name||eq||${name}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(response.statusCode).toBe(StatusCodes.OK);
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
         expect(response.body.data.categories.length).toBe(1);
       });
     });
@@ -469,7 +469,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
+        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
     });
 
@@ -488,7 +488,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NOT_FOUND);
+        expect(response.statusCode).toBe(HttpStatusCode.notFound);
       });
     });
 
@@ -524,7 +524,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .delete(`${booksUrl}/${book.id}/categories/${category.id}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.UNAUTHORIZED);
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
@@ -565,7 +565,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 
-        expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
+        expect(response.statusCode).toBe(HttpStatusCode.noContent);
       });
     });
   });
