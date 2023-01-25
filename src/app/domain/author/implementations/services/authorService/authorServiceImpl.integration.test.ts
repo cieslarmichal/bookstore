@@ -1,6 +1,8 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { EqualFilter } from '../../../../../common/filter/equalFilter';
+import { EqualFilter } from '../../../../../common/filter/filter';
+import { FilterName } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
@@ -135,7 +137,14 @@ describe('AuthorServiceImpl', () => {
 
         await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
 
-        const foundAuthors = await authorService.findAuthors(unitOfWork, [new EqualFilter('firstName', [firstName])], {
+        const equalFilterForFirstNameField: EqualFilter = {
+          fieldName: 'firstName',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [firstName],
+        };
+
+        const foundAuthors = await authorService.findAuthors(unitOfWork, [equalFilterForFirstNameField], {
           page: 1,
           limit: 5,
         });
@@ -161,9 +170,23 @@ describe('AuthorServiceImpl', () => {
 
         await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
 
+        const equalFilterForFirstNameField: EqualFilter = {
+          fieldName: 'firstName',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [firstName],
+        };
+
+        const equalFilterForLastNameField: EqualFilter = {
+          fieldName: 'lastName',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [lastName],
+        };
+
         const foundAuthors = await authorService.findAuthors(
           unitOfWork,
-          [new EqualFilter('firstName', [firstName]), new EqualFilter('lastName', [lastName])],
+          [equalFilterForFirstNameField, equalFilterForLastNameField],
           {
             page: 1,
             limit: 5,
@@ -195,7 +218,14 @@ describe('AuthorServiceImpl', () => {
 
         await authorRepository.createOne({ firstName, lastName: anotherLastName });
 
-        const foundAuthors = await authorService.findAuthors(unitOfWork, [new EqualFilter('firstName', [firstName])], {
+        const equalFilterForFirstNameField: EqualFilter = {
+          fieldName: 'firstName',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [firstName],
+        };
+
+        const foundAuthors = await authorService.findAuthors(unitOfWork, [equalFilterForFirstNameField], {
           page: 1,
           limit: 2,
         });
@@ -249,10 +279,17 @@ describe('AuthorServiceImpl', () => {
         await authorBookRepository.createOne({ bookId: book.id, authorId: firstAuthor.id });
         await authorBookRepository.createOne({ bookId: book.id, authorId: secondAuthor.id });
 
+        const equalFilterForFirstNameField: EqualFilter = {
+          fieldName: 'firstName',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [firstAuthor.firstName],
+        };
+
         const foundAuthors = await authorService.findAuthorsByBookId(
           unitOfWork,
           book.id,
-          [new EqualFilter('firstName', [firstAuthor.firstName])],
+          [equalFilterForFirstNameField],
           { page: 1, limit: 5 },
         );
 

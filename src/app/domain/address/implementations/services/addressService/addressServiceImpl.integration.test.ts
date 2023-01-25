@@ -1,5 +1,8 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
+import { EqualFilter } from '../../../../../common/filter/filter';
+import { FilterName } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
@@ -225,14 +228,17 @@ describe('AddressServiceImpl', () => {
           customerId: customer2.id,
         });
 
-        const foundAddresses = await addressService.findAddresses(
-          unitOfWork,
-          [new EqualFilter('customerId', [customer1.id])],
-          {
-            page: 1,
-            limit: 5,
-          },
-        );
+        const equalFilterForFirstNameField: EqualFilter = {
+          fieldName: 'customerId',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [customer1.id],
+        };
+
+        const foundAddresses = await addressService.findAddresses(unitOfWork, [equalFilterForFirstNameField], {
+          page: 1,
+          limit: 5,
+        });
 
         expect(foundAddresses.length).toBe(2);
         expect(foundAddresses[0]).toStrictEqual(address1);
@@ -297,14 +303,17 @@ describe('AddressServiceImpl', () => {
           customerId: customer.id,
         });
 
-        const foundAddresses = await addressService.findAddresses(
-          unitOfWork,
-          [new EqualFilter('customerId', [customer.id])],
-          {
-            page: 1,
-            limit: 5,
-          },
-        );
+        const equalFilterForFirstNameField: EqualFilter = {
+          fieldName: 'customerId',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [customer.id],
+        };
+
+        const foundAddresses = await addressService.findAddresses(unitOfWork, [equalFilterForFirstNameField], {
+          page: 1,
+          limit: 5,
+        });
 
         expect(foundAddresses.length).toBe(3);
       });

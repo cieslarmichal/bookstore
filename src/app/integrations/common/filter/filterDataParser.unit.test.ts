@@ -2,13 +2,16 @@ import { describe, it, expect } from 'vitest';
 
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import { FilterDataParser } from './filterDataParser';
-import { BetweenFilter } from '../../../common/filter/betweenFilter';
-import { EqualFilter } from '../../../common/filter/equalFilter';
-import { GreaterThanFilter } from '../../../common/filter/greaterThanFilter';
-import { GreaterThanOrEqualFilter } from '../../../common/filter/greaterThanOrEqualFilter';
-import { LessThanFilter } from '../../../common/filter/lessThanFilter';
-import { LessThanOrEqualFilter } from '../../../common/filter/lessThanOrEqualFilter';
-import { LikeFilter } from '../../../common/filter/likeFilter';
+import {
+  EqualFilter,
+  LessThanFilter,
+  LessThanOrEqualFilter,
+  GreaterThanFilter,
+  GreaterThanOrEqualFilter,
+  BetweenFilter,
+  LikeFilter,
+} from '../../../common/filter/filter';
+import { FilterName } from '../../../common/filter/filterName';
 
 describe('FilterDataParser', () => {
   const filterFataParser = new FilterDataParser();
@@ -67,7 +70,7 @@ describe('FilterDataParser', () => {
       const filterData = filterFataParser.parse(`["title||eq||lotr"]`, new Map(Object.entries({ title: ['eq'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(EqualFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.equal);
       expect((filterData[0] as EqualFilter).fieldName).toStrictEqual('title');
       expect((filterData[0] as EqualFilter).values).toStrictEqual(['lotr']);
     });
@@ -81,7 +84,7 @@ describe('FilterDataParser', () => {
       );
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(EqualFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.equal);
       expect((filterData[0] as EqualFilter).fieldName).toStrictEqual('author');
       expect((filterData[0] as EqualFilter).values).toStrictEqual(['J.R.R. Tolkien', 'J.K. Rowling']);
     });
@@ -122,7 +125,7 @@ describe('FilterDataParser', () => {
       const filterData = filterFataParser.parse(`["price||lt||10"]`, new Map(Object.entries({ price: ['lt'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(LessThanFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.lessThan);
       expect((filterData[0] as LessThanFilter).fieldName).toStrictEqual('price');
       expect((filterData[0] as LessThanFilter).value).toStrictEqual(10);
     });
@@ -163,7 +166,7 @@ describe('FilterDataParser', () => {
       const filterData = filterFataParser.parse(`["price||lte||10"]`, new Map(Object.entries({ price: ['lte'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(LessThanOrEqualFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.lessThanOrEqual);
       expect((filterData[0] as LessThanOrEqualFilter).fieldName).toStrictEqual('price');
       expect((filterData[0] as LessThanOrEqualFilter).value).toStrictEqual(10);
     });
@@ -204,7 +207,7 @@ describe('FilterDataParser', () => {
       const filterData = filterFataParser.parse(`["price||gt||10"]`, new Map(Object.entries({ price: ['gt'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(GreaterThanFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.greaterThan);
       expect((filterData[0] as GreaterThanFilter).fieldName).toStrictEqual('price');
       expect((filterData[0] as GreaterThanFilter).value).toStrictEqual(10);
     });
@@ -245,7 +248,7 @@ describe('FilterDataParser', () => {
       const filterData = filterFataParser.parse(`["price||gte||10"]`, new Map(Object.entries({ price: ['gte'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(GreaterThanOrEqualFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.greaterThanOrEqual);
       expect((filterData[0] as GreaterThanOrEqualFilter).fieldName).toStrictEqual('price');
       expect((filterData[0] as GreaterThanOrEqualFilter).value).toStrictEqual(10);
     });
@@ -299,9 +302,10 @@ describe('FilterDataParser', () => {
       );
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(BetweenFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.between);
       expect((filterData[0] as BetweenFilter).fieldName).toStrictEqual('price');
-      expect((filterData[0] as BetweenFilter).values).toStrictEqual([10, 20]);
+      expect((filterData[0] as BetweenFilter).from).toStrictEqual(10);
+      expect((filterData[0] as BetweenFilter).to).toStrictEqual(20);
     });
   });
 
@@ -330,7 +334,7 @@ describe('FilterDataParser', () => {
       const filterData = filterFataParser.parse(`["title||like||harry"]`, new Map(Object.entries({ title: ['like'] })));
 
       expect(filterData.length).toBe(1);
-      expect(filterData[0]).toBeInstanceOf(LikeFilter);
+      expect(filterData[0]?.filterName).toEqual(FilterName.like);
       expect((filterData[0] as LikeFilter).fieldName).toStrictEqual('title');
       expect((filterData[0] as LikeFilter).value).toStrictEqual('harry');
     });

@@ -1,6 +1,8 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { EqualFilter } from '../../../../../common/filter/equalFilter';
+import { EqualFilter } from '../../../../../common/filter/filter';
+import { FilterName } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
@@ -160,7 +162,14 @@ describe('CategoryServiceImpl', () => {
           name,
         });
 
-        const foundCategories = await categoryService.findCategories(unitOfWork, [new EqualFilter('name', [name])], {
+        const equalFilterForNameField: EqualFilter = {
+          fieldName: 'name',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [name],
+        };
+
+        const foundCategories = await categoryService.findCategories(unitOfWork, [equalFilterForNameField], {
           page: 1,
           limit: 5,
         });
@@ -213,10 +222,17 @@ describe('CategoryServiceImpl', () => {
           bookId: book.id,
         });
 
+        const equalFilterForNameField: EqualFilter = {
+          fieldName: 'name',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [name],
+        };
+
         const categories = await categoryService.findCategoriesByBookId(
           unitOfWork,
           book.id,
-          [new EqualFilter('name', [name])],
+          [equalFilterForNameField],
           {
             page: 1,
             limit: 5,

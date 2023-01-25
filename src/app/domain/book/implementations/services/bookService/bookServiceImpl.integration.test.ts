@@ -1,8 +1,8 @@
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { BetweenFilter } from '../../../../../common/filter/betweenFilter';
-import { EqualFilter } from '../../../../../common/filter/equalFilter';
-import { LessThanOrEqualFilter } from '../../../../../common/filter/lessThanOrEqualFilter';
+import { BetweenFilter, EqualFilter, LessThanOrEqualFilter } from '../../../../../common/filter/filter';
+import { FilterName } from '../../../../../common/filter/filterName';
+import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
@@ -174,7 +174,14 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [new EqualFilter('title', [title])], {
+        const equalFilterForTitleField: EqualFilter = {
+          fieldName: 'title',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [title],
+        };
+
+        const foundBooks = await bookService.findBooks(unitOfWork, [equalFilterForTitleField], {
           page: 1,
           limit: 5,
         });
@@ -221,9 +228,23 @@ describe('BookServiceImpl', () => {
           price,
         });
 
+        const equalFilterForLanguageField: EqualFilter = {
+          fieldName: 'language',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [language],
+        };
+
+        const lessThanOrEqualFilterForReleaseYearField: LessThanOrEqualFilter = {
+          fieldName: 'releaseYear',
+          filterName: FilterName.lessThanOrEqual,
+          filterSymbol: FilterSymbol.lessThanOrEqual,
+          value: 2000,
+        };
+
         const foundBooks = await bookService.findBooks(
           unitOfWork,
-          [new EqualFilter('language', [language]), new LessThanOrEqualFilter('releaseYear', 2000)],
+          [equalFilterForLanguageField, lessThanOrEqualFilterForReleaseYearField],
           { page: 1, limit: 5 },
         );
 
@@ -270,7 +291,15 @@ describe('BookServiceImpl', () => {
           price: 10,
         });
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [new BetweenFilter('price', [40, 80])], {
+        const betweenFilterForPriceField: BetweenFilter = {
+          fieldName: 'price',
+          filterName: FilterName.between,
+          filterSymbol: FilterSymbol.between,
+          from: 40,
+          to: 80,
+        };
+
+        const foundBooks = await bookService.findBooks(unitOfWork, [betweenFilterForPriceField], {
           page: 1,
           limit: 5,
         });
@@ -318,11 +347,14 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const foundBooks = await bookService.findBooks(
-          unitOfWork,
-          [new EqualFilter('format', [BookFormat.paperback, BookFormat.kindle])],
-          { page: 1, limit: 5 },
-        );
+        const equalFilterForFormatField: EqualFilter = {
+          fieldName: 'format',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [BookFormat.paperback, BookFormat.kindle],
+        };
+
+        const foundBooks = await bookService.findBooks(unitOfWork, [equalFilterForFormatField], { page: 1, limit: 5 });
 
         expect(foundBooks.length).toBe(2);
         expect(foundBooks[0]).toStrictEqual(book1);
@@ -355,7 +387,14 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [new EqualFilter('language', [BookLanguage.pl])], {
+        const equalFilterForLanguageField: EqualFilter = {
+          fieldName: 'language',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [BookLanguage.pl],
+        };
+
+        const foundBooks = await bookService.findBooks(unitOfWork, [equalFilterForLanguageField], {
           page: 1,
           limit: 5,
         });
@@ -455,15 +494,17 @@ describe('BookServiceImpl', () => {
         await authorBookRepository.createOne({ bookId: firstBook.id, authorId: author.id });
         await authorBookRepository.createOne({ bookId: secondBook.id, authorId: author.id });
 
-        const foundBooks = await bookService.findBooksByAuthorId(
-          unitOfWork,
-          author.id,
-          [new EqualFilter('title', [firstBook.title])],
-          {
-            page: 1,
-            limit: 5,
-          },
-        );
+        const equalFilterForTitleField: EqualFilter = {
+          fieldName: 'title',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [firstBook.title],
+        };
+
+        const foundBooks = await bookService.findBooksByAuthorId(unitOfWork, author.id, [equalFilterForTitleField], {
+          page: 1,
+          limit: 5,
+        });
 
         expect(foundBooks).not.toBeNull();
         expect(foundBooks.length).toBe(1);
@@ -518,15 +559,17 @@ describe('BookServiceImpl', () => {
           bookId: book2.id,
         });
 
-        const books = await bookService.findBooksByAuthorId(
-          unitOfWork,
-          category.id,
-          [new EqualFilter('title', [title])],
-          {
-            page: 1,
-            limit: 5,
-          },
-        );
+        const equalFilterForTitleField: EqualFilter = {
+          fieldName: 'title',
+          filterName: FilterName.equal,
+          filterSymbol: FilterSymbol.equal,
+          values: [title],
+        };
+
+        const books = await bookService.findBooksByAuthorId(unitOfWork, category.id, [equalFilterForTitleField], {
+          page: 1,
+          limit: 5,
+        });
 
         expect(books.length).toBe(1);
         expect(books[0]).toStrictEqual(book1);
