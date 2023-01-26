@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { IsOptional, IsDate, IsString, IsNumber, IsEnum, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
 
 import { BookFormat } from './bookFormat';
@@ -13,60 +12,45 @@ export const booksTableName = 'books';
   name: booksTableName,
 })
 export class BookEntity {
-  @IsOptional()
-  @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')
   //@ts-ignore
   public id: string;
 
-  @IsOptional()
-  @IsDate()
   @CreateDateColumn({ type: 'timestamp' })
   //@ts-ignore
   public createdAt: Date;
 
-  @IsOptional()
-  @IsDate()
   @UpdateDateColumn({ type: 'timestamp' })
   //@ts-ignore
   public updatedAt: Date;
 
-  @IsString()
-  @Column()
+  @Column({ type: 'text' })
   //@ts-ignore
   public title: string;
 
-  @IsNumber()
-  @Column()
+  @Column({ type: 'int' })
   //@ts-ignore
   public releaseYear: number;
 
-  @IsEnum(BookLanguage)
-  @Column()
+  @Column({ type: 'enum', enum: BookLanguage })
   //@ts-ignore
   public language: BookLanguage;
 
-  @IsEnum(BookFormat)
-  @Column()
+  @Column({ type: 'enum', enum: BookFormat })
   //@ts-ignore
   public format: BookFormat;
 
-  @IsOptional()
-  @IsString()
   @Column({ type: 'text', nullable: true })
   //@ts-ignore
   public description: string | null;
 
-  @IsNumber()
-  @Column()
+  @Column({ type: 'float' })
   //@ts-ignore
   public price: number;
 
-  @IsOptional()
   @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.book)
   public authorBooks?: AuthorBookEntity[] | null;
 
-  @IsOptional()
   @OneToMany(() => BookCategoryEntity, (bookCategory) => bookCategory.book)
   public bookCategories?: BookCategoryEntity[] | null;
 }

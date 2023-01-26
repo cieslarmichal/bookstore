@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { IsOptional, IsDate, IsUUID } from 'class-validator';
 import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, ManyToOne, Unique } from 'typeorm';
 
 import { BookEntity } from '../../book/contracts/bookEntity';
@@ -12,20 +11,14 @@ export const bookCategoriesTableName = 'bookCategories';
 })
 @Unique('unique_index_bookId_categoryId', ['bookId', 'categoryId'])
 export class BookCategoryEntity {
-  @IsOptional()
-  @IsUUID('4')
   @PrimaryGeneratedColumn('uuid')
   //@ts-ignore
   public id: string;
 
-  @IsOptional()
-  @IsDate()
   @CreateDateColumn({ type: 'timestamp' })
   //@ts-ignore
   public createdAt: Date;
 
-  @IsOptional()
-  @IsDate()
   @UpdateDateColumn({ type: 'timestamp' })
   //@ts-ignore
   public updatedAt: Date;
@@ -33,8 +26,6 @@ export class BookCategoryEntity {
   @ManyToOne(() => BookEntity, (book) => book.bookCategories, { onDelete: 'CASCADE' })
   public book?: BookEntity;
 
-  @IsOptional()
-  @IsUUID('4')
   @Column({ type: 'uuid' })
   //@ts-ignore
   public bookId: string;
@@ -42,8 +33,6 @@ export class BookCategoryEntity {
   @ManyToOne(() => CategoryEntity, (category) => category.bookCategories, { onDelete: 'CASCADE' })
   public category?: CategoryEntity;
 
-  @IsOptional()
-  @IsUUID('4')
   @Column({ type: 'uuid' })
   //@ts-ignore
   public categoryId: string;
