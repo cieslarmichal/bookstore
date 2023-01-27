@@ -1,14 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import {
-  Entity,
-  CreateDateColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-  Column,
-} from 'typeorm';
+import { Entity, OneToMany, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 
 import { AddressEntity } from '../../address/contracts/addressEntity';
 import { UserEntity } from '../../user/contracts/userEntity';
@@ -19,17 +10,9 @@ export const customersTableName = 'customers';
   name: customersTableName,
 })
 export class CustomerEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid' })
   //@ts-ignore
   public id: string;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  //@ts-ignore
-  public createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  //@ts-ignore
-  public updatedAt: Date;
 
   @OneToMany(() => AddressEntity, (address) => address.customer)
   public addresses?: AddressEntity[];

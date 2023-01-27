@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
 import { BookCategoryEntity } from '../../bookCategory/contracts/bookCategoryEntity';
 
@@ -9,17 +9,9 @@ export const categoriesTableName = 'categories';
   name: categoriesTableName,
 })
 export class CategoryEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid' })
   //@ts-ignore
   public id: string;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  //@ts-ignore
-  public createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  //@ts-ignore
-  public updatedAt: Date;
 
   @Column({ type: 'text', unique: true })
   //@ts-ignore

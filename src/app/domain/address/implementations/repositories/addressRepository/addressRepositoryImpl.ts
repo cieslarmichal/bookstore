@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { AddressQueryBuilder } from './addressQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
@@ -9,7 +9,6 @@ import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressM
 import { AddressRepository } from '../../../contracts/repositories/addressRepository/addressRepository';
 import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
-@EntityRepository()
 export class AddressRepositoryImpl implements AddressRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly addressMapper: AddressMapper) {}
 

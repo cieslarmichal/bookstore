@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Entity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { BookFormat } from './bookFormat';
 import { BookLanguage } from './bookLanguage';
@@ -12,17 +12,9 @@ export const booksTableName = 'books';
   name: booksTableName,
 })
 export class BookEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid' })
   //@ts-ignore
   public id: string;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  //@ts-ignore
-  public createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  //@ts-ignore
-  public updatedAt: Date;
 
   @Column({ type: 'text' })
   //@ts-ignore
