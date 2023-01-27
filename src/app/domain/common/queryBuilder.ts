@@ -1,6 +1,5 @@
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { ObjectLiteral } from './objectLiteral';
 import { Filter } from '../../common/filter/filter';
 import { FilterName } from '../../common/filter/filterName';
 

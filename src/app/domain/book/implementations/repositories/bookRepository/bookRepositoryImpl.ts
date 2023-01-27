@@ -16,7 +16,9 @@ export class BookRepositoryImpl implements BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Book> {
-    const book = this.entityManager.create(BookEntity, { ...input });
+    const bookEntityInput: BookEntity = input;
+
+    const book = this.entityManager.create(BookEntity, { ...bookEntityInput });
 
     const savedBook = await this.entityManager.save(book);
 
@@ -26,13 +28,13 @@ export class BookRepositoryImpl implements BookRepository {
   public async findOne(input: FindOnePayload): Promise<Book | null> {
     const { id } = input;
 
-    const book = await this.entityManager.findOne(BookEntity, { where: { id } });
+    const bookEntity = await this.entityManager.findOne(BookEntity, { where: { id } });
 
-    if (!book) {
+    if (!bookEntity) {
       return null;
     }
 
-    return this.bookMapper.map(book);
+    return this.bookMapper.map(bookEntity);
   }
 
   public async findMany(input: FindManyPayload): Promise<Book[]> {
@@ -50,37 +52,37 @@ export class BookRepositoryImpl implements BookRepository {
       bookQueryBuilder = bookQueryBuilder.whereCategoryId(categoryId);
     }
 
-    const books = await bookQueryBuilder
+    const booksEntities = await bookQueryBuilder
       .where(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
 
-    return books.map((book) => this.bookMapper.map(book));
+    return booksEntities.map((book) => this.bookMapper.map(book));
   }
 
   public async updateOne(input: UpdateOnePayload): Promise<Book> {
     const { id, draft } = input;
 
-    const book = await this.findOne({ id });
+    const bookEntity = await this.findOne({ id });
 
-    if (!book) {
+    if (!bookEntity) {
       throw new BookNotFoundError({ id });
     }
 
     await this.entityManager.update(BookEntity, { id }, { ...draft });
 
-    const updatedBook = await this.findOne({ id });
+    const updatedBookEntity = await this.findOne({ id });
 
-    return updatedBook as Book;
+    return updatedBookEntity as Book;
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
     const { id } = input;
 
-    const book = await this.findOne({ id });
+    const bookEntity = await this.findOne({ id });
 
-    if (!book) {
+    if (!bookEntity) {
       throw new BookNotFoundError({ id });
     }
 

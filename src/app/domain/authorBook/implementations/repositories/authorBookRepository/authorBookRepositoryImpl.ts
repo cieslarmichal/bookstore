@@ -4,6 +4,9 @@ import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookEntity } from '../../../contracts/authorBookEntity';
 import { AuthorBookMapper } from '../../../contracts/mappers/authorBookMapper/authorBookMapper';
 import { AuthorBookRepository } from '../../../contracts/repositories/authorBookRepository/authorBookRepository';
+import { CreateOnePayload } from '../../../contracts/repositories/authorBookRepository/createOnePayload';
+import { DeleteOnePayload } from '../../../contracts/repositories/authorBookRepository/deleteOnePayload';
+import { FindOnePayload } from '../../../contracts/repositories/authorBookRepository/findOnePayload';
 import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 
 export class AuthorBookRepositoryImpl implements AuthorBookRepository {
@@ -12,32 +15,32 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
     private readonly authorBookMapper: AuthorBookMapper,
   ) {}
 
-  public async createOne(authorBookData: Partial<AuthorBookEntity>): Promise<AuthorBook> {
-    const authorBook = this.entityManager.create(AuthorBookEntity, authorBookData);
+  public async createOne(input: CreateOnePayload): Promise<AuthorBook> {
+    const authorBookEntityInput: AuthorBookEntity = input;
 
-    const savedAuthorBook = await this.entityManager.save(authorBook);
+    const authorBookEntity = this.entityManager.create(AuthorBookEntity, { ...authorBookEntityInput });
 
-    return this.authorBookMapper.map(savedAuthorBook);
+    const savedAuthorBookEntity = await this.entityManager.save(authorBookEntity);
+
+    return this.authorBookMapper.map(savedAuthorBookEntity);
   }
 
-  public async findOne(conditions: FindConditions<AuthorBookEntity>): Promise<AuthorBook | null> {
-    const authorBook = await this.entityManager.findOne(AuthorBookEntity, conditions);
+  public async findOne(input: FindOnePayload): Promise<AuthorBook | null> {
+    const authorBookEntity = await this.entityManager.findOne(AuthorBookEntity, { where: { ...input } });
 
-    if (!authorBook) {
+    if (!authorBookEntity) {
       return null;
     }
 
-    return this.authorBookMapper.map(authorBook);
+    return this.authorBookMapper.map(authorBookEntity);
   }
 
-  public async findOneById(id: string): Promise<AuthorBook | null> {
-    return this.findOne({ id });
-  }
+  public async deleteOne(input: DeleteOnePayload): Promise<void> {
+    const { id } = input;
 
-  public async deleteOne(id: string): Promise<void> {
-    const authorBook = await this.findOneById(id);
+    const authorBookEntity = await this.findOne({ id });
 
-    if (!authorBook) {
+    if (!authorBookEntity) {
       throw new AuthorBookNotFoundError({ id });
     }
 
