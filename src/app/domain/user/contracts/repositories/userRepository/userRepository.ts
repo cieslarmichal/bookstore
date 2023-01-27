@@ -1,13 +1,12 @@
-import { FindConditions } from 'typeorm';
-
+import { CreateOnePayload } from './createOnePayload';
+import { DeleteOnePayload } from './deleteOnePayload';
+import { FindOnePayload } from './findOnePayload';
+import { UpdateOnePayload } from './updateOnePayload';
 import { User } from '../../user';
-import { UserEntity } from '../../userEntity';
 
 export interface UserRepository {
-  createOne(userData: Partial<UserEntity>): Promise<User>;
-  findOne(conditions: FindConditions<UserEntity>): Promise<User | null>;
-  findOneById(id: string): Promise<User | null>;
-  findMany(conditions: FindConditions<UserEntity>): Promise<User[]>;
-  updateOne(id: string, userData: Partial<UserEntity>): Promise<User>;
-  deleteOne(id: string): Promise<void>;
+  createOne(input: CreateOnePayload): Promise<User>;
+  findOne(input: FindOnePayload): Promise<User | null>;
+  updateOne(input: UpdateOnePayload): Promise<User>;
+  deleteOne(input: DeleteOnePayload): Promise<void>;
 }

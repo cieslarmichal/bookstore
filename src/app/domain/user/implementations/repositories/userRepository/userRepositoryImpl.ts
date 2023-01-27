@@ -1,6 +1,10 @@
 import { EntityManager } from 'typeorm';
 
 import { UserMapper } from '../../../contracts/mappers/userMapper/userMapper';
+import { CreateOnePayload } from '../../../contracts/repositories/userRepository/createOnePayload';
+import { DeleteOnePayload } from '../../../contracts/repositories/userRepository/deleteOnePayload';
+import { FindOnePayload } from '../../../contracts/repositories/userRepository/findOnePayload';
+import { UpdateOnePayload } from '../../../contracts/repositories/userRepository/updateOnePayload';
 import { UserRepository } from '../../../contracts/repositories/userRepository/userRepository';
 import { User } from '../../../contracts/user';
 import { UserEntity } from '../../../contracts/userEntity';
@@ -9,50 +13,48 @@ import { UserNotFoundError } from '../../../errors/userNotFoundError';
 export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}
 
-  public async createOne(userData: Partial<UserEntity>): Promise<User> {
-    const user = this.entityManager.create(UserEntity, userData);
+  public async createOne(input: CreateOnePayload): Promise<User> {
+    const userEntityInput: UserEntity = input;
 
-    const savedUser = await this.entityManager.save(user);
+    const userEntity = this.entityManager.create(UserEntity, userEntityInput);
 
-    return this.userMapper.map(savedUser);
+    const savedUserEntity = await this.entityManager.save(userEntity);
+
+    return this.userMapper.map(savedUserEntity);
   }
 
-  public async findOne(conditions: FindConditions<UserEntity>): Promise<User | null> {
-    const user = await this.entityManager.findOne(UserEntity, conditions);
+  public async findOne(input: FindOnePayload): Promise<User | null> {
+    const userEntity = await this.entityManager.findOne(UserEntity, { where: { ...input } });
 
-    if (!user) {
+    if (!userEntity) {
       return null;
     }
 
-    return this.userMapper.map(user);
+    return this.userMapper.map(userEntity);
   }
 
-  public async findOneById(id: string): Promise<User | null> {
-    return this.findOne({ id });
-  }
+  public async updateOne(input: UpdateOnePayload): Promise<User> {
+    const { id, draft } = input;
 
-  public async findMany(conditions: FindConditions<UserEntity>): Promise<User[]> {
-    const users = await this.entityManager.find(UserEntity, conditions);
+    const userEntity = await this.findOne({ id });
 
-    return users.map((user) => this.userMapper.map(user));
-  }
-
-  public async updateOne(id: string, userData: Partial<UserEntity>): Promise<User> {
-    const user = await this.findOneById(id);
-
-    if (!user) {
+    if (!userEntity) {
       throw new UserNotFoundError({ id });
     }
 
-    await this.entityManager.update(UserEntity, { id }, userData);
+    await this.entityManager.update(UserEntity, { id }, { ...draft });
 
-    return this.findOneById(id) as Promise<User>;
+    const updatedUserEntity = await this.findOne({ id });
+
+    return updatedUserEntity as User;
   }
 
-  public async deleteOne(id: string): Promise<void> {
-    const user = await this.findOneById(id);
+  public async deleteOne(input: DeleteOnePayload): Promise<void> {
+    const { id } = input;
 
-    if (!user) {
+    const userEntity = await this.findOne({ id });
+
+    if (!userEntity) {
       throw new UserNotFoundError({ id });
     }
 

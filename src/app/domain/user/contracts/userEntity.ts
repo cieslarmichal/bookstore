@@ -16,17 +16,17 @@ export class UserEntity {
 
   @Column({ type: 'text', unique: true, nullable: true })
   //@ts-ignore
-  public email?: string;
+  public email?: string | undefined;
 
   @Column({ type: 'text', unique: true, nullable: true })
   //@ts-ignore
-  public phoneNumber?: string;
+  public phoneNumber?: string | undefined;
 
   @Column({ type: 'text' })
   //@ts-ignore
   public password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.user })
+  @Column({ type: 'enum', enum: UserRole })
   //@ts-ignore
   public role: UserRole;
 
