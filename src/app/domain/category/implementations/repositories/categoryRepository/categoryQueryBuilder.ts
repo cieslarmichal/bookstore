@@ -9,7 +9,7 @@ export class CategoryQueryBuilder extends QueryBuilder<CategoryEntity> {
     super(entityManager, CategoryEntity, 'category');
   }
 
-  public bookConditions(bookId: string): CategoryQueryBuilder {
+  public whereBookId(bookId: string): CategoryQueryBuilder {
     this.instance
       .leftJoinAndSelect('category.bookCategories', 'bookCategories')
       .leftJoinAndSelect('bookCategories.book', 'book');
@@ -19,7 +19,7 @@ export class CategoryQueryBuilder extends QueryBuilder<CategoryEntity> {
     return this;
   }
 
-  public categoryConditions(filters: Filter[]): CategoryQueryBuilder {
+  public where(filters: Filter[]): CategoryQueryBuilder {
     for (const filter of filters) {
       this.partialConditionsForFilter(`category.${filter.fieldName}`, filter);
     }

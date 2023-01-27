@@ -1,14 +1,12 @@
-import { Filter } from '../../../../../common/filter/filter';
-import { PaginationData } from '../../../../common/paginationData';
+import { CreateOnePayload } from './createOnePayload';
+import { DeleteOnePayload } from './deleteOnePayload';
+import { FindManyPayload } from './findManyPayload';
+import { FindOnePayload } from './findOnePayload';
 import { Category } from '../../category';
-import { CategoryEntity } from '../../categoryEntity';
 
 export interface CategoryRepository {
-  createOne(categoryData: Partial<CategoryEntity>): Promise<Category>;
-  findOne(conditions: FindConditions<CategoryEntity>): Promise<Category | null>;
-  findOneById(id: string): Promise<Category | null>;
-  findMany(filters: Filter[], paginationData: PaginationData): Promise<Category[]>;
-  findManyByBookId(bookId: string, filters: Filter[], paginationData: PaginationData): Promise<Category[]>;
-  updateOne(id: string, categoryData: Partial<CategoryEntity>): Promise<Category>;
-  deleteOne(id: string): Promise<void>;
+  createOne(input: CreateOnePayload): Promise<Category>;
+  findOne(input: FindOnePayload): Promise<Category | null>;
+  findMany(input: FindManyPayload): Promise<Category[]>;
+  deleteOne(input: DeleteOnePayload): Promise<void>;
 }
