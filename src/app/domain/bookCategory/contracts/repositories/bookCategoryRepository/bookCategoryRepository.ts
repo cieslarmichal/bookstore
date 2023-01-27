@@ -1,11 +1,10 @@
-import { FindConditions } from 'typeorm';
-
+import { CreateOnePayload } from './createOnePayload';
+import { DeleteOnePayload } from './deleteOnePayload';
+import { FindOnePayload } from './findOnePayload';
 import { BookCategory } from '../../bookCategory';
-import { BookCategoryEntity } from '../../bookCategoryEntity';
 
 export interface BookCategoryRepository {
-  createOne(bookCategoryData: Partial<BookCategoryEntity>): Promise<BookCategory>;
-  findOne(conditions: FindConditions<BookCategoryEntity>): Promise<BookCategory | null>;
-  findOneById(id: string): Promise<BookCategory | null>;
-  deleteOne(id: string): Promise<void>;
+  createOne(input: CreateOnePayload): Promise<BookCategory>;
+  findOne(input: FindOnePayload): Promise<BookCategory | null>;
+  deleteOne(input: DeleteOnePayload): Promise<void>;
 }

@@ -4,6 +4,9 @@ import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryRepository } from '../../../contracts/repositories/bookCategoryRepository/bookCategoryRepository';
+import { CreateOnePayload } from '../../../contracts/repositories/bookCategoryRepository/createOnePayload';
+import { DeleteOnePayload } from '../../../contracts/repositories/bookCategoryRepository/deleteOnePayload';
+import { FindOnePayload } from '../../../contracts/repositories/bookCategoryRepository/findOnePayload';
 import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
 export class BookCategoryRepositoryImpl implements BookCategoryRepository {
@@ -12,32 +15,32 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
     private readonly bookCategoryMapper: BookCategoryMapper,
   ) {}
 
-  public async createOne(bookCategoryData: Partial<BookCategoryEntity>): Promise<BookCategory> {
-    const bookCategory = this.entityManager.create(BookCategoryEntity, bookCategoryData);
+  public async createOne(input: CreateOnePayload): Promise<BookCategory> {
+    const bookCategoryEntityInput: BookCategoryEntity = input;
 
-    const savedBookCategory = await this.entityManager.save(bookCategory);
+    const bookCategoryEntity = this.entityManager.create(BookCategoryEntity, bookCategoryEntityInput);
 
-    return this.bookCategoryMapper.map(savedBookCategory);
+    const savedBookCategoryEntity = await this.entityManager.save(bookCategoryEntity);
+
+    return this.bookCategoryMapper.map(savedBookCategoryEntity);
   }
 
-  public async findOne(conditions: FindConditions<BookCategoryEntity>): Promise<BookCategory | null> {
-    const bookCategory = await this.entityManager.findOne(BookCategoryEntity, conditions);
+  public async findOne(input: FindOnePayload): Promise<BookCategory | null> {
+    const bookCategoryEntity = await this.entityManager.findOne(BookCategoryEntity, { where: { ...input } });
 
-    if (!bookCategory) {
+    if (!bookCategoryEntity) {
       return null;
     }
 
-    return this.bookCategoryMapper.map(bookCategory);
+    return this.bookCategoryMapper.map(bookCategoryEntity);
   }
 
-  public async findOneById(id: string): Promise<BookCategory | null> {
-    return this.findOne({ id });
-  }
+  public async deleteOne(input: DeleteOnePayload): Promise<void> {
+    const { id } = input;
 
-  public async deleteOne(id: string): Promise<void> {
-    const bookCategory = await this.findOneById(id);
+    const bookCategoryEntity = await this.findOne({ id });
 
-    if (!bookCategory) {
+    if (!bookCategoryEntity) {
       throw new BookCategoryNotFoundError({ id });
     }
 
