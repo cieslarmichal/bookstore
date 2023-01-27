@@ -1,15 +1,14 @@
-import { FindConditions } from 'typeorm';
-
-import { Filter } from '../../../../../common/filter/filter';
-import { PaginationData } from '../../../../common/paginationData';
+import { CreateOnePayload } from './createOnePayload';
+import { DeleteOnePayload } from './deleteOnePayload';
+import { FindManyPayload } from './findManyPayload';
+import { FindOnePayload } from './findOnePayload';
+import { UpdateOnePayload } from './updateOnePayload';
 import { Author } from '../../author';
 
 export interface AuthorRepository {
-  createOne(authorData: Partial<Author>): Promise<Author>;
-  findOne(conditions: FindConditions<Author>): Promise<Author | null>;
-  findOneById(id: string): Promise<Author | null>;
-  findMany(filters: Filter[], paginationData: PaginationData): Promise<Author[]>;
-  findManyByBookId(bookId: string, filters: Filter[], paginationData: PaginationData): Promise<Author[]>;
-  updateOne(id: string, authorData: Partial<Author>): Promise<Author>;
-  deleteOne(id: string): Promise<void>;
+  createOne(input: CreateOnePayload): Promise<Author>;
+  findOne(input: FindOnePayload): Promise<Author | null>;
+  findMany(input: FindManyPayload): Promise<Author[]>;
+  updateOne(input: UpdateOnePayload): Promise<Author>;
+  deleteOne(input: DeleteOnePayload): Promise<void>;
 }

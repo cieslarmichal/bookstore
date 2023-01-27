@@ -1,84 +1,84 @@
-import { EntityManager, FindConditions } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { AuthorQueryBuilder } from './authorQueryBuilder';
-import { Filter } from '../../../../../common/filter/filter';
-import { PaginationData } from '../../../../common/paginationData';
 import { Author } from '../../../contracts/author';
 import { AuthorEntity } from '../../../contracts/authorEntity';
 import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';
 import { AuthorRepository } from '../../../contracts/repositories/authorRepository/authorRepository';
+import { CreateOnePayload } from '../../../contracts/repositories/authorRepository/createOnePayload';
+import { DeleteOnePayload } from '../../../contracts/repositories/authorRepository/deleteOnePayload';
+import { FindManyPayload } from '../../../contracts/repositories/authorRepository/findManyPayload';
+import { FindOnePayload } from '../../../contracts/repositories/authorRepository/findOnePayload';
+import { UpdateOnePayload } from '../../../contracts/repositories/authorRepository/updateOnePayload';
 import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
 export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
-  public async createOne(authorData: Partial<AuthorEntity>): Promise<Author> {
-    const author = this.entityManager.create(AuthorEntity, authorData);
+  public async createOne(input: CreateOnePayload): Promise<Author> {
+    const authorEntityInput: AuthorEntity = input;
 
-    const savedAuthor = await this.entityManager.save(author);
+    const authorEntity = this.entityManager.create(AuthorEntity, authorEntityInput);
 
-    return this.authorMapper.map(savedAuthor);
+    const savedAuthorEntity = await this.entityManager.save(authorEntity);
+
+    return this.authorMapper.map(savedAuthorEntity);
   }
 
-  public async findOne(conditions: FindConditions<AuthorEntity>): Promise<Author | null> {
-    const author = await this.entityManager.findOne(AuthorEntity, conditions);
+  public async findOne(input: FindOnePayload): Promise<Author | null> {
+    const { id } = input;
 
-    if (!author) {
+    const authorEntity = await this.entityManager.findOne(AuthorEntity, { where: { id } });
+
+    if (!authorEntity) {
       return null;
     }
 
-    return this.authorMapper.map(author);
+    return this.authorMapper.map(authorEntity);
   }
 
-  public async findOneById(id: string): Promise<Author | null> {
-    return this.findOne({ id });
-  }
+  public async findMany(input: FindManyPayload): Promise<Author[]> {
+    const { bookId, filters, paginationData } = input;
 
-  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<Author[]> {
-    const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
+    let authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
-    const authors = await authorQueryBuilder
-      .authorConditions(filters)
+    if (bookId) {
+      authorQueryBuilder = authorQueryBuilder.whereBookId(bookId);
+    }
+
+    const authorsEntities = await authorQueryBuilder
+      .where(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
 
-    return authors.map((author) => this.authorMapper.map(author));
+    return authorsEntities.map((authorEntity) => this.authorMapper.map(authorEntity));
   }
 
-  public async findManyByBookId(bookId: string, filters: Filter[], paginationData: PaginationData): Promise<Author[]> {
-    const authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
+  public async updateOne(input: UpdateOnePayload): Promise<Author> {
+    const { id, draft } = input;
 
-    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+    const authorEntity = await this.findOne({ id });
 
-    const authors = await authorQueryBuilder
-      .bookConditions(bookId)
-      .authorConditions(filters)
-      .skip(numberOfEnitiesToSkip)
-      .take(paginationData.limit)
-      .getMany();
-
-    return authors.map((author) => this.authorMapper.map(author));
-  }
-
-  public async updateOne(id: string, authorData: Partial<AuthorEntity>): Promise<Author> {
-    const author = await this.findOneById(id);
-
-    if (!author) {
+    if (!authorEntity) {
       throw new AuthorNotFoundError({ id });
     }
 
-    await this.entityManager.update(AuthorEntity, { id }, authorData);
+    await this.entityManager.update(AuthorEntity, { id }, { ...draft });
 
-    return this.findOneById(id) as Promise<Author>;
+    const updatedAuthorEntity = await this.findOne({ id });
+
+    return updatedAuthorEntity as Author;
   }
 
-  public async deleteOne(id: string): Promise<void> {
-    const author = await this.findOneById(id);
+  public async deleteOne(input: DeleteOnePayload): Promise<void> {
+    const { id } = input;
 
-    if (!author) {
+    const authorEntity = await this.findOne({ id });
+
+    if (!authorEntity) {
       throw new AuthorNotFoundError({ id });
     }
 
