@@ -1,69 +1,80 @@
 import { EntityManager } from 'typeorm';
 
 import { AddressQueryBuilder } from './addressQueryBuilder';
-import { Filter } from '../../../../../common/filter/filter';
-import { PaginationData } from '../../../../common/paginationData';
 import { Address } from '../../../contracts/address';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
 import { AddressRepository } from '../../../contracts/repositories/addressRepository/addressRepository';
+import { CreateOnePayload } from '../../../contracts/repositories/addressRepository/createOnePayload';
+import { DeleteOnePayload } from '../../../contracts/repositories/addressRepository/deleteOnePayload';
+import { FindManyPayload } from '../../../contracts/repositories/addressRepository/findManyPayload';
+import { FindOnePayload } from '../../../contracts/repositories/addressRepository/findOnePayload';
+import { UpdateOnePayload } from '../../../contracts/repositories/addressRepository/updateOnePayload';
 import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
 export class AddressRepositoryImpl implements AddressRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly addressMapper: AddressMapper) {}
 
-  public async createOne(addressData: Partial<AddressEntity>): Promise<Address> {
-    const address = this.entityManager.create(AddressEntity, addressData);
+  public async createOne(input: CreateOnePayload): Promise<Address> {
+    const addressEntityInput: AddressEntity = input;
 
-    const savedAddress = await this.entityManager.save(address);
+    const addressEntity = this.entityManager.create(AddressEntity, addressEntityInput);
 
-    return this.addressMapper.map(savedAddress);
+    const savedAddressEntity = await this.entityManager.save(addressEntity);
+
+    return this.addressMapper.map(savedAddressEntity);
   }
 
-  public async findOne(conditions: FindConditions<AddressEntity>): Promise<Address | null> {
-    const address = await this.entityManager.findOne(AddressEntity, conditions);
+  public async findOne(input: FindOnePayload): Promise<Address | null> {
+    const { id } = input;
 
-    if (!address) {
+    const addressEntity = await this.entityManager.findOne(AddressEntity, { where: { id } });
+
+    if (!addressEntity) {
       return null;
     }
 
-    return this.addressMapper.map(address);
+    return this.addressMapper.map(addressEntity);
   }
 
-  public async findOneById(id: string): Promise<Address | null> {
-    return this.findOne({ id });
-  }
+  public async findMany(input: FindManyPayload): Promise<Address[]> {
+    const { filters, paginationData } = input;
 
-  public async findMany(filters: Filter[], paginationData: PaginationData): Promise<Address[]> {
     const addressQueryBuilder = new AddressQueryBuilder(this.entityManager);
 
     const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
 
-    const addresses = await addressQueryBuilder
-      .addressConditions(filters)
+    const addressesEntities = await addressQueryBuilder
+      .where(filters)
       .skip(numberOfEnitiesToSkip)
       .take(paginationData.limit)
       .getMany();
 
-    return addresses.map((address) => this.addressMapper.map(address));
+    return addressesEntities.map((address) => this.addressMapper.map(address));
   }
 
-  public async updateOne(id: string, addressData: Partial<AddressEntity>): Promise<Address> {
-    const address = await this.findOneById(id);
+  public async updateOne(input: UpdateOnePayload): Promise<Address> {
+    const { id, draft } = input;
 
-    if (!address) {
+    const addressEntity = await this.findOne({ id });
+
+    if (!addressEntity) {
       throw new AddressNotFoundError({ id });
     }
 
-    await this.entityManager.update(AddressEntity, { id }, addressData);
+    await this.entityManager.update(AddressEntity, { id }, { ...draft });
 
-    return this.findOneById(id) as Promise<Address>;
+    const updatedAddressEntity = await this.findOne({ id });
+
+    return updatedAddressEntity as Address;
   }
 
-  public async deleteOne(id: string): Promise<void> {
-    const address = await this.findOneById(id);
+  public async deleteOne(input: DeleteOnePayload): Promise<void> {
+    const { id } = input;
 
-    if (!address) {
+    const addressEntity = await this.findOne({ id });
+
+    if (!addressEntity) {
       throw new AddressNotFoundError({ id });
     }
 

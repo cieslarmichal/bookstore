@@ -9,7 +9,7 @@ export class AddressQueryBuilder extends QueryBuilder<AddressEntity> {
     super(entityManager, AddressEntity, 'address');
   }
 
-  public addressConditions(filters: Filter[]): AddressQueryBuilder {
+  public where(filters: Filter[]): AddressQueryBuilder {
     for (const filter of filters) {
       this.partialConditionsForFilter(`address.${filter.fieldName}`, filter);
     }

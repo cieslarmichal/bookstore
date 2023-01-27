@@ -1,15 +1,14 @@
-import { FindConditions } from 'typeorm';
-
-import { Filter } from '../../../../../common/filter/filter';
-import { PaginationData } from '../../../../common/paginationData';
+import { CreateOnePayload } from './createOnePayload';
+import { DeleteOnePayload } from './deleteOnePayload';
+import { FindManyPayload } from './findManyPayload';
+import { FindOnePayload } from './findOnePayload';
+import { UpdateOnePayload } from './updateOnePayload';
 import { Address } from '../../address';
-import { AddressEntity } from '../../addressEntity';
 
 export interface AddressRepository {
-  createOne(addressData: Partial<AddressEntity>): Promise<Address>;
-  findOne(conditions: FindConditions<AddressEntity>): Promise<Address | null>;
-  findOneById(id: string): Promise<Address | null>;
-  findMany(filters: Filter[], paginationData: PaginationData): Promise<Address[]>;
-  updateOne(id: string, addressData: Partial<AddressEntity>): Promise<Address>;
-  deleteOne(id: string): Promise<void>;
+  createOne(input: CreateOnePayload): Promise<Address>;
+  findOne(input: FindOnePayload): Promise<Address | null>;
+  findMany(input: FindManyPayload): Promise<Address[]>;
+  updateOne(input: UpdateOnePayload): Promise<Address>;
+  deleteOne(input: DeleteOnePayload): Promise<void>;
 }
