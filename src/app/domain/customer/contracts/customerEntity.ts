@@ -20,7 +20,7 @@ export class CustomerEntity {
   @OneToOne(() => UserEntity, (user) => user.customer, { onDelete: 'CASCADE' })
   @JoinColumn()
   //@ts-ignore
-  public user: UserEntity | null;
+  public user?: UserEntity | null;
 
   @Column({ type: 'uuid' })
   //@ts-ignore

@@ -3,56 +3,41 @@ import { EntityManager } from 'typeorm';
 import { Customer } from '../../../contracts/customer';
 import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerMapper } from '../../../contracts/mappers/customerMapper/customerMapper';
+import { CreateOnePayload } from '../../../contracts/repositories/customerRepository/createOnePayload';
 import { CustomerRepository } from '../../../contracts/repositories/customerRepository/customerRepository';
+import { DeleteOnePayload } from '../../../contracts/repositories/customerRepository/deleteOnePayload';
+import { FindOnePayload } from '../../../contracts/repositories/customerRepository/findOnePayload';
 import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
 export class CustomerRepositoryImpl implements CustomerRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly customerMapper: CustomerMapper) {}
 
-  public async createOne(customerData: Partial<CustomerEntity>): Promise<Customer> {
-    const customer = this.entityManager.create(CustomerEntity, customerData);
+  public async createOne(input: CreateOnePayload): Promise<Customer> {
+    const customerEntityInput: CustomerEntity = input;
 
-    const savedCustomer = await this.entityManager.save(customer);
+    const customerEntity = this.entityManager.create(CustomerEntity, customerEntityInput);
 
-    return this.customerMapper.map(savedCustomer);
+    const savedCustomerEntity = await this.entityManager.save(customerEntity);
+
+    return this.customerMapper.map(savedCustomerEntity);
   }
 
-  public async findOne(conditions: FindConditions<CustomerEntity>): Promise<Customer | null> {
-    const customer = await this.entityManager.findOne(CustomerEntity, conditions);
+  public async findOne(input: FindOnePayload): Promise<Customer | null> {
+    const customerEntity = await this.entityManager.findOne(CustomerEntity, { where: { ...input } });
 
-    if (!customer) {
+    if (!customerEntity) {
       return null;
     }
 
-    return this.customerMapper.map(customer);
+    return this.customerMapper.map(customerEntity);
   }
 
-  public async findOneById(id: string): Promise<Customer | null> {
-    return this.findOne({ id });
-  }
+  public async deleteOne(input: DeleteOnePayload): Promise<void> {
+    const { id } = input;
 
-  public async findMany(conditions: FindConditions<CustomerEntity>): Promise<Customer[]> {
-    const customeres = await this.entityManager.find(CustomerEntity, conditions);
+    const customerEntity = await this.findOne({ id });
 
-    return customeres.map((customer) => this.customerMapper.map(customer));
-  }
-
-  public async updateOne(id: string, customerData: Partial<CustomerEntity>): Promise<Customer> {
-    const customer = await this.findOneById(id);
-
-    if (!customer) {
-      throw new CustomerNotFoundError({ id });
-    }
-
-    await this.entityManager.update(CustomerEntity, { id }, customerData);
-
-    return this.findOneById(id) as Promise<Customer>;
-  }
-
-  public async deleteOne(id: string): Promise<void> {
-    const customer = await this.findOneById(id);
-
-    if (!customer) {
+    if (!customerEntity) {
       throw new CustomerNotFoundError({ id });
     }
 

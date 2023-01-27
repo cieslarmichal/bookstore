@@ -57,9 +57,9 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
     const { id } = input;
 
-    const category = await this.findOne({ id });
+    const categoryEntity = await this.findOne({ id });
 
-    if (!category) {
+    if (!categoryEntity) {
       throw new CategoryNotFoundError({ id });
     }
 
