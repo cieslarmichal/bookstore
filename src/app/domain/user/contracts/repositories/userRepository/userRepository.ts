@@ -9,5 +9,5 @@ export interface UserRepository {
   findOneById(id: string): Promise<User | null>;
   findMany(conditions: FindConditions<UserEntity>): Promise<User[]>;
   updateOne(id: string, userData: Partial<UserEntity>): Promise<User>;
-  removeOne(id: string): Promise<void>;
+  deleteOne(id: string): Promise<void>;
 }

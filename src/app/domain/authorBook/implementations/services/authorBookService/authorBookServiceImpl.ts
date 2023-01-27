@@ -106,7 +106,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
       throw new AuthorBookNotFoundError({ authorId, bookId });
     }
 
-    await authorBookRepository.removeOne(authorBook.id);
+    await authorBookRepository.deleteOne(authorBook.id);
 
     this.loggerService.info(`AuthorBook removed.`, { authorBookId: authorBook.id });
   }

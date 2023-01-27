@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { Customer } from '../../../contracts/customer';
 import { CustomerEntity } from '../../../contracts/customerEntity';
@@ -6,7 +6,6 @@ import { CustomerMapper } from '../../../contracts/mappers/customerMapper/custom
 import { CustomerRepository } from '../../../contracts/repositories/customerRepository/customerRepository';
 import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
-@EntityRepository()
 export class CustomerRepositoryImpl implements CustomerRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly customerMapper: CustomerMapper) {}
 
@@ -50,7 +49,7 @@ export class CustomerRepositoryImpl implements CustomerRepository {
     return this.findOneById(id) as Promise<Customer>;
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async deleteOne(id: string): Promise<void> {
     const customer = await this.findOneById(id);
 
     if (!customer) {

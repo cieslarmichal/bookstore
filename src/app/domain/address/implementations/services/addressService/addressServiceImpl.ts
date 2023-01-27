@@ -75,7 +75,7 @@ export class AddressServiceImpl implements AddressService {
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
-    await addressRepository.removeOne(addressId);
+    await addressRepository.deleteOne(addressId);
 
     this.loggerService.info('Address removed.', { addressId });
   }

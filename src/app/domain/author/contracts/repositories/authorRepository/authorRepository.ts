@@ -11,5 +11,5 @@ export interface AuthorRepository {
   findMany(filters: Filter[], paginationData: PaginationData): Promise<Author[]>;
   findManyByBookId(bookId: string, filters: Filter[], paginationData: PaginationData): Promise<Author[]>;
   updateOne(id: string, authorData: Partial<Author>): Promise<Author>;
-  removeOne(id: string): Promise<void>;
+  deleteOne(id: string): Promise<void>;
 }

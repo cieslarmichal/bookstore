@@ -11,5 +11,5 @@ export interface AddressRepository {
   findOneById(id: string): Promise<Address | null>;
   findMany(filters: Filter[], paginationData: PaginationData): Promise<Address[]>;
   updateOne(id: string, addressData: Partial<AddressEntity>): Promise<Address>;
-  removeOne(id: string): Promise<void>;
+  deleteOne(id: string): Promise<void>;
 }

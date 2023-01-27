@@ -7,5 +7,5 @@ export interface BookCategoryRepository {
   createOne(bookCategoryData: Partial<BookCategoryEntity>): Promise<BookCategory>;
   findOne(conditions: FindConditions<BookCategoryEntity>): Promise<BookCategory | null>;
   findOneById(id: string): Promise<BookCategory | null>;
-  removeOne(id: string): Promise<void>;
+  deleteOne(id: string): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { EntityRepository, EntityManager, FindConditions } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { CategoryQueryBuilder } from './categoryQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
@@ -9,7 +9,6 @@ import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/catego
 import { CategoryRepository } from '../../../contracts/repositories/categoryRepository/categoryRepository';
 import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
-@EntityRepository()
 export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}
 
@@ -80,7 +79,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return this.findOneById(id) as Promise<Category>;
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async deleteOne(id: string): Promise<void> {
     const category = await this.findOneById(id);
 
     if (!category) {

@@ -57,7 +57,7 @@ export class CustomerServiceImpl implements CustomerService {
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 
-    await customerRepository.removeOne(customerId);
+    await customerRepository.deleteOne(customerId);
 
     this.loggerService.info('Customer removed.', { customerId });
   }

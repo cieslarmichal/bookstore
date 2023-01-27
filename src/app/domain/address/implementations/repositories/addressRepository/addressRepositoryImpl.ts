@@ -60,7 +60,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     return this.findOneById(id) as Promise<Address>;
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async deleteOne(id: string): Promise<void> {
     const address = await this.findOneById(id);
 
     if (!address) {

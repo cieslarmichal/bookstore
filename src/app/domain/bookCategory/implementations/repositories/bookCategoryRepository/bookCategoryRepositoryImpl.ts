@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
@@ -6,7 +6,6 @@ import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMappe
 import { BookCategoryRepository } from '../../../contracts/repositories/bookCategoryRepository/bookCategoryRepository';
 import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
-@EntityRepository()
 export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   public constructor(
     private readonly entityManager: EntityManager,
@@ -35,7 +34,7 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
     return this.findOne({ id });
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async deleteOne(id: string): Promise<void> {
     const bookCategory = await this.findOneById(id);
 
     if (!bookCategory) {

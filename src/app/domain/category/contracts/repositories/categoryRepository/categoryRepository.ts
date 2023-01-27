@@ -1,5 +1,3 @@
-import { FindConditions } from 'typeorm';
-
 import { Filter } from '../../../../../common/filter/filter';
 import { PaginationData } from '../../../../common/paginationData';
 import { Category } from '../../category';
@@ -12,5 +10,5 @@ export interface CategoryRepository {
   findMany(filters: Filter[], paginationData: PaginationData): Promise<Category[]>;
   findManyByBookId(bookId: string, filters: Filter[], paginationData: PaginationData): Promise<Category[]>;
   updateOne(id: string, categoryData: Partial<CategoryEntity>): Promise<Category>;
-  removeOne(id: string): Promise<void>;
+  deleteOne(id: string): Promise<void>;
 }

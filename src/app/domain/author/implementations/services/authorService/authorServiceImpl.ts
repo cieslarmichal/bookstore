@@ -97,7 +97,7 @@ export class AuthorServiceImpl implements AuthorService {
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
-    await authorRepository.removeOne(authorId);
+    await authorRepository.deleteOne(authorId);
 
     this.loggerService.info('Author removed.', { authorId });
   }

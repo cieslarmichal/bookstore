@@ -235,7 +235,7 @@ export class UserServiceImpl implements UserService {
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
-    await userRepository.removeOne(userId);
+    await userRepository.deleteOne(userId);
 
     this.loggerService.info('User removed.', { userId });
   }

@@ -34,7 +34,7 @@ export class BookEntity {
 
   @Column({ type: 'text', nullable: true })
   //@ts-ignore
-  public description: string | null;
+  public description?: string | null;
 
   @Column({ type: 'float' })
   //@ts-ignore

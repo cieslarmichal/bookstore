@@ -34,7 +34,7 @@ export class BookServiceImpl implements BookService {
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const book = await bookRepository.findOneById(bookId);
+    const book = await bookRepository.findOne(bookId);
 
     if (!book) {
       throw new BookNotFoundError({ id: bookId });
@@ -108,7 +108,7 @@ export class BookServiceImpl implements BookService {
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    await bookRepository.removeOne(bookId);
+    await bookRepository.deleteOne(bookId);
 
     this.loggerService.info('Book removed.', { bookId });
   }

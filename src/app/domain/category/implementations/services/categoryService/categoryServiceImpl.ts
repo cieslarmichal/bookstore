@@ -87,7 +87,7 @@ export class CategoryServiceImpl implements CategoryService {
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    await categoryRepository.removeOne(categoryId);
+    await categoryRepository.deleteOne(categoryId);
 
     this.loggerService.info('Category removed.', { categoryId });
   }

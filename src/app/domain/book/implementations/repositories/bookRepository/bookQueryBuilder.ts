@@ -9,7 +9,7 @@ export class BookQueryBuilder extends QueryBuilder<BookEntity> {
     super(entityManager, BookEntity, 'book');
   }
 
-  public authorConditions(authorId: string): BookQueryBuilder {
+  public whereAuthorId(authorId: string): BookQueryBuilder {
     this.instance
       .leftJoinAndSelect('book.authorBooks', 'authorBooks')
       .leftJoinAndSelect('authorBooks.author', 'author');
@@ -17,7 +17,7 @@ export class BookQueryBuilder extends QueryBuilder<BookEntity> {
     return this;
   }
 
-  public categoryConditions(categoryId: string): BookQueryBuilder {
+  public whereCategoryId(categoryId: string): BookQueryBuilder {
     this.instance
       .leftJoinAndSelect('book.bookCategories', 'bookCategories')
       .leftJoinAndSelect('bookCategories.category', 'category');
@@ -25,7 +25,7 @@ export class BookQueryBuilder extends QueryBuilder<BookEntity> {
     return this;
   }
 
-  public boookConditions(filters: Filter[]): BookQueryBuilder {
+  public where(filters: Filter[]): BookQueryBuilder {
     for (const filter of filters) {
       this.partialConditionsForFilter(`book.${filter.fieldName}`, filter);
     }

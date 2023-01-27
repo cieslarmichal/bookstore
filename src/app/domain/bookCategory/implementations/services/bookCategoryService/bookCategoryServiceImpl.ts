@@ -109,7 +109,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
       throw new BookCategoryNotFoundError({ bookId, categoryId });
     }
 
-    await bookCategoryRepository.removeOne(bookCategory.id);
+    await bookCategoryRepository.deleteOne(bookCategory.id);
 
     this.loggerService.info(`BookCategory removed.`, { bookCategoryId: bookCategory.id });
   }

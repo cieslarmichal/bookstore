@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { UserMapper } from '../../../contracts/mappers/userMapper/userMapper';
 import { UserRepository } from '../../../contracts/repositories/userRepository/userRepository';
@@ -6,7 +6,6 @@ import { User } from '../../../contracts/user';
 import { UserEntity } from '../../../contracts/userEntity';
 import { UserNotFoundError } from '../../../errors/userNotFoundError';
 
-@EntityRepository()
 export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}
 
@@ -50,7 +49,7 @@ export class UserRepositoryImpl implements UserRepository {
     return this.findOneById(id) as Promise<User>;
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async deleteOne(id: string): Promise<void> {
     const user = await this.findOneById(id);
 
     if (!user) {

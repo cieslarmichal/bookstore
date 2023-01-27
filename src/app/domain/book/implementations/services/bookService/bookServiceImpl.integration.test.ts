@@ -102,7 +102,7 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const bookDto = await bookRepository.findOneById(createdBookDto.id);
+        const bookDto = await bookRepository.findOne(createdBookDto.id);
 
         expect(bookDto).not.toBeNull();
       });
@@ -641,7 +641,7 @@ describe('BookServiceImpl', () => {
 
         await bookService.removeBook(unitOfWork, book.id);
 
-        const bookDto = await bookRepository.findOneById(book.id);
+        const bookDto = await bookRepository.findOne(book.id);
 
         expect(bookDto).toBeNull();
       });

@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindConditions } from 'typeorm';
+import { EntityManager, FindConditions } from 'typeorm';
 
 import { AuthorQueryBuilder } from './authorQueryBuilder';
 import { Filter } from '../../../../../common/filter/filter';
@@ -9,7 +9,6 @@ import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapp
 import { AuthorRepository } from '../../../contracts/repositories/authorRepository/authorRepository';
 import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
-@EntityRepository()
 export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
@@ -76,7 +75,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
     return this.findOneById(id) as Promise<Author>;
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async deleteOne(id: string): Promise<void> {
     const author = await this.findOneById(id);
 
     if (!author) {
