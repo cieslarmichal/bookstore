@@ -21,8 +21,6 @@ describe('UserMapperImpl', () => {
 
     expect(user).toEqual({
       id: userEntity.id,
-      createdAt: userEntity.createdAt,
-      updatedAt: userEntity.updatedAt,
       email: userEntity.email,
       phoneNumber: userEntity.phoneNumber,
       password: userEntity.password,

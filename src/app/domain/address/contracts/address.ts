@@ -1,15 +1,9 @@
-import { IsDate, IsOptional, IsString, IsUuidV4 } from '../../../common/validator/decorators';
+import { IsOptional, IsString, IsUuidV4 } from '../../../common/validator/decorators';
 import { Validator } from '../../../common/validator/validator';
 
 export class Address {
   @IsUuidV4()
   public readonly id: string;
-
-  @IsDate()
-  public readonly createdAt: Date;
-
-  @IsDate()
-  public readonly updatedAt: Date;
 
   @IsString()
   public readonly firstName: string;
@@ -45,8 +39,6 @@ export class Address {
 
   public constructor({
     id,
-    createdAt,
-    updatedAt,
     firstName,
     lastName,
     phoneNumber,
@@ -59,8 +51,6 @@ export class Address {
     customerId,
   }: Address) {
     this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.firstName = firstName;
     this.lastName = lastName;
     this.phoneNumber = phoneNumber;

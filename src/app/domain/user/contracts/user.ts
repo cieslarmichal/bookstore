@@ -1,4 +1,4 @@
-import { IsDate, IsString, IsEnum, IsUUID, IsOptional } from 'class-validator';
+import { IsString, IsEnum, IsUUID, IsOptional } from 'class-validator';
 
 import { UserRole } from './userRole';
 import { Validator } from '../../../common/validator/validator';
@@ -6,12 +6,6 @@ import { Validator } from '../../../common/validator/validator';
 export class User {
   @IsUUID('4')
   public readonly id: string;
-
-  @IsDate()
-  public readonly createdAt: Date;
-
-  @IsDate()
-  public readonly updatedAt: Date;
 
   @IsOptional()
   @IsString()
@@ -27,10 +21,8 @@ export class User {
   @IsEnum(UserRole)
   public readonly role: UserRole;
 
-  public constructor({ id, createdAt, updatedAt, email, phoneNumber, password, role }: User) {
+  public constructor({ id, email, phoneNumber, password, role }: User) {
     this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.password = password;
     this.role = role;
 

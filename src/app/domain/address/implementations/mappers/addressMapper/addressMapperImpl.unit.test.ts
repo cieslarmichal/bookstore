@@ -21,8 +21,6 @@ describe('AddressMapperImpl', () => {
 
     expect(address).toEqual({
       id: addressEntity.id,
-      createdAt: addressEntity.createdAt,
-      updatedAt: addressEntity.updatedAt,
       firstName: addressEntity.firstName,
       lastName: addressEntity.lastName,
       phoneNumber: addressEntity.phoneNumber,

@@ -6,8 +6,6 @@ export class AddressEntityTestFactory {
   public create(): AddressEntity {
     return {
       id: faker.datatype.uuid(),
-      createdAt: faker.date.recent(3),
-      updatedAt: faker.date.recent(1),
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       phoneNumber: faker.phone.phoneNumber(),

@@ -4,12 +4,10 @@ import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMappe
 
 export class BookCategoryMapperImpl implements BookCategoryMapper {
   public map(entity: BookCategoryEntity): BookCategory {
-    const { id, createdAt, updatedAt, bookId, categoryId } = entity;
+    const { id, bookId, categoryId } = entity;
 
     return new BookCategory({
       id,
-      createdAt,
-      updatedAt,
       bookId,
       categoryId,
     });

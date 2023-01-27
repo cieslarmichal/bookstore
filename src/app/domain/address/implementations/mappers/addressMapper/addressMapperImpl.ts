@@ -6,8 +6,6 @@ export class AddressMapperImpl implements AddressMapper {
   public map(entity: AddressEntity): Address {
     const {
       id,
-      createdAt,
-      updatedAt,
       firstName,
       lastName,
       phoneNumber,
@@ -22,8 +20,6 @@ export class AddressMapperImpl implements AddressMapper {
 
     return new Address({
       id,
-      createdAt,
-      updatedAt,
       firstName,
       lastName,
       phoneNumber,

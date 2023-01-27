@@ -21,8 +21,6 @@ describe('AuthorMapperImpl', () => {
 
     expect(author).toEqual({
       id: authorEntity.id,
-      createdAt: authorEntity.createdAt,
-      updatedAt: authorEntity.updatedAt,
       firstName: authorEntity.firstName,
       lastName: authorEntity.lastName,
       about: authorEntity.about,

@@ -4,12 +4,10 @@ import { AuthorBookMapper } from '../../../contracts/mappers/authorBookMapper/au
 
 export class AuthorBookMapperImpl implements AuthorBookMapper {
   public map(entity: AuthorBookEntity): AuthorBook {
-    const { id, createdAt, updatedAt, authorId, bookId } = entity;
+    const { id, authorId, bookId } = entity;
 
     return new AuthorBook({
       id,
-      createdAt,
-      updatedAt,
       authorId,
       bookId,
     });

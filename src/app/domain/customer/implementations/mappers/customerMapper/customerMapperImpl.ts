@@ -4,13 +4,8 @@ import { CustomerMapper } from '../../../contracts/mappers/customerMapper/custom
 
 export class CustomerMapperImpl implements CustomerMapper {
   public map(entity: CustomerEntity): Customer {
-    const { id, createdAt, updatedAt, userId } = entity;
+    const { id, userId } = entity;
 
-    return new Customer({
-      id,
-      createdAt,
-      updatedAt,
-      userId,
-    });
+    return new Customer({ id, userId });
   }
 }

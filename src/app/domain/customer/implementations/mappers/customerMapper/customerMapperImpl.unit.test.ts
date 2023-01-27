@@ -21,8 +21,6 @@ describe('CustomerMapperImpl', () => {
 
     expect(customer).toEqual({
       id: customerEntity.id,
-      createdAt: customerEntity.createdAt,
-      updatedAt: customerEntity.updatedAt,
       userId: customerEntity.userId,
     });
   });

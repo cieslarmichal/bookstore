@@ -21,8 +21,6 @@ describe('CategoryMapperImpl', () => {
 
     expect(category).toEqual({
       id: categoryEntity.id,
-      createdAt: categoryEntity.createdAt,
-      updatedAt: categoryEntity.updatedAt,
       name: categoryEntity.name,
     });
   });

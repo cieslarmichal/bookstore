@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { BookFormat } from './bookFormat';
 import { BookLanguage } from './bookLanguage';
@@ -7,12 +7,6 @@ import { Validator } from '../../../common/validator/validator';
 export class Book {
   @IsUUID('4')
   public readonly id: string;
-
-  @IsDate()
-  public readonly createdAt: Date;
-
-  @IsDate()
-  public readonly updatedAt: Date;
 
   @IsString()
   public readonly title: string;
@@ -33,10 +27,8 @@ export class Book {
   @IsNumber()
   public readonly price: number;
 
-  public constructor({ id, createdAt, updatedAt, title, releaseYear, language, format, description, price }: Book) {
+  public constructor({ id, title, releaseYear, language, format, description, price }: Book) {
     this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.title = title;
     this.releaseYear = releaseYear;
     this.language = language;

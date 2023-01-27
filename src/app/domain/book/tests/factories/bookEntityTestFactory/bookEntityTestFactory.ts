@@ -8,8 +8,6 @@ export class BookEntityTestFactory {
   public create(): BookEntity {
     return {
       id: faker.datatype.uuid(),
-      createdAt: faker.date.recent(3),
-      updatedAt: faker.date.recent(1),
       title: faker.lorem.words(2),
       releaseYear: faker.datatype.number({ min: 1000, max: 2100 }),
       language: faker.helpers.arrayElement([BookLanguage.en, BookLanguage.pl]),
