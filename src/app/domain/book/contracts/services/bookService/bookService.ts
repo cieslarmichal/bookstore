@@ -1,26 +1,18 @@
-import { CreateBookData } from './createBookData';
-import { UpdateBookData } from './updateBookData';
-import { Filter } from '../../../../../common/filter/filter';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
-import { PaginationData } from '../../../../common/paginationData';
+import { CreateBookPayload } from './createBookPayload';
+import { DeleteBookPayload } from './deleteBookPayload';
+import { FindBookPayload } from './findBookPayload';
+import { FindBooksByAuthorIdPayload } from './findBooksByAuthorIdPayload';
+import { FindBooksByCategoryIdPayload } from './findBooksByCategoryIdPayload';
+import { FindBooksPayload } from './findBooksPayload';
+import { UpdateBookPayload } from './updateBookPayload';
 import { Book } from '../../book';
 
 export interface BookService {
-  createBook(unitOfWork: PostgresUnitOfWork, bookData: CreateBookData): Promise<Book>;
-  findBook(unitOfWork: PostgresUnitOfWork, bookId: string): Promise<Book>;
-  findBooks(unitOfWork: PostgresUnitOfWork, filters: Filter[], pagination: PaginationData): Promise<Book[]>;
-  findBooksByAuthorId(
-    unitOfWork: PostgresUnitOfWork,
-    authorId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]>;
-  findBooksByCategoryId(
-    unitOfWork: PostgresUnitOfWork,
-    categoryId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]>;
-  updateBook(unitOfWork: PostgresUnitOfWork, bookId: string, bookData: UpdateBookData): Promise<Book>;
-  removeBook(unitOfWork: PostgresUnitOfWork, bookId: string): Promise<void>;
+  createBook(input: CreateBookPayload): Promise<Book>;
+  findBook(input: FindBookPayload): Promise<Book>;
+  findBooks(input: FindBooksPayload): Promise<Book[]>;
+  findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]>;
+  findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]>;
+  updateBook(input: UpdateBookPayload): Promise<Book>;
+  deleteBook(input: DeleteBookPayload): Promise<void>;
 }

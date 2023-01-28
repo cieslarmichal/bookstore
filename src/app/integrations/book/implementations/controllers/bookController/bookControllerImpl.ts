@@ -143,7 +143,7 @@ export class BookControllerImpl implements BookController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.bookService.removeBook(unitOfWork, id as string);
+      await this.bookService.deleteBook(unitOfWork, id as string);
     });
 
     return { statusCode: HttpStatusCode.noContent };

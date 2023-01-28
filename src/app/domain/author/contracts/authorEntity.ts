@@ -22,7 +22,7 @@ export class AuthorEntity {
   public lastName: string;
 
   @Column({ type: 'text', nullable: true })
-  public about?: string | undefined;
+  public about?: string;
 
   @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.author)
   public authorBooks?: AuthorBookEntity[] | null;

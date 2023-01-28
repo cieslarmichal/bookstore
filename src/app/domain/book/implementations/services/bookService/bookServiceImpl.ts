@@ -1,12 +1,15 @@
-import { Filter } from '../../../../../common/filter/filter';
 import { LoggerService } from '../../../../../libs/logger/loggerService';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
-import { PaginationData } from '../../../../common/paginationData';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookService } from '../../../contracts/services/bookService/bookService';
-import { CreateBookData } from '../../../contracts/services/bookService/createBookData';
-import { UpdateBookData } from '../../../contracts/services/bookService/updateBookData';
+import { CreateBookPayload } from '../../../contracts/services/bookService/createBookPayload';
+import { DeleteBookPayload } from '../../../contracts/services/bookService/deleteBookPayload';
+import { FindBookPayload } from '../../../contracts/services/bookService/findBookPayload';
+import { FindBooksByAuthorIdPayload } from '../../../contracts/services/bookService/findBooksByAuthorIdPayload';
+import { FindBooksByCategoryIdPayload } from '../../../contracts/services/bookService/findBooksByCategoryIdPayload';
+import { FindBooksPayload } from '../../../contracts/services/bookService/findBooksPayload';
+import { UpdateBookPayload } from '../../../contracts/services/bookService/updateBookPayload';
 import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 
 export class BookServiceImpl implements BookService {
@@ -15,26 +18,30 @@ export class BookServiceImpl implements BookService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createBook(unitOfWork: PostgresUnitOfWork, bookData: CreateBookData): Promise<Book> {
-    this.loggerService.debug('Creating book...');
+  public async createBook(input: CreateBookPayload): Promise<Book> {
+    const { unitOfWork, draft } = input;
+
+    this.loggerService.debug('Creating book...', { ...draft });
 
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const book = await bookRepository.createOne(bookData);
+    const book = await bookRepository.createOne({ id: UuidGenerator.generateUuid(), ...draft });
 
     this.loggerService.info('Book created.', { bookId: book.id });
 
     return book;
   }
 
-  public async findBook(unitOfWork: PostgresUnitOfWork, bookId: string): Promise<Book> {
+  public async findBook(input: FindBookPayload): Promise<Book> {
+    const { unitOfWork, bookId } = input;
+
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const book = await bookRepository.findOne(bookId);
+    const book = await bookRepository.findOne({ id: bookId });
 
     if (!book) {
       throw new BookNotFoundError({ id: bookId });
@@ -43,73 +50,69 @@ export class BookServiceImpl implements BookService {
     return book;
   }
 
-  public async findBooks(
-    unitOfWork: PostgresUnitOfWork,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]> {
+  public async findBooks(input: FindBooksPayload): Promise<Book[]> {
+    const { unitOfWork, filters, pagination } = input;
+
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const books = await bookRepository.findMany(filters, pagination);
+    const books = await bookRepository.findMany({ filters, pagination });
 
     return books;
   }
 
-  public async findBooksByAuthorId(
-    unitOfWork: PostgresUnitOfWork,
-    authorId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]> {
+  public async findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]> {
+    const { unitOfWork, authorId, filters, pagination } = input;
+
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const books = await bookRepository.findManyByAuthorId(authorId, filters, pagination);
+    const books = await bookRepository.findMany({ authorId, filters, pagination });
 
     return books;
   }
 
-  public async findBooksByCategoryId(
-    unitOfWork: PostgresUnitOfWork,
-    categoryId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]> {
+  public async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
+    const { unitOfWork, categoryId, filters, pagination } = input;
+
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const books = await bookRepository.findManyByCategoryId(categoryId, filters, pagination);
+    const books = await bookRepository.findMany({ categoryId, filters, pagination });
 
     return books;
   }
 
-  public async updateBook(unitOfWork: PostgresUnitOfWork, bookId: string, bookData: UpdateBookData): Promise<Book> {
-    this.loggerService.debug('Updating book...', { bookId });
+  public async updateBook(input: UpdateBookPayload): Promise<Book> {
+    const { unitOfWork, bookId, draft } = input;
+
+    this.loggerService.debug('Updating book...', { bookId, ...draft });
 
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const book = await bookRepository.updateOne(bookId, bookData);
+    const book = await bookRepository.updateOne({ id: bookId, draft });
 
     this.loggerService.info('Book updated.', { bookId });
 
     return book;
   }
 
-  public async removeBook(unitOfWork: PostgresUnitOfWork, bookId: string): Promise<void> {
-    this.loggerService.debug('Removing book...', { bookId });
+  public async deleteBook(input: DeleteBookPayload): Promise<void> {
+    const { unitOfWork, bookId } = input;
+
+    this.loggerService.debug('Deleting book...', { bookId });
 
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    await bookRepository.deleteOne(bookId);
+    await bookRepository.deleteOne({ id: bookId });
 
-    this.loggerService.info('Book removed.', { bookId });
+    this.loggerService.info('Book deleted.', { bookId });
   }
 }

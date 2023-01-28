@@ -22,9 +22,11 @@ import { AuthorEntityTestFactory } from '../../../../author/tests/factories/auth
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
 import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
 import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
+import { AuthorBookEntityTestFactory } from '../../../../authorBook/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { BookCategoryModule } from '../../../../bookCategory/bookCategoryModule';
 import { bookCategorySymbols } from '../../../../bookCategory/bookCategorySymbols';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
+import { BookCategoryEntityTestFactory } from '../../../../bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { categorySymbols } from '../../../../category/categorySymbols';
 import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
@@ -52,7 +54,9 @@ describe('BookServiceImpl', () => {
 
   const bookEntityTestFactory = new BookEntityTestFactory();
   const authorEntityTestFactory = new AuthorEntityTestFactory();
+  const authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
   const categoryEntityTestFactory = new CategoryEntityTestFactory();
+  const bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
@@ -90,21 +94,25 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
         const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const createdBookDto = await bookService.createBook(unitOfWork, {
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
+        const book = await bookService.createBook({
+          unitOfWork,
+          draft: {
+            title,
+            releaseYear,
+            language,
+            format,
+            price,
+          },
         });
 
-        const bookDto = await bookRepository.findOne(createdBookDto.id);
+        const foundBook = await bookRepository.findOne({ id: book.id });
 
-        expect(bookDto).not.toBeNull();
+        expect(foundBook).not.toBeNull();
       });
     });
   });
@@ -115,11 +123,13 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
+          id,
           title,
           releaseYear,
           language,
@@ -127,7 +137,7 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const foundBook = await bookService.findBook(unitOfWork, book.id);
+        const foundBook = await bookService.findBook({ unitOfWork, bookId: book.id });
 
         expect(foundBook).not.toBeNull();
       });
@@ -140,7 +150,7 @@ describe('BookServiceImpl', () => {
         const { id } = bookEntityTestFactory.create();
 
         try {
-          await bookService.findBook(unitOfWork, id);
+          await bookService.findBook({ unitOfWork, bookId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(BookNotFoundError);
         }
@@ -154,21 +164,24 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id: id1, title: title1, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+        const { id: id2, title: title2 } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
-          title,
+          id: id1,
+          title: title1,
           releaseYear,
           language,
           format,
           price,
         });
 
-        const { title: title2 } = bookEntityTestFactory.create();
-
         await bookRepository.createOne({
+          id: id2,
           title: title2,
           releaseYear,
           language,
@@ -180,12 +193,16 @@ describe('BookServiceImpl', () => {
           fieldName: 'title',
           filterName: FilterName.equal,
           filterSymbol: FilterSymbol.equal,
-          values: [title],
+          values: [title1],
         };
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [equalFilterForTitleField], {
-          page: 1,
-          limit: 5,
+        const foundBooks = await bookService.findBooks({
+          unitOfWork,
+          filters: [equalFilterForTitleField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundBooks.length).toBe(1);
@@ -198,11 +215,17 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, language, format, price } = bookEntityTestFactory.create();
+        const { id: id1, title, language, format, price } = bookEntityTestFactory.create();
+
+        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+
+        const { id: id3, title: title3 } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
+          id: id1,
           title,
           releaseYear: 1997,
           language,
@@ -210,9 +233,8 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const { title: title2 } = bookEntityTestFactory.create();
-
         const book2 = await bookRepository.createOne({
+          id: id2,
           title: title2,
           releaseYear: 1999,
           language,
@@ -220,9 +242,8 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const { title: title3 } = bookEntityTestFactory.create();
-
         await bookRepository.createOne({
+          id: id3,
           title: title3,
           releaseYear: 2005,
           language,
@@ -244,11 +265,11 @@ describe('BookServiceImpl', () => {
           value: 2000,
         };
 
-        const foundBooks = await bookService.findBooks(
+        const foundBooks = await bookService.findBooks({
           unitOfWork,
-          [equalFilterForLanguageField, lessThanOrEqualFilterForReleaseYearField],
-          { page: 1, limit: 5 },
-        );
+          filters: [equalFilterForLanguageField, lessThanOrEqualFilterForReleaseYearField],
+          pagination: { page: 1, limit: 5 },
+        });
 
         expect(foundBooks.length).toBe(2);
         expect(foundBooks[0]).toStrictEqual(book1);
@@ -261,11 +282,17 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, language, releaseYear, format } = bookEntityTestFactory.create();
+        const { id: id1, title, language, releaseYear, format } = bookEntityTestFactory.create();
+
+        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+
+        const { id: id3, title: title3 } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
+          id: id1,
           title,
           releaseYear,
           language,
@@ -273,9 +300,8 @@ describe('BookServiceImpl', () => {
           price: 60,
         });
 
-        const { title: title2 } = bookEntityTestFactory.create();
-
         const book2 = await bookRepository.createOne({
+          id: id2,
           title: title2,
           releaseYear,
           language,
@@ -283,9 +309,8 @@ describe('BookServiceImpl', () => {
           price: 50,
         });
 
-        const { title: title3 } = bookEntityTestFactory.create();
-
         await bookRepository.createOne({
+          id: id3,
           title: title3,
           releaseYear,
           language,
@@ -301,9 +326,13 @@ describe('BookServiceImpl', () => {
           to: 80,
         };
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [betweenFilterForPriceField], {
-          page: 1,
-          limit: 5,
+        const foundBooks = await bookService.findBooks({
+          unitOfWork,
+          filters: [betweenFilterForPriceField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundBooks.length).toBe(2);
@@ -317,11 +346,17 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, language, releaseYear, price } = bookEntityTestFactory.create();
+        const { id: id1, title, language, releaseYear, price } = bookEntityTestFactory.create();
+
+        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+
+        const { id: id3, title: title3 } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
+          id: id1,
           title,
           releaseYear,
           language,
@@ -329,9 +364,8 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const { title: title2 } = bookEntityTestFactory.create();
-
         const book2 = await bookRepository.createOne({
+          id: id2,
           title: title2,
           releaseYear,
           language,
@@ -339,9 +373,8 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const { title: title3 } = bookEntityTestFactory.create();
-
         await bookRepository.createOne({
+          id: id3,
           title: title3,
           releaseYear,
           language,
@@ -356,7 +389,11 @@ describe('BookServiceImpl', () => {
           values: [BookFormat.paperback, BookFormat.kindle],
         };
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [equalFilterForFormatField], { page: 1, limit: 5 });
+        const foundBooks = await bookService.findBooks({
+          unitOfWork,
+          filters: [equalFilterForFormatField],
+          pagination: { page: 1, limit: 5 },
+        });
 
         expect(foundBooks.length).toBe(2);
         expect(foundBooks[0]).toStrictEqual(book1);
@@ -371,9 +408,12 @@ describe('BookServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, price, format } = bookEntityTestFactory.create();
+        const { id: id1, title, releaseYear, price, format } = bookEntityTestFactory.create();
+
+        const { id: id2 } = bookEntityTestFactory.create();
 
         await bookRepository.createOne({
+          id: id1,
           title,
           releaseYear,
           language: BookLanguage.en,
@@ -382,6 +422,7 @@ describe('BookServiceImpl', () => {
         });
 
         const polishBook = await bookRepository.createOne({
+          id: id2,
           title,
           releaseYear,
           language: BookLanguage.pl,
@@ -396,9 +437,13 @@ describe('BookServiceImpl', () => {
           values: [BookLanguage.pl],
         };
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [equalFilterForLanguageField], {
-          page: 1,
-          limit: 5,
+        const foundBooks = await bookService.findBooks({
+          unitOfWork,
+          filters: [equalFilterForLanguageField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundBooks.length).toBe(1);
@@ -411,11 +456,17 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id: id1, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+        const { id: id2 } = bookEntityTestFactory.create();
+
+        const { id: id3 } = bookEntityTestFactory.create();
 
         await bookRepository.createOne({
+          id: id1,
           title,
           releaseYear,
           language,
@@ -424,6 +475,7 @@ describe('BookServiceImpl', () => {
         });
 
         await bookRepository.createOne({
+          id: id2,
           title,
           releaseYear,
           language,
@@ -432,6 +484,7 @@ describe('BookServiceImpl', () => {
         });
 
         await bookRepository.createOne({
+          id: id3,
           title,
           releaseYear,
           language,
@@ -439,7 +492,7 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const foundBooks = await bookService.findBooks(unitOfWork, [], { page: 1, limit: 2 });
+        const foundBooks = await bookService.findBooks({ unitOfWork, filters: [], pagination: { page: 1, limit: 2 } });
 
         expect(foundBooks.length).toBe(2);
       });
@@ -452,65 +505,57 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const authorRepository = authorRepositoryFactory.create(entityManager);
+
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const firstBookData = bookEntityTestFactory.create();
+        const bookEntity1 = bookEntityTestFactory.create();
 
-        const firstBook = await bookRepository.createOne({
-          title: firstBookData.title,
-          releaseYear: firstBookData.releaseYear,
-          language: firstBookData.language,
-          format: firstBookData.format,
-          price: firstBookData.price,
-        });
+        const bookEntity2 = bookEntityTestFactory.create();
 
-        const secondBookData = bookEntityTestFactory.create();
+        const bookEntity3 = bookEntityTestFactory.create();
 
-        const secondBook = await bookRepository.createOne({
-          title: secondBookData.title,
-          releaseYear: secondBookData.releaseYear,
-          language: secondBookData.language,
-          format: secondBookData.format,
-          price: secondBookData.price,
-        });
+        const authorEntity = authorEntityTestFactory.create();
 
-        const thirdBookData = bookEntityTestFactory.create();
+        const { id: authorBookId1 } = authorBookEntityTestFactory.create();
 
-        await bookRepository.createOne({
-          title: thirdBookData.title,
-          releaseYear: thirdBookData.releaseYear,
-          language: thirdBookData.language,
-          format: thirdBookData.format,
-          price: thirdBookData.price,
-        });
+        const { id: authorBookId2 } = authorBookEntityTestFactory.create();
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const book1 = await bookRepository.createOne(bookEntity1);
 
-        const author = await authorRepository.createOne({
-          firstName,
-          lastName,
-        });
+        const book2 = await bookRepository.createOne(bookEntity2);
 
-        await authorBookRepository.createOne({ bookId: firstBook.id, authorId: author.id });
-        await authorBookRepository.createOne({ bookId: secondBook.id, authorId: author.id });
+        await bookRepository.createOne(bookEntity3);
+
+        const author = await authorRepository.createOne(authorEntity);
+
+        await authorBookRepository.createOne({ id: authorBookId1, bookId: book1.id, authorId: author.id });
+
+        await authorBookRepository.createOne({ id: authorBookId2, bookId: book2.id, authorId: author.id });
 
         const equalFilterForTitleField: EqualFilter = {
           fieldName: 'title',
           filterName: FilterName.equal,
           filterSymbol: FilterSymbol.equal,
-          values: [firstBook.title],
+          values: [book1.title],
         };
 
-        const foundBooks = await bookService.findBooksByAuthorId(unitOfWork, author.id, [equalFilterForTitleField], {
-          page: 1,
-          limit: 5,
+        const foundBooks = await bookService.findBooksByAuthorId({
+          unitOfWork,
+          authorId: author.id,
+          filters: [equalFilterForTitleField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundBooks).not.toBeNull();
         expect(foundBooks.length).toBe(1);
-        expect(foundBooks[0]?.title).toBe(firstBook.title);
+        expect(foundBooks[0]?.title).toBe(book1.title);
       });
     });
   });
@@ -521,56 +566,53 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
+
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.create();
+        const categoryEntity1 = categoryEntityTestFactory.create();
 
-        const category = await categoryRepository.createOne({
-          name,
-        });
+        const categoryEntity2 = categoryEntityTestFactory.create();
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const bookEntity1 = bookEntityTestFactory.create();
 
-        const book1 = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const bookEntity2 = bookEntityTestFactory.create();
 
-        const { title: otherTitle } = bookEntityTestFactory.create();
+        const { id: bookCategoryId1 } = bookCategoryEntityTestFactory.create();
 
-        const book2 = await bookRepository.createOne({
-          title: otherTitle,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const { id: bookCategoryId2 } = bookCategoryEntityTestFactory.create();
+
+        const category1 = await categoryRepository.createOne(categoryEntity1);
+
+        const category2 = await categoryRepository.createOne(categoryEntity2);
+
+        const book1 = await bookRepository.createOne(bookEntity1);
+
+        const book2 = await bookRepository.createOne(bookEntity2);
 
         await bookCategoryRepository.createOne({
-          categoryId: category.id,
+          id: bookCategoryId1,
+          categoryId: category1.id,
           bookId: book1.id,
         });
 
         await bookCategoryRepository.createOne({
-          categoryId: category.id,
+          id: bookCategoryId2,
+          categoryId: category2.id,
           bookId: book2.id,
         });
 
-        const equalFilterForTitleField: EqualFilter = {
-          fieldName: 'title',
-          filterName: FilterName.equal,
-          filterSymbol: FilterSymbol.equal,
-          values: [title],
-        };
-
-        const books = await bookService.findBooksByAuthorId(unitOfWork, category.id, [equalFilterForTitleField], {
-          page: 1,
-          limit: 5,
+        const books = await bookService.findBooksByCategoryId({
+          unitOfWork,
+          categoryId: category1.id,
+          filters: [],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(books.length).toBe(1);
@@ -585,13 +627,15 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const { price: newPrice } = bookEntityTestFactory.create();
+        const newPrice = price + 1;
 
         const book = await bookRepository.createOne({
+          id,
           title,
           releaseYear,
           language,
@@ -599,7 +643,7 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        const updatedBook = await bookService.updateBook(unitOfWork, book.id, { price: newPrice });
+        const updatedBook = await bookService.updateBook({ unitOfWork, bookId: book.id, draft: { price: newPrice } });
 
         expect(updatedBook).not.toBeNull();
         expect(updatedBook.price).toBe(newPrice);
@@ -613,7 +657,7 @@ describe('BookServiceImpl', () => {
         const { id, price } = bookEntityTestFactory.create();
 
         try {
-          await bookService.updateBook(unitOfWork, id, { price });
+          await bookService.updateBook({ unitOfWork, bookId: id, draft: { price } });
         } catch (error) {
           expect(error).toBeInstanceOf(BookNotFoundError);
         }
@@ -627,11 +671,13 @@ describe('BookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
+          id,
           title,
           releaseYear,
           language,
@@ -639,11 +685,11 @@ describe('BookServiceImpl', () => {
           price,
         });
 
-        await bookService.removeBook(unitOfWork, book.id);
+        await bookService.deleteBook({ unitOfWork, bookId: book.id });
 
-        const bookDto = await bookRepository.findOne(book.id);
+        const foundBook = await bookRepository.findOne({ id: book.id });
 
-        expect(bookDto).toBeNull();
+        expect(foundBook).toBeNull();
       });
     });
 
@@ -654,7 +700,7 @@ describe('BookServiceImpl', () => {
         const { id } = bookEntityTestFactory.create();
 
         try {
-          await bookService.removeBook(unitOfWork, id);
+          await bookService.deleteBook({ unitOfWork, bookId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(BookNotFoundError);
         }
