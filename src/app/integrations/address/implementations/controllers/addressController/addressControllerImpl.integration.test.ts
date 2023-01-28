@@ -438,7 +438,7 @@ describe(`AddressControllerImpl (${baseUrl})`, () => {
     });
   });
 
-  describe('Remove address', () => {
+  describe('Delete address', () => {
     it('returns bad request when the addressId param is not uuid', async () => {
       expect.assertions(1);
 

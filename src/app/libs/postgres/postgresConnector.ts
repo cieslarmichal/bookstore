@@ -46,7 +46,7 @@ export class PostgresConnector {
   }
 
   public async closeConnection(): Promise<void> {
-    await this.connection?.close();
+    await this.connection?.destroy();
 
     this.connection = null;
   }

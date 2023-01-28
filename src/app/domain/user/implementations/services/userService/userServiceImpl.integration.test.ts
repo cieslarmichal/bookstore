@@ -561,8 +561,8 @@ describe('UserServiceImpl', () => {
     });
   });
 
-  describe('Remove user', () => {
-    it('removes user from database', async () => {
+  describe('Delete user', () => {
+    it('deletes user from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

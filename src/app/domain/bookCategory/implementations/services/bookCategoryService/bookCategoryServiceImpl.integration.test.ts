@@ -146,8 +146,8 @@ describe('BookCategoryService', () => {
     });
   });
 
-  describe('Remove bookCategory', () => {
-    it('removes bookCategory from database', async () => {
+  describe('Delete bookCategory', () => {
+    it('deletes bookCategory from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

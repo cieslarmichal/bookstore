@@ -665,8 +665,8 @@ describe('BookServiceImpl', () => {
     });
   });
 
-  describe('Remove book', () => {
-    it('removes book from database', async () => {
+  describe('Delete book', () => {
+    it('deletes book from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

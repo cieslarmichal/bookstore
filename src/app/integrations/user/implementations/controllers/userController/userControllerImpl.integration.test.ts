@@ -821,7 +821,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
     });
   });
 
-  describe('Remove user', () => {
+  describe('Delete user', () => {
     it('returns bad request when the userId param is not uuid', async () => {
       expect.assertions(1);
 

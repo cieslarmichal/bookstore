@@ -387,7 +387,7 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
     });
   });
 
-  describe('Remove author', () => {
+  describe('Delete author', () => {
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 

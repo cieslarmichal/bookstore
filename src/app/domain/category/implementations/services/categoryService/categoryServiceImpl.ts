@@ -1,11 +1,13 @@
-import { Filter } from '../../../../../common/filter/filter';
 import { LoggerService } from '../../../../../libs/logger/loggerService';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
-import { PaginationData } from '../../../../common/paginationData';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Category } from '../../../contracts/category';
 import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryService } from '../../../contracts/services/categoryService/categoryService';
-import { CreateCategoryData } from '../../../contracts/services/categoryService/createCategoryData';
+import { CreateCategoryPayload } from '../../../contracts/services/categoryService/createCategoryPayload';
+import { DeleteCategoryPayload } from '../../../contracts/services/categoryService/deleteCategoryPayload';
+import { FindCategoriesByBookIdPayload } from '../../../contracts/services/categoryService/findCategoriesByBookIdPayload';
+import { FindCategoriesPayload } from '../../../contracts/services/categoryService/findCategoriesPayload';
+import { FindCategoryPayload } from '../../../contracts/services/categoryService/findCategoryPayload';
 import { CategoryAlreadyExistsError } from '../../../errors/categoryAlreadyExistsError';
 import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
@@ -15,8 +17,11 @@ export class CategoryServiceImpl implements CategoryService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createCategory(unitOfWork: PostgresUnitOfWork, categoryData: CreateCategoryData): Promise<Category> {
-    const { name } = categoryData;
+  public async createCategory(input: CreateCategoryPayload): Promise<Category> {
+    const {
+      unitOfWork,
+      draft: { name },
+    } = input;
 
     this.loggerService.debug('Creating category...', { name });
 
@@ -30,19 +35,21 @@ export class CategoryServiceImpl implements CategoryService {
       throw new CategoryAlreadyExistsError({ name });
     }
 
-    const category = await categoryRepository.createOne(categoryData);
+    const category = await categoryRepository.createOne({ id: UuidGenerator.generateUuid(), name });
 
     this.loggerService.info('Category created.', { categoryId: category.id });
 
     return category;
   }
 
-  public async findCategory(unitOfWork: PostgresUnitOfWork, categoryId: string): Promise<Category> {
+  public async findCategory(input: FindCategoryPayload): Promise<Category> {
+    const { unitOfWork, categoryId } = input;
+
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    const category = await categoryRepository.findOneById(categoryId);
+    const category = await categoryRepository.findOne({ id: categoryId });
 
     if (!category) {
       throw new CategoryNotFoundError({ id: categoryId });
@@ -51,44 +58,41 @@ export class CategoryServiceImpl implements CategoryService {
     return category;
   }
 
-  public async findCategories(
-    unitOfWork: PostgresUnitOfWork,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Category[]> {
+  public async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
+    const { unitOfWork, filters, pagination } = input;
+
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    const categories = await categoryRepository.findMany(filters, pagination);
+    const categories = await categoryRepository.findMany({ filters, pagination });
 
     return categories;
   }
 
-  public async findCategoriesByBookId(
-    unitOfWork: PostgresUnitOfWork,
-    bookId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Category[]> {
+  public async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
+    const { unitOfWork, filters, pagination, bookId } = input;
+
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    const categories = await categoryRepository.findManyByBookId(bookId, filters, pagination);
+    const categories = await categoryRepository.findMany({ bookId, filters, pagination });
 
     return categories;
   }
 
-  public async removeCategory(unitOfWork: PostgresUnitOfWork, categoryId: string): Promise<void> {
-    this.loggerService.debug('Removing category...', { categoryId });
+  public async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
+    const { unitOfWork, categoryId } = input;
+
+    this.loggerService.debug('Deleting category...', { categoryId });
 
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    await categoryRepository.deleteOne(categoryId);
+    await categoryRepository.deleteOne({ id: categoryId });
 
-    this.loggerService.info('Category removed.', { categoryId });
+    this.loggerService.info('Category deleted.', { categoryId });
   }
 }

@@ -429,7 +429,7 @@ describe(`BookControllerImpl (${baseUrl})`, () => {
     });
   });
 
-  describe('Remove book', () => {
+  describe('Delete book', () => {
     it('returns bad request when the bookId param is not uuid', async () => {
       expect.assertions(1);
 

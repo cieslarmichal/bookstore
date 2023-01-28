@@ -363,8 +363,8 @@ describe('AuthorServiceImpl', () => {
     });
   });
 
-  describe('Remove author', () => {
-    it('removes author from database', async () => {
+  describe('Delete author', () => {
+    it('deletes author from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

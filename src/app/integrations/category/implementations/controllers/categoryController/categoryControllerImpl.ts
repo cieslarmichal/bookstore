@@ -113,7 +113,7 @@ export class CategoryControllerImpl implements CategoryController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.categoryService.removeCategory(unitOfWork, id as string);
+      await this.categoryService.deleteCategory(unitOfWork, id as string);
     });
 
     return { statusCode: HttpStatusCode.noContent };

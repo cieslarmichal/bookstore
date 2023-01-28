@@ -150,8 +150,8 @@ describe('AuthorBookServiceImpl', () => {
     });
   });
 
-  describe('Remove authorBook', () => {
-    it('removes authorBook from database', async () => {
+  describe('Delete authorBook', () => {
+    it('deletes authorBook from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

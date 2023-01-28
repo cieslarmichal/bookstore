@@ -263,7 +263,7 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
     });
   });
 
-  describe('Remove category', () => {
+  describe('Delete category', () => {
     it('returns bad request when the categoryId param is not uuid', async () => {
       expect.assertions(1);
 

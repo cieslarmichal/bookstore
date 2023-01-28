@@ -388,8 +388,8 @@ describe('AddressServiceImpl', () => {
     });
   });
 
-  describe('Remove address', () => {
-    it('removes address from database', async () => {
+  describe('Delete address', () => {
+    it('deletes address from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

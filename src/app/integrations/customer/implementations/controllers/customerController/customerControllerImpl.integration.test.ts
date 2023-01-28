@@ -240,7 +240,7 @@ describe(`CustomerControllerImpl (${baseUrl})`, () => {
     });
   });
 
-  describe('Remove customer', () => {
+  describe('Delete customer', () => {
     it('returns bad request when the customerId param is not uuid', async () => {
       expect.assertions(1);
 

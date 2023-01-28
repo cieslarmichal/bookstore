@@ -498,7 +498,7 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
     });
   });
 
-  describe('Remove authorBook', () => {
+  describe('Delete authorBook', () => {
     it('returns bad request when authorId or bookId params are not uuid', async () => {
       expect.assertions(1);
 

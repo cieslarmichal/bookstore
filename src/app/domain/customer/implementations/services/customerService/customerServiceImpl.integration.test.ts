@@ -162,8 +162,8 @@ describe('CustomerServiceImpl', () => {
     });
   });
 
-  describe('Remove customer', () => {
-    it('removes customer from database', async () => {
+  describe('Delete customer', () => {
+    it('deletes customer from database', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {

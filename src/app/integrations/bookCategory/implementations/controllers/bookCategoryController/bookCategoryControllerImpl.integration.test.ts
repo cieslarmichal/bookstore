@@ -454,7 +454,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
     });
   });
 
-  describe('Remove bookCategory', () => {
+  describe('Delete bookCategory', () => {
     it('returns bad request when categoryId or bookId params are not uuid', async () => {
       expect.assertions(1);
 
