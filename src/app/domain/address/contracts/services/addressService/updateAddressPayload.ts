@@ -1,4 +1,4 @@
-import { UpdateAddressDraft } from './updateAddressData';
+import { UpdateAddressDraft } from './updateAddressDraft';
 import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
 
 export interface UpdateAddressPayload {

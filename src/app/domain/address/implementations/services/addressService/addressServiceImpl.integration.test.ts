@@ -436,9 +436,9 @@ describe('AddressServiceImpl', () => {
 
         await addressService.deleteAddress({ unitOfWork, addressId: address.id });
 
-        const addressDto = await addressRepository.findOne({ id: address.id });
+        const foundAddress = await addressRepository.findOne({ id: address.id });
 
-        expect(addressDto).toBeNull();
+        expect(foundAddress).toBeNull();
       });
     });
 

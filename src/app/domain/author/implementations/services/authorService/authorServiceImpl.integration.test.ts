@@ -18,6 +18,7 @@ import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/t
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
 import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
 import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
+import { AuthorBookEntityTestFactory } from '../../../../authorBook/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { BookModule } from '../../../../book/bookModule';
 import { bookSymbols } from '../../../../book/bookSymbols';
 import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
@@ -41,6 +42,7 @@ describe('AuthorServiceImpl', () => {
 
   const authorEntityTestFactory = new AuthorEntityTestFactory();
   const bookEntityTestFactory = new BookEntityTestFactory();
+  const authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
@@ -75,15 +77,15 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const createdAuthorDto = await authorService.createAuthor(unitOfWork, { firstName, lastName });
-
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const authorDto = await authorRepository.findOneById(createdAuthorDto.id);
+        const { firstName, lastName } = authorEntityTestFactory.create();
 
-        expect(authorDto).not.toBeNull();
+        const author = await authorService.createAuthor({ unitOfWork, draft: { firstName, lastName } });
+
+        const foundAuthor = await authorRepository.findOne({ id: author.id });
+
+        expect(foundAuthor).not.toBeNull();
       });
     });
   });
@@ -95,13 +97,13 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const { id, firstName, lastName } = authorEntityTestFactory.create();
 
-        const foundAuthor = await authorService.findAuthor(unitOfWork, author.id);
+        const author = await authorRepository.createOne({ id, firstName, lastName });
+
+        const foundAuthor = await authorService.findAuthor({ unitOfWork, authorId: author.id });
 
         expect(foundAuthor).not.toBeNull();
       });
@@ -114,7 +116,7 @@ describe('AuthorServiceImpl', () => {
         const { id } = authorEntityTestFactory.create();
 
         try {
-          await authorService.findAuthor(unitOfWork, id);
+          await authorService.findAuthor({ unitOfWork, authorId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(AuthorNotFoundError);
         }
@@ -129,26 +131,30 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const { id: id1, firstName: firstName1, lastName: lastName1 } = authorEntityTestFactory.create();
 
-        const { firstName: otherFirstName, lastName: otherLastName } = authorEntityTestFactory.create();
+        const { id: id2, firstName: firstName2, lastName: lastName2 } = authorEntityTestFactory.create();
 
-        await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+        const author = await authorRepository.createOne({ id: id1, firstName: firstName1, lastName: lastName1 });
+
+        await authorRepository.createOne({ id: id2, firstName: firstName2, lastName: lastName2 });
 
         const equalFilterForFirstNameField: EqualFilter = {
           fieldName: 'firstName',
           filterName: FilterName.equal,
           filterSymbol: FilterSymbol.equal,
-          values: [firstName],
+          values: [firstName1],
         };
 
-        const foundAuthors = await authorService.findAuthors(unitOfWork, [equalFilterForFirstNameField], {
-          page: 1,
-          limit: 5,
+        const foundAuthors = await authorService.findAuthors({
+          unitOfWork,
+          filters: [equalFilterForFirstNameField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundAuthors.length).toBe(1);
@@ -162,38 +168,38 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const { id: id1, firstName: firstName1, lastName: lastName1 } = authorEntityTestFactory.create();
 
-        const { firstName: otherFirstName, lastName: otherLastName } = authorEntityTestFactory.create();
+        const { id: id2, firstName: firstName2, lastName: lastName2 } = authorEntityTestFactory.create();
 
-        await authorRepository.createOne({ firstName: otherFirstName, lastName: otherLastName });
+        const author = await authorRepository.createOne({ id: id1, firstName: firstName1, lastName: lastName1 });
+
+        await authorRepository.createOne({ id: id2, firstName: firstName2, lastName: lastName2 });
 
         const equalFilterForFirstNameField: EqualFilter = {
           fieldName: 'firstName',
           filterName: FilterName.equal,
           filterSymbol: FilterSymbol.equal,
-          values: [firstName],
+          values: [firstName1],
         };
 
         const equalFilterForLastNameField: EqualFilter = {
           fieldName: 'lastName',
           filterName: FilterName.equal,
           filterSymbol: FilterSymbol.equal,
-          values: [lastName],
+          values: [lastName1],
         };
 
-        const foundAuthors = await authorService.findAuthors(
+        const foundAuthors = await authorService.findAuthors({
           unitOfWork,
-          [equalFilterForFirstNameField, equalFilterForLastNameField],
-          {
+          filters: [equalFilterForFirstNameField, equalFilterForLastNameField],
+          pagination: {
             page: 1,
             limit: 5,
           },
-        );
+        });
 
         expect(foundAuthors.length).toBe(1);
         expect(foundAuthors[0]).toStrictEqual(author);
@@ -206,19 +212,19 @@ describe('AuthorServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        await authorRepository.createOne({ firstName, lastName });
+        const { id: id1, firstName, lastName: lastName1 } = authorEntityTestFactory.create();
 
-        const { lastName: otherLastName } = authorEntityTestFactory.create();
+        const { id: id2, lastName: lastName2 } = authorEntityTestFactory.create();
 
-        await authorRepository.createOne({ firstName, lastName: otherLastName });
+        const { id: id3, lastName: lastName3 } = authorEntityTestFactory.create();
 
-        const { lastName: anotherLastName } = authorEntityTestFactory.create();
+        await authorRepository.createOne({ id: id1, firstName, lastName: lastName1 });
 
-        await authorRepository.createOne({ firstName, lastName: anotherLastName });
+        await authorRepository.createOne({ id: id2, firstName, lastName: lastName2 });
+
+        await authorRepository.createOne({ id: id3, firstName, lastName: lastName3 });
 
         const equalFilterForFirstNameField: EqualFilter = {
           fieldName: 'firstName',
@@ -227,9 +233,13 @@ describe('AuthorServiceImpl', () => {
           values: [firstName],
         };
 
-        const foundAuthors = await authorService.findAuthors(unitOfWork, [equalFilterForFirstNameField], {
-          page: 1,
-          limit: 2,
+        const foundAuthors = await authorService.findAuthors({
+          unitOfWork,
+          filters: [equalFilterForFirstNameField],
+          pagination: {
+            page: 1,
+            limit: 2,
+          },
         });
 
         expect(foundAuthors.length).toBe(2);
@@ -243,13 +253,27 @@ describe('AuthorServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const authorRepository = authorRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id: bookId, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+        const { id: authorId1, firstName: firstName1, lastName: lastName1 } = authorEntityTestFactory.create();
+
+        const { id: authorId2, firstName: firstName2, lastName: lastName2 } = authorEntityTestFactory.create();
+
+        const { id: authorId3, firstName: firstName3, lastName: lastName3 } = authorEntityTestFactory.create();
+
+        const { id: authorBookId1 } = authorBookEntityTestFactory.create();
+
+        const { id: authorBookId2 } = authorBookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
+          id: bookId,
           title,
           releaseYear,
           language,
@@ -257,47 +281,45 @@ describe('AuthorServiceImpl', () => {
           price,
         });
 
-        const firstAuthorData = authorEntityTestFactory.create();
-
-        const firstAuthor = await authorRepository.createOne({
-          firstName: firstAuthorData.firstName,
-          lastName: firstAuthorData.lastName,
+        const author1 = await authorRepository.createOne({
+          id: authorId1,
+          firstName: firstName1,
+          lastName: lastName1,
         });
 
-        const secondAuthorData = authorEntityTestFactory.create();
-
-        const secondAuthor = await authorRepository.createOne({
-          firstName: secondAuthorData.firstName,
-          lastName: secondAuthorData.lastName,
+        const author2 = await authorRepository.createOne({
+          id: authorId2,
+          firstName: firstName2,
+          lastName: lastName2,
         });
-
-        const thirdAuthorData = authorEntityTestFactory.create();
 
         await authorRepository.createOne({
-          firstName: thirdAuthorData.firstName,
-          lastName: thirdAuthorData.lastName,
+          id: authorId3,
+          firstName: firstName3,
+          lastName: lastName3,
         });
 
-        await authorBookRepository.createOne({ bookId: book.id, authorId: firstAuthor.id });
-        await authorBookRepository.createOne({ bookId: book.id, authorId: secondAuthor.id });
+        await authorBookRepository.createOne({ id: authorBookId1, bookId: book.id, authorId: author1.id });
+
+        await authorBookRepository.createOne({ id: authorBookId2, bookId: book.id, authorId: author2.id });
 
         const equalFilterForFirstNameField: EqualFilter = {
           fieldName: 'firstName',
           filterName: FilterName.equal,
           filterSymbol: FilterSymbol.equal,
-          values: [firstAuthor.firstName],
+          values: [firstName1],
         };
 
-        const foundAuthors = await authorService.findAuthorsByBookId(
+        const foundAuthors = await authorService.findAuthorsByBookId({
           unitOfWork,
-          book.id,
-          [equalFilterForFirstNameField],
-          { page: 1, limit: 5 },
-        );
+          bookId: book.id,
+          filters: [equalFilterForFirstNameField],
+          pagination: { page: 1, limit: 5 },
+        });
 
         expect(foundAuthors.length).toBe(1);
-        expect(foundAuthors[0]?.firstName).toBe(firstAuthor.firstName);
-        expect(foundAuthors[0]?.lastName).toBe(firstAuthor.lastName);
+        expect(foundAuthors[0]?.firstName).toBe(author1.firstName);
+        expect(foundAuthors[0]?.lastName).toBe(author2.lastName);
       });
     });
   });
@@ -308,13 +330,18 @@ describe('AuthorServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName, about } = authorEntityTestFactory.create();
+        const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne({ id, firstName, lastName });
 
-        const updatedAuthor = await authorService.updateAuthor(unitOfWork, author.id, { about });
+        const updatedAuthor = await authorService.updateAuthor({
+          unitOfWork,
+          authorId: author.id,
+          draft: { about: about as string },
+        });
 
         expect(updatedAuthor).not.toBeNull();
         expect(updatedAuthor.about).toBe(about);
@@ -328,7 +355,7 @@ describe('AuthorServiceImpl', () => {
         const { id, about } = authorEntityTestFactory.create();
 
         try {
-          await authorService.updateAuthor(unitOfWork, id, { about });
+          await authorService.updateAuthor({ unitOfWork, authorId: id, draft: { about: about as string } });
         } catch (error) {
           expect(error).toBeInstanceOf(AuthorNotFoundError);
         }
@@ -344,15 +371,15 @@ describe('AuthorServiceImpl', () => {
         const { entityManager } = unitOfWork;
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const { id, firstName, lastName } = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne({ id, firstName, lastName });
 
-        await authorService.removeAuthor(unitOfWork, author.id);
+        await authorService.deleteAuthor({ unitOfWork, authorId: author.id });
 
-        const authorDto = await authorRepository.findOneById(author.id);
+        const foundAuthor = await authorRepository.findOne({ id: author.id });
 
-        expect(authorDto).toBeNull();
+        expect(foundAuthor).toBeNull();
       });
     });
 
@@ -363,7 +390,7 @@ describe('AuthorServiceImpl', () => {
         const { id } = authorEntityTestFactory.create();
 
         try {
-          await authorService.removeAuthor(unitOfWork, id);
+          await authorService.deleteAuthor({ unitOfWork, authorId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(AuthorNotFoundError);
         }

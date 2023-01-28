@@ -136,7 +136,7 @@ export class AuthorControllerImpl implements AuthorController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.authorService.removeAuthor(unitOfWork, id as string);
+      await this.authorService.deleteAuthor(unitOfWork, id as string);
     });
 
     return { statusCode: HttpStatusCode.noContent };
