@@ -68,18 +68,20 @@ describe('CustomerServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
+
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
-        const createdCustomerDto = await customerService.createCustomer(unitOfWork, { userId: user.id });
+        const customer = await customerService.createCustomer({ unitOfWork, draft: { userId: user.id } });
 
-        const customerDto = await customerRepository.findOneById(createdCustomerDto.id);
+        const foundCustomer = await customerRepository.findOne({ id: customer.id });
 
-        expect(customerDto).not.toBeNull();
+        expect(foundCustomer).not.toBeNull();
       });
     });
 
@@ -88,17 +90,21 @@ describe('CustomerServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
+
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password, role });
+        const { id: customerId } = customerEntityTestFactory.create();
 
-        await customerRepository.createOne({ userId: user.id });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        await customerRepository.createOne({ id: customerId, userId: user.id });
 
         try {
-          await customerService.createCustomer(unitOfWork, { userId: user.id });
+          await customerService.createCustomer({ unitOfWork, draft: { userId: user.id } });
         } catch (error) {
           expect(error).toBeInstanceOf(CustomerAlreadyExistsError);
         }
@@ -112,16 +118,20 @@ describe('CustomerServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
+
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password, role });
+        const { id: customerId } = customerEntityTestFactory.create();
 
-        const customer = await customerRepository.createOne({ userId: user.id });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
-        const foundCustomer = await customerService.findCustomer(unitOfWork, { id: customer.id });
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const foundCustomer = await customerService.findCustomer({ unitOfWork, customerId: customer.id });
 
         expect(foundCustomer).not.toBeNull();
       });
@@ -132,16 +142,20 @@ describe('CustomerServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
+
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password, role });
+        const { id: customerId } = customerEntityTestFactory.create();
 
-        await customerRepository.createOne({ userId: user.id });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
-        const foundCustomer = await customerService.findCustomer(unitOfWork, { userId: user.id });
+        await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const foundCustomer = await customerService.findCustomer({ unitOfWork, userId: user.id });
 
         expect(foundCustomer).not.toBeNull();
       });
@@ -154,7 +168,7 @@ describe('CustomerServiceImpl', () => {
         const { id } = customerEntityTestFactory.create();
 
         try {
-          await customerService.findCustomer(unitOfWork, { id });
+          await customerService.findCustomer({ unitOfWork, customerId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(CustomerNotFoundError);
         }
@@ -168,20 +182,24 @@ describe('CustomerServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
+
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password, role });
+        const { id: customerId } = customerEntityTestFactory.create();
 
-        const customer = await customerRepository.createOne({ userId: user.id });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
-        await customerService.removeCustomer(unitOfWork, customer.id);
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const customerDto = await customerRepository.findOneById(customer.id);
+        await customerService.deleteCustomer({ unitOfWork, customerId: customer.id });
 
-        expect(customerDto).toBeNull();
+        const foundCustomer = await customerRepository.findOne({ id: customer.id });
+
+        expect(foundCustomer).toBeNull();
       });
     });
 
@@ -192,7 +210,7 @@ describe('CustomerServiceImpl', () => {
         const { id } = customerEntityTestFactory.create();
 
         try {
-          await customerService.removeCustomer(unitOfWork, id);
+          await customerService.deleteCustomer({ unitOfWork, customerId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(CustomerNotFoundError);
         }

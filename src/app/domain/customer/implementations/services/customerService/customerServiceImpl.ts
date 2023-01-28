@@ -1,10 +1,12 @@
 import { LoggerService } from '../../../../../libs/logger/loggerService';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
-import { CreateCustomerData } from '../../../contracts/services/customerService/createCustomerData';
+import { FindOnePayload } from '../../../contracts/repositories/customerRepository/findOnePayload';
+import { CreateCustomerPayload } from '../../../contracts/services/customerService/createCustomerPayload';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
-import { FindCustomerData } from '../../../contracts/services/customerService/findCustomerData';
+import { DeleteCustomerPayload } from '../../../contracts/services/customerService/deleteCustomerPayload';
+import { FindCustomerPayload } from '../../../contracts/services/customerService/findCustomerPayload';
 import { CustomerAlreadyExistsError } from '../../../errors/customerAlreadyExistsError';
 import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
@@ -14,8 +16,11 @@ export class CustomerServiceImpl implements CustomerService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createCustomer(unitOfWork: PostgresUnitOfWork, customerData: CreateCustomerData): Promise<Customer> {
-    const { userId } = customerData;
+  public async createCustomer(input: CreateCustomerPayload): Promise<Customer> {
+    const {
+      unitOfWork,
+      draft: { userId },
+    } = input;
 
     this.loggerService.debug('Creating customer...', { userId });
 
@@ -29,36 +34,50 @@ export class CustomerServiceImpl implements CustomerService {
       throw new CustomerAlreadyExistsError({ userId });
     }
 
-    const customer = await customerRepository.createOne(customerData);
+    const customer = await customerRepository.createOne({ id: UuidGenerator.generateUuid(), userId });
 
     this.loggerService.info('Customer created.', { customerId: customer.id });
 
     return customer;
   }
 
-  public async findCustomer(unitOfWork: PostgresUnitOfWork, customerData: FindCustomerData): Promise<Customer> {
+  public async findCustomer(input: FindCustomerPayload): Promise<Customer> {
+    const { unitOfWork, customerId, userId } = input;
+
     const { entityManager } = unitOfWork;
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 
-    const customer = await customerRepository.findOne(customerData);
+    let findOnePayload: FindOnePayload = {};
+
+    if (customerId) {
+      findOnePayload = { ...findOnePayload, id: customerId };
+    }
+
+    if (userId) {
+      findOnePayload = { ...findOnePayload, userId };
+    }
+
+    const customer = await customerRepository.findOne(findOnePayload);
 
     if (!customer) {
-      throw new CustomerNotFoundError({ ...customerData });
+      throw new CustomerNotFoundError({ ...findOnePayload });
     }
 
     return customer;
   }
 
-  public async removeCustomer(unitOfWork: PostgresUnitOfWork, customerId: string): Promise<void> {
-    this.loggerService.debug('Removing customer...', { customerId });
+  public async deleteCustomer(input: DeleteCustomerPayload): Promise<void> {
+    const { unitOfWork, customerId } = input;
+
+    this.loggerService.debug('Deleting customer...', { customerId });
 
     const { entityManager } = unitOfWork;
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 
-    await customerRepository.deleteOne(customerId);
+    await customerRepository.deleteOne({ id: customerId });
 
-    this.loggerService.info('Customer removed.', { customerId });
+    this.loggerService.info('Customer deleted.', { customerId });
   }
 }

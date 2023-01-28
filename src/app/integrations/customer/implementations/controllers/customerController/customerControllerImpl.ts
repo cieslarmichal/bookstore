@@ -85,7 +85,7 @@ export class CustomerControllerImpl implements CustomerController {
     const { id } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.customerService.removeCustomer(unitOfWork, id as string);
+      await this.customerService.deleteCustomer(unitOfWork, id as string);
     });
 
     return { statusCode: HttpStatusCode.noContent };
