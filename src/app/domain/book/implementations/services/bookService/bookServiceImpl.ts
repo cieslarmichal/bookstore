@@ -46,13 +46,13 @@ export class BookServiceImpl implements BookService {
   public async findBooks(
     unitOfWork: PostgresUnitOfWork,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const books = await bookRepository.findMany(filters, paginationData);
+    const books = await bookRepository.findMany(filters, pagination);
 
     return books;
   }
@@ -61,13 +61,13 @@ export class BookServiceImpl implements BookService {
     unitOfWork: PostgresUnitOfWork,
     authorId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const books = await bookRepository.findManyByAuthorId(authorId, filters, paginationData);
+    const books = await bookRepository.findManyByAuthorId(authorId, filters, pagination);
 
     return books;
   }
@@ -76,13 +76,13 @@ export class BookServiceImpl implements BookService {
     unitOfWork: PostgresUnitOfWork,
     categoryId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]> {
     const { entityManager } = unitOfWork;
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
-    const books = await bookRepository.findManyByCategoryId(categoryId, filters, paginationData);
+    const books = await bookRepository.findManyByCategoryId(categoryId, filters, pagination);
 
     return books;
   }

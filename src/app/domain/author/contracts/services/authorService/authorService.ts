@@ -8,12 +8,12 @@ import { Author } from '../../author';
 export interface AuthorService {
   createAuthor(unitOfWork: PostgresUnitOfWork, authorData: CreateAuthorData): Promise<Author>;
   findAuthor(unitOfWork: PostgresUnitOfWork, authorId: string): Promise<Author>;
-  findAuthors(unitOfWork: PostgresUnitOfWork, filters: Filter[], paginationData: PaginationData): Promise<Author[]>;
+  findAuthors(unitOfWork: PostgresUnitOfWork, filters: Filter[], pagination: PaginationData): Promise<Author[]>;
   findAuthorsByBookId(
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Author[]>;
   updateAuthor(unitOfWork: PostgresUnitOfWork, authorId: string, authorData: UpdateAuthorData): Promise<Author>;
   removeAuthor(unitOfWork: PostgresUnitOfWork, authorId: string): Promise<void>;

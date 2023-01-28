@@ -18,6 +18,7 @@ import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/t
 import { CustomerRepositoryFactory } from '../../../../customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerModule } from '../../../../customer/customerModule';
 import { customerSymbols } from '../../../../customer/customerSymbols';
+import { CustomerEntityTestFactory } from '../../../../customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../../user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
@@ -43,6 +44,8 @@ describe('AddressServiceImpl', () => {
 
   const addressEntityTestFactory = new AddressEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
+  const customerEntityTestFactory = new CustomerEntityTestFactory();
+
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
@@ -77,36 +80,41 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.create();
-
         const userRepository = userRepositoryFactory.create(entityManager);
-
-        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const customer = await customerRepository.createOne({ userId: user.id });
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
 
         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
           addressEntityTestFactory.create();
 
-        const createdAddressDto = await addressService.createAddress(unitOfWork, {
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-          customerId: customer.id,
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const createdAddress = await addressService.createAddress({
+          unitOfWork,
+          draft: {
+            firstName,
+            lastName,
+            phoneNumber,
+            country,
+            state,
+            city,
+            zipCode,
+            streetAddress,
+            customerId: customer.id,
+          },
         });
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const foundAddress = await addressRepository.findOne({ id: createdAddress.id });
 
-        const addressDto = await addressRepository.findOneById(createdAddressDto.id);
-
-        expect(addressDto).not.toBeNull();
+        expect(foundAddress).not.toBeNull();
       });
     });
   });
@@ -118,22 +126,34 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.create();
-
         const userRepository = userRepositoryFactory.create(entityManager);
-
-        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const customer = await customerRepository.createOne({ userId: user.id });
-
-        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
-
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const {
+          id: addressId,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+        } = addressEntityTestFactory.create();
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
         const address = await addressRepository.createOne({
+          id: addressId,
           firstName,
           lastName,
           phoneNumber,
@@ -145,7 +165,7 @@ describe('AddressServiceImpl', () => {
           customerId: customer.id,
         });
 
-        const foundAddress = await addressService.findAddress(unitOfWork, address.id);
+        const foundAddress = await addressService.findAddress({ unitOfWork, addressId: address.id });
 
         expect(foundAddress).not.toBeNull();
       });
@@ -158,7 +178,7 @@ describe('AddressServiceImpl', () => {
         const { id } = addressEntityTestFactory.create();
 
         try {
-          await addressService.findAddress(unitOfWork, id);
+          await addressService.findAddress({ unitOfWork, addressId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(AddressNotFoundError);
         }
@@ -173,28 +193,46 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.create();
-
         const userRepository = userRepositoryFactory.create(entityManager);
-
-        const user1 = await userRepository.createOne({ email: email as string, password, role });
-
-        const { email: otherEmail } = userEntityTestFactory.create();
-
-        const user2 = await userRepository.createOne({ email: otherEmail as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const customer1 = await customerRepository.createOne({ userId: user1.id });
-
-        const customer2 = await customerRepository.createOne({ userId: user2.id });
-
-        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
-
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
+        const { id: userId1, email: email1, password, role } = userEntityTestFactory.create();
+
+        const { id: userId2, email: email2 } = userEntityTestFactory.create();
+
+        const { id: customerId1 } = customerEntityTestFactory.create();
+
+        const { id: customerId2 } = customerEntityTestFactory.create();
+
+        const {
+          id: addressId1,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+        } = addressEntityTestFactory.create();
+
+        const { id: addressId2 } = addressEntityTestFactory.create();
+
+        const { id: addressId3 } = addressEntityTestFactory.create();
+
+        const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password, role });
+
+        const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password, role });
+
+        const customer1 = await customerRepository.createOne({ id: customerId1, userId: user1.id });
+
+        const customer2 = await customerRepository.createOne({ id: customerId2, userId: user2.id });
+
         const address1 = await addressRepository.createOne({
+          id: addressId1,
           firstName,
           lastName,
           phoneNumber,
@@ -207,6 +245,7 @@ describe('AddressServiceImpl', () => {
         });
 
         const address2 = await addressRepository.createOne({
+          id: addressId2,
           firstName,
           lastName,
           phoneNumber,
@@ -219,6 +258,7 @@ describe('AddressServiceImpl', () => {
         });
 
         await addressRepository.createOne({
+          id: addressId3,
           firstName,
           lastName,
           phoneNumber,
@@ -237,9 +277,13 @@ describe('AddressServiceImpl', () => {
           values: [customer1.id],
         };
 
-        const foundAddresses = await addressService.findAddresses(unitOfWork, [equalFilterForFirstNameField], {
-          page: 1,
-          limit: 5,
+        const foundAddresses = await addressService.findAddresses({
+          unitOfWork,
+          filters: [equalFilterForFirstNameField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundAddresses.length).toBe(2);
@@ -254,22 +298,38 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.create();
-
         const userRepository = userRepositoryFactory.create(entityManager);
-
-        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const customer = await customerRepository.createOne({ userId: user.id });
-
-        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
-
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const {
+          id: addressId1,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+        } = addressEntityTestFactory.create();
+
+        const { id: addressId2 } = addressEntityTestFactory.create();
+
+        const { id: addressId3 } = addressEntityTestFactory.create();
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
         await addressRepository.createOne({
+          id: addressId1,
           firstName,
           lastName,
           phoneNumber,
@@ -282,6 +342,7 @@ describe('AddressServiceImpl', () => {
         });
 
         await addressRepository.createOne({
+          id: addressId2,
           firstName,
           lastName,
           phoneNumber,
@@ -294,6 +355,7 @@ describe('AddressServiceImpl', () => {
         });
 
         await addressRepository.createOne({
+          id: addressId3,
           firstName,
           lastName,
           phoneNumber,
@@ -312,9 +374,13 @@ describe('AddressServiceImpl', () => {
           values: [customer.id],
         };
 
-        const foundAddresses = await addressService.findAddresses(unitOfWork, [equalFilterForFirstNameField], {
-          page: 1,
-          limit: 5,
+        const foundAddresses = await addressService.findAddresses({
+          unitOfWork,
+          filters: [equalFilterForFirstNameField],
+          pagination: {
+            page: 1,
+            limit: 5,
+          },
         });
 
         expect(foundAddresses.length).toBe(3);
@@ -329,22 +395,34 @@ describe('AddressServiceImpl', () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
 
-        const { email, password, role } = userEntityTestFactory.create();
-
         const userRepository = userRepositoryFactory.create(entityManager);
-
-        const user = await userRepository.createOne({ email: email as string, password, role });
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const customer = await customerRepository.createOne({ userId: user.id });
-
-        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
-
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const {
+          id: addressId1,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+        } = addressEntityTestFactory.create();
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
         const address = await addressRepository.createOne({
+          id: addressId1,
           firstName,
           lastName,
           phoneNumber,
@@ -356,9 +434,9 @@ describe('AddressServiceImpl', () => {
           customerId: customer.id,
         });
 
-        await addressService.removeAddress(unitOfWork, address.id);
+        await addressService.deleteAddress({ unitOfWork, addressId: address.id });
 
-        const addressDto = await addressRepository.findOneById(address.id);
+        const addressDto = await addressRepository.findOne({ id: address.id });
 
         expect(addressDto).toBeNull();
       });
@@ -371,7 +449,7 @@ describe('AddressServiceImpl', () => {
         const { id } = addressEntityTestFactory.create();
 
         try {
-          await addressService.removeAddress(unitOfWork, id);
+          await addressService.deleteAddress({ unitOfWork, addressId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(AddressNotFoundError);
         }

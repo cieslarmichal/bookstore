@@ -8,7 +8,7 @@ import { BookCategoryControllerImpl } from './bookCategory/implementations/contr
 import { CategoryControllerImpl } from './category/implementations/controllers/categoryController/categoryControllerImpl';
 import { FilterDataParser } from './common/filter/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
-import { PaginationDataParser } from './common/pagination/paginationDataParser';
+import { PaginationDataParser } from './common/paginationData/paginationDataParser';
 import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';

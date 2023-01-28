@@ -38,16 +38,16 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Address[]> {
-    const { filters, paginationData } = input;
+    const { filters, pagination } = input;
 
     const addressQueryBuilder = new AddressQueryBuilder(this.entityManager);
 
-    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+    const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
     const addressesEntities = await addressQueryBuilder
       .where(filters)
       .skip(numberOfEnitiesToSkip)
-      .take(paginationData.limit)
+      .take(pagination.limit)
       .getMany();
 
     return addressesEntities.map((address) => this.addressMapper.map(address));

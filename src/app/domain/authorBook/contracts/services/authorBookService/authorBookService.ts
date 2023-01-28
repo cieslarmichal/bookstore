@@ -13,13 +13,13 @@ export interface AuthorBookService {
     unitOfWork: PostgresUnitOfWork,
     authorId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]>;
   findBookAuthors(
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Author[]>;
   removeAuthorBook(unitOfWork: PostgresUnitOfWork, authorBookData: RemoveAuthorBookData): Promise<void>;
 }

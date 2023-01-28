@@ -35,11 +35,11 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Category[]> {
-    const { bookId, filters, paginationData } = input;
+    const { bookId, filters, pagination } = input;
 
     let categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
-    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+    const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
     if (bookId) {
       categoryQueryBuilder = categoryQueryBuilder.whereBookId(bookId);
@@ -48,7 +48,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     const categoriesEntities = await categoryQueryBuilder
       .where(filters)
       .skip(numberOfEnitiesToSkip)
-      .take(paginationData.limit)
+      .take(pagination.limit)
       .getMany();
 
     return categoriesEntities.map((category) => this.categoryMapper.map(category));

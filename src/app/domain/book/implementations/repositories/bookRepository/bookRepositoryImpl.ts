@@ -38,11 +38,11 @@ export class BookRepositoryImpl implements BookRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Book[]> {
-    const { authorId, categoryId, filters, paginationData } = input;
+    const { authorId, categoryId, filters, pagination } = input;
 
     let bookQueryBuilder = new BookQueryBuilder(this.entityManager);
 
-    const numberOfEnitiesToSkip = (paginationData.page - 1) * paginationData.limit;
+    const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
     if (authorId) {
       bookQueryBuilder = bookQueryBuilder.whereAuthorId(authorId);
@@ -55,7 +55,7 @@ export class BookRepositoryImpl implements BookRepository {
     const booksEntities = await bookQueryBuilder
       .where(filters)
       .skip(numberOfEnitiesToSkip)
-      .take(paginationData.limit)
+      .take(pagination.limit)
       .getMany();
 
     return booksEntities.map((book) => this.bookMapper.map(book));

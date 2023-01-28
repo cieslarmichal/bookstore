@@ -1,12 +1,14 @@
-import { CreateAddressData } from './createAddressData';
-import { Filter } from '../../../../../common/filter/filter';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
-import { PaginationData } from '../../../../common/paginationData';
+import { CreateAddressPayload } from './createAddressPayload';
+import { DeleteAddressPayload } from './deleteAddressPayload';
+import { FindAddressesPayload } from './findAddressesPayload';
+import { FindAddressPayload } from './findAddressPayload';
+import { UpdateAddressPayload } from './updateAddressPayload';
 import { Address } from '../../address';
 
 export interface AddressService {
-  createAddress(unitOfWork: PostgresUnitOfWork, addressData: CreateAddressData): Promise<Address>;
-  findAddress(unitOfWork: PostgresUnitOfWork, addressId: string): Promise<Address>;
-  findAddresses(unitOfWork: PostgresUnitOfWork, filters: Filter[], paginationData: PaginationData): Promise<Address[]>;
-  removeAddress(unitOfWork: PostgresUnitOfWork, addressId: string): Promise<void>;
+  createAddress(input: CreateAddressPayload): Promise<Address>;
+  findAddress(input: FindAddressPayload): Promise<Address>;
+  findAddresses(input: FindAddressesPayload): Promise<Address[]>;
+  updateAddress(input: UpdateAddressPayload): Promise<Address>;
+  deleteAddress(input: DeleteAddressPayload): Promise<void>;
 }

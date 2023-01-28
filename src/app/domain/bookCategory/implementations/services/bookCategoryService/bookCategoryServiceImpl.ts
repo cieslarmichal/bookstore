@@ -65,7 +65,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Category[]> {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
@@ -73,14 +73,14 @@ export class BookCategoryServiceImpl implements BookCategoryService {
       throw new BookNotFoundError({ id: bookId });
     }
 
-    return this.categoryService.findCategoriesByBookId(unitOfWork, bookId, filters, paginationData);
+    return this.categoryService.findCategoriesByBookId(unitOfWork, bookId, filters, pagination);
   }
 
   public async findBooksFromCategory(
     unitOfWork: PostgresUnitOfWork,
     categoryId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]> {
     const category = await this.categoryService.findCategory(unitOfWork, categoryId);
 
@@ -88,7 +88,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
       throw new CategoryNotFoundError({ id: categoryId });
     }
 
-    return this.bookService.findBooksByCategoryId(unitOfWork, categoryId, filters, paginationData);
+    return this.bookService.findBooksByCategoryId(unitOfWork, categoryId, filters, pagination);
   }
 
   public async removeBookCategory(

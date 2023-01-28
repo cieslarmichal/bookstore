@@ -54,13 +54,13 @@ export class CategoryServiceImpl implements CategoryService {
   public async findCategories(
     unitOfWork: PostgresUnitOfWork,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Category[]> {
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    const categories = await categoryRepository.findMany(filters, paginationData);
+    const categories = await categoryRepository.findMany(filters, pagination);
 
     return categories;
   }
@@ -69,13 +69,13 @@ export class CategoryServiceImpl implements CategoryService {
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Category[]> {
     const { entityManager } = unitOfWork;
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
-    const categories = await categoryRepository.findManyByBookId(bookId, filters, paginationData);
+    const categories = await categoryRepository.findManyByBookId(bookId, filters, pagination);
 
     return categories;
   }

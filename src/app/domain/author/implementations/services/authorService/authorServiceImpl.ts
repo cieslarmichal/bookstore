@@ -46,13 +46,13 @@ export class AuthorServiceImpl implements AuthorService {
   public async findAuthors(
     unitOfWork: PostgresUnitOfWork,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Author[]> {
     const { entityManager } = unitOfWork;
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
-    const authors = await authorRepository.findMany(filters, paginationData);
+    const authors = await authorRepository.findMany(filters, pagination);
 
     return authors;
   }
@@ -61,13 +61,13 @@ export class AuthorServiceImpl implements AuthorService {
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Author[]> {
     const { entityManager } = unitOfWork;
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
-    const authors = await authorRepository.findManyByBookId(bookId, filters, paginationData);
+    const authors = await authorRepository.findManyByBookId(bookId, filters, pagination);
 
     return authors;
   }

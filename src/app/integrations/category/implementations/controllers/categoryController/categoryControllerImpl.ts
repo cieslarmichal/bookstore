@@ -8,7 +8,7 @@ import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFact
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { PaginationDataParser } from '../../../../common/paginationData/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { CategoryController } from '../../../contracts/controllers/categoryController/categoryController';
 import { findCategoriesFilters } from '../../../contracts/controllers/categoryController/findCategoriesFilters';
@@ -98,10 +98,10 @@ export class CategoryControllerImpl implements CategoryController {
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findCategoriesFilters);
 
-    const paginationData = this.paginationDataParser.parse(request.query);
+    const pagination = this.paginationDataParser.parse(request.query);
 
     const categories = await unitOfWork.runInTransaction(async () => {
-      return this.categoryService.findCategories(unitOfWork, filters, paginationData);
+      return this.categoryService.findCategories(unitOfWork, filters, pagination);
     });
 
     return { data: { categories }, statusCode: HttpStatusCode.ok };

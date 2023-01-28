@@ -10,7 +10,7 @@ import { findBooksFilters } from '../../../../book/contracts/controllers/bookCon
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { PaginationDataParser } from '../../../../common/paginationData/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { AuthorBookController } from '../../../contracts/controllers/authorBookController/authorBookController';
 import { authorBookErrorMiddleware } from '../../middlewares/authorBookErrorMiddleware/authorBookErrorMiddleware';
@@ -93,10 +93,10 @@ export class AuthorBookControllerImpl implements AuthorBookController {
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findBooksFilters);
 
-    const paginationData = this.paginationDataParser.parse(request.query);
+    const pagination = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.findAuthorBooks(unitOfWork, authorId as string, filters, paginationData);
+      return this.authorBookService.findAuthorBooks(unitOfWork, authorId as string, filters, pagination);
     });
 
     return { data: { books }, statusCode: HttpStatusCode.ok };
@@ -109,10 +109,10 @@ export class AuthorBookControllerImpl implements AuthorBookController {
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findAuthorsFilters);
 
-    const paginationData = this.paginationDataParser.parse(request.query);
+    const pagination = this.paginationDataParser.parse(request.query);
 
     const authors = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.findBookAuthors(unitOfWork, bookId as string, filters, paginationData);
+      return this.authorBookService.findBookAuthors(unitOfWork, bookId as string, filters, pagination);
     });
 
     return { data: { authors }, statusCode: HttpStatusCode.ok };

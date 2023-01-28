@@ -13,13 +13,13 @@ export interface BookCategoryService {
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Category[]>;
   findBooksFromCategory(
     unitOfWork: PostgresUnitOfWork,
     categoryId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]>;
   removeBookCategory(unitOfWork: PostgresUnitOfWork, bookCategoryData: RemoveBookCategoryData): Promise<void>;
 }

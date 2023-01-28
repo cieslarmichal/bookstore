@@ -65,7 +65,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     unitOfWork: PostgresUnitOfWork,
     authorId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Book[]> {
     const author = await this.authorService.findAuthor(unitOfWork, authorId);
 
@@ -73,14 +73,14 @@ export class AuthorBookServiceImpl implements AuthorBookService {
       throw new AuthorNotFoundError({ id: authorId });
     }
 
-    return this.bookService.findBooksByAuthorId(unitOfWork, authorId, filters, paginationData);
+    return this.bookService.findBooksByAuthorId(unitOfWork, authorId, filters, pagination);
   }
 
   public async findBookAuthors(
     unitOfWork: PostgresUnitOfWork,
     bookId: string,
     filters: Filter[],
-    paginationData: PaginationData,
+    pagination: PaginationData,
   ): Promise<Author[]> {
     const book = await this.bookService.findBook(unitOfWork, bookId);
 
@@ -88,7 +88,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
       throw new BookNotFoundError({ id: bookId });
     }
 
-    return this.authorService.findAuthorsByBookId(unitOfWork, bookId, filters, paginationData);
+    return this.authorService.findAuthorsByBookId(unitOfWork, bookId, filters, pagination);
   }
 
   public async removeAuthorBook(unitOfWork: PostgresUnitOfWork, authorBookData: RemoveAuthorBookData): Promise<void> {

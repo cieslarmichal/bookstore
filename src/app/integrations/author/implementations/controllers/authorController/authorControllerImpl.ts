@@ -8,7 +8,7 @@ import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFact
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { PaginationDataParser } from '../../../../common/paginationData/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { AuthorController } from '../../../contracts/controllers/authorController/authorController';
 import { findAuthorsFilters } from '../../../contracts/controllers/authorController/findAuthorsFilters';
@@ -107,10 +107,10 @@ export class AuthorControllerImpl implements AuthorController {
 
     const filters = this.filterDataParser.parse(request.query['filter'] as string, findAuthorsFilters);
 
-    const paginationData = this.paginationDataParser.parse(request.query);
+    const pagination = this.paginationDataParser.parse(request.query);
 
     const authors = await unitOfWork.runInTransaction(async () => {
-      return this.authorService.findAuthors(unitOfWork, filters, paginationData);
+      return this.authorService.findAuthors(unitOfWork, filters, pagination);
     });
 
     return { data: { authors }, statusCode: HttpStatusCode.ok };
