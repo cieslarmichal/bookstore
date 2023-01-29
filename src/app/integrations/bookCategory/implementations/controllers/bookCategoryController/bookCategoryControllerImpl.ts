@@ -96,7 +96,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     const pagination = this.paginationDataParser.parse(request.query);
 
     const categories = await unitOfWork.runInTransaction(async () => {
-      return this.bookCategoryService.findCategoriesOfBook(unitOfWork, bookId as string, filters, pagination);
+      return this.bookCategoryService.findCategoriesByBookId(unitOfWork, bookId as string, filters, pagination);
     });
 
     return { data: { categories }, statusCode: HttpStatusCode.ok };
@@ -112,7 +112,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     const pagination = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
-      return this.bookCategoryService.findBooksFromCategory(unitOfWork, categoryId as string, filters, pagination);
+      return this.bookCategoryService.findBooksByCategoryId(unitOfWork, categoryId as string, filters, pagination);
     });
 
     return { data: { books }, statusCode: HttpStatusCode.ok };
@@ -124,7 +124,7 @@ export class BookCategoryControllerImpl implements BookCategoryController {
     const { bookId, categoryId } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.bookCategoryService.removeBookCategory(unitOfWork, {
+      await this.bookCategoryService.deleteBookCategory(unitOfWork, {
         bookId: bookId as string,
         categoryId: categoryId as string,
       });

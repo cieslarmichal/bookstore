@@ -74,34 +74,32 @@ describe('BookCategoryService', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.create();
+        const categoryEntity = categoryEntityTestFactory.create();
 
-        const category = await categoryRepository.createOne({
-          name,
+        const bookEntity = bookEntityTestFactory.create();
+
+        const category = await categoryRepository.createOne(categoryEntity);
+
+        const book = await bookRepository.createOne(bookEntity);
+
+        const bookCategory = await bookCategoryService.createBookCategory({
+          unitOfWork,
+          draft: {
+            categoryId: category.id,
+            bookId: book.id,
+          },
         });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const foundBookCategory = await bookCategoryRepository.findOne({ id: bookCategory.id });
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
-
-        const createdBookCategoryDto = await bookCategoryService.createBookCategory(unitOfWork, {
-          categoryId: category.id,
-          bookId: book.id,
-        });
-
-        const bookCategoryDto = await bookCategoryRepository.findOneById(createdBookCategoryDto.id);
-
-        expect(bookCategoryDto).not.toBeNull();
+        expect(foundBookCategory).not.toBeNull();
       });
     });
 
@@ -110,34 +108,34 @@ describe('BookCategoryService', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.create();
+        const categoryEntity = categoryEntityTestFactory.create();
 
-        const category = await categoryRepository.createOne({
-          name,
-        });
+        const bookEntity = bookEntityTestFactory.create();
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const category = await categoryRepository.createOne(categoryEntity);
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const book = await bookRepository.createOne(bookEntity);
 
-        await bookCategoryService.createBookCategory(unitOfWork, {
-          categoryId: category.id,
-          bookId: book.id,
+        await bookCategoryService.createBookCategory({
+          unitOfWork,
+          draft: {
+            categoryId: category.id,
+            bookId: book.id,
+          },
         });
 
         try {
-          await bookCategoryService.createBookCategory(unitOfWork, {
-            categoryId: category.id,
-            bookId: book.id,
+          await bookCategoryService.createBookCategory({
+            unitOfWork,
+            draft: {
+              categoryId: category.id,
+              bookId: book.id,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(BookCategoryAlreadyExistsError);
@@ -152,36 +150,34 @@ describe('BookCategoryService', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const bookCategoryRepository = bookCategoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.create();
+        const categoryEntity = categoryEntityTestFactory.create();
 
-        const category = await categoryRepository.createOne({
-          name,
-        });
+        const bookEntity = bookEntityTestFactory.create();
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id: bookCategoryId } = bookCategoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const category = await categoryRepository.createOne(categoryEntity);
+
+        const book = await bookRepository.createOne(bookEntity);
 
         const bookCategory = await bookCategoryRepository.createOne({
+          id: bookCategoryId,
           categoryId: category.id,
           bookId: book.id,
         });
 
-        await bookCategoryService.removeBookCategory(unitOfWork, { categoryId: category.id, bookId: book.id });
+        await bookCategoryService.deleteBookCategory({ unitOfWork, categoryId: category.id, bookId: book.id });
 
-        const bookCategoryDto = await bookCategoryRepository.findOneById(bookCategory.id);
+        const foundBookCategory = await bookCategoryRepository.findOne({ id: bookCategory.id });
 
-        expect(bookCategoryDto).toBeNull();
+        expect(foundBookCategory).toBeNull();
       });
     });
 
@@ -192,7 +188,7 @@ describe('BookCategoryService', () => {
         const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
         try {
-          await bookCategoryService.removeBookCategory(unitOfWork, { categoryId, bookId });
+          await bookCategoryService.deleteBookCategory({ unitOfWork, categoryId, bookId });
         } catch (error) {
           expect(error).toBeInstanceOf(BookCategoryNotFoundError);
         }

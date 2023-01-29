@@ -1,25 +1,14 @@
-import { CreateBookCategoryData } from './createBookCategoryData';
-import { RemoveBookCategoryData } from './removeBookCategoryData';
-import { Filter } from '../../../../../common/filter/filter';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { CreateBookCategoryPayload } from './createBookCategoryPayload';
+import { DeleteBookCategoryPayload } from './deleteBookCategoryPayload';
+import { FindBooksByCategoryIdPayload } from './findBooksByCategoryIdPayload';
+import { FindCategoriesByBookIdPayload } from './findCategoriesByBookIdPayload';
 import { Book } from '../../../../book/contracts/book';
 import { Category } from '../../../../category/contracts/category';
-import { PaginationData } from '../../../../common/paginationData';
 import { BookCategory } from '../../bookCategory';
 
 export interface BookCategoryService {
-  createBookCategory(unitOfWork: PostgresUnitOfWork, bookCategoryData: CreateBookCategoryData): Promise<BookCategory>;
-  findCategoriesOfBook(
-    unitOfWork: PostgresUnitOfWork,
-    bookId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Category[]>;
-  findBooksFromCategory(
-    unitOfWork: PostgresUnitOfWork,
-    categoryId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]>;
-  removeBookCategory(unitOfWork: PostgresUnitOfWork, bookCategoryData: RemoveBookCategoryData): Promise<void>;
+  createBookCategory(input: CreateBookCategoryPayload): Promise<BookCategory>;
+  findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]>;
+  findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]>;
+  deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void>;
 }
