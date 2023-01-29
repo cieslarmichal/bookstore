@@ -96,7 +96,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     const pagination = this.paginationDataParser.parse(request.query);
 
     const books = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.findAuthorBooks(unitOfWork, authorId as string, filters, pagination);
+      return this.authorBookService.findBooksByAuthorId(unitOfWork, authorId as string, filters, pagination);
     });
 
     return { data: { books }, statusCode: HttpStatusCode.ok };
@@ -112,7 +112,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     const pagination = this.paginationDataParser.parse(request.query);
 
     const authors = await unitOfWork.runInTransaction(async () => {
-      return this.authorBookService.findBookAuthors(unitOfWork, bookId as string, filters, pagination);
+      return this.authorBookService.findAuthorsByBookId(unitOfWork, bookId as string, filters, pagination);
     });
 
     return { data: { authors }, statusCode: HttpStatusCode.ok };
@@ -124,7 +124,7 @@ export class AuthorBookControllerImpl implements AuthorBookController {
     const { authorId, bookId } = request.params;
 
     await unitOfWork.runInTransaction(async () => {
-      await this.authorBookService.removeAuthorBook(unitOfWork, {
+      await this.authorBookService.deleteAuthorBook(unitOfWork, {
         authorId: authorId as string,
         bookId: bookId as string,
       });

@@ -1,25 +1,14 @@
-import { CreateAuthorBookData } from './createAuthorBookData';
-import { RemoveAuthorBookData } from './removeAuthorBookData';
-import { Filter } from '../../../../../common/filter/filter';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { CreateAuthorBookPayload } from './createAuthorBookPayload';
+import { DeleteAuthorBookPayload } from './deleteAuthorBookPayload';
+import { FindAuthorsByBookIdPayload } from './findAuthorsByBookIdPayload';
+import { FindBooksByAuthorIdPayload } from './findBooksByAuthorIdPayload';
 import { Author } from '../../../../author/contracts/author';
 import { Book } from '../../../../book/contracts/book';
-import { PaginationData } from '../../../../common/paginationData';
 import { AuthorBook } from '../../authorBook';
 
 export interface AuthorBookService {
-  createAuthorBook(unitOfWork: PostgresUnitOfWork, authorBookData: CreateAuthorBookData): Promise<AuthorBook>;
-  findAuthorBooks(
-    unitOfWork: PostgresUnitOfWork,
-    authorId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Book[]>;
-  findBookAuthors(
-    unitOfWork: PostgresUnitOfWork,
-    bookId: string,
-    filters: Filter[],
-    pagination: PaginationData,
-  ): Promise<Author[]>;
-  removeAuthorBook(unitOfWork: PostgresUnitOfWork, authorBookData: RemoveAuthorBookData): Promise<void>;
+  createAuthorBook(input: CreateAuthorBookPayload): Promise<AuthorBook>;
+  findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]>;
+  findAuthorsByBookId(input: FindAuthorsByBookIdPayload): Promise<Author[]>;
+  deleteAuthorBook(input: DeleteAuthorBookPayload): Promise<void>;
 }

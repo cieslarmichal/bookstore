@@ -76,35 +76,32 @@ describe('AuthorBookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const authorRepository = authorRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const authorEntity = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({
-          firstName,
-          lastName,
+        const bookEntity = bookEntityTestFactory.create();
+
+        const author = await authorRepository.createOne(authorEntity);
+
+        const book = await bookRepository.createOne(bookEntity);
+
+        const authorBook = await authorBookService.createAuthorBook({
+          unitOfWork,
+          draft: {
+            authorId: author.id,
+            bookId: book.id,
+          },
         });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const foundAuthorBook = await authorBookRepository.findOne({ id: authorBook.id });
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
-
-        const createdAuthorBookDto = await authorBookService.createAuthorBook(unitOfWork, {
-          authorId: author.id,
-          bookId: book.id,
-        });
-
-        const authorBookDto = await authorBookRepository.findOneById(createdAuthorBookDto.id);
-
-        expect(authorBookDto).not.toBeNull();
+        expect(foundAuthorBook).not.toBeNull();
       });
     });
 
@@ -113,35 +110,34 @@ describe('AuthorBookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const authorRepository = authorRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const authorEntity = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({
-          firstName,
-          lastName,
-        });
+        const bookEntity = bookEntityTestFactory.create();
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const author = await authorRepository.createOne(authorEntity);
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const book = await bookRepository.createOne(bookEntity);
 
-        await authorBookService.createAuthorBook(unitOfWork, {
-          authorId: author.id,
-          bookId: book.id,
+        await authorBookService.createAuthorBook({
+          unitOfWork,
+          draft: {
+            authorId: author.id,
+            bookId: book.id,
+          },
         });
 
         try {
-          await authorBookService.createAuthorBook(unitOfWork, {
-            authorId: author.id,
-            bookId: book.id,
+          await authorBookService.createAuthorBook({
+            unitOfWork,
+            draft: {
+              authorId: author.id,
+              bookId: book.id,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(AuthorBookAlreadyExistsError);
@@ -156,37 +152,34 @@ describe('AuthorBookServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const authorRepository = authorRepositoryFactory.create(entityManager);
+
         const bookRepository = bookRepositoryFactory.create(entityManager);
+
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const authorEntity = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({
-          firstName,
-          lastName,
-        });
+        const bookEntity = bookEntityTestFactory.create();
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id } = authorBookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const author = await authorRepository.createOne(authorEntity);
+
+        const book = await bookRepository.createOne(bookEntity);
 
         const authorBook = await authorBookRepository.createOne({
+          id,
           authorId: author.id,
           bookId: book.id,
         });
 
-        await authorBookService.removeAuthorBook(unitOfWork, { authorId: author.id, bookId: book.id });
+        await authorBookService.deleteAuthorBook({ unitOfWork, authorId: author.id, bookId: book.id });
 
-        const authorBookDto = await authorBookRepository.findOneById(authorBook.id);
+        const foundAuthorBook = await authorBookRepository.findOne({ id: authorBook.id });
 
-        expect(authorBookDto).toBeNull();
+        expect(foundAuthorBook).toBeNull();
       });
     });
 
@@ -197,7 +190,7 @@ describe('AuthorBookServiceImpl', () => {
         const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         try {
-          await authorBookService.removeAuthorBook(unitOfWork, { authorId, bookId });
+          await authorBookService.deleteAuthorBook({ unitOfWork, authorId, bookId });
         } catch (error) {
           expect(error).toBeInstanceOf(AuthorBookNotFoundError);
         }
