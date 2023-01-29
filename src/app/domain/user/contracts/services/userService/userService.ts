@@ -1,18 +1,22 @@
-import { LoginUserByEmailData } from './loginUserByEmailData';
-import { LoginUserByPhoneNumberData } from './loginUserByPhoneNumberData';
-import { RegisterUserByEmailData } from './registerUserByEmailData';
-import { RegisterUserByPhoneNumberData } from './registerUserByPhoneNumberData';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { DeleteUserPayload } from './deleteUserPayload';
+import { FindUserPayload } from './findUserPayload';
+import { LoginUserByEmailPayload } from './loginUserByEmailPayload';
+import { LoginUserByPhoneNumberPayload } from './loginUserByPhoneNumberPayload';
+import { RegisterUserByEmailPayload } from './registerUserByEmailPayload';
+import { RegisterUserByPhoneNumberPayload } from './registerUserByPhoneNumberPayload';
+import { SetEmailPayload } from './setEmailPayload';
+import { SetPasswordPayload } from './setPasswordPayload';
+import { SetPhoneNumberPayload } from './setPhoneNumberPayload';
 import { User } from '../../user';
 
 export interface UserService {
-  registerUserByEmail(unitOfWork: PostgresUnitOfWork, userData: RegisterUserByEmailData): Promise<User>;
-  registerUserByPhoneNumber(unitOfWork: PostgresUnitOfWork, userData: RegisterUserByPhoneNumberData): Promise<User>;
-  loginUserByEmail(unitOfWork: PostgresUnitOfWork, userData: LoginUserByEmailData): Promise<string>;
-  loginUserByPhoneNumber(unitOfWork: PostgresUnitOfWork, userData: LoginUserByPhoneNumberData): Promise<string>;
-  setPassword(unitOfWork: PostgresUnitOfWork, userId: string, newPassword: string): Promise<User>;
-  setEmail(unitOfWork: PostgresUnitOfWork, userId: string, email: string): Promise<User>;
-  setPhoneNumber(unitOfWork: PostgresUnitOfWork, userId: string, phoneNumber: string): Promise<User>;
-  findUser(unitOfWork: PostgresUnitOfWork, userId: string): Promise<User>;
-  removeUser(unitOfWork: PostgresUnitOfWork, userId: string): Promise<void>;
+  registerUserByEmail(input: RegisterUserByEmailPayload): Promise<User>;
+  registerUserByPhoneNumber(input: RegisterUserByPhoneNumberPayload): Promise<User>;
+  loginUserByEmail(input: LoginUserByEmailPayload): Promise<string>;
+  loginUserByPhoneNumber(input: LoginUserByPhoneNumberPayload): Promise<string>;
+  setPassword(input: SetPasswordPayload): Promise<User>;
+  setEmail(input: SetEmailPayload): Promise<User>;
+  setPhoneNumber(input: SetPhoneNumberPayload): Promise<User>;
+  findUser(input: FindUserPayload): Promise<User>;
+  deleteUser(input: DeleteUserPayload): Promise<void>;
 }

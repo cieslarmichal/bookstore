@@ -70,18 +70,22 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
         const { email, password } = userEntityTestFactory.create();
 
-        const createdUserDto = await userService.registerUserByEmail(unitOfWork, {
-          email: email as string,
-          password,
+        const user = await userService.registerUserByEmail({
+          unitOfWork,
+          draft: {
+            email: email as string,
+            password,
+          },
         });
 
-        const userDto = await userRepository.findOneById(createdUserDto.id);
+        const foundUser = await userRepository.findOne({ id: user.id });
 
-        expect(userDto).not.toBeNull();
+        expect(foundUser).not.toBeNull();
       });
     });
 
@@ -90,19 +94,25 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
+          id,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.registerUserByEmail(unitOfWork, {
-            email: email as string,
-            password,
+          await userService.registerUserByEmail({
+            unitOfWork,
+            draft: {
+              email: email as string,
+              password,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(UserAlreadyExistsError);
@@ -117,18 +127,22 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
         const { phoneNumber, password } = userEntityTestFactory.create();
 
-        const createdUserDto = await userService.registerUserByPhoneNumber(unitOfWork, {
-          phoneNumber: phoneNumber as string,
-          password,
+        const user = await userService.registerUserByPhoneNumber({
+          unitOfWork,
+          draft: {
+            phoneNumber: phoneNumber as string,
+            password,
+          },
         });
 
-        const userDto = await userRepository.findOneById(createdUserDto.id);
+        const foundUser = await userRepository.findOne({ id: user.id });
 
-        expect(userDto).not.toBeNull();
+        expect(foundUser).not.toBeNull();
       });
     });
 
@@ -137,19 +151,25 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
         await userRepository.createOne({
+          id,
           phoneNumber: phoneNumber as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.registerUserByPhoneNumber(unitOfWork, {
-            phoneNumber: phoneNumber as string,
-            password,
+          await userService.registerUserByPhoneNumber({
+            unitOfWork,
+            draft: {
+              phoneNumber: phoneNumber as string,
+              password,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(UserAlreadyExistsError);
@@ -164,20 +184,26 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
         const user = await userRepository.createOne({
+          id,
           email: email as string,
           password: hashedPassword,
+          role: UserRole.user,
         });
 
-        const accessToken = await userService.loginUserByEmail(unitOfWork, {
-          email: email as string,
-          password,
+        const accessToken = await userService.loginUserByEmail({
+          unitOfWork,
+          draft: {
+            email: email as string,
+            password,
+          },
         });
 
         const data = await tokenService.verifyToken(accessToken);
@@ -194,9 +220,12 @@ describe('UserServiceImpl', () => {
         const { email, password } = userEntityTestFactory.create();
 
         try {
-          await userService.loginUserByEmail(unitOfWork, {
-            email: email as string,
-            password,
+          await userService.loginUserByEmail({
+            unitOfWork,
+            draft: {
+              email: email as string,
+              password,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
@@ -209,21 +238,27 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const { password: otherPassword } = userEntityTestFactory.create();
 
         await userRepository.createOne({
+          id,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.loginUserByEmail(unitOfWork, {
-            email: email as string,
-            password: otherPassword,
+          await userService.loginUserByEmail({
+            unitOfWork,
+            draft: {
+              email: email as string,
+              password: otherPassword,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
@@ -238,20 +273,26 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
         const user = await userRepository.createOne({
+          id,
           phoneNumber: phoneNumber as string,
           password: hashedPassword,
+          role: UserRole.user,
         });
 
-        const accessToken = await userService.loginUserByPhoneNumber(unitOfWork, {
-          phoneNumber: phoneNumber as string,
-          password,
+        const accessToken = await userService.loginUserByPhoneNumber({
+          unitOfWork,
+          draft: {
+            phoneNumber: phoneNumber as string,
+            password,
+          },
         });
 
         const data = await tokenService.verifyToken(accessToken);
@@ -268,9 +309,12 @@ describe('UserServiceImpl', () => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         try {
-          await userService.loginUserByPhoneNumber(unitOfWork, {
-            phoneNumber: phoneNumber as string,
-            password,
+          await userService.loginUserByPhoneNumber({
+            unitOfWork,
+            draft: {
+              phoneNumber: phoneNumber as string,
+              password,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
@@ -283,21 +327,27 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
         const { password: otherPassword } = userEntityTestFactory.create();
 
         await userRepository.createOne({
+          id,
           phoneNumber: phoneNumber as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.loginUserByPhoneNumber(unitOfWork, {
-            phoneNumber: phoneNumber as string,
-            password: otherPassword,
+          await userService.loginUserByPhoneNumber({
+            unitOfWork,
+            draft: {
+              phoneNumber: phoneNumber as string,
+              password: otherPassword,
+            },
           });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
@@ -312,22 +362,25 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
         const user = await userRepository.createOne({
+          id,
           email: email as string,
           password: hashedPassword,
+          role: UserRole.user,
         });
 
         const { password: newPassword } = userEntityTestFactory.create();
 
-        await userService.setPassword(unitOfWork, user.id, newPassword);
+        await userService.setPassword({ unitOfWork, userId: user.id, password: newPassword });
 
-        const updatedUser = (await userRepository.findOneById(user.id)) as User;
+        const updatedUser = (await userRepository.findOne({ id: user.id })) as User;
 
         expect(updatedUser).not.toBeNull();
         expect(await hashService.compare(newPassword, updatedUser.password)).toBe(true);
@@ -341,7 +394,7 @@ describe('UserServiceImpl', () => {
         const { id, password } = userEntityTestFactory.create();
 
         try {
-          await userService.setPassword(unitOfWork, id, password);
+          await userService.setPassword({ unitOfWork, userId: id, password });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }
@@ -355,18 +408,21 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
+          id,
           phoneNumber: phoneNumber as string,
           password,
+          role: UserRole.user,
         });
 
-        await userService.setEmail(unitOfWork, user.id, email as string);
+        await userService.setEmail({ unitOfWork, userId: user.id, email: email as string });
 
-        const updatedUser = (await userRepository.findOneById(user.id)) as User;
+        const updatedUser = (await userRepository.findOne({ id: user.id })) as User;
 
         expect(updatedUser).not.toBeNull();
         expect(updatedUser.email).toBe(email);
@@ -378,17 +434,20 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
+          id,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.setEmail(unitOfWork, user.id, email as string);
+          await userService.setEmail({ unitOfWork, userId: user.id, email: email as string });
         } catch (error) {
           expect(error).toBeInstanceOf(EmailAlreadySetError);
         }
@@ -400,22 +459,29 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, phoneNumber, password } = userEntityTestFactory.create();
+        const { id: userId1, email, password: password1 } = userEntityTestFactory.create();
+
+        const { id: userId2, phoneNumber, password: password2 } = userEntityTestFactory.create();
 
         await userRepository.createOne({
+          id: userId1,
           email: email as string,
-          password,
+          password: password1,
+          role: UserRole.user,
         });
 
         const user = await userRepository.createOne({
+          id: userId2,
           phoneNumber: phoneNumber as string,
-          password,
+          password: password2,
+          role: UserRole.user,
         });
 
         try {
-          await userService.setEmail(unitOfWork, user.id, email as string);
+          await userService.setEmail({ unitOfWork, userId: user.id, email: email as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
@@ -429,7 +495,7 @@ describe('UserServiceImpl', () => {
         const { id, email } = userEntityTestFactory.create();
 
         try {
-          await userService.setEmail(unitOfWork, id, email as string);
+          await userService.setEmail({ unitOfWork, userId: id, email: email as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }
@@ -443,18 +509,21 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
+          id,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
-        await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber as string);
+        await userService.setPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
 
-        const updatedUser = (await userRepository.findOneById(user.id)) as User;
+        const updatedUser = (await userRepository.findOne({ id: user.id })) as User;
 
         expect(updatedUser).not.toBeNull();
         expect(updatedUser.phoneNumber).toBe(phoneNumber);
@@ -466,17 +535,20 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
+          id,
           phoneNumber: phoneNumber as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber as string);
+          await userService.setPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
         } catch (error) {
           expect(error).toBeInstanceOf(PhoneNumberAlreadySetError);
         }
@@ -488,22 +560,29 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, phoneNumber, password } = userEntityTestFactory.create();
+        const { id: userId1, phoneNumber, password } = userEntityTestFactory.create();
+
+        const { id: userId2, email } = userEntityTestFactory.create();
 
         await userRepository.createOne({
+          id: userId1,
           phoneNumber: phoneNumber as string,
           password,
+          role: UserRole.user,
         });
 
         const user = await userRepository.createOne({
+          id: userId2,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
         try {
-          await userService.setPhoneNumber(unitOfWork, user.id, phoneNumber as string);
+          await userService.setPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
@@ -517,7 +596,7 @@ describe('UserServiceImpl', () => {
         const { id, phoneNumber } = userEntityTestFactory.create();
 
         try {
-          await userService.setPhoneNumber(unitOfWork, id, phoneNumber as string);
+          await userService.setPhoneNumber({ unitOfWork, userId: id, phoneNumber: phoneNumber as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }
@@ -531,16 +610,19 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
+          id,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
-        const foundUser = await userService.findUser(unitOfWork, user.id);
+        const foundUser = await userService.findUser({ unitOfWork, userId: user.id });
 
         expect(foundUser).not.toBeNull();
       });
@@ -553,7 +635,7 @@ describe('UserServiceImpl', () => {
         const { id } = userEntityTestFactory.create();
 
         try {
-          await userService.findUser(unitOfWork, id);
+          await userService.findUser({ unitOfWork, userId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }
@@ -567,20 +649,23 @@ describe('UserServiceImpl', () => {
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
         const { entityManager } = unitOfWork;
+
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const user = await userRepository.createOne({
+          id,
           email: email as string,
           password,
+          role: UserRole.user,
         });
 
-        await userService.removeUser(unitOfWork, user.id);
+        await userService.deleteUser({ unitOfWork, userId: user.id });
 
-        const userDto = await userRepository.findOneById(user.id);
+        const foundUser = await userRepository.findOne({ id: user.id });
 
-        expect(userDto).toBeNull();
+        expect(foundUser).toBeNull();
       });
     });
 
@@ -591,7 +676,7 @@ describe('UserServiceImpl', () => {
         const { id } = userEntityTestFactory.create();
 
         try {
-          await userService.removeUser(unitOfWork, id);
+          await userService.deleteUser({ unitOfWork, userId: id });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }

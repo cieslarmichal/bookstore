@@ -1,14 +1,20 @@
 import { LoggerService } from '../../../../../libs/logger/loggerService';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
 import { TokenService } from '../../../contracts/services/tokenService/tokenService';
-import { LoginUserByEmailData } from '../../../contracts/services/userService/loginUserByEmailData';
-import { LoginUserByPhoneNumberData } from '../../../contracts/services/userService/loginUserByPhoneNumberData';
-import { RegisterUserByEmailData } from '../../../contracts/services/userService/registerUserByEmailData';
-import { RegisterUserByPhoneNumberData } from '../../../contracts/services/userService/registerUserByPhoneNumberData';
+import { DeleteUserPayload } from '../../../contracts/services/userService/deleteUserPayload';
+import { FindUserPayload } from '../../../contracts/services/userService/findUserPayload';
+import { LoginUserByEmailPayload } from '../../../contracts/services/userService/loginUserByEmailPayload';
+import { LoginUserByPhoneNumberPayload } from '../../../contracts/services/userService/loginUserByPhoneNumberPayload';
+import { RegisterUserByEmailPayload } from '../../../contracts/services/userService/registerUserByEmailPayload';
+import { RegisterUserByPhoneNumberPayload } from '../../../contracts/services/userService/registerUserByPhoneNumberPayload';
+import { SetEmailPayload } from '../../../contracts/services/userService/setEmailPayload';
+import { SetPasswordPayload } from '../../../contracts/services/userService/setPasswordPayload';
+import { SetPhoneNumberPayload } from '../../../contracts/services/userService/setPhoneNumberPayload';
 import { UserService } from '../../../contracts/services/userService/userService';
 import { User } from '../../../contracts/user';
+import { UserRole } from '../../../contracts/userRole';
 import { EmailAlreadySetError } from '../../../errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../errors/userAlreadyExistsError';
@@ -22,8 +28,11 @@ export class UserServiceImpl implements UserService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async registerUserByEmail(unitOfWork: PostgresUnitOfWork, userData: RegisterUserByEmailData): Promise<User> {
-    const { email, password } = userData;
+  public async registerUserByEmail(input: RegisterUserByEmailPayload): Promise<User> {
+    const {
+      unitOfWork,
+      draft: { email, password },
+    } = input;
 
     this.loggerService.debug('Registering user...', { email });
 
@@ -39,18 +48,23 @@ export class UserServiceImpl implements UserService {
 
     const hashedPassword = await this.hashService.hash(password);
 
-    const user = await userRepository.createOne({ email, password: hashedPassword });
+    const user = await userRepository.createOne({
+      id: UuidGenerator.generateUuid(),
+      email,
+      password: hashedPassword,
+      role: UserRole.user,
+    });
 
-    this.loggerService.info('User registered.', { email });
+    this.loggerService.info('User registered.', { email, userId: user.id });
 
     return user;
   }
 
-  public async registerUserByPhoneNumber(
-    unitOfWork: PostgresUnitOfWork,
-    userData: RegisterUserByPhoneNumberData,
-  ): Promise<User> {
-    const { phoneNumber, password } = userData;
+  public async registerUserByPhoneNumber(input: RegisterUserByPhoneNumberPayload): Promise<User> {
+    const {
+      unitOfWork,
+      draft: { phoneNumber, password },
+    } = input;
 
     this.loggerService.debug('Registering user...', { phoneNumber });
 
@@ -66,17 +80,25 @@ export class UserServiceImpl implements UserService {
 
     const hashedPassword = await this.hashService.hash(password);
 
-    const user = await userRepository.createOne({ phoneNumber, password: hashedPassword });
+    const user = await userRepository.createOne({
+      id: UuidGenerator.generateUuid(),
+      phoneNumber,
+      password: hashedPassword,
+      role: UserRole.user,
+    });
 
-    this.loggerService.info('User registered.', { phoneNumber });
+    this.loggerService.info('User registered.', { phoneNumber, userId: user.id });
 
     return user;
   }
 
-  public async loginUserByEmail(unitOfWork: PostgresUnitOfWork, userData: LoginUserByEmailData): Promise<string> {
-    const { email, password } = userData;
+  public async loginUserByEmail(input: LoginUserByEmailPayload): Promise<string> {
+    const {
+      unitOfWork,
+      draft: { email, password },
+    } = input;
 
-    this.loggerService.debug('Logging user...', { email });
+    this.loggerService.debug('Logging user in...', { email });
 
     const { entityManager } = unitOfWork;
 
@@ -96,18 +118,18 @@ export class UserServiceImpl implements UserService {
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
 
-    this.loggerService.info('User logged in.', { email });
+    this.loggerService.info('User logged in.', { email, userId: user.id, accessToken });
 
     return accessToken;
   }
 
-  public async loginUserByPhoneNumber(
-    unitOfWork: PostgresUnitOfWork,
-    userData: LoginUserByPhoneNumberData,
-  ): Promise<string> {
-    const { phoneNumber, password } = userData;
+  public async loginUserByPhoneNumber(input: LoginUserByPhoneNumberPayload): Promise<string> {
+    const {
+      unitOfWork,
+      draft: { phoneNumber, password },
+    } = input;
 
-    this.loggerService.debug('Logging user...', { phoneNumber });
+    this.loggerService.debug('Logging user in...', { phoneNumber });
 
     const { entityManager } = unitOfWork;
 
@@ -127,12 +149,14 @@ export class UserServiceImpl implements UserService {
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
 
-    this.loggerService.info('User logged in.', { phoneNumber });
+    this.loggerService.info('User logged in.', { phoneNumber, userId: user.id, accessToken });
 
     return accessToken;
   }
 
-  public async setPassword(unitOfWork: PostgresUnitOfWork, userId: string, newPassword: string): Promise<User> {
+  public async setPassword(input: SetPasswordPayload): Promise<User> {
+    const { unitOfWork, userId, password: newPassword } = input;
+
     this.loggerService.debug('Setting password...', { userId });
 
     const { entityManager } = unitOfWork;
@@ -147,15 +171,17 @@ export class UserServiceImpl implements UserService {
 
     const hashedPassword = await this.hashService.hash(newPassword);
 
-    const updatedUser = await userRepository.updateOne(userId, { password: hashedPassword });
+    const updatedUser = await userRepository.updateOne({ id: userId, draft: { password: hashedPassword } });
 
     this.loggerService.info('Password set.', { userId });
 
     return updatedUser;
   }
 
-  public async setEmail(unitOfWork: PostgresUnitOfWork, userId: string, email: string): Promise<User> {
-    this.loggerService.debug('Setting email...', { userId });
+  public async setEmail(input: SetEmailPayload): Promise<User> {
+    const { unitOfWork, userId, email } = input;
+
+    this.loggerService.debug('Setting email...', { userId, email });
 
     const { entityManager } = unitOfWork;
 
@@ -177,15 +203,17 @@ export class UserServiceImpl implements UserService {
       throw new UserAlreadyExistsError({ email });
     }
 
-    const updatedUser = await userRepository.updateOne(userId, { email });
+    const updatedUser = await userRepository.updateOne({ id: userId, draft: { email } });
 
-    this.loggerService.info('Email set.', { userId });
+    this.loggerService.info('Email set.', { userId, email });
 
     return updatedUser;
   }
 
-  public async setPhoneNumber(unitOfWork: PostgresUnitOfWork, userId: string, phoneNumber: string): Promise<User> {
-    this.loggerService.debug('Setting phone number...', { userId });
+  public async setPhoneNumber(input: SetPhoneNumberPayload): Promise<User> {
+    const { unitOfWork, phoneNumber, userId } = input;
+
+    this.loggerService.debug('Setting phone number...', { userId, phoneNumber });
 
     const { entityManager } = unitOfWork;
 
@@ -207,19 +235,21 @@ export class UserServiceImpl implements UserService {
       throw new UserAlreadyExistsError({ phoneNumber });
     }
 
-    const updatedUser = await userRepository.updateOne(userId, { phoneNumber });
+    const updatedUser = await userRepository.updateOne({ id: userId, draft: { phoneNumber } });
 
-    this.loggerService.info('Phone number set.', { userId });
+    this.loggerService.info('Phone number set.', { userId, phoneNumber });
 
     return updatedUser;
   }
 
-  public async findUser(unitOfWork: PostgresUnitOfWork, userId: string): Promise<User> {
+  public async findUser(input: FindUserPayload): Promise<User> {
+    const { unitOfWork, userId } = input;
+
     const { entityManager } = unitOfWork;
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
-    const user = await userRepository.findOneById(userId);
+    const user = await userRepository.findOne({ id: userId });
 
     if (!user) {
       throw new UserNotFoundError({ id: userId });
@@ -228,15 +258,17 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
-  public async removeUser(unitOfWork: PostgresUnitOfWork, userId: string): Promise<void> {
-    this.loggerService.debug('Removing user...', { userId });
+  public async deleteUser(input: DeleteUserPayload): Promise<void> {
+    const { unitOfWork, userId } = input;
+
+    this.loggerService.debug('Deleting user...', { userId });
 
     const { entityManager } = unitOfWork;
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
-    await userRepository.deleteOne(userId);
+    await userRepository.deleteOne({ id: userId });
 
-    this.loggerService.info('User removed.', { userId });
+    this.loggerService.info('User deleted.', { userId });
   }
 }

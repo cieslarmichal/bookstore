@@ -234,7 +234,7 @@ export class UserControllerImpl implements UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.removeUser(unitOfWork, targetUserId as string);
+      await this.userService.deleteUser(unitOfWork, targetUserId as string);
     });
 
     return { statusCode: HttpStatusCode.noContent };
