@@ -15,16 +15,16 @@ export class PostgresModule implements Module {
       [postgresSymbols.entityManager]: asFunction(async () => {
         const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
-        const connection = await postgresConnector.getConnection();
+        const dataSource = await postgresConnector.connect();
 
-        return connection.manager;
+        return dataSource.manager;
       }),
-      [postgresSymbols.connection]: asFunction(async () => {
+      [postgresSymbols.dataSource]: asFunction(async () => {
         const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
 
-        const connection = await postgresConnector.getConnection();
+        const dataSource = await postgresConnector.connect();
 
-        return connection;
+        return dataSource;
       }),
     });
   }

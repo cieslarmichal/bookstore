@@ -1,4 +1,4 @@
-import { Connection, createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { PostgresModuleConfig } from './postgresModuleConfig';
 import { AddressEntity } from '../../domain/address/contracts/addressEntity';
@@ -11,18 +11,18 @@ import { CustomerEntity } from '../../domain/customer/contracts/customerEntity';
 import { UserEntity } from '../../domain/user/contracts/userEntity';
 
 export class PostgresConnector {
-  private connection: Connection | null = null;
+  private dataSource: DataSource | null = null;
 
   public constructor(private readonly postgresModuleConfig: PostgresModuleConfig) {}
 
-  public async getConnection(): Promise<Connection> {
-    if (this.connection) {
-      return this.connection;
+  public async connect(): Promise<DataSource> {
+    if (this.dataSource) {
+      return this.dataSource;
     }
 
     const { databaseHost, databasePort, databaseUser, databasePassword, databaseName } = this.postgresModuleConfig;
 
-    this.connection = await createConnection({
+    const dataSource = new DataSource({
       type: 'postgres',
       host: databaseHost,
       port: databasePort,
@@ -42,12 +42,14 @@ export class PostgresConnector {
       synchronize: true,
     });
 
-    return this.connection;
+    this.dataSource = await dataSource.initialize();
+
+    return this.dataSource;
   }
 
   public async closeConnection(): Promise<void> {
-    await this.connection?.destroy();
+    await this.dataSource?.destroy();
 
-    this.connection = null;
+    this.dataSource = null;
   }
 }
