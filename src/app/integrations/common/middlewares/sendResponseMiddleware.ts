@@ -2,9 +2,10 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { ControllerResponse } from '../../controllerResponse';
+import { LocalsName } from '../../localsName';
 
 export function sendResponseMiddleware(_request: Request, response: Response, next: NextFunction): void {
-  const controllerResponse: ControllerResponse = response.locals['controllerResponse'];
+  const controllerResponse: ControllerResponse = response.locals[LocalsName.controllerResponse];
 
   if (!controllerResponse) {
     next();

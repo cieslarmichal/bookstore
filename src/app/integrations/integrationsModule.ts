@@ -1,6 +1,6 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
 
-import { AddressControllerImpl } from './address/implementations/controllers/addressController/addressControllerImpl';
+import { AddressController } from './address/implementations/controllers/addressController/addressController';
 import { AuthorControllerImpl } from './author/implementations/controllers/authorController/authorControllerImpl';
 import { AuthorBookControllerImpl } from './authorBook/implementations/controllers/authorBookController/authorBookControllerImpl';
 import { BookControllerImpl } from './book/implementations/controllers/bookController/bookControllerImpl';
@@ -8,7 +8,7 @@ import { BookCategoryControllerImpl } from './bookCategory/implementations/contr
 import { CategoryControllerImpl } from './category/implementations/controllers/categoryController/categoryControllerImpl';
 import { FilterDataParser } from './common/filter/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
-import { PaginationDataParser } from './common/paginationData/paginationDataParser';
+import { PaginationDataParser } from './common/pagination/paginationDataParser';
 import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
@@ -28,7 +28,7 @@ export class IntegrationsModule implements Module {
       [integrationsSymbols.bookCategoryController]: asClass(BookCategoryControllerImpl, {
         lifetime: Lifetime.SINGLETON,
       }),
-      [integrationsSymbols.addressController]: asClass(AddressControllerImpl, { lifetime: Lifetime.SINGLETON }),
+      [integrationsSymbols.addressController]: asClass(AddressController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.customerController]: asClass(CustomerControllerImpl, { lifetime: Lifetime.SINGLETON }),
     });
   }

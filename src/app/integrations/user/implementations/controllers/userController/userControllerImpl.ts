@@ -144,7 +144,7 @@ export class UserControllerImpl implements UserController {
 
     const { userId: targetUserId, password } = request.body;
 
-    const { userId, role } = response.locals['authPayload'];
+    const { userId, role } = response.locals['authTokenData'];
 
     if (userId !== targetUserId && role === UserRole.user) {
       throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
@@ -162,7 +162,7 @@ export class UserControllerImpl implements UserController {
 
     const { userId: targetUserId, phoneNumber } = request.body;
 
-    const { userId, role } = response.locals['authPayload'];
+    const { userId, role } = response.locals['authTokenData'];
 
     if (userId !== targetUserId && role === UserRole.user) {
       throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
@@ -180,7 +180,7 @@ export class UserControllerImpl implements UserController {
 
     const { userId: targetUserId, email } = request.body;
 
-    const { userId, role } = response.locals['authPayload'];
+    const { userId, role } = response.locals['authTokenData'];
 
     if (userId !== targetUserId && role === UserRole.user) {
       throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
@@ -198,7 +198,7 @@ export class UserControllerImpl implements UserController {
 
     const { id: targetUserId } = request.params;
 
-    const { userId, role } = response.locals['authPayload'];
+    const { userId, role } = response.locals['authTokenData'];
 
     if (userId !== targetUserId && role === UserRole.user) {
       throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId: targetUserId as string });
@@ -227,7 +227,7 @@ export class UserControllerImpl implements UserController {
 
     const { id: targetUserId } = request.params;
 
-    const { userId, role } = response.locals['authPayload'];
+    const { userId, role } = response.locals['authTokenData'];
 
     if (userId !== targetUserId && role === UserRole.user) {
       throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId: targetUserId as string });

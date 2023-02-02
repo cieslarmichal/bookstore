@@ -39,7 +39,7 @@ import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/addresses';
 
-describe(`AddressControllerImpl (${baseUrl})`, () => {
+describe(`AddressController (${baseUrl})`, () => {
   const spyFactory = new SpyFactory(vi);
 
   let addressRepositoryFactory: AddressRepositoryFactory;

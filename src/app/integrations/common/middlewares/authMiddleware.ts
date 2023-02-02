@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
+import { AuthTokenData } from '../../authTokenData';
+import { LocalsName } from '../../localsName';
 
 export class AuthMiddleware {
   public constructor(private readonly tokenService: TokenService) {}
@@ -24,9 +26,17 @@ export class AuthMiddleware {
     }
 
     try {
-      const payload = await this.tokenService.verifyToken(token);
+      const tokenPayload = await this.tokenService.verifyToken(token);
 
-      response.locals['authPayload'] = payload;
+      const authTokenData = tokenPayload as unknown as AuthTokenData;
+
+      if (!authTokenData) {
+        response.status(HttpStatusCode.unauthorized).send({ error: 'Invalid access token' });
+
+        return;
+      }
+
+      response.locals[LocalsName.authTokenData] = authTokenData;
     } catch (error) {
       response.status(HttpStatusCode.unauthorized).send({ error: 'Invalid access token' });
 
