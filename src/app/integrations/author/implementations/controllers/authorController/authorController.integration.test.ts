@@ -35,7 +35,7 @@ import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/authors';
 
-describe(`AuthorControllerImpl (${baseUrl})`, () => {
+describe(`AuthorController (${baseUrl})`, () => {
   const spyFactory = new SpyFactory(vi);
 
   let authorRepositoryFactory: AuthorRepositoryFactory;
@@ -95,9 +95,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { firstName } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -131,9 +131,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { firstName, lastName } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -155,9 +155,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const authorId = 'abc';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${authorId}`)
@@ -173,9 +173,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -193,9 +193,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const authorEntity = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne(authorEntity);
 
         const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
 
@@ -213,11 +213,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const authorEntity = authorEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne(authorEntity);
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${author.id}`)
@@ -249,18 +249,18 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const authorEntity1 = authorEntityTestFactory.create();
+
+        const authorEntity2 = authorEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        await authorRepository.createOne(authorEntity1);
 
-        await authorRepository.createOne({ firstName, lastName });
-
-        const { firstName: otherFirstName } = authorEntityTestFactory.create();
-
-        await authorRepository.createOne({ firstName: otherFirstName, lastName });
+        await authorRepository.createOne(authorEntity2);
 
         const response = await request(server.instance)
-          .get(`${baseUrl}?filter=["firstName||eq||${firstName}"]`)
+          .get(`${baseUrl}?filter=["firstName||eq||${authorEntity1.firstName}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -276,9 +276,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id, firstName } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -297,11 +297,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const authorId = 'abc';
 
         const { about } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${authorId}`)
@@ -320,9 +320,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id, about } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -343,11 +343,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const { about } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne({ id, firstName, lastName });
 
         const response = await request(server.instance).patch(`${baseUrl}/${author.id}`).send({
           about,
@@ -367,13 +365,11 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const { id, firstName, lastName, about } = authorEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const { about } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne({ id, firstName, lastName });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${author.id}`)
@@ -394,9 +390,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const authorId = 'abc';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${authorId}`)
@@ -413,9 +409,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -434,9 +430,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const { id, firstName, lastName } = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne({ id, firstName, lastName });
 
         const response = await request(server.instance).delete(`${baseUrl}/${author.id}`).send();
 
@@ -456,9 +452,9 @@ describe(`AuthorControllerImpl (${baseUrl})`, () => {
 
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const { id, firstName, lastName } = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne({ id, firstName, lastName });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${author.id}`)
