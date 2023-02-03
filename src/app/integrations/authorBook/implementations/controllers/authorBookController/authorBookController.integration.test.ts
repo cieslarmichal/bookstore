@@ -42,7 +42,7 @@ import { IntegrationsModule } from '../../../../integrationsModule';
 const authorsUrl = '/authors';
 const booksUrl = '/books';
 
-describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
+describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   const spyFactory = new SpyFactory(vi);
 
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
@@ -108,10 +108,11 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const authorId = '123';
+
         const bookId = '123';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -147,23 +148,19 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const bookEntity = bookEntityTestFactory.create();
+
+        const authorEntity = authorEntityTestFactory.create();
+
+        const { id: authorBookId } = authorBookEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const book = await bookRepository.createOne(bookEntity);
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const author = await authorRepository.createOne(authorEntity);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
-
-        await authorBookRepository.createOne({ authorId: author.id, bookId: book.id });
+        await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${author.id}/books/${book.id}`)
@@ -179,9 +176,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { authorId, bookId } = authorBookEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -203,21 +200,15 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const bookEntity = bookEntityTestFactory.create();
+
+        const authorEntity = authorEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const book = await bookRepository.createOne(bookEntity);
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
-
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne(authorEntity);
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${author.id}/books/${book.id}`)
@@ -235,9 +226,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const authorId = 'abc';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${authorId}/books`)
@@ -253,9 +244,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${id}/books`)
@@ -273,9 +264,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const authorEntity = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne(authorEntity);
 
         const response = await request(server.instance).get(`${authorsUrl}/${author.id}/books`);
 
@@ -293,11 +284,11 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const authorEntity = authorEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const author = await authorRepository.createOne(authorEntity);
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${author.id}/books`)
@@ -321,37 +312,30 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const bookEntity1 = bookEntityTestFactory.create();
+
+        const bookEntity2 = bookEntityTestFactory.create();
+
+        const authorEntity = authorEntityTestFactory.create();
+
+        const { id: authorBookId1 } = authorBookEntityTestFactory.create();
+
+        const { id: authorBookId2 } = authorBookEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const book1 = await bookRepository.createOne(bookEntity1);
 
-        const book1 = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const book2 = await bookRepository.createOne(bookEntity2);
 
-        const { title: otherTitle } = bookEntityTestFactory.create();
+        const author = await authorRepository.createOne(authorEntity);
 
-        const book2 = await bookRepository.createOne({
-          title: otherTitle,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        await authorBookRepository.createOne({ id: authorBookId1, authorId: author.id, bookId: book1.id });
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
-
-        await authorBookRepository.createOne({ authorId: author.id, bookId: book1.id });
-        await authorBookRepository.createOne({ authorId: author.id, bookId: book2.id });
+        await authorBookRepository.createOne({ id: authorBookId2, authorId: author.id, bookId: book2.id });
 
         const response = await request(server.instance)
-          .get(`${authorsUrl}/${author.id}/books?filter=["title||like||${title}"]`)
+          .get(`${authorsUrl}/${author.id}/books?filter=["title||like||${book1.title}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -367,9 +351,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const bookId = 'abc';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${bookId}/authors`)
@@ -385,9 +369,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id } = bookEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${id}/authors`)
@@ -405,15 +389,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const book = await bookRepository.createOne(bookEntity);
 
         const response = await request(server.instance).get(`${booksUrl}/${book.id}/authors`);
 
@@ -431,17 +409,11 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const bookEntity = bookEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
-
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const book = await bookRepository.createOne(bookEntity);
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${book.id}/authors`)
@@ -465,31 +437,30 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const bookEntity = bookEntityTestFactory.create();
+
+        const authorEntity1 = authorEntityTestFactory.create();
+
+        const authorEntity2 = authorEntityTestFactory.create();
+
+        const { id: authorBookId1 } = authorBookEntityTestFactory.create();
+
+        const { id: authorBookId2 } = authorBookEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const book = await bookRepository.createOne(bookEntity);
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const author1 = await authorRepository.createOne(authorEntity1);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const author2 = await authorRepository.createOne(authorEntity2);
 
-        const author1 = await authorRepository.createOne({ firstName, lastName });
+        await authorBookRepository.createOne({ id: authorBookId1, authorId: author1.id, bookId: book.id });
 
-        const { firstName: otherFirstName } = authorEntityTestFactory.create();
-
-        const author2 = await authorRepository.createOne({ firstName: otherFirstName, lastName });
-
-        await authorBookRepository.createOne({ authorId: author1.id, bookId: book.id });
-        await authorBookRepository.createOne({ authorId: author2.id, bookId: book.id });
+        await authorBookRepository.createOne({ id: authorBookId2, authorId: author2.id, bookId: book.id });
 
         const response = await request(server.instance)
-          .get(`${booksUrl}/${book.id}/authors?filter=["firstName||like||${firstName}"]`)
+          .get(`${booksUrl}/${book.id}/authors?filter=["firstName||like||${author1.firstName}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -505,10 +476,11 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const authorId = 'abc';
+
         const bookId = 'dfg';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -525,9 +497,9 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { authorId, bookId } = authorBookEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -550,21 +522,17 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const authorEntity = authorEntityTestFactory.create();
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
+        const { id: authorBookId } = authorBookEntityTestFactory.create();
 
-        const author = await authorRepository.createOne({ firstName, lastName });
+        const book = await bookRepository.createOne(bookEntity);
 
-        await authorBookRepository.createOne({ authorId: author.id, bookId: book.id });
+        const author = await authorRepository.createOne(authorEntity);
+
+        await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
 
         const response = await request(server.instance).delete(`${authorsUrl}/${author.id}/books/${book.id}`).send();
 
@@ -586,23 +554,19 @@ describe(`AuthorBookControllerImpl ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const bookEntity = bookEntityTestFactory.create();
+
+        const authorEntity = authorEntityTestFactory.create();
+
+        const { id: authorBookId } = authorBookEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const book = await bookRepository.createOne(bookEntity);
 
-        const book = await bookRepository.createOne({
-          title,
-          releaseYear,
-          language,
-          format,
-          price,
-        });
+        const author = await authorRepository.createOne(authorEntity);
 
-        const { firstName, lastName } = authorEntityTestFactory.create();
-
-        const author = await authorRepository.createOne({ firstName, lastName });
-
-        await authorBookRepository.createOne({ authorId: author.id, bookId: book.id });
+        await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
 
         const response = await request(server.instance)
           .delete(`${authorsUrl}/${author.id}/books/${book.id}`)

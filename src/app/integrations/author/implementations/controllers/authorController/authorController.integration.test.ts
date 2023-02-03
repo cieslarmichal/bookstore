@@ -450,9 +450,9 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id, firstName, lastName } = authorEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const author = await authorRepository.createOne({ id, firstName, lastName });
 

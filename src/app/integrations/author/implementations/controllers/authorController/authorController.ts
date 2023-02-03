@@ -51,6 +51,7 @@ export class AuthorController {
         next();
       }),
     );
+
     this.router.get(
       this.authorEndpoint,
       [verifyAccessToken],
@@ -66,6 +67,7 @@ export class AuthorController {
         next();
       }),
     );
+
     this.router.get(
       this.authorsEndpoint,
       [verifyAccessToken],
@@ -86,6 +88,7 @@ export class AuthorController {
         next();
       }),
     );
+
     this.router.patch(
       this.authorEndpoint,
       [verifyAccessToken],
@@ -102,6 +105,7 @@ export class AuthorController {
         next();
       }),
     );
+
     this.router.delete(
       this.authorEndpoint,
       [verifyAccessToken],
@@ -123,7 +127,7 @@ export class AuthorController {
     this.router.use(authorErrorMiddleware);
   }
 
-  public async createAuthor(input: CreateAuthorPayload): Promise<Author> {
+  private async createAuthor(input: CreateAuthorPayload): Promise<Author> {
     const { firstName, lastName, about } = input;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
@@ -144,7 +148,7 @@ export class AuthorController {
     return author;
   }
 
-  public async findAuthor(input: FindAuthorPayload): Promise<Author> {
+  private async findAuthor(input: FindAuthorPayload): Promise<Author> {
     const { id } = input;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
@@ -156,7 +160,7 @@ export class AuthorController {
     return author;
   }
 
-  public async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
+  private async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
     const { filters, pagination } = input;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
@@ -168,7 +172,7 @@ export class AuthorController {
     return authors;
   }
 
-  public async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
+  private async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
     const { id, about } = input;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
@@ -180,7 +184,7 @@ export class AuthorController {
     return author;
   }
 
-  public async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
+  private async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
     const { id } = input;
 
     const unitOfWork = await this.unitOfWorkFactory.create();

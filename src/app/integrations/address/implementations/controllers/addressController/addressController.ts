@@ -79,6 +79,7 @@ export class AddressController {
         next();
       }),
     );
+
     this.router.get(
       this.addressEndpoint,
       [verifyAccessToken],
@@ -96,6 +97,7 @@ export class AddressController {
         next();
       }),
     );
+
     this.router.get(
       this.addressesEndpoint,
       [verifyAccessToken],
@@ -116,6 +118,7 @@ export class AddressController {
         next();
       }),
     );
+
     this.router.delete(
       this.addressEndpoint,
       [verifyAccessToken],

@@ -2,7 +2,7 @@ import { asClass, AwilixContainer, Lifetime } from 'awilix';
 
 import { AddressController } from './address/implementations/controllers/addressController/addressController';
 import { AuthorController } from './author/implementations/controllers/authorController/authorController';
-import { AuthorBookControllerImpl } from './authorBook/implementations/controllers/authorBookController/authorBookControllerImpl';
+import { AuthorBookController } from './authorBook/implementations/controllers/authorBookController/authorBookController';
 import { BookControllerImpl } from './book/implementations/controllers/bookController/bookControllerImpl';
 import { BookCategoryControllerImpl } from './bookCategory/implementations/controllers/bookCategoryController/bookCategoryControllerImpl';
 import { CategoryControllerImpl } from './category/implementations/controllers/categoryController/categoryControllerImpl';
@@ -24,7 +24,7 @@ export class IntegrationsModule implements Module {
       [integrationsSymbols.authorController]: asClass(AuthorController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.userController]: asClass(UserControllerImpl, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.categoryController]: asClass(CategoryControllerImpl, { lifetime: Lifetime.SINGLETON }),
-      [integrationsSymbols.authorBookController]: asClass(AuthorBookControllerImpl, { lifetime: Lifetime.SINGLETON }),
+      [integrationsSymbols.authorBookController]: asClass(AuthorBookController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.bookCategoryController]: asClass(BookCategoryControllerImpl, {
         lifetime: Lifetime.SINGLETON,
       }),
