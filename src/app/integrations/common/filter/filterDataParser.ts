@@ -1,7 +1,7 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError.js';
-import { Filter } from '../../../common/filter/filter.js';
-import { FilterName } from '../../../common/filter/filterName.js';
-import { FilterSymbol } from '../../../common/filter/filterSymbol.js';
+import { Filter } from '../../../common/types/contracts/filter.js';
+import { FilterName } from '../../../common/types/contracts/filterName.js';
+import { FilterSymbol } from '../../../common/types/contracts/filterSymbol.js';
 
 export class FilterDataParser {
   private readonly tokensSeparator = '||';

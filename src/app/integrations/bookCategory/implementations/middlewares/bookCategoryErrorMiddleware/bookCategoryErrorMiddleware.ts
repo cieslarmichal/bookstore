@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
+import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
 import { BookNotFoundError } from '../../../../../domain/book/errors/bookNotFoundError';
 import { BookCategoryAlreadyExistsError } from '../../../../../domain/bookCategory/errors/bookCategoryAlreadyExistsError';
 import { BookCategoryNotFoundError } from '../../../../../domain/bookCategory/errors/bookCategoryNotFoundError';

@@ -1,5 +1,5 @@
 import { PaginationDataDraft } from './paginationDataDraft';
-import { PaginationData } from '../../../common/pagination/paginationData';
+import { PaginationData } from '../../../common/types/contracts/paginationData';
 
 export class PaginationDataParser {
   private readonly defaultPage = 1;

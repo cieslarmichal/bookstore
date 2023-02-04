@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AwilixContainer } from 'awilix';
 
-import { SpyFactory } from '../../../../common/testFactories/spyFactory';
+import { SpyFactory } from '../../../../common/tests/implementations/spyFactory';
 import { TransactionCallback } from '../../../../libs/unitOfWork/contracts/transactionCallback';
 import { PostgresUnitOfWork } from '../../../../libs/unitOfWork/implementations/postgresUnitOfWork';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';

@@ -1,6 +1,6 @@
 import { AwilixContainer } from 'awilix';
 
-import { SpyFactory } from '../../../../common/testFactories/spyFactory';
+import { SpyFactory } from '../../../../common/tests/implementations/spyFactory';
 import { userSymbols } from '../../../../domain/user/userSymbols';
 
 export class AuthHelper {

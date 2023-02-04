@@ -2,7 +2,7 @@
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
+import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
 import { Author } from '../../../../../domain/author/contracts/author';
 import { AuthorBook } from '../../../../../domain/authorBook/contracts/authorBook';
 import { AuthorBookService } from '../../../../../domain/authorBook/contracts/services/authorBookService/authorBookService';

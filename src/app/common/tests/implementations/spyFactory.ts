@@ -18,7 +18,7 @@ export class SpyFactory {
   public create<T, M extends Methods<Required<T>>>(
     obj: T,
     methodName: M,
-  ): Required<T>[M] extends (...args: infer A) => infer R | (new (...args: infer A) => infer R)
+  ): Required<T>[M] extends ((...args: infer A) => infer R) | (new (...args: infer A) => infer R)
     ? SpyInstance<A, R>
     : never {
     const dummy = ((): void => {}) as any;

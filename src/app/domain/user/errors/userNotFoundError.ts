@@ -1,4 +1,4 @@
-import { ApplicationError } from '../../../common/errors/applicationError';
+import { ApplicationError } from '../../../common/errors/contracts/applicationError';
 
 type UserNotFoundIdContext = {
   readonly id: string;

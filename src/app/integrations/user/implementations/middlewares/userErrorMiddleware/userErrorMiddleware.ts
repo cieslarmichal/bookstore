@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
+import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
 import { EmailAlreadySetError } from '../../../../../domain/user/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../../../domain/user/errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../../../domain/user/errors/userAlreadyExistsError';

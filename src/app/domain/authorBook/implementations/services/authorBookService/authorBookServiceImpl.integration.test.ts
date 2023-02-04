@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { SpyFactory } from '../../../../../common/testFactories/spyFactory';
+import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';

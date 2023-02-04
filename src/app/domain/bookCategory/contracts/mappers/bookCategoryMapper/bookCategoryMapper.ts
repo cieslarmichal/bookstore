@@ -1,4 +1,4 @@
-import { Mapper } from '../../../../../common/mapper/mapper';
+import { Mapper } from '../../../../../common/types/contracts/mapper';
 import { BookCategory } from '../../bookCategory';
 import { BookCategoryEntity } from '../../bookCategoryEntity';
 

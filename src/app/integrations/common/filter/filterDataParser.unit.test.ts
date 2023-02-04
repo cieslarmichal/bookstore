@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import { FilterDataParser } from './filterDataParser';
+import { FilterName } from '../../../common/filter/filterName';
 import {
   EqualFilter,
   LessThanFilter,
@@ -10,8 +11,7 @@ import {
   GreaterThanOrEqualFilter,
   BetweenFilter,
   LikeFilter,
-} from '../../../common/filter/filter';
-import { FilterName } from '../../../common/filter/filterName';
+} from '../../../common/types/contracts/filter';
 
 describe('FilterDataParser', () => {
   const filterFataParser = new FilterDataParser();

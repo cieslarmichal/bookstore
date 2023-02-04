@@ -2,7 +2,7 @@
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
+import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
 import { Address } from '../../../../../domain/address/contracts/address';
 import { AddressService } from '../../../../../domain/address/contracts/services/addressService/addressService';
 import { CreateAddressDraft } from '../../../../../domain/address/contracts/services/addressService/createAddressDraft';

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { AccessTokenData } from '../../accessTokenData';
 import { LocalsName } from '../../localsName';

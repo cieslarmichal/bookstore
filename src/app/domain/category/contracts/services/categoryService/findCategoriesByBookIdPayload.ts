@@ -1,5 +1,5 @@
-import { Filter } from '../../../../../common/filter/filter';
-import { PaginationData } from '../../../../../common/pagination/paginationData';
+import { Filter } from '../../../../../common/types/contracts/filter';
+import { PaginationData } from '../../../../../common/types/contracts/paginationData';
 import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
 export interface FindCategoriesByBookIdPayload {

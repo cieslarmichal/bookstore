@@ -1,6 +1,6 @@
-import { Filter } from '../../../../../common/filter/filter';
+import { Filter } from '../../../../../common/types/contracts/filter';
+import { PaginationData } from '../../../../../common/types/contracts/paginationData';
 import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
-import { PaginationData } from '../../../../../common/pagination/paginationData';
 
 export interface FindCategoriesByBookIdPayload {
   readonly unitOfWork: UnitOfWork;
