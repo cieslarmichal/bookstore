@@ -1,5 +1,5 @@
 import { TransactionCallback } from './transactionCallback';
-import { LoggerService } from '../logger/loggerService';
+import { LoggerService } from '../logger/contracts/services/loggerService/loggerService';
 
 export abstract class UnitOfWork {
   public constructor(protected readonly loggerService: LoggerService) {}
@@ -13,19 +13,19 @@ export abstract class UnitOfWork {
     try {
       await this.init();
 
-      this.loggerService.debug('Initialized unit of work.');
+      this.loggerService.debug({ message: 'Initialized unit of work.' });
 
       const result = await callback(this);
 
       await this.commit();
 
-      this.loggerService.debug('Transaction committed.');
+      this.loggerService.debug({ message: 'Transaction committed.' });
 
       return result;
     } catch (e) {
       await this.rollback();
 
-      this.loggerService.debug('Transaction rolled back.');
+      this.loggerService.debug({ message: 'Transaction rolled back.' });
 
       throw e;
     } finally {

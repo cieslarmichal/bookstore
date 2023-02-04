@@ -1,9 +1,10 @@
 import { createLogger, LogLevel } from 'bunyan';
 
-import { LoggerClient } from './loggerClient';
-import { LoggerModuleConfig } from './loggerModuleConfig';
+import { LoggerClient } from '../../../contracts/clients/loggerClient/loggerClient';
+import { LoggerClientFactory } from '../../../contracts/factories/loggerClientFactory/loggerClientFactory';
+import { LoggerModuleConfig } from '../../../loggerModuleConfig';
 
-export class LoggerClientFactory {
+export class LoggerClientFactoryImpl implements LoggerClientFactory {
   public constructor(private readonly loggerModuleConfig: LoggerModuleConfig) {}
 
   public create(): LoggerClient {

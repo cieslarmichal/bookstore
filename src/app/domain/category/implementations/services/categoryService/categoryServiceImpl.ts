@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Category } from '../../../contracts/category';
 import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
@@ -23,7 +23,7 @@ export class CategoryServiceImpl implements CategoryService {
       draft: { name },
     } = input;
 
-    this.loggerService.debug('Creating category...', { name });
+    this.loggerService.debug({ message: 'Creating category...', context: { name } });
 
     const { entityManager } = unitOfWork;
 
@@ -37,7 +37,7 @@ export class CategoryServiceImpl implements CategoryService {
 
     const category = await categoryRepository.createOne({ id: UuidGenerator.generateUuid(), name });
 
-    this.loggerService.info('Category created.', { categoryId: category.id });
+    this.loggerService.info({ message: 'Category created.', context: { categoryId: category.id } });
 
     return category;
   }
@@ -85,7 +85,7 @@ export class CategoryServiceImpl implements CategoryService {
   public async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
     const { unitOfWork, categoryId } = input;
 
-    this.loggerService.debug('Deleting category...', { categoryId });
+    this.loggerService.debug({ message: 'Deleting category...', context: { categoryId } });
 
     const { entityManager } = unitOfWork;
 
@@ -93,6 +93,6 @@ export class CategoryServiceImpl implements CategoryService {
 
     await categoryRepository.deleteOne({ id: categoryId });
 
-    this.loggerService.info('Category deleted.', { categoryId });
+    this.loggerService.info({ message: 'Category deleted.', context: { categoryId } });
   }
 }

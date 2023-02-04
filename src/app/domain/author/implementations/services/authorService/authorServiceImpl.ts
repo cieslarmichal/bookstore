@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Author } from '../../../contracts/author';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
@@ -20,7 +20,7 @@ export class AuthorServiceImpl implements AuthorService {
   public async createAuthor(input: CreateAuthorPayload): Promise<Author> {
     const { unitOfWork, draft } = input;
 
-    this.loggerService.debug('Creating author...', { ...draft });
+    this.loggerService.debug({ message: 'Creating author...', context: { ...draft } });
 
     const { entityManager } = unitOfWork;
 
@@ -28,7 +28,7 @@ export class AuthorServiceImpl implements AuthorService {
 
     const author = await authorRepository.createOne({ id: UuidGenerator.generateUuid(), ...draft });
 
-    this.loggerService.info('Author created.', { authorId: author.id });
+    this.loggerService.info({ message: 'Author created.', context: { authorId: author.id } });
 
     return author;
   }
@@ -76,7 +76,7 @@ export class AuthorServiceImpl implements AuthorService {
   public async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
     const { unitOfWork, authorId, draft } = input;
 
-    this.loggerService.debug('Updating author...', { authorId, ...draft });
+    this.loggerService.debug({ message: 'Updating author...', context: { authorId, ...draft } });
 
     const { entityManager } = unitOfWork;
 
@@ -84,7 +84,7 @@ export class AuthorServiceImpl implements AuthorService {
 
     const author = await authorRepository.updateOne({ id: authorId, draft });
 
-    this.loggerService.info('Author updated.', { authorId });
+    this.loggerService.info({ message: 'Author updated.', context: { authorId } });
 
     return author;
   }
@@ -92,7 +92,7 @@ export class AuthorServiceImpl implements AuthorService {
   public async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
     const { unitOfWork, authorId } = input;
 
-    this.loggerService.debug('Deleting author...', { authorId });
+    this.loggerService.debug({ message: 'Deleting author...', context: { authorId } });
 
     const { entityManager } = unitOfWork;
 
@@ -100,6 +100,6 @@ export class AuthorServiceImpl implements AuthorService {
 
     await authorRepository.deleteOne({ id: authorId });
 
-    this.loggerService.info('Author deleted.', { authorId });
+    this.loggerService.info({ message: 'Author deleted.', context: { authorId } });
   }
 }

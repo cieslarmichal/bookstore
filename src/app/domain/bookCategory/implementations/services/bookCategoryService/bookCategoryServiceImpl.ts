@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
@@ -30,7 +30,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
       draft: { bookId, categoryId },
     } = input;
 
-    this.loggerService.debug('Creating bookCategory...', { bookId, categoryId });
+    this.loggerService.debug({ message: 'Creating bookCategory...', context: { bookId, categoryId } });
 
     const book = await this.bookService.findBook({ unitOfWork, bookId });
 
@@ -60,7 +60,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
       categoryId,
     });
 
-    this.loggerService.info('BookCategory created.', { bookCategoryId: bookCategory.id });
+    this.loggerService.info({ message: 'BookCategory created.', context: { bookCategoryId: bookCategory.id } });
 
     return bookCategory;
   }
@@ -92,7 +92,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   public async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
     const { unitOfWork, bookId, categoryId } = input;
 
-    this.loggerService.debug('Deleting bookCategory...', { bookId, categoryId });
+    this.loggerService.debug({ message: 'Deleting bookCategory...', context: { bookId, categoryId } });
 
     const { entityManager } = unitOfWork;
 
@@ -106,6 +106,6 @@ export class BookCategoryServiceImpl implements BookCategoryService {
 
     await bookCategoryRepository.deleteOne({ id: bookCategory.id });
 
-    this.loggerService.info('BookCategory deleted.', { bookCategoryId: bookCategory.id });
+    this.loggerService.info({ message: 'BookCategory deleted.', context: { bookCategoryId: bookCategory.id } });
   }
 }

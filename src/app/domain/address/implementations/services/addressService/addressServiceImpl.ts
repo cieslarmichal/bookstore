@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Address } from '../../../contracts/address';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
@@ -19,7 +19,7 @@ export class AddressServiceImpl implements AddressService {
   public async createAddress(input: CreateAddressPayload): Promise<Address> {
     const { unitOfWork, draft } = input;
 
-    this.loggerService.debug('Creating address...', { ...draft });
+    this.loggerService.debug({ message: 'Creating address...', context: { ...draft } });
 
     const { entityManager } = unitOfWork;
 
@@ -30,7 +30,7 @@ export class AddressServiceImpl implements AddressService {
       ...draft,
     });
 
-    this.loggerService.info('Address created.', { addressId: address.id });
+    this.loggerService.info({ message: 'Address created.', context: { addressId: address.id } });
 
     return address;
   }
@@ -66,7 +66,7 @@ export class AddressServiceImpl implements AddressService {
   public async updateAddress(input: UpdateAddressPayload): Promise<Address> {
     const { unitOfWork, draft, addressId } = input;
 
-    this.loggerService.debug('Updating address...', { addressId, ...draft });
+    this.loggerService.debug({ message: 'Updating address...', context: { addressId, ...draft } });
 
     const { entityManager } = unitOfWork;
 
@@ -74,7 +74,7 @@ export class AddressServiceImpl implements AddressService {
 
     const address = await addressRepository.updateOne({ id: addressId, draft });
 
-    this.loggerService.info('Address updated.', { addressId: address.id });
+    this.loggerService.info({ message: 'Address updated.', context: { addressId: address.id } });
 
     return address;
   }
@@ -82,7 +82,7 @@ export class AddressServiceImpl implements AddressService {
   public async deleteAddress(input: DeleteAddressPayload): Promise<void> {
     const { unitOfWork, addressId } = input;
 
-    this.loggerService.debug('Deleting address...', { addressId });
+    this.loggerService.debug({ message: 'Deleting address...', context: { addressId } });
 
     const { entityManager } = unitOfWork;
 
@@ -90,6 +90,6 @@ export class AddressServiceImpl implements AddressService {
 
     await addressRepository.deleteOne({ id: addressId });
 
-    this.loggerService.info('Address deleted.', { addressId });
+    this.loggerService.info({ message: 'Address deleted.', context: { addressId } });
   }
 }

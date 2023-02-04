@@ -1,7 +1,7 @@
 import { EntityManager, QueryRunner } from 'typeorm';
 
 import { UnitOfWork } from './unitOfWork';
-import { LoggerService } from '../logger/loggerService';
+import { LoggerService } from '../logger/contracts/services/loggerService/loggerService';
 
 export class PostgresUnitOfWork extends UnitOfWork {
   public readonly entityManager: EntityManager;

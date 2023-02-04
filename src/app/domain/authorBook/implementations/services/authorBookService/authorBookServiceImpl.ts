@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Author } from '../../../../author/contracts/author';
 import { AuthorService } from '../../../../author/contracts/services/authorService/authorService';
@@ -30,7 +30,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
       draft: { authorId, bookId },
     } = input;
 
-    this.loggerService.debug('Creating authorBook...', { authorId, bookId });
+    this.loggerService.debug({ message: 'Creating authorBook...', context: { authorId, bookId } });
 
     const author = await this.authorService.findAuthor({ unitOfWork, authorId });
 
@@ -56,7 +56,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
 
     const authorBook = await authorBookRepository.createOne({ id: UuidGenerator.generateUuid(), authorId, bookId });
 
-    this.loggerService.info('AuthorBook created.', { authorBookId: authorBook.id });
+    this.loggerService.info({ message: 'AuthorBook created.', context: { authorBookId: authorBook.id } });
 
     return authorBook;
   }
@@ -88,7 +88,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
   public async deleteAuthorBook(input: DeleteAuthorBookPayload): Promise<void> {
     const { unitOfWork, authorId, bookId } = input;
 
-    this.loggerService.debug('Deleting authorBook...', { authorId, bookId });
+    this.loggerService.debug({ message: 'Deleting authorBook...', context: { authorId, bookId } });
 
     const { entityManager } = unitOfWork;
 
@@ -102,6 +102,6 @@ export class AuthorBookServiceImpl implements AuthorBookService {
 
     await authorBookRepository.deleteOne({ id: authorBook.id });
 
-    this.loggerService.info('AuthorBook deleted.', { authorBookId: authorBook.id });
+    this.loggerService.info({ message: 'AuthorBook deleted.', context: { authorBookId: authorBook.id } });
   }
 }

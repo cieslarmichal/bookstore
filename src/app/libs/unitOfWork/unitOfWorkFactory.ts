@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 
 import { PostgresUnitOfWork } from './postgresUnitOfWork';
-import { LoggerService } from '../logger/loggerService';
+import { LoggerService } from '../logger/contracts/services/loggerService/loggerService';
 
 export class UnitOfWorkFactory {
   public constructor(private dataSource: DataSource, private readonly loggerService: LoggerService) {}

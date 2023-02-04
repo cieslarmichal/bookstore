@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContainer, InjectionMode, AwilixContainer } from 'awilix';
 
-import { DependencyInjectionModule } from '../contracts/dependencyInjectionModule';
+import { DependencyInjectionModule } from '../../../contracts/dependencyInjectionModule';
 
 export class DependencyInjectionContainerFactory {
   public static async create(modules: DependencyInjectionModule[]): Promise<AwilixContainer<any>> {

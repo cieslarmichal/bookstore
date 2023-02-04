@@ -1,8 +1,9 @@
 import { asClass, asValue, AwilixContainer, Lifetime, asFunction } from 'awilix';
 
-import { LoggerClientFactory } from './loggerClientFactory';
+import { LoggerClientFactory } from './contracts/factories/loggerClientFactory/loggerClientFactory';
+import { LoggerClientFactoryImpl } from './implementations/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LoggerServiceImpl } from './implementations/services/loggerService/loggerServiceImpl';
 import { LoggerModuleConfig } from './loggerModuleConfig';
-import { LoggerServiceImpl } from './loggerServiceImpl';
 import { loggerSymbols } from './loggerSymbols';
 import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
 
@@ -12,7 +13,7 @@ export class LoggerModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [loggerSymbols.loggerModuleConfig]: asValue(this.config),
-      [loggerSymbols.loggerClientFactory]: asClass(LoggerClientFactory, { lifetime: Lifetime.SINGLETON }),
+      [loggerSymbols.loggerClientFactory]: asClass(LoggerClientFactoryImpl, { lifetime: Lifetime.SINGLETON }),
       [loggerSymbols.loggerClient]: asFunction(() => {
         const loggerClientFactory: LoggerClientFactory = container.resolve(loggerSymbols.loggerClientFactory);
 

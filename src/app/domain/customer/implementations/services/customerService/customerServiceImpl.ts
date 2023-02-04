@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
@@ -22,7 +22,7 @@ export class CustomerServiceImpl implements CustomerService {
       draft: { userId },
     } = input;
 
-    this.loggerService.debug('Creating customer...', { userId });
+    this.loggerService.debug({ message: 'Creating customer...', context: { userId } });
 
     const { entityManager } = unitOfWork;
 
@@ -36,7 +36,7 @@ export class CustomerServiceImpl implements CustomerService {
 
     const customer = await customerRepository.createOne({ id: UuidGenerator.generateUuid(), userId });
 
-    this.loggerService.info('Customer created.', { customerId: customer.id });
+    this.loggerService.info({ message: 'Customer created.', context: { customerId: customer.id } });
 
     return customer;
   }
@@ -70,7 +70,7 @@ export class CustomerServiceImpl implements CustomerService {
   public async deleteCustomer(input: DeleteCustomerPayload): Promise<void> {
     const { unitOfWork, customerId } = input;
 
-    this.loggerService.debug('Deleting customer...', { customerId });
+    this.loggerService.debug({ message: 'Deleting customer...', context: { customerId } });
 
     const { entityManager } = unitOfWork;
 
@@ -78,6 +78,6 @@ export class CustomerServiceImpl implements CustomerService {
 
     await customerRepository.deleteOne({ id: customerId });
 
-    this.loggerService.info('Customer deleted.', { customerId });
+    this.loggerService.info({ message: 'Customer deleted.', context: { customerId } });
   }
 }

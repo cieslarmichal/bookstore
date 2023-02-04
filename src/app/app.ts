@@ -13,7 +13,7 @@ import { errorMiddleware } from './integrations/common/middlewares/errorMiddlewa
 import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
 import { IntegrationsModule } from './integrations/integrationsModule';
 import { integrationsSymbols } from './integrations/integrationsSymbols';
-import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/dependencyInjectionContainerFactory';
+import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from './libs/logger/loggerModule';
 import { PostgresModule } from './libs/postgres/postgresModule';
 

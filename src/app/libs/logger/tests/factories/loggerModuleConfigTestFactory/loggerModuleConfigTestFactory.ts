@@ -1,5 +1,5 @@
-import { LoggerModuleConfig } from './loggerModuleConfig';
-import { LogLevel } from './logLevel';
+import { LogLevel } from '../../../contracts/logLevel';
+import { LoggerModuleConfig } from '../../../loggerModuleConfig';
 
 export class LoggerModuleConfigTestFactory {
   public create(): LoggerModuleConfig {

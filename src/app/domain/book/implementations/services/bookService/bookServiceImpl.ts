@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
@@ -21,7 +21,7 @@ export class BookServiceImpl implements BookService {
   public async createBook(input: CreateBookPayload): Promise<Book> {
     const { unitOfWork, draft } = input;
 
-    this.loggerService.debug('Creating book...', { ...draft });
+    this.loggerService.debug({ message: 'Creating book...', context: { ...draft } });
 
     const { entityManager } = unitOfWork;
 
@@ -29,7 +29,7 @@ export class BookServiceImpl implements BookService {
 
     const book = await bookRepository.createOne({ id: UuidGenerator.generateUuid(), ...draft });
 
-    this.loggerService.info('Book created.', { bookId: book.id });
+    this.loggerService.info({ message: 'Book created.', context: { bookId: book.id } });
 
     return book;
   }
@@ -89,7 +89,7 @@ export class BookServiceImpl implements BookService {
   public async updateBook(input: UpdateBookPayload): Promise<Book> {
     const { unitOfWork, bookId, draft } = input;
 
-    this.loggerService.debug('Updating book...', { bookId, ...draft });
+    this.loggerService.debug({ message: 'Updating book...', context: { bookId, ...draft } });
 
     const { entityManager } = unitOfWork;
 
@@ -97,7 +97,7 @@ export class BookServiceImpl implements BookService {
 
     const book = await bookRepository.updateOne({ id: bookId, draft });
 
-    this.loggerService.info('Book updated.', { bookId });
+    this.loggerService.info({ message: 'Book updated.', context: { bookId } });
 
     return book;
   }
@@ -105,7 +105,7 @@ export class BookServiceImpl implements BookService {
   public async deleteBook(input: DeleteBookPayload): Promise<void> {
     const { unitOfWork, bookId } = input;
 
-    this.loggerService.debug('Deleting book...', { bookId });
+    this.loggerService.debug({ message: 'Deleting book...', context: { bookId } });
 
     const { entityManager } = unitOfWork;
 
@@ -113,6 +113,6 @@ export class BookServiceImpl implements BookService {
 
     await bookRepository.deleteOne({ id: bookId });
 
-    this.loggerService.info('Book deleted.', { bookId });
+    this.loggerService.info({ message: 'Book deleted.', context: { bookId } });
   }
 }

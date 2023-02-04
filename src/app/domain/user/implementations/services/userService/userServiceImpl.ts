@@ -1,4 +1,4 @@
-import { LoggerService } from '../../../../../libs/logger/loggerService';
+import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
@@ -34,7 +34,7 @@ export class UserServiceImpl implements UserService {
       draft: { email, password },
     } = input;
 
-    this.loggerService.debug('Registering user...', { email });
+    this.loggerService.debug({ message: 'Registering user...', context: { email } });
 
     const { entityManager } = unitOfWork;
 
@@ -55,7 +55,7 @@ export class UserServiceImpl implements UserService {
       role: UserRole.user,
     });
 
-    this.loggerService.info('User registered.', { email, userId: user.id });
+    this.loggerService.info({ message: 'User registered.', context: { email, userId: user.id } });
 
     return user;
   }
@@ -66,7 +66,7 @@ export class UserServiceImpl implements UserService {
       draft: { phoneNumber, password },
     } = input;
 
-    this.loggerService.debug('Registering user...', { phoneNumber });
+    this.loggerService.debug({ message: 'Registering user...', context: { phoneNumber } });
 
     const { entityManager } = unitOfWork;
 
@@ -87,7 +87,7 @@ export class UserServiceImpl implements UserService {
       role: UserRole.user,
     });
 
-    this.loggerService.info('User registered.', { phoneNumber, userId: user.id });
+    this.loggerService.info({ message: 'User registered.', context: { phoneNumber, userId: user.id } });
 
     return user;
   }
@@ -98,7 +98,7 @@ export class UserServiceImpl implements UserService {
       draft: { email, password },
     } = input;
 
-    this.loggerService.debug('Logging user in...', { email });
+    this.loggerService.debug({ message: 'Logging user in...', context: { email } });
 
     const { entityManager } = unitOfWork;
 
@@ -118,7 +118,7 @@ export class UserServiceImpl implements UserService {
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
 
-    this.loggerService.info('User logged in.', { email, userId: user.id, accessToken });
+    this.loggerService.info({ message: 'User logged in.', context: { email, userId: user.id, accessToken } });
 
     return accessToken;
   }
@@ -129,7 +129,7 @@ export class UserServiceImpl implements UserService {
       draft: { phoneNumber, password },
     } = input;
 
-    this.loggerService.debug('Logging user in...', { phoneNumber });
+    this.loggerService.debug({ message: 'Logging user in...', context: { phoneNumber } });
 
     const { entityManager } = unitOfWork;
 
@@ -149,7 +149,7 @@ export class UserServiceImpl implements UserService {
 
     const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
 
-    this.loggerService.info('User logged in.', { phoneNumber, userId: user.id, accessToken });
+    this.loggerService.info({ message: 'User logged in.', context: { phoneNumber, userId: user.id, accessToken } });
 
     return accessToken;
   }
@@ -157,7 +157,7 @@ export class UserServiceImpl implements UserService {
   public async setPassword(input: SetPasswordPayload): Promise<User> {
     const { unitOfWork, userId, password: newPassword } = input;
 
-    this.loggerService.debug('Setting password...', { userId });
+    this.loggerService.debug({ message: 'Setting password...', context: { userId } });
 
     const { entityManager } = unitOfWork;
 
@@ -173,7 +173,7 @@ export class UserServiceImpl implements UserService {
 
     const updatedUser = await userRepository.updateOne({ id: userId, draft: { password: hashedPassword } });
 
-    this.loggerService.info('Password set.', { userId });
+    this.loggerService.info({ message: 'Password set.', context: { userId } });
 
     return updatedUser;
   }
@@ -181,7 +181,7 @@ export class UserServiceImpl implements UserService {
   public async setEmail(input: SetEmailPayload): Promise<User> {
     const { unitOfWork, userId, email } = input;
 
-    this.loggerService.debug('Setting email...', { userId, email });
+    this.loggerService.debug({ message: 'Setting email...', context: { userId, email } });
 
     const { entityManager } = unitOfWork;
 
@@ -205,7 +205,7 @@ export class UserServiceImpl implements UserService {
 
     const updatedUser = await userRepository.updateOne({ id: userId, draft: { email } });
 
-    this.loggerService.info('Email set.', { userId, email });
+    this.loggerService.info({ message: 'Email set.', context: { userId, email } });
 
     return updatedUser;
   }
@@ -213,7 +213,7 @@ export class UserServiceImpl implements UserService {
   public async setPhoneNumber(input: SetPhoneNumberPayload): Promise<User> {
     const { unitOfWork, phoneNumber, userId } = input;
 
-    this.loggerService.debug('Setting phone number...', { userId, phoneNumber });
+    this.loggerService.debug({ message: 'Setting phone number...', context: { userId, phoneNumber } });
 
     const { entityManager } = unitOfWork;
 
@@ -237,7 +237,7 @@ export class UserServiceImpl implements UserService {
 
     const updatedUser = await userRepository.updateOne({ id: userId, draft: { phoneNumber } });
 
-    this.loggerService.info('Phone number set.', { userId, phoneNumber });
+    this.loggerService.info({ message: 'Phone number set.', context: { userId, phoneNumber } });
 
     return updatedUser;
   }
@@ -261,7 +261,7 @@ export class UserServiceImpl implements UserService {
   public async deleteUser(input: DeleteUserPayload): Promise<void> {
     const { unitOfWork, userId } = input;
 
-    this.loggerService.debug('Deleting user...', { userId });
+    this.loggerService.debug({ message: 'Deleting user...', context: { userId } });
 
     const { entityManager } = unitOfWork;
 
@@ -269,6 +269,6 @@ export class UserServiceImpl implements UserService {
 
     await userRepository.deleteOne({ id: userId });
 
-    this.loggerService.info('User deleted.', { userId });
+    this.loggerService.info({ message: 'User deleted.', context: { userId } });
   }
 }
