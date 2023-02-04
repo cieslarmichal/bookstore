@@ -3,11 +3,12 @@ import { faker } from '@faker-js/faker';
 import { CustomerEntity } from '../../../contracts/customerEntity';
 
 export class CustomerEntityTestFactory {
-  public create(): CustomerEntity {
+  public create(input: Partial<CustomerEntity> = {}): CustomerEntity {
     return {
       id: faker.datatype.uuid(),
       userId: faker.datatype.uuid(),
       user: null,
+      ...input,
     };
   }
 }

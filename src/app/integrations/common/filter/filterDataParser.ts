@@ -11,8 +11,8 @@ export class FilterDataParser {
   private readonly valuesIndex = 2;
   private readonly numberOfTokensInFilterElement = 3;
 
-  public parse(filterDataAsJson: string, supportedFieldsFilters: Map<string, Array<string>>): Filter[] {
-    if (!filterDataAsJson) {
+  public parse(jsonFilterData: string, supportedFieldsFilters: Map<string, Array<string>>): Filter[] {
+    if (!jsonFilterData) {
       return [];
     }
 
@@ -23,7 +23,7 @@ export class FilterDataParser {
     let filterData: Array<string>;
 
     try {
-      filterData = JSON.parse(filterDataAsJson);
+      filterData = JSON.parse(jsonFilterData);
     } catch (error) {
       throw new InvalidFilterSyntaxError({ errorDetails: 'filter data is not valid json object' });
     }

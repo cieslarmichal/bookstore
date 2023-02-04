@@ -2,8 +2,8 @@
 import { AwilixContainer } from 'awilix';
 
 import { SpyFactory } from '../../../../common/testFactories/spyFactory';
-import { PostgresUnitOfWork } from '../../../../libs/unitOfWork/implementations/postgresUnitOfWork';
 import { TransactionCallback } from '../../../../libs/unitOfWork/contracts/transactionCallback';
+import { PostgresUnitOfWork } from '../../../../libs/unitOfWork/implementations/postgresUnitOfWork';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 
 export class TestTransactionExternalRunner {

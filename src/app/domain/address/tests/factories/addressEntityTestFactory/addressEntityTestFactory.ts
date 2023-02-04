@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { AddressEntity } from '../../../contracts/addressEntity';
 
 export class AddressEntityTestFactory {
-  public create(): AddressEntity {
+  public create(input: Partial<AddressEntity> = {}): AddressEntity {
     return {
       id: faker.datatype.uuid(),
       firstName: faker.name.firstName(),
@@ -16,6 +16,7 @@ export class AddressEntityTestFactory {
       streetAddress: faker.address.streetAddress(true),
       deliveryInstructions: faker.lorem.words(),
       customerId: faker.datatype.uuid(),
+      ...input,
     };
   }
 }
