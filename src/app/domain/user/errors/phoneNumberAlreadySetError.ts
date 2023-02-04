@@ -1,9 +1,9 @@
 import { ApplicationError } from '../../../common/errors/applicationError';
 
-type Context = {
+interface Context {
   readonly phoneNumber: string;
   readonly userId: string;
-};
+}
 
 export class PhoneNumberAlreadySetError extends ApplicationError<Context> {
   public constructor(context: Context) {

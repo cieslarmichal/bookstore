@@ -1,10 +1,10 @@
 import { ApplicationError } from '../../../common/errors/applicationError';
 import { AccessTokenData } from '../../accessTokenData';
 
-type Context = {
+interface Context {
   readonly userId: string;
   readonly accessTokenData: AccessTokenData;
-};
+}
 
 export class UserFromAccessTokenNotMatchingTargetUserError extends ApplicationError<Context> {
   public constructor(context: Context) {

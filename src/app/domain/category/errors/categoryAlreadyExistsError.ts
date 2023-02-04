@@ -1,8 +1,8 @@
 import { ApplicationError } from '../../../common/errors/applicationError';
 
-type Context = {
+interface Context {
   readonly name: string;
-};
+}
 
 export class CategoryAlreadyExistsError extends ApplicationError<Context> {
   public constructor(context: Context) {

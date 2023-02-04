@@ -1,8 +1,8 @@
 import { ApplicationError } from '../../../common/errors/applicationError';
 
-type Context = {
+interface Context {
   readonly id: string;
-};
+}
 
 export class BookNotFoundError extends ApplicationError<Context> {
   public constructor(context: Context) {
