@@ -1,4 +1,4 @@
-import { PaginationData } from './paginationData';
+import { PaginationData } from '../../../common/pagination/paginationData';
 import { PaginationDataDraft } from './paginationDataDraft';
 
 export class PaginationDataParser {
