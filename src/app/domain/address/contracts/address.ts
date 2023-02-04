@@ -1,55 +1,51 @@
-import { IsOptional, IsString, IsUuidV4 } from '../../../common/validator/decorators';
-import { Validator } from '../../../common/validator/validator';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Schema } from '../../../common/validator/implementations/schema';
+
+export const addressInputSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  firstName: Schema.notEmptyString(),
+  lastName: Schema.notEmptyString(),
+  phoneNumber: Schema.notEmptyString(),
+  country: Schema.notEmptyString(),
+  state: Schema.notEmptyString(),
+  city: Schema.notEmptyString(),
+  zipCode: Schema.notEmptyString(),
+  streetAddress: Schema.notEmptyString(),
+  deliveryInstructions: Schema.notEmptyString().optional(),
+  customerId: Schema.notEmptyString().optional(),
+});
+
+export type AddressInput = SchemaType<typeof addressInputSchema>;
 
 export class Address {
-  @IsUuidV4()
   public readonly id: string;
-
-  @IsString()
   public readonly firstName: string;
-
-  @IsString()
   public readonly lastName: string;
-
-  @IsString()
   public readonly phoneNumber: string;
-
-  @IsString()
   public readonly country: string;
-
-  @IsString()
   public readonly state: string;
-
-  @IsString()
   public readonly city: string;
-
-  @IsString()
   public readonly zipCode: string;
-
-  @IsString()
   public readonly streetAddress: string;
+  public readonly deliveryInstructions?: string;
+  public readonly customerId?: string;
 
-  @IsOptional()
-  @IsString()
-  public readonly deliveryInstructions?: string | undefined;
+  public constructor(input: AddressInput) {
+    const {
+      id,
+      firstName,
+      lastName,
+      phoneNumber,
+      country,
+      state,
+      city,
+      zipCode,
+      streetAddress,
+      deliveryInstructions,
+      customerId,
+    } = PayloadFactory.create(addressInputSchema, input);
 
-  @IsOptional()
-  @IsUuidV4()
-  public readonly customerId?: string | undefined;
-
-  public constructor({
-    id,
-    firstName,
-    lastName,
-    phoneNumber,
-    country,
-    state,
-    city,
-    zipCode,
-    streetAddress,
-    deliveryInstructions,
-    customerId,
-  }: Address) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -67,7 +63,5 @@ export class Address {
     if (customerId) {
       this.customerId = customerId;
     }
-
-    Validator.validate(this);
   }
 }

@@ -1,12 +1,16 @@
 import { EntityManager } from 'typeorm';
 
 import { AddressQueryBuilder } from './addressQueryBuilder';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Address } from '../../../contracts/address';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
 import { AddressRepository } from '../../../contracts/repositories/addressRepository/addressRepository';
 import { CreateOnePayload } from '../../../contracts/repositories/addressRepository/createOnePayload';
-import { DeleteOnePayload } from '../../../contracts/repositories/addressRepository/deleteOnePayload';
+import {
+  DeleteOnePayload,
+  deleteOnePayloadSchema,
+} from '../../../contracts/repositories/addressRepository/deleteOnePayload';
 import { FindManyPayload } from '../../../contracts/repositories/addressRepository/findManyPayload';
 import { FindOnePayload } from '../../../contracts/repositories/addressRepository/findOnePayload';
 import { UpdateOnePayload } from '../../../contracts/repositories/addressRepository/updateOnePayload';
@@ -70,7 +74,7 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
 
     const addressEntity = await this.findOne({ id });
 

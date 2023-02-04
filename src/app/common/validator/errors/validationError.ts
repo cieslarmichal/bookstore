@@ -1,10 +1,11 @@
+import { ZodIssue } from 'zod';
+
 import { ApplicationError } from '../../errors/contracts/applicationError';
 
 interface Context {
   readonly target: unknown;
-  readonly property: string;
-  readonly value: unknown;
-  readonly constraints: Record<string, string>;
+  readonly issues: ZodIssue[];
+  readonly message: string;
 }
 
 export class ValidationError extends ApplicationError<Context> {
