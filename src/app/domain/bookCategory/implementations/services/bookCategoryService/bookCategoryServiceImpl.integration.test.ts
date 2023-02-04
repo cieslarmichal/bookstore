@@ -92,7 +92,7 @@ describe('BookCategoryService', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -126,7 +126,7 @@ describe('BookCategoryService', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
@@ -168,7 +168,7 @@ describe('BookCategoryService', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 

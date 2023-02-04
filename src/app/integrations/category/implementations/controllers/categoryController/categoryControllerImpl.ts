@@ -5,7 +5,7 @@ import asyncHandler from 'express-async-handler';
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { Category } from '../../../../../domain/category/contracts/category';
 import { CategoryService } from '../../../../../domain/category/contracts/services/categoryService/categoryService';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';

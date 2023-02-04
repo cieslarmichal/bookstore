@@ -6,7 +6,7 @@ import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { Author } from '../../../../../domain/author/contracts/author';
 import { AuthorService } from '../../../../../domain/author/contracts/services/authorService/authorService';
 import { CreateAuthorDraft } from '../../../../../domain/author/contracts/services/authorService/createAuthorDraft';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';

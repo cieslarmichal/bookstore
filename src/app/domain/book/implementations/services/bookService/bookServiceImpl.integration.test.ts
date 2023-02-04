@@ -112,7 +112,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -141,7 +141,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -182,7 +182,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(2);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -233,7 +233,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(3);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -300,7 +300,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(3);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -364,7 +364,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(3);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -424,7 +424,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(2);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
         const { id: id1, title, releaseYear, price, format } = bookEntityTestFactory.create();
@@ -474,7 +474,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -523,7 +523,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(3);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -584,7 +584,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(2);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -645,7 +645,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(2);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
@@ -689,7 +689,7 @@ describe('BookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 

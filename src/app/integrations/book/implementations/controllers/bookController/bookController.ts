@@ -7,7 +7,7 @@ import { Book } from '../../../../../domain/book/contracts/book';
 import { BookService } from '../../../../../domain/book/contracts/services/bookService/bookService';
 import { CreateBookDraft } from '../../../../../domain/book/contracts/services/bookService/createBookDraft';
 import { UpdateBookDraft } from '../../../../../domain/book/contracts/services/bookService/updateBookDraft';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';

@@ -7,7 +7,7 @@ import { Author } from '../../../../../domain/author/contracts/author';
 import { AuthorBook } from '../../../../../domain/authorBook/contracts/authorBook';
 import { AuthorBookService } from '../../../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
 import { Book } from '../../../../../domain/book/contracts/book';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { findAuthorsFilters } from '../../../../author/contracts/controllers/authorController/findAuthorsFilters';
 import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';

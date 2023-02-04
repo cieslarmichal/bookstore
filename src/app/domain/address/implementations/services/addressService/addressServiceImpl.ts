@@ -21,7 +21,7 @@ export class AddressServiceImpl implements AddressService {
 
     this.loggerService.debug({ message: 'Creating address...', context: { ...draft } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
@@ -38,7 +38,7 @@ export class AddressServiceImpl implements AddressService {
   public async findAddress(input: FindAddressPayload): Promise<Address> {
     const { unitOfWork, addressId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
@@ -54,7 +54,7 @@ export class AddressServiceImpl implements AddressService {
   public async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
     const { unitOfWork, filters, pagination } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
@@ -68,7 +68,7 @@ export class AddressServiceImpl implements AddressService {
 
     this.loggerService.debug({ message: 'Updating address...', context: { addressId, ...draft } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
@@ -84,7 +84,7 @@ export class AddressServiceImpl implements AddressService {
 
     this.loggerService.debug({ message: 'Deleting address...', context: { addressId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 

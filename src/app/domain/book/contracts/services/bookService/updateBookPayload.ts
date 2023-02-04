@@ -1,8 +1,8 @@
 import { UpdateBookDraft } from './updateBookDraft';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
 export interface UpdateBookPayload {
-  readonly unitOfWork: PostgresUnitOfWork;
+  readonly unitOfWork: UnitOfWork;
   readonly bookId: string;
   readonly draft: UpdateBookDraft;
 }

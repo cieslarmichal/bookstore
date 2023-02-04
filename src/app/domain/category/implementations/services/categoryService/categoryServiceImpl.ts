@@ -25,7 +25,7 @@ export class CategoryServiceImpl implements CategoryService {
 
     this.loggerService.debug({ message: 'Creating category...', context: { name } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
@@ -45,7 +45,7 @@ export class CategoryServiceImpl implements CategoryService {
   public async findCategory(input: FindCategoryPayload): Promise<Category> {
     const { unitOfWork, categoryId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
@@ -61,7 +61,7 @@ export class CategoryServiceImpl implements CategoryService {
   public async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
     const { unitOfWork, filters, pagination } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
@@ -73,7 +73,7 @@ export class CategoryServiceImpl implements CategoryService {
   public async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
     const { unitOfWork, filters, pagination, bookId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 
@@ -87,7 +87,7 @@ export class CategoryServiceImpl implements CategoryService {
 
     this.loggerService.debug({ message: 'Deleting category...', context: { categoryId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const categoryRepository = this.categoryRepositoryFactory.create(entityManager);
 

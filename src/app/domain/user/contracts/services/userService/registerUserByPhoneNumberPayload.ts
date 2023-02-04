@@ -1,7 +1,7 @@
 import { RegisterUserByPhoneNumberDraft } from './registerUserByPhoneNumberDraft';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/implementations/postgresUnitOfWork';
 
 export interface RegisterUserByPhoneNumberPayload {
-  readonly unitOfWork: PostgresUnitOfWork;
+  readonly unitOfWork: UnitOfWork;
   readonly draft: RegisterUserByPhoneNumberDraft;
 }

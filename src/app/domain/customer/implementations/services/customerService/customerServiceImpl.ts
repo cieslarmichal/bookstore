@@ -24,7 +24,7 @@ export class CustomerServiceImpl implements CustomerService {
 
     this.loggerService.debug({ message: 'Creating customer...', context: { userId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 
@@ -44,7 +44,7 @@ export class CustomerServiceImpl implements CustomerService {
   public async findCustomer(input: FindCustomerPayload): Promise<Customer> {
     const { unitOfWork, customerId, userId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 
@@ -72,7 +72,7 @@ export class CustomerServiceImpl implements CustomerService {
 
     this.loggerService.debug({ message: 'Deleting customer...', context: { customerId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 

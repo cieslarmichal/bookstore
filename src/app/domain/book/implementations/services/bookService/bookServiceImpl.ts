@@ -23,7 +23,7 @@ export class BookServiceImpl implements BookService {
 
     this.loggerService.debug({ message: 'Creating book...', context: { ...draft } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
@@ -37,7 +37,7 @@ export class BookServiceImpl implements BookService {
   public async findBook(input: FindBookPayload): Promise<Book> {
     const { unitOfWork, bookId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
@@ -53,7 +53,7 @@ export class BookServiceImpl implements BookService {
   public async findBooks(input: FindBooksPayload): Promise<Book[]> {
     const { unitOfWork, filters, pagination } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
@@ -65,7 +65,7 @@ export class BookServiceImpl implements BookService {
   public async findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]> {
     const { unitOfWork, authorId, filters, pagination } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
@@ -77,7 +77,7 @@ export class BookServiceImpl implements BookService {
   public async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
     const { unitOfWork, categoryId, filters, pagination } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
@@ -91,7 +91,7 @@ export class BookServiceImpl implements BookService {
 
     this.loggerService.debug({ message: 'Updating book...', context: { bookId, ...draft } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 
@@ -107,7 +107,7 @@ export class BookServiceImpl implements BookService {
 
     this.loggerService.debug({ message: 'Deleting book...', context: { bookId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookRepository = this.bookRepositoryFactory.create(entityManager);
 

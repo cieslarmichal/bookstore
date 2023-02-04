@@ -22,7 +22,7 @@ export class AuthorServiceImpl implements AuthorService {
 
     this.loggerService.debug({ message: 'Creating author...', context: { ...draft } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
@@ -36,7 +36,7 @@ export class AuthorServiceImpl implements AuthorService {
   public async findAuthor(input: FindAuthorPayload): Promise<Author> {
     const { unitOfWork, authorId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
@@ -52,7 +52,7 @@ export class AuthorServiceImpl implements AuthorService {
   public async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
     const { unitOfWork, filters, pagination } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
@@ -64,7 +64,7 @@ export class AuthorServiceImpl implements AuthorService {
   public async findAuthorsByBookId(input: FindAuthorsByBookIdPayload): Promise<Author[]> {
     const { unitOfWork, filters, pagination, bookId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
@@ -78,7 +78,7 @@ export class AuthorServiceImpl implements AuthorService {
 
     this.loggerService.debug({ message: 'Updating author...', context: { authorId, ...draft } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 
@@ -94,7 +94,7 @@ export class AuthorServiceImpl implements AuthorService {
 
     this.loggerService.debug({ message: 'Deleting author...', context: { authorId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorRepository = this.authorRepositoryFactory.create(entityManager);
 

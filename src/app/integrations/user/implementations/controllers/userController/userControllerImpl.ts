@@ -6,7 +6,7 @@ import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { UserService } from '../../../../../domain/user/contracts/services/userService/userService';
 import { User } from '../../../../../domain/user/contracts/user';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../../../controllerResponse';

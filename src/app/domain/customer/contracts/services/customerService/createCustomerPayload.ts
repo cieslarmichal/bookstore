@@ -1,7 +1,7 @@
 import { CreateCustomerDraft } from './createCustomerDraft';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
 export interface CreateCustomerPayload {
-  readonly unitOfWork: PostgresUnitOfWork;
+  readonly unitOfWork: UnitOfWork;
   readonly draft: CreateCustomerDraft;
 }

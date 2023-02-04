@@ -36,7 +36,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Registering user...', context: { email } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -68,7 +68,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Registering user...', context: { phoneNumber } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -100,7 +100,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Logging user in...', context: { email } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -131,7 +131,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Logging user in...', context: { phoneNumber } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -159,7 +159,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Setting password...', context: { userId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -183,7 +183,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Setting email...', context: { userId, email } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -215,7 +215,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Setting phone number...', context: { userId, phoneNumber } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -245,7 +245,7 @@ export class UserServiceImpl implements UserService {
   public async findUser(input: FindUserPayload): Promise<User> {
     const { unitOfWork, userId } = input;
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 
@@ -263,7 +263,7 @@ export class UserServiceImpl implements UserService {
 
     this.loggerService.debug({ message: 'Deleting user...', context: { userId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const userRepository = this.userRepositoryFactory.create(entityManager);
 

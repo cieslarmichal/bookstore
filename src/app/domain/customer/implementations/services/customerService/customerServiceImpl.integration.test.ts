@@ -86,7 +86,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -108,7 +108,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -136,7 +136,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -160,7 +160,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -200,7 +200,7 @@ describe('CustomerServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 

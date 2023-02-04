@@ -94,7 +94,7 @@ describe('AuthorBookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -128,7 +128,7 @@ describe('AuthorBookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
@@ -170,7 +170,7 @@ describe('AuthorBookServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 

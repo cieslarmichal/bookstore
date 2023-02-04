@@ -9,7 +9,7 @@ import { CreateAddressDraft } from '../../../../../domain/address/contracts/serv
 import { Customer } from '../../../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { AccessTokenData } from '../../../../accessTokenData';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';

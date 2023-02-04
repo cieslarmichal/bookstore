@@ -44,7 +44,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
       throw new CategoryNotFoundError({ id: categoryId });
     }
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookCategoryRepository = this.bookCategoryRepositoryFactory.create(entityManager);
 
@@ -94,7 +94,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
 
     this.loggerService.debug({ message: 'Deleting bookCategory...', context: { bookId, categoryId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const bookCategoryRepository = this.bookCategoryRepositoryFactory.create(entityManager);
 

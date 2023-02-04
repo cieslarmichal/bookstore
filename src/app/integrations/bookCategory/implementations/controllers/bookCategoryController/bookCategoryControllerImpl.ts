@@ -7,7 +7,7 @@ import { Book } from '../../../../../domain/book/contracts/book';
 import { BookCategory } from '../../../../../domain/bookCategory/contracts/bookCategory';
 import { BookCategoryService } from '../../../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
 import { Category } from '../../../../../domain/category/contracts/category';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
 import { findCategoriesFilters } from '../../../../category/contracts/controllers/categoryController/findCategoriesFilters';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';

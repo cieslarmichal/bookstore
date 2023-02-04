@@ -140,7 +140,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -177,7 +177,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -239,7 +239,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -269,7 +269,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -320,7 +320,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -375,7 +375,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -442,7 +442,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(2);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -561,7 +561,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
@@ -612,7 +612,7 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
-        const { entityManager } = unitOfWork;
+        const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
 

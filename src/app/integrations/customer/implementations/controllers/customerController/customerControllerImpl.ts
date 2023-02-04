@@ -4,7 +4,7 @@ import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
-import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../../../controllerResponse';

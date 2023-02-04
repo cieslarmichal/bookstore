@@ -44,7 +44,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
       throw new BookNotFoundError({ id: bookId });
     }
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorBookRepository = this.authorBookRepositoryFactory.create(entityManager);
 
@@ -90,7 +90,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
 
     this.loggerService.debug({ message: 'Deleting authorBook...', context: { authorId, bookId } });
 
-    const { entityManager } = unitOfWork;
+    const entityManager = unitOfWork.getEntityManager();
 
     const authorBookRepository = this.authorBookRepositoryFactory.create(entityManager);
 

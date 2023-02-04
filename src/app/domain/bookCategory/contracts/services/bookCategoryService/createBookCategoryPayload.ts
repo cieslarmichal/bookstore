@@ -1,7 +1,7 @@
 import { CreateBookCategoryDraft } from './createBookCategoryDraft';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/postgresUnitOfWork';
+import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
 export interface CreateBookCategoryPayload {
-  readonly unitOfWork: PostgresUnitOfWork;
+  readonly unitOfWork: UnitOfWork;
   readonly draft: CreateBookCategoryDraft;
 }
