@@ -3,22 +3,27 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
+import { Category } from '../../../../../domain/category/contracts/category';
 import { CategoryService } from '../../../../../domain/category/contracts/services/categoryService/categoryService';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/paginationData/paginationDataParser';
+import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
-import { CategoryController } from '../../../contracts/controllers/categoryController/categoryController';
+import { LocalsName } from '../../../../localsName';
+import { QueryParameterName } from '../../../../queryParameterName';
+import { CreateCategoryPayload } from '../../../contracts/controllers/categoryController/createCategoryPayload';
+import { DeleteCategoryPayload } from '../../../contracts/controllers/categoryController/deleteCategoryPayload';
 import { findCategoriesFilters } from '../../../contracts/controllers/categoryController/findCategoriesFilters';
+import { FindCategoriesPayload } from '../../../contracts/controllers/categoryController/findCategoriesPayload';
+import { FindCategoryPayload } from '../../../contracts/controllers/categoryController/findCategoryPayload';
 import { categoryErrorMiddleware } from '../../middlewares/categoryErrorMiddleware/categoryErrorMiddleware';
 
-const categoriesEndpoint = '/categories';
-const categoryEndpoint = `${categoriesEndpoint}/:id`;
-
-export class CategoryControllerImpl implements CategoryController {
+export class CategoryController {
   public readonly router = Router();
+  private readonly categoriesEndpoint = '/categories';
+  private readonly categoryEndpoint = `${this.categoriesEndpoint}/:id`;
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -30,92 +35,122 @@ export class CategoryControllerImpl implements CategoryController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      categoriesEndpoint,
+      this.categoriesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const createCategoryResponse = await this.createCategory(request, response);
-        response.locals['controllerResponse'] = createCategoryResponse;
+        const { name } = request.body;
+
+        const category = await this.createCategory({ name });
+
+        const controllerResponse: ControllerResponse = { data: { category }, statusCode: HttpStatusCode.created };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.get(
-      categoryEndpoint,
+      this.categoryEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const findCategoryResponse = await this.findCategory(request, response);
-        response.locals['controllerResponse'] = findCategoryResponse;
+        const { id } = request.params;
+
+        const category = await this.findCategory({ id: id as string });
+
+        const controllerResponse: ControllerResponse = { data: { category }, statusCode: HttpStatusCode.ok };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.get(
-      categoriesEndpoint,
+      this.categoriesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const findCategoriesResponse = await this.findCategories(request, response);
-        response.locals['controllerResponse'] = findCategoriesResponse;
+        const filters = this.filterDataParser.parse(
+          request.query[QueryParameterName.filter] as string,
+          findCategoriesFilters,
+        );
+
+        const pagination = this.paginationDataParser.parse(request.query);
+
+        const categories = await this.findCategories({ filters, pagination });
+
+        const controllerResponse: ControllerResponse = { data: { categories }, statusCode: HttpStatusCode.ok };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.delete(
-      categoryEndpoint,
+      this.categoryEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const deleteCategoryResponse = await this.deleteCategory(request, response);
-        response.locals['controllerResponse'] = deleteCategoryResponse;
+        const { id } = request.params;
+
+        await this.deleteCategory({ id: id as string });
+
+        const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.use(sendResponseMiddleware);
+
     this.router.use(categoryErrorMiddleware);
   }
 
-  public async createCategory(request: Request, _response: Response): Promise<ControllerResponse> {
-    const unitOfWork = await this.unitOfWorkFactory.create();
+  private async createCategory(input: CreateCategoryPayload): Promise<Category> {
+    const { name } = input;
 
-    const { name } = request.body;
+    const unitOfWork = await this.unitOfWorkFactory.create();
 
     const category = await unitOfWork.runInTransaction(async () => {
-      return this.categoryService.createCategory(unitOfWork, { name });
+      return this.categoryService.createCategory({ unitOfWork, draft: { name } });
     });
 
-    return { data: { category }, statusCode: HttpStatusCode.created };
+    return category;
   }
 
-  public async findCategory(request: Request, _response: Response): Promise<ControllerResponse> {
-    const unitOfWork = await this.unitOfWorkFactory.create();
+  private async findCategory(input: FindCategoryPayload): Promise<Category> {
+    const { id } = input;
 
-    const { id } = request.params;
+    const unitOfWork = await this.unitOfWorkFactory.create();
 
     const category = await unitOfWork.runInTransaction(async () => {
-      return this.categoryService.findCategory(unitOfWork, id as string);
+      return this.categoryService.findCategory({ unitOfWork, categoryId: id });
     });
 
-    return { data: { category }, statusCode: HttpStatusCode.ok };
+    return category;
   }
 
-  public async findCategories(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
+    const { filters, pagination } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
-
-    const filters = this.filterDataParser.parse(request.query['filter'] as string, findCategoriesFilters);
-
-    const pagination = this.paginationDataParser.parse(request.query);
 
     const categories = await unitOfWork.runInTransaction(async () => {
-      return this.categoryService.findCategories(unitOfWork, filters, pagination);
+      return this.categoryService.findCategories({ unitOfWork, filters, pagination });
     });
 
-    return { data: { categories }, statusCode: HttpStatusCode.ok };
+    return categories;
   }
 
-  public async deleteCategory(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
+    const { id } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = request.params;
-
     await unitOfWork.runInTransaction(async () => {
-      await this.categoryService.deleteCategory(unitOfWork, id as string);
+      await this.categoryService.deleteCategory({ unitOfWork, categoryId: id });
     });
-
-    return { statusCode: HttpStatusCode.noContent };
   }
 }

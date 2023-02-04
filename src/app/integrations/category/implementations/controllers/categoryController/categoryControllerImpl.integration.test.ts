@@ -35,7 +35,7 @@ import { IntegrationsModule } from '../../../../integrationsModule';
 
 const baseUrl = '/categories';
 
-describe(`CategoryControllerImpl (${baseUrl})`, () => {
+describe(`CategoryController (${baseUrl})`, () => {
   const spyFactory = new SpyFactory(vi);
 
   let categoryRepositoryFactory: CategoryRepositoryFactory;
@@ -126,9 +126,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { name } = categoryEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -149,9 +149,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const categoryId = 'abc';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${categoryId}`)
@@ -167,9 +167,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id } = categoryEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -187,9 +187,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.create();
+        const { id, name } = categoryEntityTestFactory.create();
 
-        const category = await categoryRepository.createOne({ name });
+        const category = await categoryRepository.createOne({ id, name });
 
         const response = await request(server.instance).get(`${baseUrl}/${category.id}`);
 
@@ -207,11 +207,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const { id, name } = categoryEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.create();
-
-        const category = await categoryRepository.createOne({ name });
+        const category = await categoryRepository.createOne({ id, name });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${category.id}`)
@@ -243,18 +243,18 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const categoryEntity1 = categoryEntityTestFactory.create();
+
+        const categoryEntity2 = categoryEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.create();
+        await categoryRepository.createOne(categoryEntity1);
 
-        await categoryRepository.createOne({ name });
-
-        const { name: otherName } = categoryEntityTestFactory.create();
-
-        await categoryRepository.createOne({ name: otherName });
+        await categoryRepository.createOne(categoryEntity2);
 
         const response = await request(server.instance)
-          .get(`${baseUrl}?filter=["name||eq||${name}"]`)
+          .get(`${baseUrl}?filter=["name||eq||${categoryEntity1.name}"]`)
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -270,9 +270,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const categoryId = 'abc';
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${categoryId}`)
@@ -289,9 +289,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
-
         const { id } = categoryEntityTestFactory.create();
+
+        const accessToken = authHelper.mockAuth({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -310,9 +310,9 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
 
-        const { name } = categoryEntityTestFactory.create();
+        const { id, name } = categoryEntityTestFactory.create();
 
-        const category = await categoryRepository.createOne({ name });
+        const category = await categoryRepository.createOne({ id, name });
 
         const response = await request(server.instance).delete(`${baseUrl}/${category.id}`).send();
 
@@ -330,11 +330,11 @@ describe(`CategoryControllerImpl (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
+        const { id, name } = categoryEntityTestFactory.create();
+
         const accessToken = authHelper.mockAuth({ userId, role });
 
-        const { name } = categoryEntityTestFactory.create();
-
-        const category = await categoryRepository.createOne({ name });
+        const category = await categoryRepository.createOne({ id, name });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${category.id}`)
