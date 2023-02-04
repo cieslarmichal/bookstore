@@ -7,9 +7,9 @@ import { TokenServiceImpl } from './implementations/services/tokenService/tokenS
 import { UserServiceImpl } from './implementations/services/userService/userServiceImpl';
 import { UserModuleConfig } from './userModuleConfig';
 import { userSymbols } from './userSymbols';
-import { Module } from '../../libs/dependencyInjection/module';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
-export class UserModule implements Module {
+export class UserModule implements DependencyInjectionModule {
   public constructor(private readonly config: UserModuleConfig) {}
 
   public async registerSymbols(container: AwilixContainer): Promise<void> {

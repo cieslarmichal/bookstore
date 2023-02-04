@@ -4,9 +4,9 @@ import { LoggerClientFactory } from './loggerClientFactory';
 import { LoggerModuleConfig } from './loggerModuleConfig';
 import { LoggerServiceImpl } from './loggerServiceImpl';
 import { loggerSymbols } from './loggerSymbols';
-import { Module } from '../dependencyInjection/module';
+import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
 
-export class LoggerModule implements Module {
+export class LoggerModule implements DependencyInjectionModule {
   public constructor(private readonly config: LoggerModuleConfig) {}
 
   public async registerSymbols(container: AwilixContainer): Promise<void> {

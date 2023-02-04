@@ -4,9 +4,9 @@ import { customerSymbols } from './customerSymbols';
 import { CustomerRepositoryFactoryImpl } from './implementations/factories/customerRepositoryFactory/customerRepositoryFactoryImpl';
 import { CustomerMapperImpl } from './implementations/mappers/customerMapper/customerMapperImpl';
 import { CustomerServiceImpl } from './implementations/services/customerService/customerServiceImpl';
-import { Module } from '../../libs/dependencyInjection/module';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
-export class CustomerModule implements Module {
+export class CustomerModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [customerSymbols.customerMapper]: asClass(CustomerMapperImpl, { lifetime: Lifetime.SINGLETON }),

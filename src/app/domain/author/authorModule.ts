@@ -4,9 +4,9 @@ import { authorSymbols } from './authorSymbols';
 import { AuthorRepositoryFactoryImpl } from './implementations/factories/authorRepositoryFactory/authorRepositoryFactoryImpl';
 import { AuthorMapperImpl } from './implementations/mappers/authorMapper/authorMapperImpl';
 import { AuthorServiceImpl } from './implementations/services/authorService/authorServiceImpl';
-import { Module } from '../../libs/dependencyInjection/module';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
-export class AuthorModule implements Module {
+export class AuthorModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [authorSymbols.authorMapper]: asClass(AuthorMapperImpl, { lifetime: Lifetime.SINGLETON }),

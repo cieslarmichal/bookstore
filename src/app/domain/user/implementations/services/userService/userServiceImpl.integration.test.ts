@@ -4,7 +4,7 @@ import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
 import { SpyFactory } from '../../../../../common/testFactories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
-import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
 import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
@@ -44,7 +44,7 @@ describe('UserServiceImpl', () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    const container = await createDependencyInjectionContainer([
+    const container = await DependencyInjectionContainerFactory.create([
       new PostgresModule(postgresModuleConfig),
       new UserModule(userModuleConfig),
       new LoggerModule(loggerModuleConfig),

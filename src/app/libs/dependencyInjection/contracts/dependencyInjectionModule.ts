@@ -1,5 +1,5 @@
 import { AwilixContainer } from 'awilix';
 
-export interface Module {
+export interface DependencyInjectionModule {
   registerSymbols(container: AwilixContainer): Promise<void>;
 }

@@ -4,9 +4,9 @@ import { addressSymbols } from './addressSymbols';
 import { AddressRepositoryFactoryImpl } from './implementations/factories/addressRepositoryFactory/addressRepositoryFactoryImpl';
 import { AddressMapperImpl } from './implementations/mappers/addressMapper/addressMapperImpl';
 import { AddressServiceImpl } from './implementations/services/addressService/addressServiceImpl';
-import { Module } from '../../libs/dependencyInjection/module';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
-export class AddressModule implements Module {
+export class AddressModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [addressSymbols.addressMapper]: asClass(AddressMapperImpl, { lifetime: Lifetime.SINGLETON }),

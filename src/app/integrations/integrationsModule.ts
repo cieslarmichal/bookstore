@@ -12,9 +12,9 @@ import { PaginationDataParser } from './common/pagination/paginationDataParser';
 import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
-import { Module } from '../libs/dependencyInjection/module';
+import { DependencyInjectionModule } from '../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
-export class IntegrationsModule implements Module {
+export class IntegrationsModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [integrationsSymbols.authMiddleware]: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),

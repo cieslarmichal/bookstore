@@ -21,7 +21,7 @@ import { UserEntityTestFactory } from '../../../../../domain/user/tests/factorie
 import { UserModuleConfigTestFactory } from '../../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../../domain/user/userModule';
 import { userSymbols } from '../../../../../domain/user/userSymbols';
-import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
 import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
@@ -58,7 +58,7 @@ describe(`UserController (${baseUrl})`, () => {
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
-    const container = await createDependencyInjectionContainer([
+    const container = await DependencyInjectionContainerFactory.create([
       new PostgresModule(postgresModuleConfig),
       new CategoryModule(),
       new BookModule(),

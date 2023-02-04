@@ -4,9 +4,9 @@ import { bookSymbols } from './bookSymbols';
 import { BookRepositoryFactoryImpl } from './implementations/factories/bookRepositoryFactory/bookRepositoryFactoryImpl';
 import { BookMapperImpl } from './implementations/mappers/bookMapper/bookMapperImpl';
 import { BookServiceImpl } from './implementations/services/bookService/bookServiceImpl';
-import { Module } from '../../libs/dependencyInjection/module';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
-export class BookModule implements Module {
+export class BookModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [bookSymbols.bookMapper]: asClass(BookMapperImpl, { lifetime: Lifetime.SINGLETON }),

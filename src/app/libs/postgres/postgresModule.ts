@@ -3,9 +3,9 @@ import { asClass, asFunction, asValue, AwilixContainer, Lifetime } from 'awilix'
 import { PostgresConnector } from './postgresConnector';
 import { PostgresModuleConfig } from './postgresModuleConfig';
 import { postgresSymbols } from './postgresSymbols';
-import { Module } from '../dependencyInjection/module';
+import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
 
-export class PostgresModule implements Module {
+export class PostgresModule implements DependencyInjectionModule {
   public constructor(private readonly config: PostgresModuleConfig) {}
 
   public async registerSymbols(container: AwilixContainer): Promise<void> {

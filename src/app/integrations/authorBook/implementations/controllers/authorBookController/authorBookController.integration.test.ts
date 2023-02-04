@@ -27,7 +27,7 @@ import { CustomerModule } from '../../../../../domain/customer/customerModule';
 import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../../domain/user/userModule';
-import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
 import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
@@ -64,7 +64,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
-    const container = await createDependencyInjectionContainer([
+    const container = await DependencyInjectionContainerFactory.create([
       new PostgresModule(postgresModuleConfig),
       new CategoryModule(),
       new BookModule(),

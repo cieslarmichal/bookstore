@@ -13,7 +13,7 @@ import { errorMiddleware } from './integrations/common/middlewares/errorMiddlewa
 import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
 import { IntegrationsModule } from './integrations/integrationsModule';
 import { integrationsSymbols } from './integrations/integrationsSymbols';
-import { createDependencyInjectionContainer } from './libs/dependencyInjection/container';
+import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/dependencyInjectionContainerFactory';
 import { LoggerModule } from './libs/logger/loggerModule';
 import { PostgresModule } from './libs/postgres/postgresModule';
 
@@ -39,7 +39,7 @@ export class App {
       logLevel,
     } = this.config;
 
-    const container = await createDependencyInjectionContainer([
+    const container = await DependencyInjectionContainerFactory.create([
       new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword }),
       new CategoryModule(),
       new BookModule(),

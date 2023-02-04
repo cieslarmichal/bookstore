@@ -7,7 +7,7 @@ import { FilterName } from '../../../../../common/filter/filterName';
 import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 import { SpyFactory } from '../../../../../common/testFactories/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
-import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
 import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
@@ -62,7 +62,7 @@ describe('BookServiceImpl', () => {
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    const container = await createDependencyInjectionContainer([
+    const container = await DependencyInjectionContainerFactory.create([
       new PostgresModule(postgresModuleConfig),
       new BookModule(),
       new AuthorModule(),
