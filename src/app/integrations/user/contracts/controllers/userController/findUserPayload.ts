@@ -1,6 +1,6 @@
 import { AccessTokenData } from '../../../../accessTokenData';
 
-export interface FindAddressPayload {
+export interface FindUserPayload {
   readonly id: string;
   readonly accessTokenData: AccessTokenData;
 }

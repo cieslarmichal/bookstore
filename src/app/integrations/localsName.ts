@@ -1,4 +1,4 @@
 export enum LocalsName {
-  authTokenData = 'authTokenData',
+  accessTokenData = 'accessTokenData',
   controllerResponse = 'controllerResponse',
 }

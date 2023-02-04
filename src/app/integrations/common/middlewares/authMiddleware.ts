@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
-import { AuthTokenData } from '../../authTokenData';
+import { AccessTokenData } from '../../accessTokenData';
 import { LocalsName } from '../../localsName';
 
 export class AuthMiddleware {
@@ -28,15 +28,15 @@ export class AuthMiddleware {
     try {
       const tokenPayload = await this.tokenService.verifyToken(token);
 
-      const authTokenData = tokenPayload as unknown as AuthTokenData;
+      const accessTokenData = tokenPayload as unknown as AccessTokenData;
 
-      if (!authTokenData) {
+      if (!accessTokenData) {
         response.status(HttpStatusCode.unauthorized).send({ error: 'Invalid access token' });
 
         return;
       }
 
-      response.locals[LocalsName.authTokenData] = authTokenData;
+      response.locals[LocalsName.accessTokenData] = accessTokenData;
     } catch (error) {
       response.status(HttpStatusCode.unauthorized).send({ error: 'Invalid access token' });
 

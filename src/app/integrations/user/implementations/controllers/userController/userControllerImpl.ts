@@ -4,25 +4,32 @@ import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { UserService } from '../../../../../domain/user/contracts/services/userService/userService';
+import { User } from '../../../../../domain/user/contracts/user';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../../../controllerResponse';
-import { UserController } from '../../../contracts/controllers/userController/userController';
+import { LocalsName } from '../../../../localsName';
+import { DeleteUserPayload } from '../../../contracts/controllers/userController/deleteUserPayload';
+import { FindUserPayload } from '../../../contracts/controllers/userController/findUserPayload';
+import { LoginUserPayload } from '../../../contracts/controllers/userController/loginUserPayload';
+import { RegisterUserPayload } from '../../../contracts/controllers/userController/registerUserPayload';
+import { SetUserEmailPayload } from '../../../contracts/controllers/userController/setUserEmailPayload';
+import { SetUserPasswordPayload } from '../../../contracts/controllers/userController/setUserPasswordPayload';
+import { SetUserPhoneNumberPayload } from '../../../contracts/controllers/userController/setUserPhoneNumberPayload';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../../../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 import { userErrorMiddleware } from '../../middlewares/userErrorMiddleware/userErrorMiddleware';
 
-const usersEndpoint = '/users';
-const userEndpoint = `${usersEndpoint}/:id`;
-const registerUserEndpoint = `${usersEndpoint}/register`;
-const loginUserEndpoint = `${usersEndpoint}/login`;
-const setUserPasswordEndpoint = `${usersEndpoint}/set-password`;
-const setUserPhoneNumberEndpoint = `${usersEndpoint}/set-phone-number`;
-const setUserEmailEndpoint = `${usersEndpoint}/set-email`;
-
-export class UserControllerImpl implements UserController {
+export class UserController {
   public readonly router = Router();
+  private readonly usersEndpoint = '/users';
+  private readonly userEndpoint = `${this.usersEndpoint}/:id`;
+  private readonly registerUserEndpoint = `${this.usersEndpoint}/register`;
+  private readonly loginUserEndpoint = `${this.usersEndpoint}/login`;
+  private readonly setUserPasswordEndpoint = `${this.usersEndpoint}/set-password`;
+  private readonly setUserPhoneNumberEndpoint = `${this.usersEndpoint}/set-phone-number`;
+  private readonly setUserEmailEndpoint = `${this.usersEndpoint}/set-email`;
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -32,211 +39,255 @@ export class UserControllerImpl implements UserController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      registerUserEndpoint,
+      this.registerUserEndpoint,
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const registerUserResponse = await this.registerUser(request, response);
-        response.locals['controllerResponse'] = registerUserResponse;
+        const { phoneNumber, email, password } = request.body;
+
+        const user = await this.registerUser({ email, phoneNumber, password });
+
+        const controllerResponse: ControllerResponse = {
+          data: {
+            user: {
+              id: user.id,
+              email: user.email,
+              role: user.role,
+            },
+          },
+          statusCode: HttpStatusCode.created,
+        };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.post(
-      loginUserEndpoint,
+      this.loginUserEndpoint,
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const loginUserResponse = await this.loginUser(request, response);
-        response.locals['controllerResponse'] = loginUserResponse;
+        const { phoneNumber, email, password } = request.body;
+
+        const token = await this.loginUser({ email, phoneNumber, password });
+
+        const controllerResponse: ControllerResponse = { data: { token }, statusCode: HttpStatusCode.ok };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.post(
-      setUserPasswordEndpoint,
+      this.setUserPasswordEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const setUserPasswordResponse = await this.setUserPassword(request, response);
-        response.locals['controllerResponse'] = setUserPasswordResponse;
+        const { userId, password } = request.body;
+
+        const accessTokenData = response.locals[LocalsName.accessTokenData];
+
+        await this.setUserPassword({ userId, password, accessTokenData });
+
+        const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.post(
-      setUserPhoneNumberEndpoint,
+      this.setUserPhoneNumberEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const setUserPhoneNumberResponse = await this.setUserPhoneNumber(request, response);
-        response.locals['controllerResponse'] = setUserPhoneNumberResponse;
+        const { userId, phoneNumber } = request.body;
+
+        const accessTokenData = response.locals[LocalsName.accessTokenData];
+
+        await this.setUserPhoneNumber({ userId, phoneNumber, accessTokenData });
+
+        const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.post(
-      setUserEmailEndpoint,
+      this.setUserEmailEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const setUserEmailResponse = await this.setUserEmail(request, response);
-        response.locals['controllerResponse'] = setUserEmailResponse;
+        const { userId, email } = request.body;
+
+        const accessTokenData = response.locals[LocalsName.accessTokenData];
+
+        await this.setUserEmail({ userId, email, accessTokenData });
+
+        const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.get(
-      userEndpoint,
+      this.userEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const findUserResponse = await this.findUser(request, response);
-        response.locals['controllerResponse'] = findUserResponse;
+        const { id } = request.params;
+
+        const accessTokenData = response.locals[LocalsName.accessTokenData];
+
+        const user = await this.findUser({ id: id as string, accessTokenData });
+
+        const controllerResponse: ControllerResponse = {
+          data: {
+            user: {
+              id: user.id,
+              email: user.email,
+              role: user.role,
+            },
+          },
+          statusCode: HttpStatusCode.ok,
+        };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.delete(
-      userEndpoint,
+      this.userEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const deleteUserResponse = await this.deleteUser(request, response);
-        response.locals['controllerResponse'] = deleteUserResponse;
+        const { id } = request.params;
+
+        const accessTokenData = response.locals[LocalsName.accessTokenData];
+
+        await this.deleteUser({ id: id as string, accessTokenData });
+
+        const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.use(sendResponseMiddleware);
+
     this.router.use(userErrorMiddleware);
   }
 
-  public async registerUser(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async registerUser(input: RegisterUserPayload): Promise<User> {
+    const { email, password, phoneNumber } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const user = await unitOfWork.runInTransaction(async () => {
-      const { phoneNumber, email, password } = request.body;
-
       if (email) {
-        return this.userService.registerUserByEmail(unitOfWork, { email, password });
+        return this.userService.registerUserByEmail({ unitOfWork, draft: { email, password } });
       } else {
-        return this.userService.registerUserByPhoneNumber(unitOfWork, { phoneNumber, password });
+        return this.userService.registerUserByPhoneNumber({
+          unitOfWork,
+          draft: { phoneNumber: phoneNumber as string, password },
+        });
       }
     });
 
-    return {
-      data: {
-        user: {
-          id: user.id,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-          email: user.email,
-          role: user.role,
-        },
-      },
-      statusCode: HttpStatusCode.created,
-    };
+    return user;
   }
 
-  public async loginUser(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async loginUser(input: LoginUserPayload): Promise<string> {
+    const { email, password, phoneNumber } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const token = await unitOfWork.runInTransaction(async () => {
-      const { phoneNumber, email, password } = request.body;
-
       if (email) {
-        return this.userService.loginUserByEmail(unitOfWork, { email, password });
+        return this.userService.loginUserByEmail({ unitOfWork, draft: { email, password } });
       } else {
-        return this.userService.loginUserByPhoneNumber(unitOfWork, { phoneNumber, password });
+        return this.userService.loginUserByPhoneNumber({
+          unitOfWork,
+          draft: { phoneNumber: phoneNumber as string, password },
+        });
       }
     });
 
-    return { data: { token }, statusCode: HttpStatusCode.ok };
+    return token;
   }
 
-  public async setUserPassword(request: Request, response: Response): Promise<ControllerResponse> {
+  private async setUserPassword(input: SetUserPasswordPayload): Promise<void> {
+    const { userId, password, accessTokenData } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { userId: targetUserId, password } = request.body;
-
-    const { userId, role } = response.locals['authTokenData'];
-
-    if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
+    if (userId !== accessTokenData.userId && accessTokenData.role === UserRole.user) {
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, accessTokenData });
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setPassword(unitOfWork, userId, password);
+      await this.userService.setPassword({ unitOfWork, userId, password });
     });
-
-    return { statusCode: HttpStatusCode.noContent };
   }
 
-  public async setUserPhoneNumber(request: Request, response: Response): Promise<ControllerResponse> {
+  private async setUserPhoneNumber(input: SetUserPhoneNumberPayload): Promise<void> {
+    const { userId, phoneNumber, accessTokenData } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { userId: targetUserId, phoneNumber } = request.body;
-
-    const { userId, role } = response.locals['authTokenData'];
-
-    if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
+    if (userId !== accessTokenData.userId && accessTokenData.role === UserRole.user) {
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, accessTokenData });
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setPhoneNumber(unitOfWork, userId, phoneNumber);
+      await this.userService.setPhoneNumber({ unitOfWork, userId, phoneNumber });
     });
-
-    return { statusCode: HttpStatusCode.noContent };
   }
 
-  public async setUserEmail(request: Request, response: Response): Promise<ControllerResponse> {
+  private async setUserEmail(input: SetUserEmailPayload): Promise<void> {
+    const { userId, email, accessTokenData } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { userId: targetUserId, email } = request.body;
-
-    const { userId, role } = response.locals['authTokenData'];
-
-    if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId });
+    if (userId !== accessTokenData.userId && accessTokenData.role === UserRole.user) {
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, accessTokenData });
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setEmail(unitOfWork, userId, email);
+      await this.userService.setEmail({ unitOfWork, userId, email });
     });
-
-    return { statusCode: HttpStatusCode.noContent };
   }
 
-  public async findUser(request: Request, response: Response): Promise<ControllerResponse> {
+  private async findUser(input: FindUserPayload): Promise<User> {
+    const { id: userId, accessTokenData } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id: targetUserId } = request.params;
-
-    const { userId, role } = response.locals['authTokenData'];
-
-    if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId: targetUserId as string });
+    if (userId !== accessTokenData.userId && accessTokenData.role === UserRole.user) {
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, accessTokenData });
     }
 
     const user = await unitOfWork.runInTransaction(async () => {
-      return this.userService.findUser(unitOfWork, targetUserId as string);
+      return this.userService.findUser({ unitOfWork, userId });
     });
 
-    return {
-      data: {
-        user: {
-          id: user.id,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-          email: user.email,
-          role: user.role,
-        },
-      },
-      statusCode: HttpStatusCode.ok,
-    };
+    return user;
   }
 
-  public async deleteUser(request: Request, response: Response): Promise<ControllerResponse> {
+  private async deleteUser(input: DeleteUserPayload): Promise<void> {
+    const { id: userId, accessTokenData } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id: targetUserId } = request.params;
-
-    const { userId, role } = response.locals['authTokenData'];
-
-    if (userId !== targetUserId && role === UserRole.user) {
-      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, targetUserId: targetUserId as string });
+    if (userId !== accessTokenData.userId && accessTokenData.role === UserRole.user) {
+      throw new UserFromAccessTokenNotMatchingTargetUserError({ userId, accessTokenData });
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.deleteUser(unitOfWork, targetUserId as string);
+      await this.userService.deleteUser({ unitOfWork, userId });
     });
-
-    return { statusCode: HttpStatusCode.noContent };
   }
 }

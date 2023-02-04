@@ -10,7 +10,7 @@ import { Customer } from '../../../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../../../domain/customer/contracts/services/customerService/customerService';
 import { UserRole } from '../../../../../domain/user/contracts/userRole';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFactory';
-import { AuthTokenData } from '../../../../authTokenData';
+import { AccessTokenData } from '../../../../accessTokenData';
 import { FilterDataParser } from '../../../../common/filter/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
@@ -86,9 +86,9 @@ export class AddressController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { id } = request.params;
 
-        const authTokenData: AuthTokenData = response.locals[LocalsName.authTokenData];
+        const accessTokenData: AccessTokenData = response.locals[LocalsName.accessTokenData];
 
-        const address = await this.findAddress({ authTokenData, id: id as string });
+        const address = await this.findAddress({ accessTokenData, id: id as string });
 
         const controllerResponse: ControllerResponse = { data: { address }, statusCode: HttpStatusCode.ok };
 
@@ -186,12 +186,12 @@ export class AddressController {
   }
 
   private async findAddress(input: FindAddressPayload): Promise<Address> {
-    const { id, authTokenData } = input;
+    const { id, accessTokenData } = input;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const address = await unitOfWork.runInTransaction(async () => {
-      const { userId, role } = authTokenData;
+      const { userId, role } = accessTokenData;
 
       let customer: Customer;
 

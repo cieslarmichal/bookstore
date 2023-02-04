@@ -40,7 +40,7 @@ const setPasswordUrl = `${baseUrl}/set-password`;
 const setEmailUrl = `${baseUrl}/set-email`;
 const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
-describe(`UserControllerImpl (${baseUrl})`, () => {
+describe(`UserController (${baseUrl})`, () => {
   const spyFactory = new SpyFactory(vi);
 
   let hashService: HashService;
@@ -118,9 +118,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password, role } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ email: email as string, password });
+        await userRepository.createOne({ id, email: email as string, password, role });
 
         const response = await request(server.instance).post(registerUrl).send({
           email,
@@ -170,9 +170,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password, role } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
+        await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password, role });
 
         const response = await request(server.instance).post(registerUrl).send({
           phoneNumber,
@@ -206,9 +206,7 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
         const { email } = userEntityTestFactory.create();
 
-        const response = await request(server.instance).post(loginUrl).send({
-          email,
-        });
+        const response = await request(server.instance).post(loginUrl).send({ email });
 
         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
       });
@@ -237,11 +235,11 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password, role } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
-        await userRepository.createOne({ email: email as string, password: hashedPassword });
+        await userRepository.createOne({ id, email: email as string, password: hashedPassword, role });
 
         const response = await request(server.instance).post(loginUrl).send({
           email,
@@ -291,11 +289,11 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password, role } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
-        await userRepository.createOne({ phoneNumber: phoneNumber as string, password: hashedPassword });
+        await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password: hashedPassword, role });
 
         const response = await request(server.instance).post(loginUrl).send({
           phoneNumber,
@@ -392,9 +390,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password, role });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -496,11 +494,13 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id: id1, email, password, role } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ email: email as string, password });
+        const { id: id2, phoneNumber } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
+        await userRepository.createOne({ id: id1, email: email as string, password, role });
+
+        const user = await userRepository.createOne({ id: id2, phoneNumber: phoneNumber as string, password, role });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -524,9 +524,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password, role });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -550,9 +550,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, email, password, role } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
+        const user = await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password, role });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -654,11 +654,13 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id: id1, phoneNumber, password, role } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
+        const { id: id2, email } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        await userRepository.createOne({ id: id1, role, phoneNumber: phoneNumber as string, password });
+
+        const user = await userRepository.createOne({ id: id2, role, email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -682,9 +684,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, password } = userEntityTestFactory.create();
+        const { id, role, phoneNumber, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ phoneNumber: phoneNumber as string, password });
+        const user = await userRepository.createOne({ id, role, phoneNumber: phoneNumber as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -708,9 +710,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id, role, phoneNumber, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, role, email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -770,9 +772,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, role, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, role, email: email as string, password });
 
         const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
 
@@ -806,9 +808,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, role, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, role, email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
@@ -866,9 +868,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, role, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, role, email: email as string, password });
 
         const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
 
@@ -902,9 +904,9 @@ describe(`UserControllerImpl (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { email, password } = userEntityTestFactory.create();
+        const { id, role, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ email: email as string, password });
+        const user = await userRepository.createOne({ id, role, email: email as string, password });
 
         const accessToken = authHelper.mockAuth({ userId: user.id, role: user.role });
 
