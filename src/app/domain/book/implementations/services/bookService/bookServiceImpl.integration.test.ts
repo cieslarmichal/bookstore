@@ -10,29 +10,37 @@ import { TestTransactionInternalRunner } from '../../../../../integrations/commo
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AddressEntity } from '../../../../address/contracts/addressEntity';
 import { AuthorModule } from '../../../../author/authorModule';
 import { authorSymbols } from '../../../../author/authorSymbols';
+import { AuthorEntity } from '../../../../author/contracts/authorEntity';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
 import { AuthorEntityTestFactory } from '../../../../author/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
 import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';
+import { AuthorBookEntity } from '../../../../authorBook/contracts/authorBookEntity';
 import { AuthorBookRepositoryFactory } from '../../../../authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { AuthorBookEntityTestFactory } from '../../../../authorBook/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { BookCategoryModule } from '../../../../bookCategory/bookCategoryModule';
 import { bookCategorySymbols } from '../../../../bookCategory/bookCategorySymbols';
+import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { categorySymbols } from '../../../../category/categorySymbols';
+import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryEntityTestFactory } from '../../../../category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
+import { UserEntity } from '../../../../user/contracts/userEntity';
 import { BookModule } from '../../../bookModule';
 import { bookSymbols } from '../../../bookSymbols';
+import { BookEntity } from '../../../contracts/bookEntity';
 import { BookFormat } from '../../../contracts/bookFormat';
 import { BookLanguage } from '../../../contracts/bookLanguage';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
@@ -59,7 +67,18 @@ describe('BookServiceImpl', () => {
   const bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
+    entities: [
+      BookEntity,
+      AuthorEntity,
+      UserEntity,
+      CategoryEntity,
+      AuthorBookEntity,
+      BookCategoryEntity,
+      AddressEntity,
+      CustomerEntity,
+    ],
+  });
 
   beforeAll(async () => {
     const container = await DependencyInjectionContainerFactory.create([

@@ -1,6 +1,7 @@
 import { asClass, asFunction, asValue, AwilixContainer, Lifetime } from 'awilix';
 
-import { PostgresConnector } from './postgresConnector';
+import { PostgresConnector } from './contracts/postgresConnector';
+import { PostgresConnectorImpl } from './implementations/postgresConnectorImpl';
 import { PostgresModuleConfig } from './postgresModuleConfig';
 import { postgresSymbols } from './postgresSymbols';
 import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
@@ -11,7 +12,7 @@ export class PostgresModule implements DependencyInjectionModule {
   public async registerSymbols(container: AwilixContainer): Promise<void> {
     container.register({
       [postgresSymbols.postgresModuleConfig]: asValue(this.config),
-      [postgresSymbols.postgresConnector]: asClass(PostgresConnector, { lifetime: Lifetime.SINGLETON }),
+      [postgresSymbols.postgresConnector]: asClass(PostgresConnectorImpl, { lifetime: Lifetime.SINGLETON }),
       [postgresSymbols.entityManager]: asFunction(async () => {
         const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
 

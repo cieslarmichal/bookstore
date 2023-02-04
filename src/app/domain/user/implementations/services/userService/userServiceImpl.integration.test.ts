@@ -7,16 +7,24 @@ import { TestTransactionInternalRunner } from '../../../../../integrations/commo
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AddressEntity } from '../../../../address/contracts/addressEntity';
+import { AuthorEntity } from '../../../../author/contracts/authorEntity';
+import { AuthorBookEntity } from '../../../../authorBook/contracts/authorBookEntity';
+import { BookEntity } from '../../../../book/contracts/bookEntity';
+import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
+import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
+import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
 import { TokenService } from '../../../contracts/services/tokenService/tokenService';
 import { UserService } from '../../../contracts/services/userService/userService';
 import { User } from '../../../contracts/user';
+import { UserEntity } from '../../../contracts/userEntity';
 import { UserRole } from '../../../contracts/userRole';
 import { EmailAlreadySetError } from '../../../errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../errors/phoneNumberAlreadySetError';
@@ -40,7 +48,18 @@ describe('UserServiceImpl', () => {
   const userEntityTestFactory = new UserEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
+    entities: [
+      BookEntity,
+      AuthorEntity,
+      UserEntity,
+      CategoryEntity,
+      AuthorBookEntity,
+      BookCategoryEntity,
+      AddressEntity,
+      CustomerEntity,
+    ],
+  });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {

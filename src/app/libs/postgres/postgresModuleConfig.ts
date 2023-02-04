@@ -1,4 +1,4 @@
-import { EntitySchema } from 'typeorm';
+export type EntityConstructor = new () => unknown;
 
 export interface PostgresModuleConfig {
   readonly databaseHost: string;
@@ -6,5 +6,5 @@ export interface PostgresModuleConfig {
   readonly databaseName: string;
   readonly databaseUser: string;
   readonly databasePassword: string;
-  readonly entities: EntitySchema[];
+  readonly entities: EntityConstructor[];
 }

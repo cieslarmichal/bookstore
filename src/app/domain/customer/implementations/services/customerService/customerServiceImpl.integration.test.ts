@@ -7,16 +7,24 @@ import { TestTransactionInternalRunner } from '../../../../../integrations/commo
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AddressEntity } from '../../../../address/contracts/addressEntity';
+import { AuthorEntity } from '../../../../author/contracts/authorEntity';
+import { AuthorBookEntity } from '../../../../authorBook/contracts/authorBookEntity';
+import { BookEntity } from '../../../../book/contracts/bookEntity';
+import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
+import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { UserEntity } from '../../../../user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../../user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../user/userModule';
 import { userSymbols } from '../../../../user/userSymbols';
+import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
 import { CustomerModule } from '../../../customerModule';
@@ -38,7 +46,18 @@ describe('CustomerServiceImpl', () => {
   const userEntityTestFactory = new UserEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
+    entities: [
+      BookEntity,
+      AuthorEntity,
+      UserEntity,
+      CategoryEntity,
+      AuthorBookEntity,
+      BookCategoryEntity,
+      AddressEntity,
+      CustomerEntity,
+    ],
+  });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {

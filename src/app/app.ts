@@ -2,12 +2,20 @@ import express, { json, urlencoded } from 'express';
 
 import { AppConfig } from './appConfig';
 import { AddressModule } from './domain/address/addressModule';
+import { AddressEntity } from './domain/address/contracts/addressEntity';
 import { AuthorModule } from './domain/author/authorModule';
+import { AuthorEntity } from './domain/author/contracts/authorEntity';
 import { AuthorBookModule } from './domain/authorBook/authorBookModule';
+import { AuthorBookEntity } from './domain/authorBook/contracts/authorBookEntity';
 import { BookModule } from './domain/book/bookModule';
+import { BookEntity } from './domain/book/contracts/bookEntity';
 import { BookCategoryModule } from './domain/bookCategory/bookCategoryModule';
+import { BookCategoryEntity } from './domain/bookCategory/contracts/bookCategoryEntity';
 import { CategoryModule } from './domain/category/categoryModule';
+import { CategoryEntity } from './domain/category/contracts/categoryEntity';
+import { CustomerEntity } from './domain/customer/contracts/customerEntity';
 import { CustomerModule } from './domain/customer/customerModule';
+import { UserEntity } from './domain/user/contracts/userEntity';
 import { UserModule } from './domain/user/userModule';
 import { errorMiddleware } from './integrations/common/middlewares/errorMiddleware';
 import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
@@ -39,8 +47,19 @@ export class App {
       logLevel,
     } = this.config;
 
+    const entities = [
+      BookEntity,
+      AuthorEntity,
+      UserEntity,
+      CategoryEntity,
+      AuthorBookEntity,
+      BookCategoryEntity,
+      AddressEntity,
+      CustomerEntity,
+    ];
+
     const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword }),
+      new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword, entities }),
       new CategoryModule(),
       new BookModule(),
       new AuthorModule(),

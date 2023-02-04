@@ -9,14 +9,22 @@ import { App } from '../../../../../app';
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { SpyFactory } from '../../../../../common/testFactories/spyFactory';
 import { AddressModule } from '../../../../../domain/address/addressModule';
+import { AddressEntity } from '../../../../../domain/address/contracts/addressEntity';
 import { AuthorModule } from '../../../../../domain/author/authorModule';
+import { AuthorEntity } from '../../../../../domain/author/contracts/authorEntity';
 import { AuthorBookModule } from '../../../../../domain/authorBook/authorBookModule';
+import { AuthorBookEntity } from '../../../../../domain/authorBook/contracts/authorBookEntity';
 import { BookModule } from '../../../../../domain/book/bookModule';
+import { BookEntity } from '../../../../../domain/book/contracts/bookEntity';
 import { BookCategoryModule } from '../../../../../domain/bookCategory/bookCategoryModule';
+import { BookCategoryEntity } from '../../../../../domain/bookCategory/contracts/bookCategoryEntity';
 import { CategoryModule } from '../../../../../domain/category/categoryModule';
+import { CategoryEntity } from '../../../../../domain/category/contracts/categoryEntity';
+import { CustomerEntity } from '../../../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../../../domain/customer/customerModule';
 import { UserRepositoryFactory } from '../../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../../../domain/user/contracts/services/hashService/hashService';
+import { UserEntity } from '../../../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../../domain/user/userModule';
@@ -24,10 +32,10 @@ import { userSymbols } from '../../../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/postgresConnector';
+import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthHelper } from '../../../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../../../common/tests/unitOfWork/testTransactionExternalRunner';
@@ -53,7 +61,18 @@ describe(`UserController (${baseUrl})`, () => {
   const userEntityTestFactory = new UserEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
+  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
+    entities: [
+      BookEntity,
+      AuthorEntity,
+      UserEntity,
+      CategoryEntity,
+      AuthorBookEntity,
+      BookCategoryEntity,
+      AddressEntity,
+      CustomerEntity,
+    ],
+  });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
