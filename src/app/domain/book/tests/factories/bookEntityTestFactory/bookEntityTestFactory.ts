@@ -5,7 +5,7 @@ import { BookFormat } from '../../../contracts/bookFormat';
 import { BookLanguage } from '../../../contracts/bookLanguage';
 
 export class BookEntityTestFactory {
-  public create(): BookEntity {
+  public create(input: Partial<BookEntity> = {}): BookEntity {
     return {
       id: faker.datatype.uuid(),
       title: faker.lorem.words(2),
@@ -14,6 +14,7 @@ export class BookEntityTestFactory {
       format: faker.helpers.arrayElement([BookFormat.hardcover, BookFormat.paperback, BookFormat.paperback]),
       description: faker.lorem.words(),
       price: faker.datatype.number({ min: 1, max: 1000 }),
+      ...input,
     };
   }
 }
