@@ -1,7 +1,7 @@
 import { AwilixContainer } from 'awilix';
 
-import { userSymbols } from '../../domain/user/userSymbols';
-import { SpyFactory } from '../factories/spyFactory';
+import { SpyFactory } from '../../../../common/testFactories/spyFactory';
+import { userSymbols } from '../../../../domain/user/userSymbols';
 
 export class AuthHelper {
   public constructor(private readonly spyFactory: SpyFactory, private readonly container: AwilixContainer) {}

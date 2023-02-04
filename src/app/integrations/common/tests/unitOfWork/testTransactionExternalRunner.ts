@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AwilixContainer } from 'awilix';
 
-import { PostgresUnitOfWork } from '../../libs/unitOfWork/postgresUnitOfWork';
-import { TransactionCallback } from '../../libs/unitOfWork/transactionCallback';
-import { unitOfWorkSymbols } from '../../libs/unitOfWork/unitOfWorkSymbols';
-import { SpyFactory } from '../factories/spyFactory';
+import { SpyFactory } from '../../../../common/testFactories/spyFactory';
+import { PostgresUnitOfWork } from '../../../../libs/unitOfWork/postgresUnitOfWork';
+import { TransactionCallback } from '../../../../libs/unitOfWork/transactionCallback';
+import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 
 export class TestTransactionExternalRunner {
   public constructor(private readonly container: AwilixContainer) {}

@@ -2,6 +2,8 @@ import 'reflect-metadata';
 
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
+import { SpyFactory } from '../../../../../common/testFactories/spyFactory';
+import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { createDependencyInjectionContainer } from '../../../../../libs/dependencyInjection/container';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/loggerModuleConfigTestFactory';
@@ -10,8 +12,6 @@ import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/postgresModuleConfigTestFactory';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
-import { SpyFactory } from '../../../../../tests/factories/spyFactory';
-import { TestTransactionInternalRunner } from '../../../../../tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorModule } from '../../../../author/authorModule';
 import { authorSymbols } from '../../../../author/authorSymbols';
 import { AuthorRepositoryFactory } from '../../../../author/contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
