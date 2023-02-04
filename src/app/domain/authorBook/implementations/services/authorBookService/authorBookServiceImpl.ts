@@ -1,5 +1,5 @@
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
+import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Author } from '../../../../author/contracts/author';
 import { AuthorService } from '../../../../author/contracts/services/authorService/authorService';
 import { AuthorNotFoundError } from '../../../../author/errors/authorNotFoundError';

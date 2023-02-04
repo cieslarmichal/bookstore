@@ -1,5 +1,5 @@
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
+import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
 import { BookNotFoundError } from '../../../../book/errors/bookNotFoundError';

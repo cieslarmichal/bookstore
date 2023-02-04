@@ -1,5 +1,5 @@
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
+import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookService } from '../../../contracts/services/bookService/bookService';
