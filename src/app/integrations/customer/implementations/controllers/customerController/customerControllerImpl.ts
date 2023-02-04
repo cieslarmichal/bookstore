@@ -8,14 +8,16 @@ import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/unitOfWorkFact
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../../../controllerResponse';
-import { CustomerController } from '../../../contracts/controllers/customerController/customerController';
+import { LocalsName } from '../../../../localsName';
+import { CreateCustomerPayload } from '../../../contracts/controllers/customerController/createCustomerPayload';
+import { DeleteCustomerPayload } from '../../../contracts/controllers/customerController/deleteCustomerPayload';
+import { FindCustomerPayload } from '../../../contracts/controllers/customerController/findCustomerPayload';
 import { customerErrorMiddleware } from '../../middlewares/customerErrorMiddleware/customerErrorMiddleware';
 
-const customersEndpoint = '/customers';
-const customerEndpoint = `${customersEndpoint}/:id`;
-
-export class CustomerControllerImpl implements CustomerController {
+export class CustomerController {
   public readonly router = Router();
+  private readonly customersEndpoint = '/customers';
+  private readonly customerEndpoint = `${this.customersEndpoint}/:id`;
 
   public constructor(
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
@@ -25,67 +27,89 @@ export class CustomerControllerImpl implements CustomerController {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
     this.router.post(
-      customersEndpoint,
+      this.customersEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const createCustomerResponse = await this.createCustomer(request, response);
-        response.locals['controllerResponse'] = createCustomerResponse;
+        const { userId } = request.body;
+
+        const customer = await this.createCustomer({ userId });
+
+        const controllerResponse: ControllerResponse = { data: { customer }, statusCode: HttpStatusCode.created };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.get(
-      customerEndpoint,
+      this.customerEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const findCustomerResponse = await this.findCustomer(request, response);
-        response.locals['controllerResponse'] = findCustomerResponse;
+        const { id } = request.params;
+
+        const customer = await this.findCustomer({ id: id as string });
+
+        const controllerResponse: ControllerResponse = { data: { customer }, statusCode: HttpStatusCode.ok };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.delete(
-      customerEndpoint,
+      this.customerEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const deleteCustomerResponse = await this.deleteCustomer(request, response);
-        response.locals['controllerResponse'] = deleteCustomerResponse;
+        const { id } = request.params;
+
+        await this.deleteCustomer({ id: id as string });
+
+        const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
         next();
       }),
     );
+
     this.router.use(sendResponseMiddleware);
+
     this.router.use(customerErrorMiddleware);
   }
 
-  public async createCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async createCustomer(input: CreateCustomerPayload): Promise<ControllerResponse> {
+    const { userId } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { userId } = request.body;
-
     const customer = await unitOfWork.runInTransaction(async () => {
-      return this.customerService.createCustomer(unitOfWork, { userId });
+      return this.customerService.createCustomer({ unitOfWork, draft: { userId } });
     });
 
     return { data: { customer }, statusCode: HttpStatusCode.created };
   }
 
-  public async findCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async findCustomer(input: FindCustomerPayload): Promise<ControllerResponse> {
+    const { id } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = request.params;
-
     const customer = await unitOfWork.runInTransaction(async () => {
-      return this.customerService.findCustomer(unitOfWork, { id: id as string });
+      return this.customerService.findCustomer({ unitOfWork, customerId: id });
     });
 
     return { data: { customer }, statusCode: HttpStatusCode.ok };
   }
 
-  public async deleteCustomer(request: Request, _response: Response): Promise<ControllerResponse> {
+  private async deleteCustomer(input: DeleteCustomerPayload): Promise<ControllerResponse> {
+    const { id } = input;
+
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const { id } = request.params;
-
     await unitOfWork.runInTransaction(async () => {
-      await this.customerService.deleteCustomer(unitOfWork, id as string);
+      await this.customerService.deleteCustomer({ unitOfWork, customerId: id });
     });
 
     return { statusCode: HttpStatusCode.noContent };
