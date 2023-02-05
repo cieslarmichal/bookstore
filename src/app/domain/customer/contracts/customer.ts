@@ -1,18 +1,22 @@
-import { IsUUID } from 'class-validator';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Schema } from '../../../common/validator/implementations/schema';
 
-import { Validator } from '../../../common/validator/validator';
+export const customerInputSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  userId: Schema.notEmptyString(),
+});
+
+export type CustomerInput = SchemaType<typeof customerInputSchema>;
 
 export class Customer {
-  @IsUUID('4')
   public readonly id: string;
-
-  @IsUUID('4')
   public readonly userId: string;
 
-  public constructor({ id, userId }: Customer) {
+  public constructor(input: CustomerInput) {
+    const { id, userId } = PayloadFactory.create(customerInputSchema, input);
+
     this.id = id;
     this.userId = userId;
-
-    Validator.validate(this);
   }
 }

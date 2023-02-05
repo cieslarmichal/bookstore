@@ -19,11 +19,13 @@ export class AddressQueryBuilder extends QueryBuilder<AddressEntity> {
 
   public skip(enitiesToSkip: number): AddressQueryBuilder {
     this.instance = this.instance.skip(enitiesToSkip);
+
     return this;
   }
 
   public take(enitiesToTake: number): AddressQueryBuilder {
     this.instance = this.instance.take(enitiesToTake);
+
     return this;
   }
 }

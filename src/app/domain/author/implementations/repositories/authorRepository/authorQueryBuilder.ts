@@ -11,7 +11,9 @@ export class AuthorQueryBuilder extends QueryBuilder<AuthorEntity> {
 
   public whereBookId(bookId: string): AuthorQueryBuilder {
     this.instance.leftJoinAndSelect('author.authorBooks', 'authorBooks').leftJoinAndSelect('authorBooks.book', 'book');
+
     this.equalConditionForProperty('book.id', bookId);
+
     return this;
   }
 
@@ -25,11 +27,13 @@ export class AuthorQueryBuilder extends QueryBuilder<AuthorEntity> {
 
   public skip(enitiesToSkip: number): AuthorQueryBuilder {
     this.instance = this.instance.skip(enitiesToSkip);
+
     return this;
   }
 
   public take(enitiesToTake: number): AuthorQueryBuilder {
     this.instance = this.instance.take(enitiesToTake);
+
     return this;
   }
 }

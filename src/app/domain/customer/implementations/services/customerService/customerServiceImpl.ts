@@ -1,12 +1,21 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
-import { FindOnePayload } from '../../../contracts/repositories/customerRepository/findOnePayload';
-import { CreateCustomerPayload } from '../../../contracts/services/customerService/createCustomerPayload';
+import {
+  CreateCustomerPayload,
+  createCustomerPayloadSchema,
+} from '../../../contracts/services/customerService/createCustomerPayload';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
-import { DeleteCustomerPayload } from '../../../contracts/services/customerService/deleteCustomerPayload';
-import { FindCustomerPayload } from '../../../contracts/services/customerService/findCustomerPayload';
+import {
+  DeleteCustomerPayload,
+  deleteCustomerPayloadSchema,
+} from '../../../contracts/services/customerService/deleteCustomerPayload';
+import {
+  FindCustomerPayload,
+  findCustomerPayloadSchema,
+} from '../../../contracts/services/customerService/findCustomerPayload';
 import { CustomerAlreadyExistsError } from '../../../errors/customerAlreadyExistsError';
 import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
@@ -20,7 +29,7 @@ export class CustomerServiceImpl implements CustomerService {
     const {
       unitOfWork,
       draft: { userId },
-    } = input;
+    } = PayloadFactory.create(createCustomerPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating customer...', context: { userId } });
 
@@ -42,13 +51,13 @@ export class CustomerServiceImpl implements CustomerService {
   }
 
   public async findCustomer(input: FindCustomerPayload): Promise<Customer> {
-    const { unitOfWork, customerId, userId } = input;
+    const { unitOfWork, customerId, userId } = PayloadFactory.create(findCustomerPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
     const customerRepository = this.customerRepositoryFactory.create(entityManager);
 
-    let findOnePayload: FindOnePayload = {};
+    let findOnePayload = {};
 
     if (customerId) {
       findOnePayload = { ...findOnePayload, id: customerId };
@@ -68,7 +77,7 @@ export class CustomerServiceImpl implements CustomerService {
   }
 
   public async deleteCustomer(input: DeleteCustomerPayload): Promise<void> {
-    const { unitOfWork, customerId } = input;
+    const { unitOfWork, customerId } = PayloadFactory.create(deleteCustomerPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting customer...', context: { customerId } });
 

@@ -1,4 +1,9 @@
-export interface FindOnePayload {
-  readonly id?: string;
-  readonly userId?: string;
-}
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
+
+export const findOnePayloadSchema = Schema.object({
+  id: Schema.notEmptyString().optional(),
+  userId: Schema.notEmptyString().optional(),
+});
+
+export type FindOnePayload = SchemaType<typeof findOnePayloadSchema>;

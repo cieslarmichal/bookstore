@@ -7,7 +7,6 @@ export class CustomerEntityTestFactory {
     return {
       id: faker.datatype.uuid(),
       userId: faker.datatype.uuid(),
-      user: null,
       ...input,
     };
   }

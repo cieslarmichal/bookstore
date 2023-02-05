@@ -13,7 +13,9 @@ export class BookQueryBuilder extends QueryBuilder<BookEntity> {
     this.instance
       .leftJoinAndSelect('book.authorBooks', 'authorBooks')
       .leftJoinAndSelect('authorBooks.author', 'author');
+
     this.equalConditionForProperty('author.id', authorId);
+
     return this;
   }
 
@@ -21,7 +23,9 @@ export class BookQueryBuilder extends QueryBuilder<BookEntity> {
     this.instance
       .leftJoinAndSelect('book.bookCategories', 'bookCategories')
       .leftJoinAndSelect('bookCategories.category', 'category');
+
     this.equalConditionForProperty('category.id', categoryId);
+
     return this;
   }
 
@@ -35,11 +39,13 @@ export class BookQueryBuilder extends QueryBuilder<BookEntity> {
 
   public skip(enitiesToSkip: number): BookQueryBuilder {
     this.instance = this.instance.skip(enitiesToSkip);
+
     return this;
   }
 
   public take(enitiesToTake: number): BookQueryBuilder {
     this.instance = this.instance.take(enitiesToTake);
+
     return this;
   }
 }

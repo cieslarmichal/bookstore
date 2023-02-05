@@ -29,11 +29,13 @@ export class CategoryQueryBuilder extends QueryBuilder<CategoryEntity> {
 
   public skip(enitiesToSkip: number): CategoryQueryBuilder {
     this.instance = this.instance.skip(enitiesToSkip);
+
     return this;
   }
 
   public take(enitiesToTake: number): CategoryQueryBuilder {
     this.instance = this.instance.take(enitiesToTake);
+
     return this;
   }
 }
