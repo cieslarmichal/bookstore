@@ -18,5 +18,5 @@ export class CategoryEntity {
   public name: string;
 
   @OneToMany(() => BookCategoryEntity, (bookCategory) => bookCategory.category)
-  public bookCategories?: BookCategoryEntity[] | null;
+  public bookCategories?: BookCategoryEntity[];
 }

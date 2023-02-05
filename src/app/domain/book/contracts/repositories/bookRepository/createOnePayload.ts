@@ -1,12 +1,16 @@
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { BookFormat } from '../../bookFormat';
 import { BookLanguage } from '../../bookLanguage';
 
-export interface CreateOnePayload {
-  readonly id: string;
-  readonly title: string;
-  readonly releaseYear: number;
-  readonly language: BookLanguage;
-  readonly format: BookFormat;
-  readonly description?: string | null;
-  readonly price: number;
-}
+export const createOnePayloadSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  title: Schema.notEmptyString(),
+  releaseYear: Schema.positiveInteger(),
+  language: Schema.enum(BookLanguage),
+  format: Schema.enum(BookFormat),
+  price: Schema.positiveNumber(),
+  description: Schema.notEmptyString().optional(),
+});
+
+export type CreateOnePayload = SchemaType<typeof createOnePayloadSchema>;

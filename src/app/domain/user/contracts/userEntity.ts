@@ -16,11 +16,11 @@ export class UserEntity {
 
   @Column({ type: 'text', unique: true, nullable: true })
   //@ts-ignore
-  public email?: string | undefined;
+  public email?: string;
 
   @Column({ type: 'text', unique: true, nullable: true })
   //@ts-ignore
-  public phoneNumber?: string | undefined;
+  public phoneNumber?: string;
 
   @Column({ type: 'text' })
   //@ts-ignore
@@ -31,5 +31,5 @@ export class UserEntity {
   public role: UserRole;
 
   @OneToOne(() => CustomerEntity, (customer) => customer.user)
-  public customer?: CustomerEntity | null;
+  public customer?: CustomerEntity;
 }

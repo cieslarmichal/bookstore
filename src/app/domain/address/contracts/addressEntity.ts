@@ -46,10 +46,10 @@ export class AddressEntity {
   public streetAddress: string;
 
   @Column({ type: 'text', nullable: true })
-  public deliveryInstructions?: string | undefined;
+  public deliveryInstructions?: string;
 
   @ManyToOne(() => CustomerEntity, (customer) => customer.addresses, { onDelete: 'CASCADE' })
-  public customer?: CustomerEntity | null;
+  public customer?: CustomerEntity;
 
   @Column({ type: 'uuid' })
   public customerId?: string;

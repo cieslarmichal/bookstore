@@ -25,5 +25,5 @@ export class AuthorEntity {
   public about?: string;
 
   @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.author)
-  public authorBooks?: AuthorBookEntity[] | null;
+  public authorBooks?: AuthorBookEntity[];
 }

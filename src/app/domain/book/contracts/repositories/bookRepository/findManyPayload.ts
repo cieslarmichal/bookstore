@@ -1,9 +1,13 @@
 import { Filter } from '../../../../../common/types/contracts/filter';
 import { PaginationData } from '../../../../../common/types/contracts/paginationData';
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 
-export interface FindManyPayload {
-  readonly filters: Filter[];
-  readonly pagination: PaginationData;
-  readonly authorId?: string;
-  readonly categoryId?: string;
-}
+export const findManyPayloadSchema = Schema.object({
+  filters: Schema.array(Schema.unsafeType<Filter>()),
+  pagination: Schema.unsafeType<PaginationData>(),
+  authorId: Schema.notEmptyString().optional(),
+  categoryId: Schema.notEmptyString().optional(),
+});
+
+export type FindManyPayload = SchemaType<typeof findManyPayloadSchema>;

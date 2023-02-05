@@ -1,15 +1,22 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookService } from '../../../contracts/services/bookService/bookService';
-import { CreateBookPayload } from '../../../contracts/services/bookService/createBookPayload';
-import { DeleteBookPayload } from '../../../contracts/services/bookService/deleteBookPayload';
-import { FindBookPayload } from '../../../contracts/services/bookService/findBookPayload';
-import { FindBooksByAuthorIdPayload } from '../../../contracts/services/bookService/findBooksByAuthorIdPayload';
-import { FindBooksByCategoryIdPayload } from '../../../contracts/services/bookService/findBooksByCategoryIdPayload';
-import { FindBooksPayload } from '../../../contracts/services/bookService/findBooksPayload';
-import { UpdateBookPayload } from '../../../contracts/services/bookService/updateBookPayload';
+import { CreateBookPayload, createBookPayloadSchema } from '../../../contracts/services/bookService/createBookPayload';
+import { DeleteBookPayload, deleteBookPayloadSchema } from '../../../contracts/services/bookService/deleteBookPayload';
+import { FindBookPayload, findBookPayloadSchema } from '../../../contracts/services/bookService/findBookPayload';
+import {
+  FindBooksByAuthorIdPayload,
+  findBooksByAuthorIdPayloadSchema,
+} from '../../../contracts/services/bookService/findBooksByAuthorIdPayload';
+import {
+  FindBooksByCategoryIdPayload,
+  findBooksByCategoryIdPayloadSchema,
+} from '../../../contracts/services/bookService/findBooksByCategoryIdPayload';
+import { FindBooksPayload, findBooksPayloadSchema } from '../../../contracts/services/bookService/findBooksPayload';
+import { UpdateBookPayload, updateBookPayloadSchema } from '../../../contracts/services/bookService/updateBookPayload';
 import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 
 export class BookServiceImpl implements BookService {
@@ -19,7 +26,7 @@ export class BookServiceImpl implements BookService {
   ) {}
 
   public async createBook(input: CreateBookPayload): Promise<Book> {
-    const { unitOfWork, draft } = input;
+    const { unitOfWork, draft } = PayloadFactory.create(createBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating book...', context: { ...draft } });
 
@@ -35,7 +42,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBook(input: FindBookPayload): Promise<Book> {
-    const { unitOfWork, bookId } = input;
+    const { unitOfWork, bookId } = PayloadFactory.create(findBookPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -51,7 +58,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBooks(input: FindBooksPayload): Promise<Book[]> {
-    const { unitOfWork, filters, pagination } = input;
+    const { unitOfWork, filters, pagination } = PayloadFactory.create(findBooksPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -63,7 +70,10 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]> {
-    const { unitOfWork, authorId, filters, pagination } = input;
+    const { unitOfWork, authorId, filters, pagination } = PayloadFactory.create(
+      findBooksByAuthorIdPayloadSchema,
+      input,
+    );
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -75,7 +85,10 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
-    const { unitOfWork, categoryId, filters, pagination } = input;
+    const { unitOfWork, categoryId, filters, pagination } = PayloadFactory.create(
+      findBooksByCategoryIdPayloadSchema,
+      input,
+    );
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -87,7 +100,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async updateBook(input: UpdateBookPayload): Promise<Book> {
-    const { unitOfWork, bookId, draft } = input;
+    const { unitOfWork, bookId, draft } = PayloadFactory.create(updateBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating book...', context: { bookId, ...draft } });
 
@@ -103,7 +116,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async deleteBook(input: DeleteBookPayload): Promise<void> {
-    const { unitOfWork, bookId } = input;
+    const { unitOfWork, bookId } = PayloadFactory.create(deleteBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting book...', context: { bookId } });
 

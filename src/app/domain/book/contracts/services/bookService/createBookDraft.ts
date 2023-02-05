@@ -1,11 +1,15 @@
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { BookFormat } from '../../bookFormat';
 import { BookLanguage } from '../../bookLanguage';
 
-export interface CreateBookDraft {
-  readonly title: string;
-  readonly releaseYear: number;
-  readonly language: BookLanguage;
-  readonly format: BookFormat;
-  readonly description?: string;
-  readonly price: number;
-}
+export const createBookDraftSchema = Schema.object({
+  title: Schema.notEmptyString(),
+  releaseYear: Schema.positiveInteger(),
+  language: Schema.enum(BookLanguage),
+  format: Schema.enum(BookFormat),
+  price: Schema.positiveNumber(),
+  description: Schema.notEmptyString().optional(),
+});
+
+export type CreateBookDraft = SchemaType<typeof createBookDraftSchema>;

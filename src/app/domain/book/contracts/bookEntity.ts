@@ -32,17 +32,17 @@ export class BookEntity {
   //@ts-ignore
   public format: BookFormat;
 
-  @Column({ type: 'text', nullable: true })
-  //@ts-ignore
-  public description?: string | null;
-
   @Column({ type: 'float' })
   //@ts-ignore
   public price: number;
 
+  @Column({ type: 'text', nullable: true })
+  //@ts-ignore
+  public description?: string;
+
   @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.book)
-  public authorBooks?: AuthorBookEntity[] | null;
+  public authorBooks?: AuthorBookEntity[];
 
   @OneToMany(() => BookCategoryEntity, (bookCategory) => bookCategory.book)
-  public bookCategories?: BookCategoryEntity[] | null;
+  public bookCategories?: BookCategoryEntity[];
 }
