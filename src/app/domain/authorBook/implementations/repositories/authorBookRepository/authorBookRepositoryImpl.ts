@@ -1,12 +1,22 @@
 import { EntityManager } from 'typeorm';
 
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookEntity } from '../../../contracts/authorBookEntity';
 import { AuthorBookMapper } from '../../../contracts/mappers/authorBookMapper/authorBookMapper';
 import { AuthorBookRepository } from '../../../contracts/repositories/authorBookRepository/authorBookRepository';
-import { CreateOnePayload } from '../../../contracts/repositories/authorBookRepository/createOnePayload';
-import { DeleteOnePayload } from '../../../contracts/repositories/authorBookRepository/deleteOnePayload';
-import { FindOnePayload } from '../../../contracts/repositories/authorBookRepository/findOnePayload';
+import {
+  CreateOnePayload,
+  createOnePayloadSchema,
+} from '../../../contracts/repositories/authorBookRepository/createOnePayload';
+import {
+  DeleteOnePayload,
+  deleteOnePayloadSchema,
+} from '../../../contracts/repositories/authorBookRepository/deleteOnePayload';
+import {
+  FindOnePayload,
+  findOnePayloadSchema,
+} from '../../../contracts/repositories/authorBookRepository/findOnePayload';
 import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 
 export class AuthorBookRepositoryImpl implements AuthorBookRepository {
@@ -16,9 +26,9 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
   ) {}
 
   public async createOne(input: CreateOnePayload): Promise<AuthorBook> {
-    const authorBookEntityInput: AuthorBookEntity = input;
+    const { id, authorId, bookId } = PayloadFactory.create(createOnePayloadSchema, input);
 
-    const authorBookEntity = this.entityManager.create(AuthorBookEntity, { ...authorBookEntityInput });
+    const authorBookEntity = this.entityManager.create(AuthorBookEntity, { id, authorId, bookId });
 
     const savedAuthorBookEntity = await this.entityManager.save(authorBookEntity);
 
@@ -26,7 +36,23 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<AuthorBook | null> {
-    const authorBookEntity = await this.entityManager.findOne(AuthorBookEntity, { where: { ...input } });
+    const { authorId, bookId, id } = PayloadFactory.create(findOnePayloadSchema, input);
+
+    let findOneInput = {};
+
+    if (id) {
+      findOneInput = { ...findOneInput, id };
+    }
+
+    if (authorId) {
+      findOneInput = { ...findOneInput, authorId };
+    }
+
+    if (bookId) {
+      findOneInput = { ...findOneInput, bookId };
+    }
+
+    const authorBookEntity = await this.entityManager.findOne(AuthorBookEntity, { where: { ...findOneInput } });
 
     if (!authorBookEntity) {
       return null;
@@ -36,7 +62,7 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
 
     const authorBookEntity = await this.findOne({ id });
 

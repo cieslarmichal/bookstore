@@ -1,3 +1,4 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Author } from '../../../../author/contracts/author';
@@ -9,10 +10,22 @@ import { BookNotFoundError } from '../../../../book/errors/bookNotFoundError';
 import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { AuthorBookService } from '../../../contracts/services/authorBookService/authorBookService';
-import { CreateAuthorBookPayload } from '../../../contracts/services/authorBookService/createAuthorBookPayload';
-import { DeleteAuthorBookPayload } from '../../../contracts/services/authorBookService/deleteAuthorBookPayload';
-import { FindAuthorsByBookIdPayload } from '../../../contracts/services/authorBookService/findAuthorsByBookIdPayload';
-import { FindBooksByAuthorIdPayload } from '../../../contracts/services/authorBookService/findBooksByAuthorIdPayload';
+import {
+  CreateAuthorBookPayload,
+  createAuthorBookPayloadSchema,
+} from '../../../contracts/services/authorBookService/createAuthorBookPayload';
+import {
+  DeleteAuthorBookPayload,
+  deleteAuthorBookPayloadSchema,
+} from '../../../contracts/services/authorBookService/deleteAuthorBookPayload';
+import {
+  FindAuthorsByBookIdPayload,
+  findAuthorsByBookIdPayloadSchema,
+} from '../../../contracts/services/authorBookService/findAuthorsByBookIdPayload';
+import {
+  FindBooksByAuthorIdPayload,
+  findBooksByAuthorIdPayloadSchema,
+} from '../../../contracts/services/authorBookService/findBooksByAuthorIdPayload';
 import { AuthorBookAlreadyExistsError } from '../../../errors/authorBookAlreadyExistsError';
 import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 
@@ -28,7 +41,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     const {
       unitOfWork,
       draft: { authorId, bookId },
-    } = input;
+    } = PayloadFactory.create(createAuthorBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating authorBook...', context: { authorId, bookId } });
 
@@ -62,7 +75,10 @@ export class AuthorBookServiceImpl implements AuthorBookService {
   }
 
   public async findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]> {
-    const { unitOfWork, authorId, filters, pagination } = input;
+    const { unitOfWork, authorId, filters, pagination } = PayloadFactory.create(
+      findBooksByAuthorIdPayloadSchema,
+      input,
+    );
 
     const author = await this.authorService.findAuthor({ unitOfWork, authorId });
 
@@ -74,7 +90,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
   }
 
   public async findAuthorsByBookId(input: FindAuthorsByBookIdPayload): Promise<Author[]> {
-    const { unitOfWork, bookId, filters, pagination } = input;
+    const { unitOfWork, bookId, filters, pagination } = PayloadFactory.create(findAuthorsByBookIdPayloadSchema, input);
 
     const book = await this.bookService.findBook({ unitOfWork, bookId });
 
@@ -86,7 +102,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
   }
 
   public async deleteAuthorBook(input: DeleteAuthorBookPayload): Promise<void> {
-    const { unitOfWork, authorId, bookId } = input;
+    const { unitOfWork, authorId, bookId } = PayloadFactory.create(deleteAuthorBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting authorBook...', context: { authorId, bookId } });
 
