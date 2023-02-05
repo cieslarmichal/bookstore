@@ -1,28 +1,28 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
-
-import { IsInstanceOf } from '../../../common/validator/decorators';
-import { Validator } from '../../../common/validator/validator';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Schema } from '../../../common/validator/implementations/schema';
 import { Book } from '../../book/contracts/book';
 
+export const authorInputSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  firstName: Schema.notEmptyString(),
+  lastName: Schema.notEmptyString(),
+  about: Schema.notEmptyString().optional(),
+  books: Schema.array(Schema.instanceof(Book)).optional(),
+});
+
+export type AuthorInput = SchemaType<typeof authorInputSchema>;
+
 export class Author {
-  @IsUUID('4')
   public readonly id: string;
-
-  @IsString()
   public readonly firstName: string;
-
-  @IsString()
   public readonly lastName: string;
+  public readonly about?: string;
+  public readonly books?: Book[];
 
-  @IsOptional()
-  @IsString()
-  public readonly about?: string | undefined;
+  public constructor(input: AuthorInput) {
+    const { id, firstName, lastName, about, books } = PayloadFactory.create(authorInputSchema, input);
 
-  @IsOptional()
-  @IsInstanceOf(Book, { each: true })
-  public readonly books?: Book[] | null;
-
-  public constructor({ id, firstName, lastName, about, books }: Author) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -34,7 +34,5 @@ export class Author {
     if (books) {
       this.books = books;
     }
-
-    Validator.validate(this);
   }
 }

@@ -1,7 +1,11 @@
-import { CreateAuthorDraft } from './createAuthorDraft';
+import { createAuthorDraftSchema } from './createAuthorDraft';
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
-export interface CreateAuthorPayload {
-  readonly unitOfWork: UnitOfWork;
-  readonly draft: CreateAuthorDraft;
-}
+export const createAuthorPayloadSchema = Schema.object({
+  unitOfWork: Schema.unsafeType<UnitOfWork>(),
+  draft: createAuthorDraftSchema,
+});
+
+export type CreateAuthorPayload = SchemaType<typeof createAuthorPayloadSchema>;

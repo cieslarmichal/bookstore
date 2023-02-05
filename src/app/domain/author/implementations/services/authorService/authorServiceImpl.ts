@@ -1,14 +1,33 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Author } from '../../../contracts/author';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
 import { AuthorService } from '../../../contracts/services/authorService/authorService';
-import { CreateAuthorPayload } from '../../../contracts/services/authorService/createAuthorPayload';
-import { DeleteAuthorPayload } from '../../../contracts/services/authorService/deleteAuthorPayload';
-import { FindAuthorPayload } from '../../../contracts/services/authorService/findAuthorPayload';
-import { FindAuthorsByBookIdPayload } from '../../../contracts/services/authorService/findAuthorsByBookIdPayload';
-import { FindAuthorsPayload } from '../../../contracts/services/authorService/findAuthorsPayload';
-import { UpdateAuthorPayload } from '../../../contracts/services/authorService/updateAuthorPayload';
+import {
+  CreateAuthorPayload,
+  createAuthorPayloadSchema,
+} from '../../../contracts/services/authorService/createAuthorPayload';
+import {
+  DeleteAuthorPayload,
+  deleteAuthorPayloadSchema,
+} from '../../../contracts/services/authorService/deleteAuthorPayload';
+import {
+  FindAuthorPayload,
+  findAuthorPayloadSchema,
+} from '../../../contracts/services/authorService/findAuthorPayload';
+import {
+  FindAuthorsByBookIdPayload,
+  findAuthorsByBookIdPayloadSchema,
+} from '../../../contracts/services/authorService/findAuthorsByBookIdPayload';
+import {
+  FindAuthorsPayload,
+  findAuthorsPayloadSchema,
+} from '../../../contracts/services/authorService/findAuthorsPayload';
+import {
+  UpdateAuthorPayload,
+  updateAuthorPayloadSchema,
+} from '../../../contracts/services/authorService/updateAuthorPayload';
 import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
 export class AuthorServiceImpl implements AuthorService {
@@ -18,7 +37,7 @@ export class AuthorServiceImpl implements AuthorService {
   ) {}
 
   public async createAuthor(input: CreateAuthorPayload): Promise<Author> {
-    const { unitOfWork, draft } = input;
+    const { unitOfWork, draft } = PayloadFactory.create(createAuthorPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating author...', context: { ...draft } });
 
@@ -34,7 +53,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async findAuthor(input: FindAuthorPayload): Promise<Author> {
-    const { unitOfWork, authorId } = input;
+    const { unitOfWork, authorId } = PayloadFactory.create(findAuthorPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -50,7 +69,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
-    const { unitOfWork, filters, pagination } = input;
+    const { unitOfWork, filters, pagination } = PayloadFactory.create(findAuthorsPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -62,7 +81,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async findAuthorsByBookId(input: FindAuthorsByBookIdPayload): Promise<Author[]> {
-    const { unitOfWork, filters, pagination, bookId } = input;
+    const { unitOfWork, filters, pagination, bookId } = PayloadFactory.create(findAuthorsByBookIdPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -74,7 +93,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
-    const { unitOfWork, authorId, draft } = input;
+    const { unitOfWork, authorId, draft } = PayloadFactory.create(updateAuthorPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating author...', context: { authorId, ...draft } });
 
@@ -90,7 +109,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
-    const { unitOfWork, authorId } = input;
+    const { unitOfWork, authorId } = PayloadFactory.create(deleteAuthorPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting author...', context: { authorId } });
 

@@ -1,22 +1,41 @@
 import { EntityManager } from 'typeorm';
 
 import { AuthorQueryBuilder } from './authorQueryBuilder';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Author } from '../../../contracts/author';
 import { AuthorEntity } from '../../../contracts/authorEntity';
 import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';
 import { AuthorRepository } from '../../../contracts/repositories/authorRepository/authorRepository';
-import { CreateOnePayload } from '../../../contracts/repositories/authorRepository/createOnePayload';
-import { DeleteOnePayload } from '../../../contracts/repositories/authorRepository/deleteOnePayload';
-import { FindManyPayload } from '../../../contracts/repositories/authorRepository/findManyPayload';
-import { FindOnePayload } from '../../../contracts/repositories/authorRepository/findOnePayload';
-import { UpdateOnePayload } from '../../../contracts/repositories/authorRepository/updateOnePayload';
+import {
+  CreateOnePayload,
+  createOnePayloadSchema,
+} from '../../../contracts/repositories/authorRepository/createOnePayload';
+import {
+  DeleteOnePayload,
+  deleteOnePayloadSchema,
+} from '../../../contracts/repositories/authorRepository/deleteOnePayload';
+import {
+  FindManyPayload,
+  findManyPayloadSchema,
+} from '../../../contracts/repositories/authorRepository/findManyPayload';
+import { FindOnePayload, findOnePayloadSchema } from '../../../contracts/repositories/authorRepository/findOnePayload';
+import {
+  UpdateOnePayload,
+  updateOnePayloadSchema,
+} from '../../../contracts/repositories/authorRepository/updateOnePayload';
 import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
 export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Author> {
-    const authorEntityInput: AuthorEntity = input;
+    const { id, firstName, lastName, about } = PayloadFactory.create(createOnePayloadSchema, input);
+
+    let authorEntityInput: AuthorEntity = { id, firstName, lastName };
+
+    if (about) {
+      authorEntityInput = { ...authorEntityInput, about };
+    }
 
     const authorEntity = this.entityManager.create(AuthorEntity, authorEntityInput);
 
@@ -26,7 +45,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Author | null> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
 
     const authorEntity = await this.entityManager.findOne(AuthorEntity, { where: { id } });
 
@@ -38,7 +57,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Author[]> {
-    const { bookId, filters, pagination } = input;
+    const { bookId, filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
 
     let authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
@@ -58,7 +77,10 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async updateOne(input: UpdateOnePayload): Promise<Author> {
-    const { id, draft } = input;
+    const {
+      id,
+      draft: { about },
+    } = PayloadFactory.create(updateOnePayloadSchema, input);
 
     const authorEntity = await this.findOne({ id });
 
@@ -66,7 +88,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
       throw new AuthorNotFoundError({ id });
     }
 
-    await this.entityManager.update(AuthorEntity, { id }, { ...draft });
+    await this.entityManager.update(AuthorEntity, { id }, { about });
 
     const updatedAuthorEntity = await this.findOne({ id });
 
@@ -74,7 +96,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
 
     const authorEntity = await this.findOne({ id });
 

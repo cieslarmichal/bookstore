@@ -1,6 +1,11 @@
-export interface CreateOnePayload {
-  readonly id: string;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly about?: string;
-}
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
+
+export const createOnePayloadSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  firstName: Schema.notEmptyString(),
+  lastName: Schema.notEmptyString(),
+  about: Schema.notEmptyString().optional(),
+});
+
+export type CreateOnePayload = SchemaType<typeof createOnePayloadSchema>;
