@@ -8,7 +8,7 @@ export class AddressEntityTestFactory {
       id: faker.datatype.uuid(),
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      phoneNumber: faker.phone.phoneNumber(),
+      phoneNumber: faker.phone.number(),
       country: faker.address.country(),
       state: faker.address.state(),
       city: faker.address.city(),

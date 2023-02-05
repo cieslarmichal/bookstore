@@ -1,13 +1,29 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Address } from '../../../contracts/address';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';
-import { CreateAddressPayload } from '../../../contracts/services/addressService/createAddressPayload';
-import { DeleteAddressPayload } from '../../../contracts/services/addressService/deleteAddressPayload';
-import { FindAddressesPayload } from '../../../contracts/services/addressService/findAddressesPayload';
-import { FindAddressPayload } from '../../../contracts/services/addressService/findAddressPayload';
-import { UpdateAddressPayload } from '../../../contracts/services/addressService/updateAddressPayload';
+import {
+  CreateAddressPayload,
+  createAddressPayloadSchema,
+} from '../../../contracts/services/addressService/createAddressPayload';
+import {
+  DeleteAddressPayload,
+  deleteAddressPayloadSchema,
+} from '../../../contracts/services/addressService/deleteAddressPayload';
+import {
+  FindAddressesPayload,
+  findAddressesPayloadSchema,
+} from '../../../contracts/services/addressService/findAddressesPayload';
+import {
+  FindAddressPayload,
+  findAddressPayloadSchema,
+} from '../../../contracts/services/addressService/findAddressPayload';
+import {
+  UpdateAddressPayload,
+  updateAddressPayloadSchema,
+} from '../../../contracts/services/addressService/updateAddressPayload';
 import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
 export class AddressServiceImpl implements AddressService {
@@ -17,7 +33,7 @@ export class AddressServiceImpl implements AddressService {
   ) {}
 
   public async createAddress(input: CreateAddressPayload): Promise<Address> {
-    const { unitOfWork, draft } = input;
+    const { unitOfWork, draft } = PayloadFactory.create(createAddressPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating address...', context: { ...draft } });
 
@@ -36,7 +52,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async findAddress(input: FindAddressPayload): Promise<Address> {
-    const { unitOfWork, addressId } = input;
+    const { unitOfWork, addressId } = PayloadFactory.create(findAddressPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -52,7 +68,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
-    const { unitOfWork, filters, pagination } = input;
+    const { unitOfWork, filters, pagination } = PayloadFactory.create(findAddressesPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -64,7 +80,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async updateAddress(input: UpdateAddressPayload): Promise<Address> {
-    const { unitOfWork, draft, addressId } = input;
+    const { unitOfWork, draft, addressId } = PayloadFactory.create(updateAddressPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating address...', context: { addressId, ...draft } });
 
@@ -80,7 +96,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async deleteAddress(input: DeleteAddressPayload): Promise<void> {
-    const { unitOfWork, addressId } = input;
+    const { unitOfWork, addressId } = PayloadFactory.create(deleteAddressPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting address...', context: { addressId } });
 

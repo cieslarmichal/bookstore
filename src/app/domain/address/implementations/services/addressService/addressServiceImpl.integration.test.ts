@@ -2,10 +2,10 @@ import 'reflect-metadata';
 
 import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
 
-import { FilterName } from '../../../../../common/filter/filterName';
-import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
 import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
+import { FilterName } from '../../../../../common/types/contracts/filterName';
+import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';

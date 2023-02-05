@@ -1,12 +1,17 @@
-export interface CreateAddressDraft {
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly phoneNumber: string;
-  readonly country: string;
-  readonly state: string;
-  readonly city: string;
-  readonly zipCode: string;
-  readonly streetAddress: string;
-  readonly deliveryInstructions?: string;
-  readonly customerId?: string;
-}
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
+
+export const createAddressDraftSchema = Schema.object({
+  firstName: Schema.notEmptyString(),
+  lastName: Schema.notEmptyString(),
+  phoneNumber: Schema.notEmptyString(),
+  country: Schema.notEmptyString(),
+  state: Schema.notEmptyString(),
+  city: Schema.notEmptyString(),
+  zipCode: Schema.notEmptyString(),
+  streetAddress: Schema.notEmptyString(),
+  deliveryInstructions: Schema.notEmptyString().optional(),
+  customerId: Schema.notEmptyString().optional(),
+});
+
+export type CreateAddressDraft = SchemaType<typeof createAddressDraftSchema>;

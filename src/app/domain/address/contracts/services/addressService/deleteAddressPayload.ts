@@ -1,6 +1,10 @@
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
-export interface DeleteAddressPayload {
-  readonly unitOfWork: UnitOfWork;
-  readonly addressId: string;
-}
+export const deleteAddressPayloadSchema = Schema.object({
+  unitOfWork: Schema.unsafeType<UnitOfWork>(),
+  addressId: Schema.notEmptyString(),
+});
+
+export type DeleteAddressPayload = SchemaType<typeof deleteAddressPayloadSchema>;

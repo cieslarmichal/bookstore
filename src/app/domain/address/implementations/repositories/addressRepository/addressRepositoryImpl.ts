@@ -6,21 +6,62 @@ import { Address } from '../../../contracts/address';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
 import { AddressRepository } from '../../../contracts/repositories/addressRepository/addressRepository';
-import { CreateOnePayload } from '../../../contracts/repositories/addressRepository/createOnePayload';
+import {
+  CreateOnePayload,
+  createOnePayloadSchema,
+} from '../../../contracts/repositories/addressRepository/createOnePayload';
 import {
   DeleteOnePayload,
   deleteOnePayloadSchema,
 } from '../../../contracts/repositories/addressRepository/deleteOnePayload';
-import { FindManyPayload } from '../../../contracts/repositories/addressRepository/findManyPayload';
-import { FindOnePayload } from '../../../contracts/repositories/addressRepository/findOnePayload';
-import { UpdateOnePayload } from '../../../contracts/repositories/addressRepository/updateOnePayload';
+import {
+  FindManyPayload,
+  findManyPayloadSchema,
+} from '../../../contracts/repositories/addressRepository/findManyPayload';
+import { FindOnePayload, findOnePayloadSchema } from '../../../contracts/repositories/addressRepository/findOnePayload';
+import {
+  UpdateOnePayload,
+  updateOnePayloadSchema,
+} from '../../../contracts/repositories/addressRepository/updateOnePayload';
 import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
 export class AddressRepositoryImpl implements AddressRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly addressMapper: AddressMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Address> {
-    const addressEntityInput: AddressEntity = input;
+    const {
+      id,
+      firstName,
+      lastName,
+      phoneNumber,
+      country,
+      state,
+      city,
+      zipCode,
+      streetAddress,
+      deliveryInstructions,
+      customerId,
+    } = PayloadFactory.create(createOnePayloadSchema, input);
+
+    let addressEntityInput: AddressEntity = {
+      id,
+      firstName,
+      lastName,
+      phoneNumber,
+      country,
+      state,
+      city,
+      zipCode,
+      streetAddress,
+    };
+
+    if (deliveryInstructions) {
+      addressEntityInput = { ...addressEntityInput, deliveryInstructions };
+    }
+
+    if (customerId) {
+      addressEntityInput = { ...addressEntityInput, customerId };
+    }
 
     const addressEntity = this.entityManager.create(AddressEntity, addressEntityInput);
 
@@ -30,7 +71,7 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Address | null> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
 
     const addressEntity = await this.entityManager.findOne(AddressEntity, { where: { id } });
 
@@ -42,7 +83,7 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Address[]> {
-    const { filters, pagination } = input;
+    const { filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
 
     const addressQueryBuilder = new AddressQueryBuilder(this.entityManager);
 
@@ -58,7 +99,10 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async updateOne(input: UpdateOnePayload): Promise<Address> {
-    const { id, draft } = input;
+    const {
+      id,
+      draft: { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions },
+    } = PayloadFactory.create(updateOnePayloadSchema, input);
 
     const addressEntity = await this.findOne({ id });
 
@@ -66,7 +110,45 @@ export class AddressRepositoryImpl implements AddressRepository {
       throw new AddressNotFoundError({ id });
     }
 
-    await this.entityManager.update(AddressEntity, { id }, { ...draft });
+    let addressEntityInput: Partial<AddressEntity> = {};
+
+    if (firstName) {
+      addressEntityInput = { ...addressEntityInput, firstName };
+    }
+
+    if (lastName) {
+      addressEntityInput = { ...addressEntityInput, lastName };
+    }
+
+    if (phoneNumber) {
+      addressEntityInput = { ...addressEntityInput, phoneNumber };
+    }
+
+    if (country) {
+      addressEntityInput = { ...addressEntityInput, country };
+    }
+
+    if (state) {
+      addressEntityInput = { ...addressEntityInput, state };
+    }
+
+    if (city) {
+      addressEntityInput = { ...addressEntityInput, city };
+    }
+
+    if (zipCode) {
+      addressEntityInput = { ...addressEntityInput, zipCode };
+    }
+
+    if (streetAddress) {
+      addressEntityInput = { ...addressEntityInput, streetAddress };
+    }
+
+    if (deliveryInstructions) {
+      addressEntityInput = { ...addressEntityInput, deliveryInstructions };
+    }
+
+    await this.entityManager.update(AddressEntity, { id }, { ...addressEntityInput });
 
     const updatedAddressEntity = await this.findOne({ id });
 

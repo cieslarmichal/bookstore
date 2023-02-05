@@ -1,8 +1,12 @@
-import { UpdateAddressDraft } from './updateAddressDraft';
+import { updateAddressDraftSchema } from './updateAddressDraft';
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
-export interface UpdateAddressPayload {
-  readonly unitOfWork: UnitOfWork;
-  readonly addressId: string;
-  readonly draft: UpdateAddressDraft;
-}
+export const updateAddressPayloadSchema = Schema.object({
+  unitOfWork: Schema.unsafeType<UnitOfWork>(),
+  addressId: Schema.notEmptyString(),
+  draft: updateAddressDraftSchema,
+});
+
+export type UpdateAddressPayload = SchemaType<typeof updateAddressPayloadSchema>;
