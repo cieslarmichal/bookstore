@@ -1,13 +1,29 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Category } from '../../../contracts/category';
 import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryService } from '../../../contracts/services/categoryService/categoryService';
-import { CreateCategoryPayload } from '../../../contracts/services/categoryService/createCategoryPayload';
-import { DeleteCategoryPayload } from '../../../contracts/services/categoryService/deleteCategoryPayload';
-import { FindCategoriesByBookIdPayload } from '../../../contracts/services/categoryService/findCategoriesByBookIdPayload';
-import { FindCategoriesPayload } from '../../../contracts/services/categoryService/findCategoriesPayload';
-import { FindCategoryPayload } from '../../../contracts/services/categoryService/findCategoryPayload';
+import {
+  CreateCategoryPayload,
+  createCategoryPayloadSchema,
+} from '../../../contracts/services/categoryService/createCategoryPayload';
+import {
+  DeleteCategoryPayload,
+  deleteCategoryPayloadSchema,
+} from '../../../contracts/services/categoryService/deleteCategoryPayload';
+import {
+  FindCategoriesByBookIdPayload,
+  findCategoriesByBookIdPayloadSchema,
+} from '../../../contracts/services/categoryService/findCategoriesByBookIdPayload';
+import {
+  FindCategoriesPayload,
+  findCategoriesPayloadSchema,
+} from '../../../contracts/services/categoryService/findCategoriesPayload';
+import {
+  FindCategoryPayload,
+  findCategoryPayloadSchema,
+} from '../../../contracts/services/categoryService/findCategoryPayload';
 import { CategoryAlreadyExistsError } from '../../../errors/categoryAlreadyExistsError';
 import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
@@ -21,7 +37,7 @@ export class CategoryServiceImpl implements CategoryService {
     const {
       unitOfWork,
       draft: { name },
-    } = input;
+    } = PayloadFactory.create(createCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating category...', context: { name } });
 
@@ -43,7 +59,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async findCategory(input: FindCategoryPayload): Promise<Category> {
-    const { unitOfWork, categoryId } = input;
+    const { unitOfWork, categoryId } = PayloadFactory.create(findCategoryPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -59,7 +75,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
-    const { unitOfWork, filters, pagination } = input;
+    const { unitOfWork, filters, pagination } = PayloadFactory.create(findCategoriesPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -71,7 +87,10 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
-    const { unitOfWork, filters, pagination, bookId } = input;
+    const { unitOfWork, filters, pagination, bookId } = PayloadFactory.create(
+      findCategoriesByBookIdPayloadSchema,
+      input,
+    );
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -83,7 +102,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
-    const { unitOfWork, categoryId } = input;
+    const { unitOfWork, categoryId } = PayloadFactory.create(deleteCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting category...', context: { categoryId } });
 

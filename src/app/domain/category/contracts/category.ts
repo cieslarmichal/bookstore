@@ -1,18 +1,22 @@
-import { IsString, IsUUID } from 'class-validator';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Schema } from '../../../common/validator/implementations/schema';
 
-import { Validator } from '../../../common/validator/validator';
+export const categoryInputSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  name: Schema.notEmptyString(),
+});
+
+export type CategoryInput = SchemaType<typeof categoryInputSchema>;
 
 export class Category {
-  @IsUUID('4')
   public readonly id: string;
-
-  @IsString()
   public readonly name: string;
 
-  public constructor({ id, name }: Category) {
+  public constructor(input: CategoryInput) {
+    const { id, name } = PayloadFactory.create(categoryInputSchema, input);
+
     this.id = id;
     this.name = name;
-
-    Validator.validate(this);
   }
 }

@@ -1,23 +1,36 @@
 import { EntityManager } from 'typeorm';
 
 import { CategoryQueryBuilder } from './categoryQueryBuilder';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Category } from '../../../contracts/category';
 import { CategoryEntity } from '../../../contracts/categoryEntity';
 import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/categoryMapper';
 import { CategoryRepository } from '../../../contracts/repositories/categoryRepository/categoryRepository';
-import { CreateOnePayload } from '../../../contracts/repositories/categoryRepository/createOnePayload';
-import { DeleteOnePayload } from '../../../contracts/repositories/categoryRepository/deleteOnePayload';
-import { FindManyPayload } from '../../../contracts/repositories/categoryRepository/findManyPayload';
-import { FindOnePayload } from '../../../contracts/repositories/categoryRepository/findOnePayload';
+import {
+  CreateOnePayload,
+  createOnePayloadSchema,
+} from '../../../contracts/repositories/categoryRepository/createOnePayload';
+import {
+  DeleteOnePayload,
+  deleteOnePayloadSchema,
+} from '../../../contracts/repositories/categoryRepository/deleteOnePayload';
+import {
+  FindManyPayload,
+  findManyPayloadSchema,
+} from '../../../contracts/repositories/categoryRepository/findManyPayload';
+import {
+  FindOnePayload,
+  findOnePayloadSchema,
+} from '../../../contracts/repositories/categoryRepository/findOnePayload';
 import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
 export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Category> {
-    const categoryEntityInput: CategoryEntity = input;
+    const { id, name } = PayloadFactory.create(createOnePayloadSchema, input);
 
-    const categoryEntity = this.entityManager.create(CategoryEntity, categoryEntityInput);
+    const categoryEntity = this.entityManager.create(CategoryEntity, { id, name });
 
     const savedCategoryEntity = await this.entityManager.save(categoryEntity);
 
@@ -25,7 +38,19 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Category | null> {
-    const categoryEntity = await this.entityManager.findOne(CategoryEntity, { where: { ...input } });
+    const { id, name } = PayloadFactory.create(findOnePayloadSchema, input);
+
+    let findOneInput = {};
+
+    if (id) {
+      findOneInput = { ...findOneInput, id };
+    }
+
+    if (name) {
+      findOneInput = { ...findOneInput, name };
+    }
+
+    const categoryEntity = await this.entityManager.findOne(CategoryEntity, { where: { ...findOneInput } });
 
     if (!categoryEntity) {
       return null;
@@ -35,7 +60,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Category[]> {
-    const { bookId, filters, pagination } = input;
+    const { bookId, filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
 
     let categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
@@ -55,7 +80,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
 
     const categoryEntity = await this.findOne({ id });
 
