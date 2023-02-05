@@ -1,12 +1,22 @@
 import { EntityManager } from 'typeorm';
 
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryRepository } from '../../../contracts/repositories/bookCategoryRepository/bookCategoryRepository';
-import { CreateOnePayload } from '../../../contracts/repositories/bookCategoryRepository/createOnePayload';
-import { DeleteOnePayload } from '../../../contracts/repositories/bookCategoryRepository/deleteOnePayload';
-import { FindOnePayload } from '../../../contracts/repositories/bookCategoryRepository/findOnePayload';
+import {
+  CreateOnePayload,
+  createOnePayloadSchema,
+} from '../../../contracts/repositories/bookCategoryRepository/createOnePayload';
+import {
+  DeleteOnePayload,
+  deleteOnePayloadSchema,
+} from '../../../contracts/repositories/bookCategoryRepository/deleteOnePayload';
+import {
+  FindOnePayload,
+  findOnePayloadSchema,
+} from '../../../contracts/repositories/bookCategoryRepository/findOnePayload';
 import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
 export class BookCategoryRepositoryImpl implements BookCategoryRepository {
@@ -16,9 +26,9 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   ) {}
 
   public async createOne(input: CreateOnePayload): Promise<BookCategory> {
-    const bookCategoryEntityInput: BookCategoryEntity = input;
+    const { id, bookId, categoryId } = PayloadFactory.create(createOnePayloadSchema, input);
 
-    const bookCategoryEntity = this.entityManager.create(BookCategoryEntity, bookCategoryEntityInput);
+    const bookCategoryEntity = this.entityManager.create(BookCategoryEntity, { id, bookId, categoryId });
 
     const savedBookCategoryEntity = await this.entityManager.save(bookCategoryEntity);
 
@@ -26,7 +36,23 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<BookCategory | null> {
-    const bookCategoryEntity = await this.entityManager.findOne(BookCategoryEntity, { where: { ...input } });
+    const { id, bookId, categoryId } = PayloadFactory.create(findOnePayloadSchema, input);
+
+    let findOneInput = {};
+
+    if (id) {
+      findOneInput = { ...findOneInput, id };
+    }
+
+    if (bookId) {
+      findOneInput = { ...findOneInput, bookId };
+    }
+
+    if (categoryId) {
+      findOneInput = { ...findOneInput, categoryId };
+    }
+
+    const bookCategoryEntity = await this.entityManager.findOne(BookCategoryEntity, { where: { ...findOneInput } });
 
     if (!bookCategoryEntity) {
       return null;
@@ -36,7 +62,7 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
 
     const bookCategoryEntity = await this.findOne({ id });
 

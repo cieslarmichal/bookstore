@@ -1,22 +1,25 @@
-import { IsUUID } from 'class-validator';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Schema } from '../../../common/validator/implementations/schema';
 
-import { Validator } from '../../../common/validator/validator';
+export const bookCategoryInputSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  bookId: Schema.notEmptyString(),
+  categoryId: Schema.notEmptyString(),
+});
+
+export type BookCategoryInput = SchemaType<typeof bookCategoryInputSchema>;
 
 export class BookCategory {
-  @IsUUID('4')
   public readonly id: string;
+  public readonly bookId: string;
+  public readonly categoryId: string;
 
-  @IsUUID('4')
-  public bookId: string;
+  public constructor(input: BookCategoryInput) {
+    const { id, bookId, categoryId } = PayloadFactory.create(bookCategoryInputSchema, input);
 
-  @IsUUID('4')
-  public categoryId: string;
-
-  public constructor({ id, bookId, categoryId }: BookCategory) {
     this.id = id;
     this.bookId = bookId;
     this.categoryId = categoryId;
-
-    Validator.validate(this);
   }
 }

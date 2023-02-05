@@ -1,3 +1,4 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Book } from '../../../../book/contracts/book';
@@ -9,10 +10,22 @@ import { CategoryNotFoundError } from '../../../../category/errors/categoryNotFo
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
-import { CreateBookCategoryPayload } from '../../../contracts/services/bookCategoryService/createBookCategoryPayload';
-import { DeleteBookCategoryPayload } from '../../../contracts/services/bookCategoryService/deleteBookCategoryPayload';
-import { FindBooksByCategoryIdPayload } from '../../../contracts/services/bookCategoryService/findBooksByCategoryIdPayload';
-import { FindCategoriesByBookIdPayload } from '../../../contracts/services/bookCategoryService/findCategoriesByBookIdPayload';
+import {
+  CreateBookCategoryPayload,
+  createBookCategoryPayloadSchema,
+} from '../../../contracts/services/bookCategoryService/createBookCategoryPayload';
+import {
+  DeleteBookCategoryPayload,
+  deleteBookCategoryPayloadSchema,
+} from '../../../contracts/services/bookCategoryService/deleteBookCategoryPayload';
+import {
+  FindBooksByCategoryIdPayload,
+  findBooksByCategoryIdPayloadSchema,
+} from '../../../contracts/services/bookCategoryService/findBooksByCategoryIdPayload';
+import {
+  FindCategoriesByBookIdPayload,
+  findCategoriesByBookIdPayloadSchema,
+} from '../../../contracts/services/bookCategoryService/findCategoriesByBookIdPayload';
 import { BookCategoryAlreadyExistsError } from '../../../errors/bookCategoryAlreadyExistsError';
 import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
@@ -28,7 +41,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const {
       unitOfWork,
       draft: { bookId, categoryId },
-    } = input;
+    } = PayloadFactory.create(createBookCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating bookCategory...', context: { bookId, categoryId } });
 
@@ -66,7 +79,10 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   }
 
   public async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
-    const { unitOfWork, bookId, filters, pagination } = input;
+    const { unitOfWork, bookId, filters, pagination } = PayloadFactory.create(
+      findCategoriesByBookIdPayloadSchema,
+      input,
+    );
 
     const book = await this.bookService.findBook({ unitOfWork, bookId });
 
@@ -78,7 +94,10 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   }
 
   public async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
-    const { unitOfWork, categoryId, filters, pagination } = input;
+    const { unitOfWork, categoryId, filters, pagination } = PayloadFactory.create(
+      findBooksByCategoryIdPayloadSchema,
+      input,
+    );
 
     const category = await this.categoryService.findCategory({ unitOfWork, categoryId });
 
@@ -90,7 +109,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   }
 
   public async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
-    const { unitOfWork, bookId, categoryId } = input;
+    const { unitOfWork, bookId, categoryId } = PayloadFactory.create(deleteBookCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting bookCategory...', context: { bookId, categoryId } });
 

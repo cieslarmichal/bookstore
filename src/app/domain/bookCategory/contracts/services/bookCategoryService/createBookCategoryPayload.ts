@@ -1,7 +1,11 @@
-import { CreateBookCategoryDraft } from './createBookCategoryDraft';
+import { createBookCategoryDraftSchema } from './createBookCategoryDraft';
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
-export interface CreateBookCategoryPayload {
-  readonly unitOfWork: UnitOfWork;
-  readonly draft: CreateBookCategoryDraft;
-}
+export const createBookCategoryPayloadSchema = Schema.object({
+  unitOfWork: Schema.unsafeType<UnitOfWork>(),
+  draft: createBookCategoryDraftSchema,
+});
+
+export type CreateBookCategoryPayload = SchemaType<typeof createBookCategoryPayloadSchema>;
