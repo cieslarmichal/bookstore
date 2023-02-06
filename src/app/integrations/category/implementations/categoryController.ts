@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 
 import { categoryErrorMiddleware } from './categoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Category } from '../../../domain/category/contracts/category';
 import { CategoryService } from '../../../domain/category/contracts/services/categoryService/categoryService';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
@@ -14,11 +15,11 @@ import { PaginationDataBuilder } from '../../common/paginationDataBuilder/pagina
 import { ControllerResponse } from '../../controllerResponse';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
-import { CreateCategoryPayload } from '../contracts/createCategoryPayload';
-import { DeleteCategoryPayload } from '../contracts/deleteCategoryPayload';
+import { CreateCategoryPayload, createCategoryPayloadSchema } from '../contracts/createCategoryPayload';
+import { DeleteCategoryPayload, deleteCategoryPayloadSchema } from '../contracts/deleteCategoryPayload';
 import { findCategoriesFilters } from '../contracts/findCategoriesFilters';
-import { FindCategoriesPayload } from '../contracts/findCategoriesPayload';
-import { FindCategoryPayload } from '../contracts/findCategoryPayload';
+import { FindCategoriesPayload, findCategoriesPayloadSchema } from '../contracts/findCategoriesPayload';
+import { FindCategoryPayload, findCategoryPayloadSchema } from '../contracts/findCategoryPayload';
 
 export class CategoryController {
   public readonly router = Router();
@@ -113,7 +114,7 @@ export class CategoryController {
   }
 
   private async createCategory(input: CreateCategoryPayload): Promise<Category> {
-    const { name } = input;
+    const { name } = PayloadFactory.create(createCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -125,7 +126,7 @@ export class CategoryController {
   }
 
   private async findCategory(input: FindCategoryPayload): Promise<Category> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(findCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -137,7 +138,7 @@ export class CategoryController {
   }
 
   private async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
-    const { filters, pagination } = input;
+    const { filters, pagination } = PayloadFactory.create(findCategoriesPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -149,7 +150,7 @@ export class CategoryController {
   }
 
   private async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
