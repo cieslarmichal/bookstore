@@ -3,6 +3,7 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Book } from '../../../../../domain/book/contracts/book';
 import { BookService } from '../../../../../domain/book/contracts/services/bookService/bookService';
 import { CreateBookDraft } from '../../../../../domain/book/contracts/services/bookService/createBookDraft';
@@ -15,12 +16,24 @@ import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
-import { CreateBookPayload } from '../../../contracts/controllers/bookController/createBookPayload';
-import { DeleteBookPayload } from '../../../contracts/controllers/bookController/deleteBookPayload';
-import { FindBookPayload } from '../../../contracts/controllers/bookController/findBookPayload';
+import {
+  CreateBookPayload,
+  createBookPayloadSchema,
+} from '../../../contracts/controllers/bookController/createBookPayload';
+import {
+  DeleteBookPayload,
+  deleteBookPayloadSchema,
+} from '../../../contracts/controllers/bookController/deleteBookPayload';
+import { FindBookPayload, findBookPayloadSchema } from '../../../contracts/controllers/bookController/findBookPayload';
 import { findBooksFilters } from '../../../contracts/controllers/bookController/findBooksFilters';
-import { FindBooksPayload } from '../../../contracts/controllers/bookController/findBooksPayload';
-import { UpdateBookPayload } from '../../../contracts/controllers/bookController/updateBookPayload';
+import {
+  FindBooksPayload,
+  findBooksPayloadSchema,
+} from '../../../contracts/controllers/bookController/findBooksPayload';
+import {
+  UpdateBookPayload,
+  updateBookPayloadSchema,
+} from '../../../contracts/controllers/bookController/updateBookPayload';
 import { bookErrorMiddleware } from '../../middlewares/bookErrorMiddleware/bookErrorMiddleware';
 
 export class BookController {
@@ -134,7 +147,10 @@ export class BookController {
   }
 
   private async createBook(input: CreateBookPayload): Promise<Book> {
-    const { title, releaseYear, language, format, description, price } = input;
+    const { title, releaseYear, language, format, description, price } = PayloadFactory.create(
+      createBookPayloadSchema,
+      input,
+    );
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -161,7 +177,7 @@ export class BookController {
   }
 
   private async findBook(input: FindBookPayload): Promise<Book> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(findBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -173,7 +189,7 @@ export class BookController {
   }
 
   private async findBooks(input: FindBooksPayload): Promise<Book[]> {
-    const { filters, pagination } = input;
+    const { filters, pagination } = PayloadFactory.create(findBooksPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -185,7 +201,7 @@ export class BookController {
   }
 
   private async updateBook(input: UpdateBookPayload): Promise<Book> {
-    const { id, description, price } = input;
+    const { id, description, price } = PayloadFactory.create(updateBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -207,7 +223,7 @@ export class BookController {
   }
 
   private async deleteBook(input: DeleteBookPayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
