@@ -4,14 +4,14 @@ import { AddressController } from './address/implementations/controllers/address
 import { AuthorController } from './author/implementations/controllers/authorController/authorController';
 import { AuthorBookController } from './authorBook/implementations/controllers/authorBookController/authorBookController';
 import { BookController } from './book/implementations/controllers/bookController/bookController';
-import { BookCategoryControllerImpl } from './bookCategory/implementations/controllers/bookCategoryController/bookCategoryControllerImpl';
-import { CategoryControllerImpl } from './category/implementations/controllers/categoryController/categoryControllerImpl';
+import { BookCategoryController } from './bookCategory/implementations/controllers/bookCategoryController/bookCategoryController';
+import { CategoryController } from './category/implementations/controllers/categoryController/categoryController';
 import { FilterDataParser } from './common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
 import { PaginationDataBuilder } from './common/paginationDataBuilder/paginationDataBuilder';
-import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
+import { CustomerController } from './customer/implementations/controllers/customerController/customerController';
 import { integrationsSymbols } from './integrationsSymbols';
-import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
+import { UserController } from './user/implementations/controllers/userController/userController';
 import { DependencyInjectionModule } from '../libs/dependencyInjection/contracts/dependencyInjectionModule';
 
 export class IntegrationsModule implements DependencyInjectionModule {
@@ -22,14 +22,14 @@ export class IntegrationsModule implements DependencyInjectionModule {
       [integrationsSymbols.paginationDataBuilder]: asClass(PaginationDataBuilder, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.bookController]: asClass(BookController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.authorController]: asClass(AuthorController, { lifetime: Lifetime.SINGLETON }),
-      [integrationsSymbols.userController]: asClass(UserControllerImpl, { lifetime: Lifetime.SINGLETON }),
-      [integrationsSymbols.categoryController]: asClass(CategoryControllerImpl, { lifetime: Lifetime.SINGLETON }),
+      [integrationsSymbols.userController]: asClass(UserController, { lifetime: Lifetime.SINGLETON }),
+      [integrationsSymbols.categoryController]: asClass(CategoryController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.authorBookController]: asClass(AuthorBookController, { lifetime: Lifetime.SINGLETON }),
-      [integrationsSymbols.bookCategoryController]: asClass(BookCategoryControllerImpl, {
+      [integrationsSymbols.bookCategoryController]: asClass(BookCategoryController, {
         lifetime: Lifetime.SINGLETON,
       }),
       [integrationsSymbols.addressController]: asClass(AddressController, { lifetime: Lifetime.SINGLETON }),
-      [integrationsSymbols.customerController]: asClass(CustomerControllerImpl, { lifetime: Lifetime.SINGLETON }),
+      [integrationsSymbols.customerController]: asClass(CustomerController, { lifetime: Lifetime.SINGLETON }),
     });
   }
 }
