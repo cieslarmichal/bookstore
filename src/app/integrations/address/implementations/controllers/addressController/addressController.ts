@@ -3,6 +3,7 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Address } from '../../../../../domain/address/contracts/address';
 import { AddressService } from '../../../../../domain/address/contracts/services/addressService/addressService';
 import { CreateAddressDraft } from '../../../../../domain/address/contracts/services/addressService/createAddressDraft';
@@ -18,11 +19,23 @@ import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
-import { CreateAddressPayload } from '../../../contracts/controllers/addressController/createAddressPayload';
-import { DeleteAddressPayload } from '../../../contracts/controllers/addressController/deleteAddressPayload';
+import {
+  CreateAddressPayload,
+  createAddressPayloadSchema,
+} from '../../../contracts/controllers/addressController/createAddressPayload';
+import {
+  DeleteAddressPayload,
+  deleteAddressPayloadSchema,
+} from '../../../contracts/controllers/addressController/deleteAddressPayload';
 import { findAddressesFilters } from '../../../contracts/controllers/addressController/findAddressesFilters';
-import { FindAddressesPayload } from '../../../contracts/controllers/addressController/findAddressesPayload';
-import { FindAddressPayload } from '../../../contracts/controllers/addressController/findAddressPayload';
+import {
+  FindAddressesPayload,
+  findAddressesPayloadSchema,
+} from '../../../contracts/controllers/addressController/findAddressesPayload';
+import {
+  FindAddressPayload,
+  findAddressPayloadSchema,
+} from '../../../contracts/controllers/addressController/findAddressPayload';
 import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../../../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
 import { UserIsNotCustomerError } from '../../../errors/userIsNotCustomerError';
 import { addressErrorMiddleware } from '../../middlewares/addressErrorMiddleware/addressErrorMiddleware';
@@ -156,7 +169,7 @@ export class AddressController {
       streetAddress,
       deliveryInstructions,
       customerId,
-    } = input;
+    } = PayloadFactory.create(createAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -190,7 +203,7 @@ export class AddressController {
   }
 
   private async findAddress(input: FindAddressPayload): Promise<Address> {
-    const { id, accessTokenData } = input;
+    const { id, accessTokenData } = PayloadFactory.create(findAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -221,7 +234,7 @@ export class AddressController {
   }
 
   private async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
-    const { filters, pagination } = input;
+    const { filters, pagination } = PayloadFactory.create(findAddressesPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -233,7 +246,7 @@ export class AddressController {
   }
 
   private async deleteAddress(input: DeleteAddressPayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
