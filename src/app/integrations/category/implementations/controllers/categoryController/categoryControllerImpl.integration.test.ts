@@ -72,20 +72,22 @@ describe(`CategoryController (${baseUrl})`, () => {
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new CategoryModule(),
-      new BookModule(),
-      new AuthorModule(),
-      new UserModule(userModuleConfig),
-      new IntegrationsModule(),
-      new AuthorBookModule(),
-      new LoggerModule(loggerModuleConfig),
-      new BookCategoryModule(),
-      new AddressModule(),
-      new CustomerModule(),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new CategoryModule(),
+        new BookModule(),
+        new AuthorModule(),
+        new UserModule(userModuleConfig),
+        new IntegrationsModule(),
+        new AuthorBookModule(),
+        new LoggerModule(loggerModuleConfig),
+        new BookCategoryModule(),
+        new AddressModule(),
+        new CustomerModule(),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
     postgresConnector = container.resolve(postgresSymbols.postgresConnector);

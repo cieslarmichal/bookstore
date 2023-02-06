@@ -75,20 +75,22 @@ describe(`CustomerController (${baseUrl})`, () => {
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new BookModule(),
-      new AuthorModule(),
-      new UserModule(userModuleConfig),
-      new IntegrationsModule(),
-      new AuthorBookModule(),
-      new LoggerModule(loggerModuleConfig),
-      new BookCategoryModule(),
-      new CategoryModule(),
-      new CustomerModule(),
-      new AddressModule(),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new BookModule(),
+        new AuthorModule(),
+        new UserModule(userModuleConfig),
+        new IntegrationsModule(),
+        new AuthorBookModule(),
+        new LoggerModule(loggerModuleConfig),
+        new BookCategoryModule(),
+        new CategoryModule(),
+        new CustomerModule(),
+        new AddressModule(),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);

@@ -70,14 +70,16 @@ describe('AddressServiceImpl', () => {
   });
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new AddressModule(),
-      new LoggerModule(loggerModuleConfig),
-      new CustomerModule(),
-      new UserModule(userModuleConfig),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new AddressModule(),
+        new LoggerModule(loggerModuleConfig),
+        new CustomerModule(),
+        new UserModule(userModuleConfig),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     addressService = container.resolve(addressSymbols.addressService);
     addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);

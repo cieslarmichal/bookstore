@@ -65,14 +65,16 @@ describe('BookCategoryService', () => {
   });
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new CategoryModule(),
-      new BookModule(),
-      new BookCategoryModule(),
-      new LoggerModule(loggerModuleConfig),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new CategoryModule(),
+        new BookModule(),
+        new BookCategoryModule(),
+        new LoggerModule(loggerModuleConfig),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     bookCategoryService = container.resolve(bookCategorySymbols.bookCategoryService);
     bookCategoryRepositoryFactory = container.resolve(bookCategorySymbols.bookCategoryRepositoryFactory);

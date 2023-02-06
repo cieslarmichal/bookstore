@@ -83,20 +83,22 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new CategoryModule(),
-      new BookModule(),
-      new AuthorModule(),
-      new AuthorBookModule(),
-      new UserModule(userModuleConfig),
-      new IntegrationsModule(),
-      new LoggerModule(loggerModuleConfig),
-      new BookCategoryModule(),
-      new AddressModule(),
-      new CustomerModule(),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new CategoryModule(),
+        new BookModule(),
+        new AuthorModule(),
+        new AuthorBookModule(),
+        new UserModule(userModuleConfig),
+        new IntegrationsModule(),
+        new LoggerModule(loggerModuleConfig),
+        new BookCategoryModule(),
+        new AddressModule(),
+        new CustomerModule(),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     authorRepositoryFactory = container.resolve(authorSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);

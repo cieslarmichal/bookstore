@@ -58,19 +58,21 @@ export class App {
       CustomerEntity,
     ];
 
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword, entities }),
-      new CategoryModule(),
-      new BookModule(),
-      new AuthorModule(),
-      new UserModule({ jwtSecret, jwtExpiresIn, hashSaltRounds }),
-      new IntegrationsModule(),
-      new AuthorBookModule(),
-      new LoggerModule({ logLevel }),
-      new BookCategoryModule(),
-      new AddressModule(),
-      new CustomerModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword, entities }),
+        new CategoryModule(),
+        new BookModule(),
+        new AuthorModule(),
+        new UserModule({ jwtSecret, jwtExpiresIn, hashSaltRounds }),
+        new IntegrationsModule(),
+        new AuthorBookModule(),
+        new LoggerModule({ logLevel }),
+        new BookCategoryModule(),
+        new AddressModule(),
+        new CustomerModule(),
+      ],
+    });
 
     const bookController = container.resolve(integrationsSymbols.bookController);
     const authorController = container.resolve(integrationsSymbols.authorController);

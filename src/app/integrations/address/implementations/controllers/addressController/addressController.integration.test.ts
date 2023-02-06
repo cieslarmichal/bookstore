@@ -81,20 +81,22 @@ describe(`AddressController (${baseUrl})`, () => {
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
   beforeEach(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new AddressModule(),
-      new BookModule(),
-      new AuthorModule(),
-      new UserModule(userModuleConfig),
-      new IntegrationsModule(),
-      new AuthorBookModule(),
-      new LoggerModule(loggerModuleConfig),
-      new BookCategoryModule(),
-      new CategoryModule(),
-      new CustomerModule(),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new AddressModule(),
+        new BookModule(),
+        new AuthorModule(),
+        new UserModule(userModuleConfig),
+        new IntegrationsModule(),
+        new AuthorBookModule(),
+        new LoggerModule(loggerModuleConfig),
+        new BookCategoryModule(),
+        new CategoryModule(),
+        new CustomerModule(),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
     userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);

@@ -67,14 +67,16 @@ describe('AuthorServiceImpl', () => {
   });
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new BookModule(),
-      new AuthorModule(),
-      new AuthorBookModule(),
-      new LoggerModule(loggerModuleConfig),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new BookModule(),
+        new AuthorModule(),
+        new AuthorBookModule(),
+        new LoggerModule(loggerModuleConfig),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     authorService = container.resolve(authorSymbols.authorService);
     authorRepositoryFactory = container.resolve(authorSymbols.authorRepositoryFactory);

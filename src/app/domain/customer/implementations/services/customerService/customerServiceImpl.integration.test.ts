@@ -61,13 +61,15 @@ describe('CustomerServiceImpl', () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create([
-      new PostgresModule(postgresModuleConfig),
-      new CustomerModule(),
-      new LoggerModule(loggerModuleConfig),
-      new UserModule(userModuleConfig),
-      new UnitOfWorkModule(),
-    ]);
+    const container = await DependencyInjectionContainerFactory.create({
+      modules: [
+        new PostgresModule(postgresModuleConfig),
+        new CustomerModule(),
+        new LoggerModule(loggerModuleConfig),
+        new UserModule(userModuleConfig),
+        new UnitOfWorkModule(),
+      ],
+    });
 
     customerService = container.resolve(customerSymbols.customerService);
     customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
