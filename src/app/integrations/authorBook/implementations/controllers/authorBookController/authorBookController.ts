@@ -3,6 +3,7 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Author } from '../../../../../domain/author/contracts/author';
 import { AuthorBook } from '../../../../../domain/authorBook/contracts/authorBook';
 import { AuthorBookService } from '../../../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
@@ -17,10 +18,22 @@ import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
-import { CreateAuthorBookPayload } from '../../../contracts/controllers/authorBookController/createAuthorBookPayload';
-import { DeleteAuthorBookPayload } from '../../../contracts/controllers/authorBookController/deleteAuthorBookPayload';
-import { FindAuthorsByBookIdPayload } from '../../../contracts/controllers/authorBookController/findAuthorsByBookIdPayload';
-import { FindBooksByAuthorIdPayload } from '../../../contracts/controllers/authorBookController/findBooksByAuthorIdPayload';
+import {
+  CreateAuthorBookPayload,
+  createAuthorBookPayloadSchema,
+} from '../../../contracts/controllers/authorBookController/createAuthorBookPayload';
+import {
+  DeleteAuthorBookPayload,
+  deleteAuthorBookPayloadSchema,
+} from '../../../contracts/controllers/authorBookController/deleteAuthorBookPayload';
+import {
+  FindAuthorsByBookIdPayload,
+  findAuthorsByBookIdPayloadSchema,
+} from '../../../contracts/controllers/authorBookController/findAuthorsByBookIdPayload';
+import {
+  FindBooksByAuthorIdPayload,
+  findBooksByAuthorIdPayloadSchema,
+} from '../../../contracts/controllers/authorBookController/findBooksByAuthorIdPayload';
 import { authorBookErrorMiddleware } from '../../middlewares/authorBookErrorMiddleware/authorBookErrorMiddleware';
 
 export class AuthorBookController {
@@ -130,7 +143,7 @@ export class AuthorBookController {
   }
 
   private async createAuthorBook(input: CreateAuthorBookPayload): Promise<AuthorBook> {
-    const { authorId, bookId } = input;
+    const { authorId, bookId } = PayloadFactory.create(createAuthorBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -148,7 +161,7 @@ export class AuthorBookController {
   }
 
   private async findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]> {
-    const { authorId, filters, pagination } = input;
+    const { authorId, filters, pagination } = PayloadFactory.create(findBooksByAuthorIdPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -165,7 +178,7 @@ export class AuthorBookController {
   }
 
   private async findAuthorsByBookId(input: FindAuthorsByBookIdPayload): Promise<Author[]> {
-    const { bookId, filters, pagination } = input;
+    const { bookId, filters, pagination } = PayloadFactory.create(findAuthorsByBookIdPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -177,7 +190,7 @@ export class AuthorBookController {
   }
 
   private async deleteAuthorBook(input: DeleteAuthorBookPayload): Promise<void> {
-    const { authorId, bookId } = input;
+    const { authorId, bookId } = PayloadFactory.create(deleteAuthorBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
