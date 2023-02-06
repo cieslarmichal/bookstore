@@ -1,6 +1,10 @@
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
 import { LogContext } from '../../logContext';
 
-export interface DebugPayload {
-  readonly message: string;
-  readonly context?: LogContext;
-}
+export const debugPayloadSchema = Schema.object({
+  message: Schema.string(),
+  context: Schema.unsafeType<LogContext>().optional(),
+});
+
+export type DebugPayload = SchemaType<typeof debugPayloadSchema>;
