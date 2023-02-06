@@ -3,6 +3,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { HttpStatusCode } from '../../../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Author } from '../../../../../domain/author/contracts/author';
 import { AuthorService } from '../../../../../domain/author/contracts/services/authorService/authorService';
 import { CreateAuthorDraft } from '../../../../../domain/author/contracts/services/authorService/createAuthorDraft';
@@ -14,12 +15,27 @@ import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
-import { CreateAuthorPayload } from '../../../contracts/controllers/authorController/createAuthorPayload';
-import { DeleteAuthorPayload } from '../../../contracts/controllers/authorController/deleteAuthorPayload';
-import { FindAuthorPayload } from '../../../contracts/controllers/authorController/findAuthorPayload';
+import {
+  CreateAuthorPayload,
+  createAuthorPayloadSchema,
+} from '../../../contracts/controllers/authorController/createAuthorPayload';
+import {
+  DeleteAuthorPayload,
+  deleteAuthorPayloadSchema,
+} from '../../../contracts/controllers/authorController/deleteAuthorPayload';
+import {
+  FindAuthorPayload,
+  findAuthorPayloadSchema,
+} from '../../../contracts/controllers/authorController/findAuthorPayload';
 import { findAuthorsFilters } from '../../../contracts/controllers/authorController/findAuthorsFilters';
-import { FindAuthorsPayload } from '../../../contracts/controllers/authorController/findAuthorsPayload';
-import { UpdateAuthorPayload } from '../../../contracts/controllers/authorController/updateAuthorPayload';
+import {
+  FindAuthorsPayload,
+  findAuthorsPayloadSchema,
+} from '../../../contracts/controllers/authorController/findAuthorsPayload';
+import {
+  UpdateAuthorPayload,
+  updateAuthorPayloadSchema,
+} from '../../../contracts/controllers/authorController/updateAuthorPayload';
 import { authorErrorMiddleware } from '../../middlewares/authorErrorMiddleware/authorErrorMiddleware';
 
 export class AuthorController {
@@ -132,7 +148,7 @@ export class AuthorController {
   }
 
   private async createAuthor(input: CreateAuthorPayload): Promise<Author> {
-    const { firstName, lastName, about } = input;
+    const { firstName, lastName, about } = PayloadFactory.create(createAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -153,7 +169,7 @@ export class AuthorController {
   }
 
   private async findAuthor(input: FindAuthorPayload): Promise<Author> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(findAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -165,7 +181,7 @@ export class AuthorController {
   }
 
   private async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
-    const { filters, pagination } = input;
+    const { filters, pagination } = PayloadFactory.create(findAuthorsPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -177,7 +193,7 @@ export class AuthorController {
   }
 
   private async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
-    const { id, about } = input;
+    const { id, about } = PayloadFactory.create(updateAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -189,7 +205,7 @@ export class AuthorController {
   }
 
   private async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
