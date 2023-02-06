@@ -4,15 +4,16 @@ import asyncHandler from 'express-async-handler';
 
 import { customerErrorMiddleware } from './customerErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
 import { LocalsName } from '../../localsName';
-import { CreateCustomerPayload } from '../contracts/createCustomerPayload';
-import { DeleteCustomerPayload } from '../contracts/deleteCustomerPayload';
-import { FindCustomerPayload } from '../contracts/findCustomerPayload';
+import { CreateCustomerPayload, createCustomerPayloadSchema } from '../contracts/createCustomerPayload';
+import { DeleteCustomerPayload, deleteCustomerPayloadSchema } from '../contracts/deleteCustomerPayload';
+import { FindCustomerPayload, findCustomerPayloadSchema } from '../contracts/findCustomerPayload';
 
 export class CustomerController {
   public readonly router = Router();
@@ -80,7 +81,7 @@ export class CustomerController {
   }
 
   private async createCustomer(input: CreateCustomerPayload): Promise<ControllerResponse> {
-    const { userId } = input;
+    const { userId } = PayloadFactory.create(createCustomerPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -92,7 +93,7 @@ export class CustomerController {
   }
 
   private async findCustomer(input: FindCustomerPayload): Promise<ControllerResponse> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(findCustomerPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -104,7 +105,7 @@ export class CustomerController {
   }
 
   private async deleteCustomer(input: DeleteCustomerPayload): Promise<ControllerResponse> {
-    const { id } = input;
+    const { id } = PayloadFactory.create(deleteCustomerPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
