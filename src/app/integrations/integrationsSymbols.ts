@@ -1,7 +1,7 @@
 export const integrationsSymbols = {
   authMiddleware: 'authMiddleware',
   filterDataParser: 'filterDataParser',
-  paginationDataParser: 'paginationDataParser',
+  paginationDataBuilder: 'paginationDataBuilder',
   bookController: 'bookController',
   authorController: 'authorController',
   userController: 'userController',

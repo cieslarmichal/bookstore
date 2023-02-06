@@ -8,7 +8,7 @@ import { BookCategoryControllerImpl } from './bookCategory/implementations/contr
 import { CategoryControllerImpl } from './category/implementations/controllers/categoryController/categoryControllerImpl';
 import { FilterDataParser } from './common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
-import { PaginationDataParser } from './common/paginationDataParser/paginationDataParser';
+import { PaginationDataBuilder } from './common/paginationDataBuilder/paginationDataBuilder';
 import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';
@@ -19,7 +19,7 @@ export class IntegrationsModule implements DependencyInjectionModule {
     container.register({
       [integrationsSymbols.authMiddleware]: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.filterDataParser]: asClass(FilterDataParser, { lifetime: Lifetime.SINGLETON }),
-      [integrationsSymbols.paginationDataParser]: asClass(PaginationDataParser, { lifetime: Lifetime.SINGLETON }),
+      [integrationsSymbols.paginationDataBuilder]: asClass(PaginationDataBuilder, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.bookController]: asClass(BookController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.authorController]: asClass(AuthorController, { lifetime: Lifetime.SINGLETON }),
       [integrationsSymbols.userController]: asClass(UserControllerImpl, { lifetime: Lifetime.SINGLETON }),

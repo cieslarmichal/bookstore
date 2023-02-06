@@ -10,7 +10,7 @@ import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/fact
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/paginationDataParser/paginationDataParser';
+import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
@@ -32,7 +32,7 @@ export class AuthorController {
     private readonly authorService: AuthorService,
     authMiddleware: AuthMiddleware,
     private filterDataParser: FilterDataParser,
-    private paginationDataParser: PaginationDataParser,
+    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -77,7 +77,11 @@ export class AuthorController {
           supportedFieldsFilters: findAuthorsFilters,
         });
 
-        const pagination = this.paginationDataParser.parse(request.query);
+        const page = Number(request.query[QueryParameterName.page]);
+
+        const limit = Number(request.query[QueryParameterName.limit]);
+
+        const pagination = this.paginationDataBuilder.build({ page, limit });
 
         const authors = await this.findAuthors({ filters, pagination });
 

@@ -13,7 +13,7 @@ import { findBooksFilters } from '../../../../book/contracts/controllers/bookCon
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/paginationDataParser/paginationDataParser';
+import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
@@ -34,7 +34,7 @@ export class AuthorBookController {
     private readonly authorBookService: AuthorBookService,
     authMiddleware: AuthMiddleware,
     private filterDataParser: FilterDataParser,
-    private paginationDataParser: PaginationDataParser,
+    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -65,7 +65,11 @@ export class AuthorBookController {
           supportedFieldsFilters: findBooksFilters,
         });
 
-        const pagination = this.paginationDataParser.parse(request.query);
+        const page = Number(request.query[QueryParameterName.page]);
+
+        const limit = Number(request.query[QueryParameterName.limit]);
+
+        const pagination = this.paginationDataBuilder.build({ page, limit });
 
         const books = await this.findBooksByAuthorId({ authorId: authorId as string, filters, pagination });
 
@@ -88,7 +92,11 @@ export class AuthorBookController {
           supportedFieldsFilters: findAuthorsFilters,
         });
 
-        const pagination = this.paginationDataParser.parse(request.query);
+        const page = Number(request.query[QueryParameterName.page]);
+
+        const limit = Number(request.query[QueryParameterName.limit]);
+
+        const pagination = this.paginationDataBuilder.build({ page, limit });
 
         const authors = await this.findAuthorsByBookId({ bookId: bookId as string, filters, pagination });
 

@@ -14,7 +14,7 @@ import { AccessTokenData } from '../../../../accessTokenData';
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/paginationDataParser/paginationDataParser';
+import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
@@ -38,7 +38,7 @@ export class AddressController {
     private readonly customerService: CustomerService,
     authMiddleware: AuthMiddleware,
     private filterDataParser: FilterDataParser,
-    private paginationDataParser: PaginationDataParser,
+    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -107,7 +107,11 @@ export class AddressController {
           supportedFieldsFilters: findAddressesFilters,
         });
 
-        const pagination = this.paginationDataParser.parse(request.query);
+        const page = Number(request.query[QueryParameterName.page]);
+
+        const limit = Number(request.query[QueryParameterName.limit]);
+
+        const pagination = this.paginationDataBuilder.build({ page, limit });
 
         const addresses = await this.findAddresses({ filters, pagination });
 
