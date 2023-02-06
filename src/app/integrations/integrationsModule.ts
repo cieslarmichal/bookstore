@@ -6,9 +6,9 @@ import { AuthorBookController } from './authorBook/implementations/controllers/a
 import { BookController } from './book/implementations/controllers/bookController/bookController';
 import { BookCategoryControllerImpl } from './bookCategory/implementations/controllers/bookCategoryController/bookCategoryControllerImpl';
 import { CategoryControllerImpl } from './category/implementations/controllers/categoryController/categoryControllerImpl';
-import { FilterDataParser } from './common/filter/filterDataParser';
+import { FilterDataParser } from './common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
-import { PaginationDataParser } from './common/pagination/paginationDataParser';
+import { PaginationDataParser } from './common/paginationDataParser/paginationDataParser';
 import { CustomerControllerImpl } from './customer/implementations/controllers/customerController/customerControllerImpl';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserControllerImpl } from './user/implementations/controllers/userController/userControllerImpl';

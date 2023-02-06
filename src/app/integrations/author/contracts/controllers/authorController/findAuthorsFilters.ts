@@ -1,8 +1,6 @@
-import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
+import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
 
-export const findAuthorsFilters: Map<string, Array<string>> = new Map(
-  Object.entries({
-    firstName: [FilterSymbol.equal, FilterSymbol.like],
-    lastName: [FilterSymbol.equal, FilterSymbol.like],
-  }),
-);
+export const findAuthorsFilters: Record<string, FilterSymbol[]> = {
+  firstName: [FilterSymbol.equal, FilterSymbol.like],
+  lastName: [FilterSymbol.equal, FilterSymbol.like],
+};

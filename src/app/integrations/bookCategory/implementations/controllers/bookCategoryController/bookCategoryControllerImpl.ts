@@ -10,10 +10,10 @@ import { Category } from '../../../../../domain/category/contracts/category';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { findBooksFilters } from '../../../../book/contracts/controllers/bookController/findBooksFilters';
 import { findCategoriesFilters } from '../../../../category/contracts/controllers/categoryController/findCategoriesFilters';
-import { FilterDataParser } from '../../../../common/filter/filterDataParser';
+import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { PaginationDataParser } from '../../../../common/paginationDataParser/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
@@ -63,10 +63,10 @@ export class BookCategoryController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { bookId } = request.params;
 
-        const filters = this.filterDataParser.parse(
-          request.query[QueryParameterName.filter] as string,
-          findCategoriesFilters,
-        );
+        const filters = this.filterDataParser.parse({
+          jsonData: request.query[QueryParameterName.filter] as string,
+          supportedFieldsFilters: findCategoriesFilters,
+        });
 
         const pagination = this.paginationDataParser.parse(request.query);
 
@@ -90,10 +90,10 @@ export class BookCategoryController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { categoryId } = request.params;
 
-        const filters = this.filterDataParser.parse(
-          request.query[QueryParameterName.filter] as string,
-          findBooksFilters,
-        );
+        const filters = this.filterDataParser.parse({
+          jsonData: request.query[QueryParameterName.filter] as string,
+          supportedFieldsFilters: findBooksFilters,
+        });
 
         const pagination = this.paginationDataParser.parse(request.query);
 

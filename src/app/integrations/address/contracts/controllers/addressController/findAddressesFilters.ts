@@ -1,7 +1,5 @@
-import { FilterSymbol } from '../../../../../common/filter/filterSymbol.js';
+import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
 
-export const findAddressesFilters = new Map(
-  Object.entries({
-    customerId: [FilterSymbol.equal],
-  }),
-);
+export const findAddressesFilters: Record<string, FilterSymbol[]> = {
+  customerId: [FilterSymbol.equal],
+};

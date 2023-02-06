@@ -1,7 +1,9 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError.js';
+import { ParsePayload, parsePayloadSchema } from './parsePayload.js';
 import { Filter } from '../../../common/types/contracts/filter.js';
 import { FilterName } from '../../../common/types/contracts/filterName.js';
 import { FilterSymbol } from '../../../common/types/contracts/filterSymbol.js';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory.js';
 
 export class FilterDataParser {
   private readonly tokensSeparator = '||';
@@ -11,10 +13,8 @@ export class FilterDataParser {
   private readonly valuesIndex = 2;
   private readonly numberOfTokensInFilterElement = 3;
 
-  public parse(jsonData: string, supportedFieldsFilters: Map<string, Array<string>>): Filter[] {
-    if (!jsonData) {
-      return [];
-    }
+  public parse(input: ParsePayload): Filter[] {
+    const { jsonData, supportedFieldsFilters } = PayloadFactory.create(parsePayloadSchema, input);
 
     if (!supportedFieldsFilters) {
       return [];
@@ -39,7 +39,7 @@ export class FilterDataParser {
 
       const fieldName = tokens[this.fieldNameIndex];
 
-      const filterSymbol = tokens[this.operationNameIndex];
+      const filterSymbol = tokens[this.operationNameIndex] as FilterSymbol;
 
       if (!fieldName) {
         throw new InvalidFilterSyntaxError({ errorDetails: 'field name not defined' });
@@ -49,7 +49,7 @@ export class FilterDataParser {
         throw new InvalidFilterSyntaxError({ errorDetails: 'filter symbol not defined' });
       }
 
-      const supportedFieldFilters = supportedFieldsFilters.get(fieldName);
+      const supportedFieldFilters = supportedFieldsFilters[fieldName];
 
       if (!supportedFieldFilters || !supportedFieldFilters.includes(filterSymbol)) {
         continue;

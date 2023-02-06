@@ -1,7 +1,5 @@
-import { FilterSymbol } from '../../../../../common/filter/filterSymbol';
+import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
 
-export const findCategoriesFilters: Map<string, Array<string>> = new Map(
-  Object.entries({
-    name: [FilterSymbol.equal, FilterSymbol.like],
-  }),
-);
+export const findCategoriesFilters: Record<string, FilterSymbol[]> = {
+  name: [FilterSymbol.equal, FilterSymbol.like],
+};

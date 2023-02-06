@@ -8,10 +8,10 @@ import { BookService } from '../../../../../domain/book/contracts/services/bookS
 import { CreateBookDraft } from '../../../../../domain/book/contracts/services/bookService/createBookDraft';
 import { UpdateBookDraft } from '../../../../../domain/book/contracts/services/bookService/updateBookDraft';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { FilterDataParser } from '../../../../common/filter/filterDataParser';
+import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataParser } from '../../../../common/pagination/paginationDataParser';
+import { PaginationDataParser } from '../../../../common/paginationDataParser/paginationDataParser';
 import { ControllerResponse } from '../../../../controllerResponse';
 import { LocalsName } from '../../../../localsName';
 import { QueryParameterName } from '../../../../queryParameterName';
@@ -73,10 +73,10 @@ export class BookController {
       this.booksEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const filters = this.filterDataParser.parse(
-          request.query[QueryParameterName.filter] as string,
-          findBooksFilters,
-        );
+        const filters = this.filterDataParser.parse({
+          jsonData: request.query[QueryParameterName.filter] as string,
+          supportedFieldsFilters: findBooksFilters,
+        });
 
         const pagination = this.paginationDataParser.parse(request.query);
 
