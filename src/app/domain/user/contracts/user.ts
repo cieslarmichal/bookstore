@@ -1,27 +1,28 @@
-import { IsString, IsEnum, IsUUID, IsOptional } from 'class-validator';
-
 import { UserRole } from './userRole';
-import { Validator } from '../../../common/validator/validator';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Schema } from '../../../common/validator/implementations/schema';
+
+export const userInputSchema = Schema.object({
+  id: Schema.notEmptyString(),
+  email: Schema.notEmptyString().optional(),
+  phoneNumber: Schema.notEmptyString().optional(),
+  password: Schema.notEmptyString(),
+  role: Schema.enum(UserRole),
+});
+
+export type UserInput = SchemaType<typeof userInputSchema>;
 
 export class User {
-  @IsUUID('4')
   public readonly id: string;
-
-  @IsOptional()
-  @IsString()
-  public readonly email?: string | undefined;
-
-  @IsOptional()
-  @IsString()
-  public readonly phoneNumber?: string | undefined;
-
-  @IsString()
+  public readonly email?: string;
+  public readonly phoneNumber?: string;
   public readonly password: string;
-
-  @IsEnum(UserRole)
   public readonly role: UserRole;
 
-  public constructor({ id, email, phoneNumber, password, role }: User) {
+  public constructor(input: UserInput) {
+    const { id, email, phoneNumber, password, role } = PayloadFactory.create(userInputSchema, input);
+
     this.id = id;
     this.password = password;
     this.role = role;
@@ -33,7 +34,5 @@ export class User {
     if (phoneNumber) {
       this.phoneNumber = phoneNumber;
     }
-
-    Validator.validate(this);
   }
 }

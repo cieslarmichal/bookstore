@@ -397,7 +397,7 @@ describe('UserServiceImpl', () => {
 
         const { password: newPassword } = userEntityTestFactory.create();
 
-        await userService.setPassword({ unitOfWork, userId: user.id, password: newPassword });
+        await userService.setUserPassword({ unitOfWork, userId: user.id, password: newPassword });
 
         const updatedUser = (await userRepository.findOne({ id: user.id })) as User;
 
@@ -413,7 +413,7 @@ describe('UserServiceImpl', () => {
         const { id, password } = userEntityTestFactory.create();
 
         try {
-          await userService.setPassword({ unitOfWork, userId: id, password });
+          await userService.setUserPassword({ unitOfWork, userId: id, password });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }
@@ -439,7 +439,7 @@ describe('UserServiceImpl', () => {
           role: UserRole.user,
         });
 
-        await userService.setEmail({ unitOfWork, userId: user.id, email: email as string });
+        await userService.setUserEmail({ unitOfWork, userId: user.id, email: email as string });
 
         const updatedUser = (await userRepository.findOne({ id: user.id })) as User;
 
@@ -466,7 +466,7 @@ describe('UserServiceImpl', () => {
         });
 
         try {
-          await userService.setEmail({ unitOfWork, userId: user.id, email: email as string });
+          await userService.setUserEmail({ unitOfWork, userId: user.id, email: email as string });
         } catch (error) {
           expect(error).toBeInstanceOf(EmailAlreadySetError);
         }
@@ -500,7 +500,7 @@ describe('UserServiceImpl', () => {
         });
 
         try {
-          await userService.setEmail({ unitOfWork, userId: user.id, email: email as string });
+          await userService.setUserEmail({ unitOfWork, userId: user.id, email: email as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
@@ -514,7 +514,7 @@ describe('UserServiceImpl', () => {
         const { id, email } = userEntityTestFactory.create();
 
         try {
-          await userService.setEmail({ unitOfWork, userId: id, email: email as string });
+          await userService.setUserEmail({ unitOfWork, userId: id, email: email as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }
@@ -540,7 +540,7 @@ describe('UserServiceImpl', () => {
           role: UserRole.user,
         });
 
-        await userService.setPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
+        await userService.setUserPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
 
         const updatedUser = (await userRepository.findOne({ id: user.id })) as User;
 
@@ -567,7 +567,7 @@ describe('UserServiceImpl', () => {
         });
 
         try {
-          await userService.setPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
+          await userService.setUserPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
         } catch (error) {
           expect(error).toBeInstanceOf(PhoneNumberAlreadySetError);
         }
@@ -601,7 +601,7 @@ describe('UserServiceImpl', () => {
         });
 
         try {
-          await userService.setPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
+          await userService.setUserPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserAlreadyExistsError);
         }
@@ -615,7 +615,7 @@ describe('UserServiceImpl', () => {
         const { id, phoneNumber } = userEntityTestFactory.create();
 
         try {
-          await userService.setPhoneNumber({ unitOfWork, userId: id, phoneNumber: phoneNumber as string });
+          await userService.setUserPhoneNumber({ unitOfWork, userId: id, phoneNumber: phoneNumber as string });
         } catch (error) {
           expect(error).toBeInstanceOf(UserNotFoundError);
         }

@@ -1,17 +1,39 @@
+import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
 import { TokenService } from '../../../contracts/services/tokenService/tokenService';
-import { DeleteUserPayload } from '../../../contracts/services/userService/deleteUserPayload';
-import { FindUserPayload } from '../../../contracts/services/userService/findUserPayload';
-import { LoginUserByEmailPayload } from '../../../contracts/services/userService/loginUserByEmailPayload';
-import { LoginUserByPhoneNumberPayload } from '../../../contracts/services/userService/loginUserByPhoneNumberPayload';
-import { RegisterUserByEmailPayload } from '../../../contracts/services/userService/registerUserByEmailPayload';
-import { RegisterUserByPhoneNumberPayload } from '../../../contracts/services/userService/registerUserByPhoneNumberPayload';
-import { SetEmailPayload } from '../../../contracts/services/userService/setEmailPayload';
-import { SetPasswordPayload } from '../../../contracts/services/userService/setPasswordPayload';
-import { SetPhoneNumberPayload } from '../../../contracts/services/userService/setPhoneNumberPayload';
+import { DeleteUserPayload, deleteUserPayloadSchema } from '../../../contracts/services/userService/deleteUserPayload';
+import { FindUserPayload, findUserPayloadSchema } from '../../../contracts/services/userService/findUserPayload';
+import {
+  LoginUserByEmailPayload,
+  loginUserByEmailPayloadSchema,
+} from '../../../contracts/services/userService/loginUserByEmailPayload';
+import {
+  LoginUserByPhoneNumberPayload,
+  loginUserByPhoneNumberPayloadSchema,
+} from '../../../contracts/services/userService/loginUserByPhoneNumberPayload';
+import {
+  RegisterUserByEmailPayload,
+  registerUserByEmailPayloadSchema,
+} from '../../../contracts/services/userService/registerUserByEmailPayload';
+import {
+  RegisterUserByPhoneNumberPayload,
+  registerUserByPhoneNumberPayloadSchema,
+} from '../../../contracts/services/userService/registerUserByPhoneNumberPayload';
+import {
+  SetUserEmailPayload,
+  setUserEmailPayloadSchema,
+} from '../../../contracts/services/userService/setUserEmailPayload';
+import {
+  SetUserPasswordPayload,
+  setUserPasswordPayloadSchema,
+} from '../../../contracts/services/userService/setUserPasswordPayload';
+import {
+  SetUserPhoneNumberPayload,
+  setUserPhoneNumberPayloadSchema,
+} from '../../../contracts/services/userService/setUserPhoneNumberPayload';
 import { UserService } from '../../../contracts/services/userService/userService';
 import { User } from '../../../contracts/user';
 import { UserRole } from '../../../contracts/userRole';
@@ -32,7 +54,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { email, password },
-    } = input;
+    } = PayloadFactory.create(registerUserByEmailPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Registering user...', context: { email } });
 
@@ -64,7 +86,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { phoneNumber, password },
-    } = input;
+    } = PayloadFactory.create(registerUserByPhoneNumberPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Registering user...', context: { phoneNumber } });
 
@@ -96,7 +118,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { email, password },
-    } = input;
+    } = PayloadFactory.create(loginUserByEmailPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Logging user in...', context: { email } });
 
@@ -127,7 +149,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { phoneNumber, password },
-    } = input;
+    } = PayloadFactory.create(loginUserByPhoneNumberPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Logging user in...', context: { phoneNumber } });
 
@@ -154,8 +176,8 @@ export class UserServiceImpl implements UserService {
     return accessToken;
   }
 
-  public async setPassword(input: SetPasswordPayload): Promise<User> {
-    const { unitOfWork, userId, password: newPassword } = input;
+  public async setUserPassword(input: SetUserPasswordPayload): Promise<User> {
+    const { unitOfWork, userId, password: newPassword } = PayloadFactory.create(setUserPasswordPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Setting password...', context: { userId } });
 
@@ -178,8 +200,8 @@ export class UserServiceImpl implements UserService {
     return updatedUser;
   }
 
-  public async setEmail(input: SetEmailPayload): Promise<User> {
-    const { unitOfWork, userId, email } = input;
+  public async setUserEmail(input: SetUserEmailPayload): Promise<User> {
+    const { unitOfWork, userId, email } = PayloadFactory.create(setUserEmailPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Setting email...', context: { userId, email } });
 
@@ -210,8 +232,8 @@ export class UserServiceImpl implements UserService {
     return updatedUser;
   }
 
-  public async setPhoneNumber(input: SetPhoneNumberPayload): Promise<User> {
-    const { unitOfWork, phoneNumber, userId } = input;
+  public async setUserPhoneNumber(input: SetUserPhoneNumberPayload): Promise<User> {
+    const { unitOfWork, phoneNumber, userId } = PayloadFactory.create(setUserPhoneNumberPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Setting phone number...', context: { userId, phoneNumber } });
 
@@ -243,7 +265,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async findUser(input: FindUserPayload): Promise<User> {
-    const { unitOfWork, userId } = input;
+    const { unitOfWork, userId } = PayloadFactory.create(findUserPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -259,7 +281,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async deleteUser(input: DeleteUserPayload): Promise<void> {
-    const { unitOfWork, userId } = input;
+    const { unitOfWork, userId } = PayloadFactory.create(deleteUserPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting user...', context: { userId } });
 

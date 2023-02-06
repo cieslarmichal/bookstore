@@ -1,7 +1,11 @@
-import { RegisterUserByPhoneNumberDraft } from './registerUserByPhoneNumberDraft';
-import { PostgresUnitOfWork } from '../../../../../libs/unitOfWork/implementations/postgresUnitOfWork';
+import { registerUserByPhoneNumberDraftSchema } from './registerUserByPhoneNumberDraft';
+import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../../../common/validator/implementations/schema';
+import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
 
-export interface RegisterUserByPhoneNumberPayload {
-  readonly unitOfWork: UnitOfWork;
-  readonly draft: RegisterUserByPhoneNumberDraft;
-}
+export const registerUserByPhoneNumberPayloadSchema = Schema.object({
+  unitOfWork: Schema.unsafeType<UnitOfWork>(),
+  draft: registerUserByPhoneNumberDraftSchema,
+});
+
+export type RegisterUserByPhoneNumberPayload = SchemaType<typeof registerUserByPhoneNumberPayloadSchema>;

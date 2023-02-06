@@ -4,9 +4,9 @@ import { LoginUserByEmailPayload } from './loginUserByEmailPayload';
 import { LoginUserByPhoneNumberPayload } from './loginUserByPhoneNumberPayload';
 import { RegisterUserByEmailPayload } from './registerUserByEmailPayload';
 import { RegisterUserByPhoneNumberPayload } from './registerUserByPhoneNumberPayload';
-import { SetEmailPayload } from './setEmailPayload';
-import { SetPasswordPayload } from './setPasswordPayload';
-import { SetPhoneNumberPayload } from './setPhoneNumberPayload';
+import { SetUserEmailPayload } from './setUserEmailPayload';
+import { SetUserPasswordPayload } from './setUserPasswordPayload';
+import { SetUserPhoneNumberPayload } from './setUserPhoneNumberPayload';
 import { User } from '../../user';
 
 export interface UserService {
@@ -14,9 +14,9 @@ export interface UserService {
   registerUserByPhoneNumber(input: RegisterUserByPhoneNumberPayload): Promise<User>;
   loginUserByEmail(input: LoginUserByEmailPayload): Promise<string>;
   loginUserByPhoneNumber(input: LoginUserByPhoneNumberPayload): Promise<string>;
-  setPassword(input: SetPasswordPayload): Promise<User>;
-  setEmail(input: SetEmailPayload): Promise<User>;
-  setPhoneNumber(input: SetPhoneNumberPayload): Promise<User>;
+  setUserPassword(input: SetUserPasswordPayload): Promise<User>;
+  setUserEmail(input: SetUserEmailPayload): Promise<User>;
+  setUserPhoneNumber(input: SetUserPhoneNumberPayload): Promise<User>;
   findUser(input: FindUserPayload): Promise<User>;
   deleteUser(input: DeleteUserPayload): Promise<void>;
 }

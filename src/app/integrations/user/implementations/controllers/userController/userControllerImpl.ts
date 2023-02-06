@@ -229,7 +229,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setPassword({ unitOfWork, userId, password });
+      await this.userService.setUserPassword({ unitOfWork, userId, password });
     });
   }
 
@@ -243,7 +243,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setPhoneNumber({ unitOfWork, userId, phoneNumber });
+      await this.userService.setUserPhoneNumber({ unitOfWork, userId, phoneNumber });
     });
   }
 
@@ -257,7 +257,7 @@ export class UserController {
     }
 
     await unitOfWork.runInTransaction(async () => {
-      await this.userService.setEmail({ unitOfWork, userId, email });
+      await this.userService.setUserEmail({ unitOfWork, userId, email });
     });
   }
 
