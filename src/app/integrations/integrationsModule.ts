@@ -1,15 +1,15 @@
 import { asClass, AwilixContainer, Lifetime } from 'awilix';
 
 import { AddressController } from './address/implementations/controllers/addressController/addressController';
-import { AuthorController } from './author/implementations/controllers/authorController/authorController';
+import { AuthorController } from './author/implementations/authorController';
 import { AuthorBookController } from './authorBook/implementations/controllers/authorBookController/authorBookController';
 import { BookController } from './book/implementations/controllers/bookController/bookController';
-import { BookCategoryController } from './bookCategory/implementations/controllers/bookCategoryController/bookCategoryController';
+import { BookCategoryController } from './bookCategory/implementations/controllers/bookCategoryController';
 import { CategoryController } from './category/implementations/controllers/categoryController/categoryController';
 import { FilterDataParser } from './common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
 import { PaginationDataBuilder } from './common/paginationDataBuilder/paginationDataBuilder';
-import { CustomerController } from './customer/implementations/controllers/customerController/customerController';
+import { CustomerController } from './customer/implementations/customerController';
 import { integrationsSymbols } from './integrationsSymbols';
 import { UserController } from './user/implementations/controllers/userController/userController';
 import { DependencyInjectionModule } from '../libs/dependencyInjection/contracts/dependencyInjectionModule';
