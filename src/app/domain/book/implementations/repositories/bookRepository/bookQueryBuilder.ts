@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { Filter } from '../../../../../common/types/contracts/filter';
-import { QueryBuilder } from '../../../../../common/types/contracts/queryBuilder';
+import { QueryBuilder } from '../../../../../common/types/implementations/queryBuilder';
 import { BookEntity } from '../../../contracts/bookEntity';
 
 export class BookQueryBuilder extends QueryBuilder<BookEntity> {

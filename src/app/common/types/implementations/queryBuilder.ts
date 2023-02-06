@@ -1,7 +1,7 @@
 import { EntityManager, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
-import { Filter } from './filter';
-import { FilterName } from './filterName';
+import { Filter } from '../contracts/filter';
+import { FilterName } from '../contracts/filterName';
 
 export abstract class QueryBuilder<T extends ObjectLiteral> {
   protected instance: SelectQueryBuilder<T>;
