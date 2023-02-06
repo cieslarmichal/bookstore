@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 
 import { bookCategoryErrorMiddleware } from './bookCategoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Book } from '../../../domain/book/contracts/book';
 import { BookCategory } from '../../../domain/bookCategory/contracts/bookCategory';
 import { BookCategoryService } from '../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
@@ -18,10 +19,16 @@ import { PaginationDataBuilder } from '../../common/paginationDataBuilder/pagina
 import { ControllerResponse } from '../../controllerResponse';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
-import { CreateBookCategoryPayload } from '../contracts/createBookCategoryPayload';
-import { DeleteBookCategoryPayload } from '../contracts/deleteBookCategoryPayload';
-import { FindBooksByCategoryIdPayload } from '../contracts/findBooksByCategoryIdPayload';
-import { FindCategoriesByBookIdPayload } from '../contracts/findCategoriesByBookIdPayload';
+import { CreateBookCategoryPayload, createBookCategoryPayloadSchema } from '../contracts/createBookCategoryPayload';
+import { DeleteBookCategoryPayload, deleteBookCategoryPayloadSchema } from '../contracts/deleteBookCategoryPayload';
+import {
+  FindBooksByCategoryIdPayload,
+  findBooksByCategoryIdPayloadSchema,
+} from '../contracts/findBooksByCategoryIdPayload';
+import {
+  FindCategoriesByBookIdPayload,
+  findCategoriesByBookIdPayloadSchema,
+} from '../contracts/findCategoriesByBookIdPayload';
 
 export class BookCategoryController {
   public readonly router = Router();
@@ -144,7 +151,7 @@ export class BookCategoryController {
   }
 
   private async createBookCategory(input: CreateBookCategoryPayload): Promise<BookCategory> {
-    const { bookId, categoryId } = input;
+    const { bookId, categoryId } = PayloadFactory.create(createBookCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -162,7 +169,7 @@ export class BookCategoryController {
   }
 
   private async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
-    const { bookId, filters, pagination } = input;
+    const { bookId, filters, pagination } = PayloadFactory.create(findCategoriesByBookIdPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -174,7 +181,7 @@ export class BookCategoryController {
   }
 
   private async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
-    const { categoryId, pagination, filters } = input;
+    const { categoryId, pagination, filters } = PayloadFactory.create(findBooksByCategoryIdPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -186,7 +193,7 @@ export class BookCategoryController {
   }
 
   private async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
-    const { bookId, categoryId } = input;
+    const { bookId, categoryId } = PayloadFactory.create(deleteBookCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

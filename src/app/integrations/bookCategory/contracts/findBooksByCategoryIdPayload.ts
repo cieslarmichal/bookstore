@@ -1,8 +1,12 @@
-import { Filter } from '../../../../../common/types/contracts/filter';
-import { PaginationData } from '../../../../../common/types/contracts/paginationData';
+import { Filter } from '../../../common/types/contracts/filter';
+import { PaginationData } from '../../../common/types/contracts/paginationData';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../common/validator/implementations/schema';
 
-export interface FindBooksByCategoryIdPayload {
-  readonly filters: Filter[];
-  readonly pagination: PaginationData;
-  readonly categoryId: string;
-}
+export const findBooksByCategoryIdPayloadSchema = Schema.object({
+  filters: Schema.array(Schema.unsafeType<Filter>()),
+  pagination: Schema.unsafeType<PaginationData>(),
+  categoryId: Schema.notEmptyString(),
+});
+
+export type FindBooksByCategoryIdPayload = SchemaType<typeof findBooksByCategoryIdPayloadSchema>;
