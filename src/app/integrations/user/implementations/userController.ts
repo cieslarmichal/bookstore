@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 
 import { userErrorMiddleware } from './userErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { UserService } from '../../../domain/user/contracts/services/userService/userService';
 import { User } from '../../../domain/user/contracts/user';
 import { UserRole } from '../../../domain/user/contracts/userRole';
@@ -12,13 +13,13 @@ import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
 import { LocalsName } from '../../localsName';
-import { DeleteUserPayload } from '../contracts/deleteUserPayload';
-import { FindUserPayload } from '../contracts/findUserPayload';
-import { LoginUserPayload } from '../contracts/loginUserPayload';
-import { RegisterUserPayload } from '../contracts/registerUserPayload';
-import { SetUserEmailPayload } from '../contracts/setUserEmailPayload';
-import { SetUserPasswordPayload } from '../contracts/setUserPasswordPayload';
-import { SetUserPhoneNumberPayload } from '../contracts/setUserPhoneNumberPayload';
+import { DeleteUserPayload, deleteUserPayloadSchema } from '../contracts/deleteUserPayload';
+import { FindUserPayload, findUserPayloadSchema } from '../contracts/findUserPayload';
+import { LoginUserPayload, loginUserPayloadSchema } from '../contracts/loginUserPayload';
+import { RegisterUserPayload, registerUserPayloadSchema } from '../contracts/registerUserPayload';
+import { SetUserEmailPayload, setUserEmailPayloadSchema } from '../contracts/setUserEmailPayload';
+import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from '../contracts/setUserPasswordPayload';
+import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from '../contracts/setUserPhoneNumberPayload';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 
 export class UserController {
@@ -182,7 +183,7 @@ export class UserController {
   }
 
   private async registerUser(input: RegisterUserPayload): Promise<User> {
-    const { email, password, phoneNumber } = input;
+    const { email, password, phoneNumber } = PayloadFactory.create(registerUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -201,7 +202,7 @@ export class UserController {
   }
 
   private async loginUser(input: LoginUserPayload): Promise<string> {
-    const { email, password, phoneNumber } = input;
+    const { email, password, phoneNumber } = PayloadFactory.create(loginUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -220,7 +221,7 @@ export class UserController {
   }
 
   private async setUserPassword(input: SetUserPasswordPayload): Promise<void> {
-    const { userId, password, accessTokenData } = input;
+    const { userId, password, accessTokenData } = PayloadFactory.create(setUserPasswordPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -234,7 +235,7 @@ export class UserController {
   }
 
   private async setUserPhoneNumber(input: SetUserPhoneNumberPayload): Promise<void> {
-    const { userId, phoneNumber, accessTokenData } = input;
+    const { userId, phoneNumber, accessTokenData } = PayloadFactory.create(setUserPhoneNumberPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -248,7 +249,7 @@ export class UserController {
   }
 
   private async setUserEmail(input: SetUserEmailPayload): Promise<void> {
-    const { userId, email, accessTokenData } = input;
+    const { userId, email, accessTokenData } = PayloadFactory.create(setUserEmailPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -262,7 +263,7 @@ export class UserController {
   }
 
   private async findUser(input: FindUserPayload): Promise<User> {
-    const { id: userId, accessTokenData } = input;
+    const { id: userId, accessTokenData } = PayloadFactory.create(findUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -278,7 +279,7 @@ export class UserController {
   }
 
   private async deleteUser(input: DeleteUserPayload): Promise<void> {
-    const { id: userId, accessTokenData } = input;
+    const { id: userId, accessTokenData } = PayloadFactory.create(deleteUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

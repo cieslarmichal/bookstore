@@ -1,7 +1,11 @@
-import { AccessTokenData } from '../../../../accessTokenData';
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../common/validator/implementations/schema';
+import { AccessTokenData } from '../../accessTokenData';
 
-export interface SetUserPhoneNumberPayload {
-  readonly userId: string;
-  readonly phoneNumber: string;
-  readonly accessTokenData: AccessTokenData;
-}
+export const setUserPhoneNumberPayloadSchema = Schema.object({
+  userId: Schema.notEmptyString(),
+  phoneNumber: Schema.notEmptyString(),
+  accessTokenData: Schema.unsafeType<AccessTokenData>(),
+});
+
+export type SetUserPhoneNumberPayload = SchemaType<typeof setUserPhoneNumberPayloadSchema>;

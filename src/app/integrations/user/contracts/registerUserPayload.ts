@@ -1,5 +1,10 @@
-export interface RegisterUserPayload {
-  readonly email?: string;
-  readonly phoneNumber?: string;
-  readonly password: string;
-}
+import { SchemaType } from '../../../common/validator/contracts/schemaType';
+import { Schema } from '../../../common/validator/implementations/schema';
+
+export const registerUserPayloadSchema = Schema.object({
+  email: Schema.notEmptyString().optional(),
+  phoneNumber: Schema.notEmptyString().optional(),
+  password: Schema.notEmptyString(),
+});
+
+export type RegisterUserPayload = SchemaType<typeof registerUserPayloadSchema>;
