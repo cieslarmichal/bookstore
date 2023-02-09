@@ -12,22 +12,32 @@ export class PostgresUnitOfWork implements UnitOfWork {
   }
 
   public async init(): Promise<void> {
+    await this.ensureConnection();
+
     await this.queryRunner.startTransaction();
   }
 
   public async commit(): Promise<void> {
+    await this.ensureConnection();
+
     await this.queryRunner.commitTransaction();
   }
 
   public async rollback(): Promise<void> {
+    await this.ensureConnection();
+
     await this.queryRunner.rollbackTransaction();
   }
 
   public async cleanUp(): Promise<void> {
+    await this.ensureConnection();
+
     await this.queryRunner.release();
   }
 
   public async runInTransaction<Result>(callback: TransactionCallback<Result, UnitOfWork>): Promise<Result> {
+    await this.ensureConnection();
+
     try {
       await this.init();
 
@@ -53,5 +63,13 @@ export class PostgresUnitOfWork implements UnitOfWork {
 
   public getEntityManager(): EntityManager {
     return this.entityManager;
+  }
+
+  private async ensureConnection(): Promise<void> {
+    if (this.queryRunner.connection.isInitialized) {
+      return;
+    }
+
+    await this.queryRunner.connect();
   }
 }

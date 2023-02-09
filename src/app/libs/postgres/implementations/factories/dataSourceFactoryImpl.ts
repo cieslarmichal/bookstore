@@ -1,10 +1,16 @@
 import { DataSource } from 'typeorm';
 
+import { Inject, Injectable } from '../../../dependencyInjection/contracts/decorators';
 import { DataSourceFactory } from '../../contracts/factories/dataSourceFactory';
 import { PostgresModuleConfig } from '../../postgresModuleConfig';
+import { postgresSymbols } from '../../postgresSymbols';
 
+@Injectable()
 export class DataSourceFactoryImpl implements DataSourceFactory {
-  public constructor(private readonly postgresModuleConfig: PostgresModuleConfig) {}
+  public constructor(
+    @Inject(postgresSymbols.postgresModuleConfig)
+    private readonly postgresModuleConfig: PostgresModuleConfig,
+  ) {}
 
   public create(): DataSource {
     const { databaseHost, databasePort, databaseUser, databasePassword, databaseName, entities } =
