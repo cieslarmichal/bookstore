@@ -1,6 +1,9 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { bookSymbols } from '../../../bookSymbols';
 import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookService } from '../../../contracts/services/bookService/bookService';
@@ -19,9 +22,12 @@ import { FindBooksPayload, findBooksPayloadSchema } from '../../../contracts/ser
 import { UpdateBookPayload, updateBookPayloadSchema } from '../../../contracts/services/bookService/updateBookPayload';
 import { BookNotFoundError } from '../../../errors/bookNotFoundError';
 
+@Injectable()
 export class BookServiceImpl implements BookService {
   public constructor(
+    @Inject(bookSymbols.bookRepositoryFactory)
     private readonly bookRepositoryFactory: BookRepositoryFactory,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

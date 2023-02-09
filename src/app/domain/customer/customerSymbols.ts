@@ -1,5 +1,5 @@
 export const customerSymbols = {
-  customerMapper: 'customerMapper',
-  customerRepositoryFactory: 'customerRepositoryFactory',
-  customerService: 'customerService',
+  customerMapper: Symbol('customerMapper'),
+  customerRepositoryFactory: Symbol('customerRepositoryFactory'),
+  customerService: Symbol('customerService'),
 };

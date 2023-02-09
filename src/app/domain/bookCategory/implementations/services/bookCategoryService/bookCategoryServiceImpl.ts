@@ -1,12 +1,17 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { bookSymbols } from '../../../../book/bookSymbols';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
 import { BookNotFoundError } from '../../../../book/errors/bookNotFoundError';
+import { categorySymbols } from '../../../../category/categorySymbols';
 import { Category } from '../../../../category/contracts/category';
 import { CategoryService } from '../../../../category/contracts/services/categoryService/categoryService';
 import { CategoryNotFoundError } from '../../../../category/errors/categoryNotFoundError';
+import { bookCategorySymbols } from '../../../bookCategorySymbols';
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryService } from '../../../contracts/services/bookCategoryService/bookCategoryService';
@@ -29,11 +34,16 @@ import {
 import { BookCategoryAlreadyExistsError } from '../../../errors/bookCategoryAlreadyExistsError';
 import { BookCategoryNotFoundError } from '../../../errors/bookCategoryNotFoundError';
 
+@Injectable()
 export class BookCategoryServiceImpl implements BookCategoryService {
   public constructor(
+    @Inject(bookCategorySymbols.bookCategoryRepositoryFactory)
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
+    @Inject(categorySymbols.categoryService)
     private readonly categoryService: CategoryService,
+    @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

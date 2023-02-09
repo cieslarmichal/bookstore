@@ -1,7 +1,9 @@
 import { BuildPayload, buildPayloadSchema } from './buildPayload';
 import { PaginationData } from '../../../common/types/contracts/paginationData';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 
+@Injectable()
 export class PaginationDataBuilder {
   private readonly defaultPage = 1;
   private readonly defaultLimit = 5;

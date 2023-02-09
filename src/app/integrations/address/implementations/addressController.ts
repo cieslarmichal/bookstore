@@ -5,19 +5,24 @@ import asyncHandler from 'express-async-handler';
 import { addressErrorMiddleware } from './addressErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { addressSymbols } from '../../../domain/address/addressSymbols';
 import { Address } from '../../../domain/address/contracts/address';
 import { AddressService } from '../../../domain/address/contracts/services/addressService/addressService';
 import { CreateAddressDraft } from '../../../domain/address/contracts/services/addressService/createAddressDraft';
 import { Customer } from '../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
+import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { UserRole } from '../../../domain/user/contracts/userRole';
+import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { AccessTokenData } from '../../accessTokenData';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
 import { CreateAddressPayload, createAddressPayloadSchema } from '../contracts/createAddressPayload';
@@ -28,17 +33,24 @@ import { FindAddressPayload, findAddressPayloadSchema } from '../contracts/findA
 import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
+@Injectable()
 export class AddressController {
   public readonly router = Router();
   private readonly addressesEndpoint = '/addresses';
   private readonly addressEndpoint = `${this.addressesEndpoint}/:id`;
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(addressSymbols.addressService)
     private readonly addressService: AddressService,
+    @Inject(customerSymbols.customerService)
     private readonly customerService: CustomerService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
+    @Inject(integrationsSymbols.filterDataParser)
     private filterDataParser: FilterDataParser,
+    @Inject(integrationsSymbols.paginationDataBuilder)
     private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

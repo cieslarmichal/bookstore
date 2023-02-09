@@ -1,12 +1,17 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { authorSymbols } from '../../../../author/authorSymbols';
 import { Author } from '../../../../author/contracts/author';
 import { AuthorService } from '../../../../author/contracts/services/authorService/authorService';
 import { AuthorNotFoundError } from '../../../../author/errors/authorNotFoundError';
+import { bookSymbols } from '../../../../book/bookSymbols';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
 import { BookNotFoundError } from '../../../../book/errors/bookNotFoundError';
+import { authorBookSymbols } from '../../../authorBookSymbols';
 import { AuthorBook } from '../../../contracts/authorBook';
 import { AuthorBookRepositoryFactory } from '../../../contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
 import { AuthorBookService } from '../../../contracts/services/authorBookService/authorBookService';
@@ -29,11 +34,16 @@ import {
 import { AuthorBookAlreadyExistsError } from '../../../errors/authorBookAlreadyExistsError';
 import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError';
 
+@Injectable()
 export class AuthorBookServiceImpl implements AuthorBookService {
   public constructor(
+    @Inject(authorBookSymbols.authorBookRepositoryFactory)
     private readonly authorBookRepositoryFactory: AuthorBookRepositoryFactory,
+    @Inject(authorSymbols.authorService)
     private readonly authorService: AuthorService,
+    @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

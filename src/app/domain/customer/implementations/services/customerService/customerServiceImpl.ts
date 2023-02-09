@@ -1,5 +1,7 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
@@ -16,12 +18,16 @@ import {
   FindCustomerPayload,
   findCustomerPayloadSchema,
 } from '../../../contracts/services/customerService/findCustomerPayload';
+import { customerSymbols } from '../../../customerSymbols';
 import { CustomerAlreadyExistsError } from '../../../errors/customerAlreadyExistsError';
 import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 
+@Injectable()
 export class CustomerServiceImpl implements CustomerService {
   public constructor(
+    @Inject(customerSymbols.customerRepositoryFactory)
     private readonly customerRepositoryFactory: CustomerRepositoryFactory,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

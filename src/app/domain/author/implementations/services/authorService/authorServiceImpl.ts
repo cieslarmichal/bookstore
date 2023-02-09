@@ -1,6 +1,9 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { authorSymbols } from '../../../authorSymbols';
 import { Author } from '../../../contracts/author';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
 import { AuthorService } from '../../../contracts/services/authorService/authorService';
@@ -30,9 +33,12 @@ import {
 } from '../../../contracts/services/authorService/updateAuthorPayload';
 import { AuthorNotFoundError } from '../../../errors/authorNotFoundError';
 
+@Injectable()
 export class AuthorServiceImpl implements AuthorService {
   public constructor(
+    @Inject(authorSymbols.authorRepositoryFactory)
     private readonly authorRepositoryFactory: AuthorRepositoryFactory,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

@@ -5,14 +5,18 @@ import asyncHandler from 'express-async-handler';
 import { categoryErrorMiddleware } from './categoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { categorySymbols } from '../../../domain/category/categorySymbols';
 import { Category } from '../../../domain/category/contracts/category';
 import { CategoryService } from '../../../domain/category/contracts/services/categoryService/categoryService';
+import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
 import { CreateCategoryPayload, createCategoryPayloadSchema } from '../contracts/createCategoryPayload';
@@ -21,16 +25,22 @@ import { findCategoriesFilters } from '../contracts/findCategoriesFilters';
 import { FindCategoriesPayload, findCategoriesPayloadSchema } from '../contracts/findCategoriesPayload';
 import { FindCategoryPayload, findCategoryPayloadSchema } from '../contracts/findCategoryPayload';
 
+@Injectable()
 export class CategoryController {
   public readonly router = Router();
   private readonly categoriesEndpoint = '/categories';
   private readonly categoryEndpoint = `${this.categoriesEndpoint}/:id`;
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(categorySymbols.categoryService)
     private readonly categoryService: CategoryService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
+    @Inject(integrationsSymbols.filterDataParser)
     private filterDataParser: FilterDataParser,
+    @Inject(integrationsSymbols.paginationDataBuilder)
     private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

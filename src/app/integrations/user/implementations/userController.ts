@@ -8,10 +8,14 @@ import { PayloadFactory } from '../../../common/validator/implementations/payloa
 import { UserService } from '../../../domain/user/contracts/services/userService/userService';
 import { User } from '../../../domain/user/contracts/user';
 import { UserRole } from '../../../domain/user/contracts/userRole';
+import { userSymbols } from '../../../domain/user/userSymbols';
+import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { DeleteUserPayload, deleteUserPayloadSchema } from '../contracts/deleteUserPayload';
 import { FindUserPayload, findUserPayloadSchema } from '../contracts/findUserPayload';
@@ -22,6 +26,7 @@ import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from '../contrac
 import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from '../contracts/setUserPhoneNumberPayload';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 
+@Injectable()
 export class UserController {
   public readonly router = Router();
   private readonly usersEndpoint = '/users';
@@ -33,8 +38,11 @@ export class UserController {
   private readonly setUserEmailEndpoint = `${this.usersEndpoint}/set-email`;
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(userSymbols.userService)
     private readonly userService: UserService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

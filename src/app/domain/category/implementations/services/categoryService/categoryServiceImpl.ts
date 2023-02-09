@@ -1,6 +1,9 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { categorySymbols } from '../../../categorySymbols';
 import { Category } from '../../../contracts/category';
 import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryService } from '../../../contracts/services/categoryService/categoryService';
@@ -27,9 +30,12 @@ import {
 import { CategoryAlreadyExistsError } from '../../../errors/categoryAlreadyExistsError';
 import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 
+@Injectable()
 export class CategoryServiceImpl implements CategoryService {
   public constructor(
+    @Inject(categorySymbols.categoryRepositoryFactory)
     private readonly categoryRepositoryFactory: CategoryRepositoryFactory,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

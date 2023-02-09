@@ -1,6 +1,9 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { addressSymbols } from '../../../addressSymbols';
 import { Address } from '../../../contracts/address';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
 import { AddressService } from '../../../contracts/services/addressService/addressService';
@@ -26,9 +29,12 @@ import {
 } from '../../../contracts/services/addressService/updateAddressPayload';
 import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 
+@Injectable()
 export class AddressServiceImpl implements AddressService {
   public constructor(
+    @Inject(addressSymbols.addressRepositoryFactory)
     private readonly addressRepositoryFactory: AddressRepositoryFactory,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

@@ -1,3 +1,3 @@
 export const unitOfWorkSymbols = {
-  unitOfWorkFactory: 'unitOfWorkFactory',
+  unitOfWorkFactory: Symbol('unitOfWorkFactory'),
 };

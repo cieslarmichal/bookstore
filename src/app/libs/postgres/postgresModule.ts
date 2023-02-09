@@ -1,32 +1,23 @@
-import { asClass, asFunction, asValue, AwilixContainer, Lifetime } from 'awilix';
+import { DataSource, EntityManager } from 'typeorm';
 
-import { PostgresConnector } from './contracts/postgresConnector';
-import { PostgresConnectorImpl } from './implementations/postgresConnectorImpl';
+import { DataSourceFactoryImpl } from './implementations/factories/dataSourceFactoryImpl';
 import { PostgresModuleConfig } from './postgresModuleConfig';
 import { postgresSymbols } from './postgresSymbols';
 import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class PostgresModule implements DependencyInjectionModule {
   public constructor(private readonly config: PostgresModuleConfig) {}
 
-  public async registerSymbols(container: AwilixContainer): Promise<void> {
-    container.register({
-      [postgresSymbols.postgresModuleConfig]: asValue(this.config),
-      [postgresSymbols.postgresConnector]: asClass(PostgresConnectorImpl, { lifetime: Lifetime.SINGLETON }),
-      [postgresSymbols.entityManager]: asFunction(async () => {
-        const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
+  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+    container.bindToValue<PostgresModuleConfig>(postgresSymbols.postgresModuleConfig, this.config);
 
-        const dataSource = await postgresConnector.connect();
+    container.bindToFactory<DataSource>(postgresSymbols.dataSource, DataSourceFactoryImpl);
 
-        return dataSource.manager;
-      }),
-      [postgresSymbols.dataSource]: asFunction(async () => {
-        const postgresConnector: PostgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    container.bindToDynamicValue<EntityManager>(postgresSymbols.entityManager, ({ container }) => {
+      const dataSource: DataSource = container.get(postgresSymbols.dataSource);
 
-        const dataSource = await postgresConnector.connect();
-
-        return dataSource;
-      }),
+      return dataSource.manager;
     });
   }
 }

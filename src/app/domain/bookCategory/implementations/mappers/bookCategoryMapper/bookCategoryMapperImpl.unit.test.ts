@@ -21,8 +21,6 @@ describe('BookCategoryMapperImpl', () => {
 
     expect(bookCategory).toEqual({
       id: bookCategoryEntity.id,
-      createdAt: bookCategoryEntity.createdAt,
-      updatedAt: bookCategoryEntity.updatedAt,
       bookId: bookCategoryEntity.bookId,
       categoryId: bookCategoryEntity.categoryId,
     });

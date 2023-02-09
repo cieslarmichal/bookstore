@@ -6,23 +6,31 @@ import { customerErrorMiddleware } from './customerErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
+import { customerSymbols } from '../../../domain/customer/customerSymbols';
+import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { CreateCustomerPayload, createCustomerPayloadSchema } from '../contracts/createCustomerPayload';
 import { DeleteCustomerPayload, deleteCustomerPayloadSchema } from '../contracts/deleteCustomerPayload';
 import { FindCustomerPayload, findCustomerPayloadSchema } from '../contracts/findCustomerPayload';
 
+@Injectable()
 export class CustomerController {
   public readonly router = Router();
   private readonly customersEndpoint = '/customers';
   private readonly customerEndpoint = `${this.customersEndpoint}/:id`;
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(customerSymbols.customerService)
     private readonly customerService: CustomerService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

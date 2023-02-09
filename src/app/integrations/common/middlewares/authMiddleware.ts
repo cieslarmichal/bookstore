@@ -2,11 +2,17 @@ import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
+import { userSymbols } from '../../../domain/user/userSymbols';
+import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { AccessTokenData } from '../../accessTokenData';
 import { LocalsName } from '../../localsName';
 
+@Injectable()
 export class AuthMiddleware {
-  public constructor(private readonly tokenService: TokenService) {}
+  public constructor(
+    @Inject(userSymbols.tokenService)
+    private readonly tokenService: TokenService,
+  ) {}
 
   public async verifyToken(request: Request, response: Response, next: NextFunction): Promise<void> {
     const authHeader = request.headers.authorization;

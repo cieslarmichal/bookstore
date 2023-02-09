@@ -1,6 +1,5 @@
 export const postgresSymbols = {
-  postgresConnector: 'postgresConnector',
-  postgresModuleConfig: 'postgresModuleConfig',
-  entityManager: 'entityManager',
-  dataSource: 'dataSource',
+  postgresModuleConfig: Symbol('postgresModuleConfig'),
+  entityManager: Symbol('entityManager'),
+  dataSource: Symbol('dataSource'),
 };

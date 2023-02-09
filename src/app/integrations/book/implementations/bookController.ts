@@ -5,16 +5,20 @@ import asyncHandler from 'express-async-handler';
 import { bookErrorMiddleware } from './bookErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { bookSymbols } from '../../../domain/book/bookSymbols';
 import { Book } from '../../../domain/book/contracts/book';
 import { BookService } from '../../../domain/book/contracts/services/bookService/bookService';
 import { CreateBookDraft } from '../../../domain/book/contracts/services/bookService/createBookDraft';
 import { UpdateBookDraft } from '../../../domain/book/contracts/services/bookService/updateBookDraft';
+import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
 import { CreateBookPayload, createBookPayloadSchema } from '../contracts/createBookPayload';
@@ -24,16 +28,22 @@ import { findBooksFilters } from '../contracts/findBooksFilters';
 import { FindBooksPayload, findBooksPayloadSchema } from '../contracts/findBooksPayload';
 import { UpdateBookPayload, updateBookPayloadSchema } from '../contracts/updateBookPayload';
 
+@Injectable()
 export class BookController {
   public readonly router = Router();
   private readonly booksEndpoint = '/books';
   private readonly bookEndpoint = `${this.booksEndpoint}/:id`;
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
+    @Inject(integrationsSymbols.filterDataParser)
     private filterDataParser: FilterDataParser,
+    @Inject(integrationsSymbols.paginationDataBuilder)
     private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

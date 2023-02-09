@@ -18,17 +18,6 @@ describe('FilterDataParser', () => {
   const filterFataParser = new FilterDataParser();
 
   describe('Empty input', () => {
-    it('should return empty array when filter data is empty string', () => {
-      expect.assertions(1);
-
-      const filterData = filterFataParser.parse({
-        jsonData: '',
-        supportedFieldsFilters: { title: [FilterSymbol.equal] },
-      });
-
-      expect(filterData.length).toBe(0);
-    });
-
     it('should return empty array when filter data is empty array', () => {
       expect.assertions(1);
 

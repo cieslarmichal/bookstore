@@ -5,15 +5,19 @@ import asyncHandler from 'express-async-handler';
 import { authorErrorMiddleware } from './authorErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { authorSymbols } from '../../../domain/author/authorSymbols';
 import { Author } from '../../../domain/author/contracts/author';
 import { AuthorService } from '../../../domain/author/contracts/services/authorService/authorService';
 import { CreateAuthorDraft } from '../../../domain/author/contracts/services/authorService/createAuthorDraft';
+import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
 import { CreateAuthorPayload, createAuthorPayloadSchema } from '../contracts/createAuthorPayload';
@@ -23,16 +27,22 @@ import { findAuthorsFilters } from '../contracts/findAuthorsFilters';
 import { FindAuthorsPayload, findAuthorsPayloadSchema } from '../contracts/findAuthorsPayload';
 import { UpdateAuthorPayload, updateAuthorPayloadSchema } from '../contracts/updateAuthorPayload';
 
+@Injectable()
 export class AuthorController {
   public readonly router = Router();
   private readonly authorsEndpoint = '/authors';
   private readonly authorEndpoint = `${this.authorsEndpoint}/:id`;
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(authorSymbols.authorService)
     private readonly authorService: AuthorService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
+    @Inject(integrationsSymbols.filterDataParser)
     private filterDataParser: FilterDataParser,
+    @Inject(integrationsSymbols.paginationDataBuilder)
     private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

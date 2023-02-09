@@ -1,5 +1,5 @@
 export const authorSymbols = {
-  authorMapper: 'authorMapper',
-  authorRepositoryFactory: 'authorRepositoryFactory',
-  authorService: 'authorService',
+  authorMapper: Symbol('authorMapper'),
+  authorRepositoryFactory: Symbol('authorRepositoryFactory'),
+  authorService: Symbol('authorService'),
 };

@@ -1,5 +1,5 @@
 export const categorySymbols = {
-  categoryMapper: 'categoryMapper',
-  categoryRepositoryFactory: 'categoryRepositoryFactory',
-  categoryService: 'categoryService',
+  categoryMapper: Symbol('categoryMapper'),
+  categoryRepositoryFactory: Symbol('categoryRepositoryFactory'),
+  categoryService: Symbol('categoryService'),
 };

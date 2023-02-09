@@ -1,13 +1,11 @@
-import { asClass, AwilixContainer, Lifetime } from 'awilix';
-
+import { UnitOfWorkFactory } from './contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { UnitOfWorkFactoryImpl } from './implementations/factories/unitOfWorkFactory/unitOfWorkFactoryImpl';
 import { unitOfWorkSymbols } from './unitOfWorkSymbols';
 import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class UnitOfWorkModule implements DependencyInjectionModule {
-  public async registerSymbols(container: AwilixContainer): Promise<void> {
-    container.register({
-      [unitOfWorkSymbols.unitOfWorkFactory]: asClass(UnitOfWorkFactoryImpl, { lifetime: Lifetime.SINGLETON }),
-    });
+  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+    container.bindToConstructor<UnitOfWorkFactory>(unitOfWorkSymbols.unitOfWorkFactory, UnitOfWorkFactoryImpl);
   }
 }

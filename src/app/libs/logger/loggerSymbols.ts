@@ -1,6 +1,5 @@
 export const loggerSymbols = {
-  loggerModuleConfig: 'loggerModuleConfig',
-  loggerClient: 'loggerClient',
-  loggerClientFactory: 'loggerClientFactory',
-  loggerService: 'loggerService',
+  loggerModuleConfig: Symbol('loggerModuleConfig'),
+  loggerClient: Symbol('loggerClient'),
+  loggerService: Symbol('loggerService'),
 };

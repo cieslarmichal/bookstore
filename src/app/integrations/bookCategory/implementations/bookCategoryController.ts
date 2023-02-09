@@ -6,10 +6,13 @@ import { bookCategoryErrorMiddleware } from './bookCategoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Book } from '../../../domain/book/contracts/book';
+import { bookCategorySymbols } from '../../../domain/bookCategory/bookCategorySymbols';
 import { BookCategory } from '../../../domain/bookCategory/contracts/bookCategory';
 import { BookCategoryService } from '../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
 import { Category } from '../../../domain/category/contracts/category';
+import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { findBooksFilters } from '../../book/contracts/findBooksFilters';
 import { findCategoriesFilters } from '../../category/contracts/findCategoriesFilters';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
@@ -17,6 +20,7 @@ import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
 import { CreateBookCategoryPayload, createBookCategoryPayloadSchema } from '../contracts/createBookCategoryPayload';
@@ -30,6 +34,7 @@ import {
   findCategoriesByBookIdPayloadSchema,
 } from '../contracts/findCategoriesByBookIdPayload';
 
+@Injectable()
 export class BookCategoryController {
   public readonly router = Router();
   private readonly bookCategoriesEndpoint = '/books/:bookId/categories';
@@ -37,10 +42,15 @@ export class BookCategoryController {
   private readonly categoryBooksEndpoint = '/categories/:categoryId/books';
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(bookCategorySymbols.bookCategoryService)
     private readonly bookCategoryService: BookCategoryService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
+    @Inject(integrationsSymbols.filterDataParser)
     private filterDataParser: FilterDataParser,
+    @Inject(integrationsSymbols.paginationDataBuilder)
     private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

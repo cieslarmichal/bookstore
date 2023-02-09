@@ -4,7 +4,9 @@ import { Filter } from '../../../common/types/contracts/filter.js';
 import { FilterName } from '../../../common/types/contracts/filterName.js';
 import { FilterSymbol } from '../../../common/types/contracts/filterSymbol.js';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory.js';
+import { Injectable } from '../../../libs/dependencyInjection/contracts/decorators.js';
 
+@Injectable()
 export class FilterDataParser {
   private readonly tokensSeparator = '||';
   private readonly valuesSeparator = ',';

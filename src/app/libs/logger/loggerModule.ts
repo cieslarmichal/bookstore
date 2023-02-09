@@ -1,25 +1,20 @@
-import { asClass, asValue, AwilixContainer, Lifetime, asFunction } from 'awilix';
-
-import { LoggerClientFactory } from './contracts/factories/loggerClientFactory/loggerClientFactory';
+import { LoggerClient } from './contracts/clients/loggerClient/loggerClient';
+import { LoggerService } from './contracts/services/loggerService/loggerService';
 import { LoggerClientFactoryImpl } from './implementations/factories/loggerClientFactory/loggerClientFactoryImpl';
 import { LoggerServiceImpl } from './implementations/services/loggerService/loggerServiceImpl';
 import { LoggerModuleConfig } from './loggerModuleConfig';
 import { loggerSymbols } from './loggerSymbols';
 import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class LoggerModule implements DependencyInjectionModule {
   public constructor(private readonly config: LoggerModuleConfig) {}
 
-  public async registerSymbols(container: AwilixContainer): Promise<void> {
-    container.register({
-      [loggerSymbols.loggerModuleConfig]: asValue(this.config),
-      [loggerSymbols.loggerClientFactory]: asClass(LoggerClientFactoryImpl, { lifetime: Lifetime.SINGLETON }),
-      [loggerSymbols.loggerClient]: asFunction(() => {
-        const loggerClientFactory: LoggerClientFactory = container.resolve(loggerSymbols.loggerClientFactory);
+  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+    container.bindToValue<LoggerModuleConfig>(loggerSymbols.loggerModuleConfig, this.config);
 
-        return loggerClientFactory.create();
-      }),
-      [loggerSymbols.loggerService]: asClass(LoggerServiceImpl, { lifetime: Lifetime.SINGLETON }),
-    });
+    container.bindToFactory<LoggerClient>(loggerSymbols.loggerClient, LoggerClientFactoryImpl);
+
+    container.bindToConstructor<LoggerService>(loggerSymbols.loggerService, LoggerServiceImpl);
   }
 }

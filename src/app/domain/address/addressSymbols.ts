@@ -1,5 +1,5 @@
 export const addressSymbols = {
-  addressMapper: 'addressMapper',
-  addressRepositoryFactory: 'addressRepositoryFactory',
-  addressService: 'addressService',
+  addressMapper: Symbol('addressMapper'),
+  addressRepositoryFactory: Symbol('addressRepositoryFactory'),
+  addressService: Symbol('addressService'),
 };

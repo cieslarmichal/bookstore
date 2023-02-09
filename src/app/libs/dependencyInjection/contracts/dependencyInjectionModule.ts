@@ -1,5 +1,5 @@
-import { AwilixContainer } from 'awilix';
+import { DependencyInjectionContainer } from '../implementations/dependencyInjectionContainer';
 
 export interface DependencyInjectionModule {
-  registerSymbols(container: AwilixContainer): Promise<void>;
+  declareBindings(container: DependencyInjectionContainer): Promise<void>;
 }

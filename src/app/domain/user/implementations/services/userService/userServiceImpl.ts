@@ -1,5 +1,7 @@
 import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
@@ -41,12 +43,18 @@ import { EmailAlreadySetError } from '../../../errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../errors/userAlreadyExistsError';
 import { UserNotFoundError } from '../../../errors/userNotFoundError';
+import { userSymbols } from '../../../userSymbols';
 
+@Injectable()
 export class UserServiceImpl implements UserService {
   public constructor(
+    @Inject(userSymbols.userRepositoryFactory)
     private readonly userRepositoryFactory: UserRepositoryFactory,
+    @Inject(userSymbols.hashService)
     private readonly hashService: HashService,
+    @Inject(userSymbols.tokenService)
     private readonly tokenService: TokenService,
+    @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

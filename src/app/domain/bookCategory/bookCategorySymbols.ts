@@ -1,5 +1,5 @@
 export const bookCategorySymbols = {
-  bookCategoryMapper: 'bookCategoryMapper',
-  bookCategoryRepositoryFactory: 'bookCategoryRepositoryFactory',
-  bookCategoryService: 'bookCategoryService',
+  bookCategoryMapper: Symbol('bookCategoryMapper'),
+  bookCategoryRepositoryFactory: Symbol('bookCategoryRepositoryFactory'),
+  bookCategoryService: Symbol('bookCategoryService'),
 };

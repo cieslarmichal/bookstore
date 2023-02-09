@@ -6,10 +6,13 @@ import { authorBookErrorMiddleware } from './authorBookErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Author } from '../../../domain/author/contracts/author';
+import { authorBookSymbols } from '../../../domain/authorBook/authorBookSymbols';
 import { AuthorBook } from '../../../domain/authorBook/contracts/authorBook';
 import { AuthorBookService } from '../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
 import { Book } from '../../../domain/book/contracts/book';
+import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
 import { findAuthorsFilters } from '../../author/contracts/findAuthorsFilters';
 import { findBooksFilters } from '../../book/contracts/findBooksFilters';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
@@ -17,6 +20,7 @@ import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
 import { ControllerResponse } from '../../controllerResponse';
+import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
 import { CreateAuthorBookPayload, createAuthorBookPayloadSchema } from '../contracts/createAuthorBookPayload';
@@ -24,6 +28,7 @@ import { DeleteAuthorBookPayload, deleteAuthorBookPayloadSchema } from '../contr
 import { FindAuthorsByBookIdPayload, findAuthorsByBookIdPayloadSchema } from '../contracts/findAuthorsByBookIdPayload';
 import { FindBooksByAuthorIdPayload, findBooksByAuthorIdPayloadSchema } from '../contracts/findBooksByAuthorIdPayload';
 
+@Injectable()
 export class AuthorBookController {
   public readonly router = Router();
   private readonly authorBooksEndpoint = '/authors/:authorId/books';
@@ -31,10 +36,15 @@ export class AuthorBookController {
   private readonly bookAuthorsEndpoint = '/books/:bookId/authors';
 
   public constructor(
+    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
+    @Inject(authorBookSymbols.authorBookService)
     private readonly authorBookService: AuthorBookService,
+    @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
+    @Inject(integrationsSymbols.filterDataParser)
     private filterDataParser: FilterDataParser,
+    @Inject(integrationsSymbols.paginationDataBuilder)
     private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);

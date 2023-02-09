@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "baseUrl": "./",
     "resolveJsonModule": true,
     "outDir": "./dist",
@@ -29,6 +29,7 @@
     "declaration": true,
     "declarationMap": true,
     "incremental": true,
-    "composite": true
+    "composite": true,
+    "types": ["reflect-metadata"],
   },
 }
