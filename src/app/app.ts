@@ -17,10 +17,18 @@ import { CustomerEntity } from './domain/customer/contracts/customerEntity';
 import { CustomerModule } from './domain/customer/customerModule';
 import { UserEntity } from './domain/user/contracts/userEntity';
 import { UserModule } from './domain/user/userModule';
+import { AddressController } from './integrations/address/implementations/addressController';
+import { AuthorController } from './integrations/author/implementations/authorController';
+import { AuthorBookController } from './integrations/authorBook/implementations/authorBookController';
+import { BookController } from './integrations/book/implementations/bookController';
+import { BookCategoryController } from './integrations/bookCategory/implementations/bookCategoryController';
+import { CategoryController } from './integrations/category/implementations/categoryController';
 import { errorMiddleware } from './integrations/common/middlewares/errorMiddleware';
 import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
+import { CustomerController } from './integrations/customer/implementations/customerController';
 import { IntegrationsModule } from './integrations/integrationsModule';
 import { integrationsSymbols } from './integrations/integrationsSymbols';
+import { UserController } from './integrations/user/implementations/userController';
 import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from './libs/logger/loggerModule';
 import { PostgresModule } from './libs/postgres/postgresModule';
@@ -74,14 +82,14 @@ export class App {
       ],
     });
 
-    const bookController = container.resolve(integrationsSymbols.bookController);
-    const authorController = container.resolve(integrationsSymbols.authorController);
-    const userController = container.resolve(integrationsSymbols.userController);
-    const categoryController = container.resolve(integrationsSymbols.categoryController);
-    const authorBookController = container.resolve(integrationsSymbols.authorBookController);
-    const bookCategoryController = container.resolve(integrationsSymbols.bookCategoryController);
-    const addressController = container.resolve(integrationsSymbols.addressController);
-    const customerController = container.resolve(integrationsSymbols.customerController);
+    const bookController = container.get<BookController>(integrationsSymbols.bookController);
+    const authorController = container.get<AuthorController>(integrationsSymbols.authorController);
+    const userController = container.get<UserController>(integrationsSymbols.userController);
+    const categoryController = container.get<CategoryController>(integrationsSymbols.categoryController);
+    const authorBookController = container.get<AuthorBookController>(integrationsSymbols.authorBookController);
+    const bookCategoryController = container.get<BookCategoryController>(integrationsSymbols.bookCategoryController);
+    const addressController = container.get<AddressController>(integrationsSymbols.addressController);
+    const customerController = container.get<CustomerController>(integrationsSymbols.customerController);
 
     this.instance.use(json());
     this.instance.use(urlencoded({ extended: false }));

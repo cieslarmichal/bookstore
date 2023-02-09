@@ -1,5 +1,3 @@
-import { describe, it, beforeAll, expect } from 'vitest';
-
 import { AuthorBookMapperImpl } from './authorBookMapperImpl';
 import { AuthorBookEntityTestFactory } from '../../../tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 

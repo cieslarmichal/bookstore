@@ -1,8 +1,5 @@
 import 'reflect-metadata';
 
-import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
-
-import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
@@ -40,8 +37,6 @@ import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 
 describe('AddressServiceImpl', () => {
-  const spyFactory = new SpyFactory(vi);
-
   let addressService: AddressService;
   let addressRepositoryFactory: AddressRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
@@ -98,7 +93,7 @@ describe('AddressServiceImpl', () => {
     it('creates address in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -144,7 +139,7 @@ describe('AddressServiceImpl', () => {
     it('finds address by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -195,7 +190,7 @@ describe('AddressServiceImpl', () => {
     it('should throw if address with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = addressEntityTestFactory.create();
 
         try {
@@ -211,7 +206,7 @@ describe('AddressServiceImpl', () => {
     it('finds addresses by customerId', async () => {
       expect.assertions(3);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -316,7 +311,7 @@ describe('AddressServiceImpl', () => {
     it('finds addresses by customerId limited by pagination', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -413,7 +408,7 @@ describe('AddressServiceImpl', () => {
     it('deletes address from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -466,7 +461,7 @@ describe('AddressServiceImpl', () => {
     it('should throw if address with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = addressEntityTestFactory.create();
 
         try {

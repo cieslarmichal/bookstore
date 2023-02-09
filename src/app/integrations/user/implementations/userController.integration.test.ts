@@ -1,13 +1,11 @@
 import 'reflect-metadata';
 
 import request from 'supertest';
-import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../app';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { SpyFactory } from '../../../common/tests/implementations/spyFactory';
 import { AddressModule } from '../../../domain/address/addressModule';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
 import { AuthorModule } from '../../../domain/author/authorModule';
@@ -49,8 +47,6 @@ const setEmailUrl = `${baseUrl}/set-email`;
 const setPhoneNumberUrl = `${baseUrl}/set-phone-number`;
 
 describe(`UserController (${baseUrl})`, () => {
-  const spyFactory = new SpyFactory(vi);
-
   let hashService: HashService;
   let server: HttpServer;
   let authHelper: AuthHelper;
@@ -101,7 +97,7 @@ describe(`UserController (${baseUrl})`, () => {
 
     hashService = container.resolve(userSymbols.hashService);
 
-    authHelper = new AuthHelper(spyFactory, container);
+    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -120,7 +116,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { email } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(registerUrl).send({
@@ -134,7 +130,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when user with given email already exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -155,7 +151,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { email, password } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(registerUrl).send({
@@ -172,7 +168,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { phoneNumber } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(registerUrl).send({
@@ -186,7 +182,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when user with given phone number already exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -207,7 +203,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(registerUrl).send({
@@ -224,7 +220,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { email } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(loginUrl).send({ email });
@@ -236,7 +232,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given email does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { email, password } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(loginUrl).send({
@@ -251,7 +247,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns ok when existing credentials are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -276,7 +272,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { phoneNumber } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(loginUrl).send({
@@ -290,7 +286,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given phone number does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(loginUrl).send({
@@ -305,7 +301,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns ok when existing credentials are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -330,7 +326,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, password, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -349,7 +345,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, password, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -369,7 +365,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, password } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(setPasswordUrl).send({
@@ -384,7 +380,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, password, role } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
@@ -406,7 +402,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -434,7 +430,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, email, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -453,7 +449,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, email, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -473,7 +469,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, email } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(setEmailUrl).send({
@@ -488,7 +484,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, email, role } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
@@ -510,7 +506,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when email is already in use by other user', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -540,7 +536,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when email is already set for target user', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -566,7 +562,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -594,7 +590,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, phoneNumber, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -613,7 +609,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, phoneNumber, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -633,7 +629,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, phoneNumber } = userEntityTestFactory.create();
 
         const response = await request(server.instance).post(setPhoneNumberUrl).send({
@@ -648,7 +644,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, phoneNumber, role } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
@@ -670,7 +666,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when phone number is already in use by other user', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -700,7 +696,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unprocessable entity when phone number is already set for target user', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -726,7 +722,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns no content when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -754,7 +750,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request the userId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const userId = 'abc';
 
         const { role } = userEntityTestFactory.create();
@@ -772,7 +768,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -788,7 +784,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -806,7 +802,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
@@ -824,7 +820,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('accepts a request and returns ok when userId is uuid and have corresponding user', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -848,7 +844,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns bad request when the userId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const userId = 'abc';
 
         const { role } = userEntityTestFactory.create();
@@ -867,7 +863,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns not found when user with given userId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -884,7 +880,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -902,7 +898,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('returns forbidden when user id from access token does not match target user id', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
@@ -920,7 +916,7 @@ describe(`UserController (${baseUrl})`, () => {
     it('accepts a request and returns no content when userId is uuid and corresponds to existing user', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);

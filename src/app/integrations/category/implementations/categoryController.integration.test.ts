@@ -1,13 +1,11 @@
 import 'reflect-metadata';
 
 import request from 'supertest';
-import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../app';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { SpyFactory } from '../../../common/tests/implementations/spyFactory';
 import { AddressModule } from '../../../domain/address/addressModule';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
 import { AuthorModule } from '../../../domain/author/authorModule';
@@ -44,8 +42,6 @@ import { IntegrationsModule } from '../../integrationsModule';
 const baseUrl = '/categories';
 
 describe(`CategoryController (${baseUrl})`, () => {
-  const spyFactory = new SpyFactory(vi);
-
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let server: HttpServer;
   let authHelper: AuthHelper;
@@ -94,7 +90,7 @@ describe(`CategoryController (${baseUrl})`, () => {
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    authHelper = new AuthHelper(spyFactory, container);
+    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -113,7 +109,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const accessToken = authHelper.mockAuth({ userId, role });
@@ -130,7 +126,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { name } = categoryEntityTestFactory.create();
 
         const response = await request(server.instance).post(baseUrl).send({
@@ -144,7 +140,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('accepts a request and returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { name } = categoryEntityTestFactory.create();
@@ -167,7 +163,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns bad request the categoryId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const categoryId = 'abc';
@@ -185,7 +181,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns not found when category with given categoryId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id } = categoryEntityTestFactory.create();
@@ -203,7 +199,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -221,7 +217,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('accepts a request and returns ok when categoryId is uuid and have corresponding category', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -247,7 +243,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const response = await request(server.instance).get(`${baseUrl}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -257,7 +253,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns categories with filtering provided', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -288,7 +284,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns bad request when the categoryId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const categoryId = 'abc';
@@ -307,7 +303,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns not found when category with given categoryId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id } = categoryEntityTestFactory.create();
@@ -326,7 +322,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -344,7 +340,7 @@ describe(`CategoryController (${baseUrl})`, () => {
     it('accepts a request and returns no content when categoryId is uuid and corresponds to existing category', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);

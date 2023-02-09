@@ -1,13 +1,11 @@
 import 'reflect-metadata';
 
 import request from 'supertest';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../app';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { SpyFactory } from '../../../common/tests/implementations/spyFactory';
 import { AddressModule } from '../../../domain/address/addressModule';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
 import { AuthorModule } from '../../../domain/author/authorModule';
@@ -44,8 +42,6 @@ import { IntegrationsModule } from '../../integrationsModule';
 const baseUrl = '/authors';
 
 describe(`AuthorController (${baseUrl})`, () => {
-  const spyFactory = new SpyFactory(vi);
-
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let server: HttpServer;
   let authHelper: AuthHelper;
@@ -94,7 +90,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    authHelper = new AuthHelper(spyFactory, container);
+    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -113,7 +109,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { firstName } = authorEntityTestFactory.create();
@@ -134,7 +130,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { firstName, lastName } = authorEntityTestFactory.create();
 
         const response = await request(server.instance).post(baseUrl).send({
@@ -149,7 +145,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('accepts a request and returns created when all required body properties are provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { firstName, lastName } = authorEntityTestFactory.create();
@@ -173,7 +169,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request the authorId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const authorId = 'abc';
@@ -191,7 +187,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id } = authorEntityTestFactory.create();
@@ -209,7 +205,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -227,7 +223,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('accepts a request and returns ok when authorId is uuid and have corresponding author', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -253,7 +249,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const response = await request(server.instance).get(`${baseUrl}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -263,7 +259,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns authors with filtering provided', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -294,7 +290,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when provided not allowed properties in body', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id, firstName } = authorEntityTestFactory.create();
@@ -315,7 +311,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const authorId = 'abc';
@@ -338,7 +334,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id, about } = authorEntityTestFactory.create();
@@ -359,7 +355,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -379,7 +375,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('accepts a request and returns ok when authorId is uuid and corresponds to existing author', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -408,7 +404,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns bad request when the authorId param is not uuid', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const authorId = 'abc';
@@ -427,7 +423,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async () => {
+      await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
         const { id } = authorEntityTestFactory.create();
@@ -446,7 +442,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -464,7 +460,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);

@@ -1,17 +1,16 @@
-import { AwilixContainer } from 'awilix';
-
-import { SpyFactory } from '../../../../common/tests/implementations/spyFactory';
+import { TokenService } from '../../../../domain/user/contracts/services/tokenService/tokenService';
 import { userSymbols } from '../../../../domain/user/userSymbols';
+import { DependencyInjectionContainer } from '../../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class AuthHelper {
-  public constructor(private readonly spyFactory: SpyFactory, private readonly container: AwilixContainer) {}
+  public constructor(private readonly container: DependencyInjectionContainer) {}
 
   public mockAuth(authPayload: { userId: string; role: string }): unknown {
     const fakeToken = 'token';
 
-    const tokenService = this.container.resolve(userSymbols.tokenService);
+    const tokenService = this.container.get<TokenService>(userSymbols.tokenService);
 
-    this.spyFactory.create(tokenService, 'verifyAccessToken').mockImplementation(async (token) => {
+    jest.spyOn(tokenService, 'verifyToken').mockImplementation(async (token) => {
       if (token !== fakeToken) {
         throw new Error('Invalid token.');
       }

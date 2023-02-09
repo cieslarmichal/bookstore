@@ -1,8 +1,5 @@
 import 'reflect-metadata';
 
-import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
-
-import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
@@ -36,8 +33,6 @@ import { UserModule } from '../../../userModule';
 import { userSymbols } from '../../../userSymbols';
 
 describe('UserServiceImpl', () => {
-  const spyFactory = new SpyFactory(vi);
-
   let userService: UserService;
   let userRepositoryFactory: UserRepositoryFactory;
   let tokenService: TokenService;
@@ -89,7 +84,7 @@ describe('UserServiceImpl', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -113,7 +108,7 @@ describe('UserServiceImpl', () => {
     it('should not create user and throw if user with the same email already exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -146,7 +141,7 @@ describe('UserServiceImpl', () => {
     it('creates user in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -170,7 +165,7 @@ describe('UserServiceImpl', () => {
     it('should not create user and throw if user with the same phone number already exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -203,7 +198,7 @@ describe('UserServiceImpl', () => {
     it('should return access token', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -237,7 +232,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given email does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { email, password } = userEntityTestFactory.create();
 
         try {
@@ -257,7 +252,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user password does not match db password', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -292,7 +287,7 @@ describe('UserServiceImpl', () => {
     it('should return access token', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -326,7 +321,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given email does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { phoneNumber, password } = userEntityTestFactory.create();
 
         try {
@@ -346,7 +341,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user password does not match db password', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -381,7 +376,7 @@ describe('UserServiceImpl', () => {
     it(`should update user's password in db`, async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -411,7 +406,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, password } = userEntityTestFactory.create();
 
         try {
@@ -427,7 +422,7 @@ describe('UserServiceImpl', () => {
     it(`should update user's email in db`, async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -453,7 +448,7 @@ describe('UserServiceImpl', () => {
     it(`should throw if user already has email set in db`, async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -478,7 +473,7 @@ describe('UserServiceImpl', () => {
     it(`should throw if email is already assigned to different user in db`, async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -512,7 +507,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, email } = userEntityTestFactory.create();
 
         try {
@@ -528,7 +523,7 @@ describe('UserServiceImpl', () => {
     it(`should update user's phone number in db`, async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -554,7 +549,7 @@ describe('UserServiceImpl', () => {
     it(`should throw if user already has phone number set in db`, async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -579,7 +574,7 @@ describe('UserServiceImpl', () => {
     it(`should throw if phone number is already assigned to different user in db`, async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -613,7 +608,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id, phoneNumber } = userEntityTestFactory.create();
 
         try {
@@ -629,7 +624,7 @@ describe('UserServiceImpl', () => {
     it('finds user by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -652,7 +647,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = userEntityTestFactory.create();
 
         try {
@@ -668,7 +663,7 @@ describe('UserServiceImpl', () => {
     it('deletes user from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -693,7 +688,7 @@ describe('UserServiceImpl', () => {
     it('should throw if user with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = userEntityTestFactory.create();
 
         try {

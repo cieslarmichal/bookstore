@@ -1,22 +1,18 @@
-import { AwilixContainer } from 'awilix';
-
-import { SpyFactory } from '../../../../common/tests/implementations/spyFactory';
+import { DependencyInjectionContainer } from '../../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { TransactionCallback } from '../../../../libs/unitOfWork/contracts/transactionCallback';
-import { PostgresUnitOfWork } from '../../../../libs/unitOfWork/implementations/postgresUnitOfWork';
+import { UnitOfWork } from '../../../../libs/unitOfWork/contracts/unitOfWork';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 
 export class TestTransactionInternalRunner {
-  public constructor(private readonly container: AwilixContainer) {}
+  public constructor(private readonly container: DependencyInjectionContainer) {}
 
-  public async runInTestTransaction<Result>(
-    spyFactory: SpyFactory,
-    callback: TransactionCallback<Result, PostgresUnitOfWork>,
-  ): Promise<void> {
-    const unitOfWorkFactory = this.container.resolve(unitOfWorkSymbols.unitOfWorkFactory);
+  public async runInTestTransaction<Result>(callback: TransactionCallback<Result, UnitOfWork>): Promise<void> {
+    const unitOfWorkFactory = this.container.get<UnitOfWorkFactory>(unitOfWorkSymbols.unitOfWorkFactory);
 
     const unitOfWork = await unitOfWorkFactory.create();
 
-    spyFactory.create(unitOfWork, 'commit').mockImplementation(async () => {
+    jest.spyOn(unitOfWork, 'commit').mockImplementation(async () => {
       await unitOfWork.rollback();
     });
 

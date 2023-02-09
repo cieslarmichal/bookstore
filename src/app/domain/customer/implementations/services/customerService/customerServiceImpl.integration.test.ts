@@ -1,8 +1,5 @@
 import 'reflect-metadata';
 
-import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
-
-import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
@@ -34,8 +31,6 @@ import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 
 describe('CustomerServiceImpl', () => {
-  const spyFactory = new SpyFactory(vi);
-
   let customerService: CustomerService;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
@@ -87,7 +82,7 @@ describe('CustomerServiceImpl', () => {
     it('creates customer in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -109,7 +104,7 @@ describe('CustomerServiceImpl', () => {
     it('throws if customer with userId already exists in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -137,7 +132,7 @@ describe('CustomerServiceImpl', () => {
     it('finds customer by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -161,7 +156,7 @@ describe('CustomerServiceImpl', () => {
     it('finds customer by userId in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -185,7 +180,7 @@ describe('CustomerServiceImpl', () => {
     it('should throw if customer with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = customerEntityTestFactory.create();
 
         try {
@@ -201,7 +196,7 @@ describe('CustomerServiceImpl', () => {
     it('deletes customer from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const userRepository = userRepositoryFactory.create(entityManager);
@@ -227,7 +222,7 @@ describe('CustomerServiceImpl', () => {
     it('should throw if customer with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = customerEntityTestFactory.create();
 
         try {

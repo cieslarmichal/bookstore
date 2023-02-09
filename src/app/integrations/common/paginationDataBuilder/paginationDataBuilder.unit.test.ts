@@ -1,5 +1,3 @@
-import { describe, it, expect } from 'vitest';
-
 import { PaginationDataBuilder } from './paginationDataBuilder';
 
 const defaultPage = 1;

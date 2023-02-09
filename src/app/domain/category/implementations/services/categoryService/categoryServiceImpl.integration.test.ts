@@ -1,8 +1,5 @@
 import 'reflect-metadata';
 
-import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
-
-import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
@@ -41,8 +38,6 @@ import { CategoryNotFoundError } from '../../../errors/categoryNotFoundError';
 import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 
 describe('CategoryServiceImpl', () => {
-  const spyFactory = new SpyFactory(vi);
-
   let categoryService: CategoryService;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
@@ -98,7 +93,7 @@ describe('CategoryServiceImpl', () => {
     it('creates category in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -121,7 +116,7 @@ describe('CategoryServiceImpl', () => {
     it('should not create category and throw if category with the same name exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -151,7 +146,7 @@ describe('CategoryServiceImpl', () => {
     it('finds category by id in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -172,7 +167,7 @@ describe('CategoryServiceImpl', () => {
     it('should throw if category with given id does not exist in db', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = categoryEntityTestFactory.create();
 
         try {
@@ -188,7 +183,7 @@ describe('CategoryServiceImpl', () => {
     it('finds categories by condition in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -226,7 +221,7 @@ describe('CategoryServiceImpl', () => {
     it('finds categories by bookId with condition in database', async () => {
       expect.assertions(2);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -290,7 +285,7 @@ describe('CategoryServiceImpl', () => {
     it('deletes category from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const categoryRepository = categoryRepositoryFactory.create(entityManager);
@@ -313,7 +308,7 @@ describe('CategoryServiceImpl', () => {
     it('should throw if category with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { id } = categoryEntityTestFactory.create();
 
         try {

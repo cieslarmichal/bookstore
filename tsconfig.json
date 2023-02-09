@@ -30,6 +30,6 @@
     "declarationMap": true,
     "incremental": true,
     "composite": true,
-    "types": ["reflect-metadata"],
+    "types": ["reflect-metadata", "jest"],
   },
 }

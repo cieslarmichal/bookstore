@@ -1,8 +1,5 @@
 import 'reflect-metadata';
 
-import { describe, it, beforeAll, afterAll, expect, vi } from 'vitest';
-
-import { SpyFactory } from '../../../../../common/tests/implementations/spyFactory';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
@@ -38,8 +35,6 @@ import { AuthorBookNotFoundError } from '../../../errors/authorBookNotFoundError
 import { AuthorBookEntityTestFactory } from '../../../tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 
 describe('AuthorBookServiceImpl', () => {
-  const spyFactory = new SpyFactory(vi);
-
   let authorBookService: AuthorBookService;
   let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let authorRepositoryFactory: AuthorRepositoryFactory;
@@ -95,7 +90,7 @@ describe('AuthorBookServiceImpl', () => {
     it('creates authorBook in database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -129,7 +124,7 @@ describe('AuthorBookServiceImpl', () => {
     it('should not create authorBook and throw if authorBook with the authorId and bookId exists', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -171,7 +166,7 @@ describe('AuthorBookServiceImpl', () => {
     it('deletes authorBook from database', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
@@ -207,7 +202,7 @@ describe('AuthorBookServiceImpl', () => {
     it('should throw if authorBook with given id does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(spyFactory, async (unitOfWork) => {
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const { authorId, bookId } = authorBookEntityTestFactory.create();
 
         try {
