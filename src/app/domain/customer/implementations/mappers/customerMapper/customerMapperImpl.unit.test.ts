@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { CustomerMapperImpl } from './customerMapperImpl';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 

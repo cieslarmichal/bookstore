@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { BookCategoryMapperImpl } from './bookCategoryMapperImpl';
 import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 

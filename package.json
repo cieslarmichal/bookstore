@@ -11,6 +11,7 @@
     "test:unit:watch": "npm run test:unit -- --watch",
     "test:integration": "jest --config tests-integration.config.js --runInBand --detectOpenHandles",
     "test:integration:watch": "npm run test:integration -- --watch",
+    "test:clean": "jest --clearCache",
     "lint": "eslint . --ext .ts --cache --max-warnings 0",
     "lint:fix": "npm run lint -- --fix"
   },

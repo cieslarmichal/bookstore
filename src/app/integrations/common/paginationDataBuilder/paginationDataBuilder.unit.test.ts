@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { PaginationDataBuilder } from './paginationDataBuilder';
 
 const defaultPage = 1;

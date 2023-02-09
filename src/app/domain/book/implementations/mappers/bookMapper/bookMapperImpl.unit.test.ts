@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { BookMapperImpl } from './bookMapperImpl';
 import { BookEntityTestFactory } from '../../../tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 

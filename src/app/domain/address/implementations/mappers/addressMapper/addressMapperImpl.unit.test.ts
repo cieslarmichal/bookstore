@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { AddressMapperImpl } from './addressMapperImpl';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 

@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { AuthorMapperImpl } from './authorMapperImpl';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 

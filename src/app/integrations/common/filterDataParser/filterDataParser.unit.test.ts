@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import { FilterDataParser } from './filterDataParser';
 import {

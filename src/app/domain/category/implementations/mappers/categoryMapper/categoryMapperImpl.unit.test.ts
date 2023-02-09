@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { CategoryMapperImpl } from './categoryMapperImpl';
 import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 

@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { UserMapperImpl } from './userMapperImpl';
 import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+
 import { DataSource } from 'typeorm';
 
 import { EqualFilter } from '../../../../../common/types/contracts/filter';

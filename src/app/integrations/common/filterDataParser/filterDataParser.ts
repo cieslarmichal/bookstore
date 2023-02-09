@@ -1,10 +1,10 @@
-import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError.js';
-import { ParsePayload, parsePayloadSchema } from './parsePayload.js';
-import { Filter } from '../../../common/types/contracts/filter.js';
-import { FilterName } from '../../../common/types/contracts/filterName.js';
-import { FilterSymbol } from '../../../common/types/contracts/filterSymbol.js';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory.js';
-import { Injectable } from '../../../libs/dependencyInjection/contracts/decorators.js';
+import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
+import { ParsePayload, parsePayloadSchema } from './parsePayload';
+import { Filter } from '../../../common/types/contracts/filter';
+import { FilterName } from '../../../common/types/contracts/filterName';
+import { FilterSymbol } from '../../../common/types/contracts/filterSymbol';
+import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
+import { Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 
 @Injectable()
 export class FilterDataParser {
