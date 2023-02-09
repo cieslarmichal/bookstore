@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import request from 'supertest';
+import { DataSource } from 'typeorm';
 
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
@@ -30,7 +31,6 @@ import { UserModule } from '../../../domain/user/userModule';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -46,7 +46,7 @@ describe(`CategoryController (${baseUrl})`, () => {
   let server: HttpServer;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const categoryEntityTestFactory = new CategoryEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
@@ -85,8 +85,10 @@ describe(`CategoryController (${baseUrl})`, () => {
       ],
     });
 
-    categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
@@ -102,7 +104,7 @@ describe(`CategoryController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Create category', () => {

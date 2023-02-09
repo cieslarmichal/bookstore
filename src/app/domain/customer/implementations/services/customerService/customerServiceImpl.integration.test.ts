@@ -1,10 +1,10 @@
 import 'reflect-metadata';
+import { DataSource } from 'typeorm';
 
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -35,7 +35,7 @@ describe('CustomerServiceImpl', () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const customerEntityTestFactory = new CustomerEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
@@ -66,16 +66,18 @@ describe('CustomerServiceImpl', () => {
       ],
     });
 
-    customerService = container.resolve(customerSymbols.customerService);
-    customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
-    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    customerService = container.get<CustomerService>(customerSymbols.customerService);
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
 
   afterAll(async () => {
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Create customer', () => {

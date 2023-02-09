@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { DataSource } from 'typeorm';
 
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
@@ -7,7 +8,6 @@ import { TestTransactionInternalRunner } from '../../../../../integrations/commo
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -43,7 +43,7 @@ describe('AddressServiceImpl', () => {
   let userRepositoryFactory: UserRepositoryFactory;
 
   let testTransactionRunner: TestTransactionInternalRunner;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const addressEntityTestFactory = new AddressEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
@@ -76,17 +76,19 @@ describe('AddressServiceImpl', () => {
       ],
     });
 
-    addressService = container.resolve(addressSymbols.addressService);
-    addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
-    customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
-    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    addressService = container.get<AddressService>(addressSymbols.addressService);
+    addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
 
   afterAll(async () => {
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Create address', () => {

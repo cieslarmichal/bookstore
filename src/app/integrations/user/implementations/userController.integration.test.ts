@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import request from 'supertest';
+import { DataSource } from 'typeorm';
 
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
@@ -30,7 +31,6 @@ import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -52,7 +52,7 @@ describe(`UserController (${baseUrl})`, () => {
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
   let userRepositoryFactory: UserRepositoryFactory;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const userEntityTestFactory = new UserEntityTestFactory();
 
@@ -90,12 +90,13 @@ describe(`UserController (${baseUrl})`, () => {
       ],
     });
 
-    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    hashService = container.get<HashService>(userSymbols.hashService);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    hashService = container.resolve(userSymbols.hashService);
 
     authHelper = new AuthHelper(container);
 
@@ -109,7 +110,7 @@ describe(`UserController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Register user by email', () => {

@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import request from 'supertest';
+import { DataSource } from 'typeorm';
 
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
@@ -35,7 +36,6 @@ import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -54,7 +54,7 @@ describe(`AddressController (${baseUrl})`, () => {
   let server: HttpServer;
   let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const addressEntityTestFactory = new AddressEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
@@ -94,10 +94,12 @@ describe(`AddressController (${baseUrl})`, () => {
       ],
     });
 
-    addressRepositoryFactory = container.resolve(addressSymbols.addressRepositoryFactory);
-    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
-    customerRepositoryFactory = container.resolve(customerSymbols.customerRepositoryFactory);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
@@ -113,7 +115,7 @@ describe(`AddressController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Create address', () => {

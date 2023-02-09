@@ -1,10 +1,10 @@
 import 'reflect-metadata';
+import { DataSource } from 'typeorm';
 
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -38,7 +38,7 @@ describe('UserServiceImpl', () => {
   let tokenService: TokenService;
   let hashService: HashService;
   let testTransactionRunner: TestTransactionInternalRunner;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const userEntityTestFactory = new UserEntityTestFactory();
 
@@ -67,17 +67,19 @@ describe('UserServiceImpl', () => {
       ],
     });
 
-    userService = container.resolve(userSymbols.userService);
-    userRepositoryFactory = container.resolve(userSymbols.userRepositoryFactory);
-    tokenService = container.resolve(userSymbols.tokenService);
-    hashService = container.resolve(userSymbols.hashService);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    userService = container.get<UserService>(userSymbols.userService);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
+    hashService = container.get<HashService>(userSymbols.hashService);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
 
   afterAll(async () => {
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Register user by email', () => {

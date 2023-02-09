@@ -1,10 +1,10 @@
 import 'reflect-metadata';
+import { DataSource } from 'typeorm';
 
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresConnector } from '../../../../../libs/postgres/contracts/postgresConnector';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
@@ -39,7 +39,7 @@ describe('BookCategoryService', () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
-  let postgresConnector: PostgresConnector;
+  let dataSource: DataSource;
 
   const bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
   const categoryEntityTestFactory = new CategoryEntityTestFactory();
@@ -71,17 +71,21 @@ describe('BookCategoryService', () => {
       ],
     });
 
-    bookCategoryService = container.resolve(bookCategorySymbols.bookCategoryService);
-    bookCategoryRepositoryFactory = container.resolve(bookCategorySymbols.bookCategoryRepositoryFactory);
-    categoryRepositoryFactory = container.resolve(categorySymbols.categoryRepositoryFactory);
-    bookRepositoryFactory = container.resolve(bookSymbols.bookRepositoryFactory);
-    postgresConnector = container.resolve(postgresSymbols.postgresConnector);
+    bookCategoryService = container.get<BookCategoryService>(bookCategorySymbols.bookCategoryService);
+    bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
+      bookCategorySymbols.bookCategoryRepositoryFactory,
+    );
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
 
   afterAll(async () => {
-    postgresConnector.closeConnection();
+    dataSource.destroy();
   });
 
   describe('Create bookCategory', () => {
