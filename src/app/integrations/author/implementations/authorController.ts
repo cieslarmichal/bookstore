@@ -88,9 +88,9 @@ export class AuthorController {
           supportedFieldsFilters: findAuthorsFilters,
         });
 
-        const page = Number(request.query[QueryParameterName.page]);
+        const page = Number(request.query[QueryParameterName.page] ?? 0);
 
-        const limit = Number(request.query[QueryParameterName.limit]);
+        const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
         const pagination = this.paginationDataBuilder.build({ page, limit });
 

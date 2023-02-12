@@ -32,6 +32,7 @@ import { UserController } from './integrations/user/implementations/userControll
 import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from './libs/logger/loggerModule';
 import { PostgresModule } from './libs/postgres/postgresModule';
+import { UnitOfWorkModule } from './libs/unitOfWork/unitOfWorkModule';
 
 export class App {
   public instance: express.Application;
@@ -79,6 +80,7 @@ export class App {
         new BookCategoryModule(),
         new AddressModule(),
         new CustomerModule(),
+        new UnitOfWorkModule(),
       ],
     });
 

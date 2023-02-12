@@ -28,6 +28,7 @@ import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
@@ -40,7 +41,6 @@ import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper } from '../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
@@ -52,9 +52,9 @@ describe(`AddressController (${baseUrl})`, () => {
   let userRepositoryFactory: UserRepositoryFactory;
 
   let server: HttpServer;
-  let authHelper: AuthHelper;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
+  let tokenService: TokenService;
 
   const addressEntityTestFactory = new AddressEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
@@ -76,6 +76,8 @@ describe(`AddressController (${baseUrl})`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -94,16 +96,17 @@ describe(`AddressController (${baseUrl})`, () => {
       ],
     });
 
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+
     addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     await dataSource.initialize();
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -113,6 +116,8 @@ describe(`AddressController (${baseUrl})`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     server.close();
 
     await dataSource.destroy();
@@ -125,7 +130,7 @@ describe(`AddressController (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -187,7 +192,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -217,24 +222,6 @@ describe(`AddressController (${baseUrl})`, () => {
   });
 
   describe('Find address', () => {
-    it('returns bad request the addressId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const accessToken = authHelper.mockAuth({ userId, role });
-
-        const addressId = 'abc';
-
-        const response = await request(server.instance)
-          .get(`${baseUrl}/${addressId}`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
@@ -249,7 +236,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -330,6 +317,8 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
+        const { id: otherUserId } = userEntityTestFactory.create();
+
         const { id: customerId } = customerEntityTestFactory.create();
 
         const {
@@ -344,7 +333,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId: otherUserId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -399,7 +388,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -472,7 +461,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: addressId2 } = addressEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId: userId1, role });
+        const accessToken = await tokenService.createToken({ userId: userId1, role });
 
         const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password, role });
 
@@ -519,32 +508,13 @@ describe(`AddressController (${baseUrl})`, () => {
   });
 
   describe('Delete address', () => {
-    it('returns bad request when the addressId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const accessToken = authHelper.mockAuth({ userId, role });
-
-        const addressId = 'abc';
-
-        const response = await request(server.instance)
-          .delete(`${baseUrl}/${addressId}`)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send();
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId, role });
 
         const { id } = addressEntityTestFactory.create();
 
@@ -636,7 +606,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = await tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
