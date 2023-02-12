@@ -120,7 +120,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
   afterEach(async () => {
     server.close();
 
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create bookCategory', () => {

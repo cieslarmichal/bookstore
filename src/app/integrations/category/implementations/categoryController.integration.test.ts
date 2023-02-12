@@ -104,7 +104,7 @@ describe(`CategoryController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create category', () => {

@@ -119,7 +119,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   afterEach(async () => {
     server.close();
 
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create authorBook', () => {

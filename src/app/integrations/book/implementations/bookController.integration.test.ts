@@ -104,7 +104,7 @@ describe(`BookController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create book', () => {

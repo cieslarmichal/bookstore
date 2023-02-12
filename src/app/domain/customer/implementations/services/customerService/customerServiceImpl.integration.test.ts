@@ -78,7 +78,7 @@ describe('CustomerServiceImpl', () => {
   });
 
   afterAll(async () => {
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create customer', () => {

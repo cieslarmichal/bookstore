@@ -88,7 +88,7 @@ describe('AuthorServiceImpl', () => {
   });
 
   afterAll(async () => {
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create author', () => {
@@ -340,7 +340,7 @@ describe('AuthorServiceImpl', () => {
 
         expect(foundAuthors.length).toBe(1);
         expect(foundAuthors[0]?.firstName).toBe(author1.firstName);
-        expect(foundAuthors[0]?.lastName).toBe(author2.lastName);
+        expect(foundAuthors[0]?.lastName).toBe(author1.lastName);
       });
     });
   });

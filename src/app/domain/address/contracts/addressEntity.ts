@@ -46,7 +46,7 @@ export class AddressEntity {
   public streetAddress: string;
 
   @Column({ type: 'text', nullable: true })
-  public deliveryInstructions?: string;
+  public deliveryInstructions?: string | null;
 
   @ManyToOne(() => CustomerEntity, (customer) => customer.addresses, { onDelete: 'CASCADE' })
   public customer?: CustomerEntity;

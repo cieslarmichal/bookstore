@@ -5,14 +5,12 @@ import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapp
 
 @Injectable()
 export class AuthorMapperImpl implements AuthorMapper {
-  public map(entity: AuthorEntity): Author {
-    const { id, firstName, lastName, about } = entity;
-
+  public map({ id, firstName, lastName, about }: AuthorEntity): Author {
     return new Author({
       id,
       firstName,
       lastName,
-      about,
+      about: about || undefined,
     });
   }
 }

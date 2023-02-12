@@ -5,9 +5,7 @@ import { CustomerMapper } from '../../../contracts/mappers/customerMapper/custom
 
 @Injectable()
 export class CustomerMapperImpl implements CustomerMapper {
-  public map(entity: CustomerEntity): Customer {
-    const { id, userId } = entity;
-
+  public map({ id, userId }: CustomerEntity): Customer {
     return new Customer({ id, userId });
   }
 }

@@ -88,7 +88,7 @@ describe('AuthorBookServiceImpl', () => {
   });
 
   afterAll(async () => {
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create authorBook', () => {

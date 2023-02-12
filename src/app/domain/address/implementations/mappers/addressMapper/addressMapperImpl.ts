@@ -5,21 +5,19 @@ import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressM
 
 @Injectable()
 export class AddressMapperImpl implements AddressMapper {
-  public map(entity: AddressEntity): Address {
-    const {
-      id,
-      firstName,
-      lastName,
-      phoneNumber,
-      country,
-      state,
-      city,
-      zipCode,
-      streetAddress,
-      deliveryInstructions,
-      customerId,
-    } = entity;
-
+  public map({
+    id,
+    firstName,
+    lastName,
+    phoneNumber,
+    country,
+    state,
+    city,
+    zipCode,
+    streetAddress,
+    deliveryInstructions,
+    customerId,
+  }: AddressEntity): Address {
     return new Address({
       id,
       firstName,
@@ -30,7 +28,7 @@ export class AddressMapperImpl implements AddressMapper {
       city,
       zipCode,
       streetAddress,
-      deliveryInstructions,
+      deliveryInstructions: deliveryInstructions || undefined,
       customerId,
     });
   }

@@ -80,7 +80,7 @@ describe('UserServiceImpl', () => {
   });
 
   afterAll(async () => {
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Register user by email', () => {

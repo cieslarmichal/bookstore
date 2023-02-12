@@ -86,7 +86,7 @@ describe('BookCategoryService', () => {
   });
 
   afterAll(async () => {
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create bookCategory', () => {

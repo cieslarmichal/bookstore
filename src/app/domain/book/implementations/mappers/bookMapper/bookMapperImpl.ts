@@ -5,9 +5,7 @@ import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';
 
 @Injectable()
 export class BookMapperImpl implements BookMapper {
-  public map(entity: BookEntity): Book {
-    const { id, title, releaseYear, language, format, description, price } = entity;
-
+  public map({ id, title, releaseYear, language, format, description, price }: BookEntity): Book {
     return new Book({
       id,
       title,

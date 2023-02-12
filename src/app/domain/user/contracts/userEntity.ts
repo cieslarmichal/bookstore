@@ -16,11 +16,11 @@ export class UserEntity {
 
   @Column({ type: 'text', unique: true, nullable: true })
   //@ts-ignore
-  public email?: string;
+  public email?: string | null;
 
   @Column({ type: 'text', unique: true, nullable: true })
   //@ts-ignore
-  public phoneNumber?: string;
+  public phoneNumber?: string | null;
 
   @Column({ type: 'text' })
   //@ts-ignore

@@ -5,9 +5,7 @@ import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMappe
 
 @Injectable()
 export class BookCategoryMapperImpl implements BookCategoryMapper {
-  public map(entity: BookCategoryEntity): BookCategory {
-    const { id, bookId, categoryId } = entity;
-
+  public map({ id, bookId, categoryId }: BookCategoryEntity): BookCategory {
     return new BookCategory({
       id,
       bookId,

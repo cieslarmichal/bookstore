@@ -110,7 +110,7 @@ describe(`UserController (${baseUrl})`, () => {
   afterEach(async () => {
     server.close();
 
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Register user by email', () => {

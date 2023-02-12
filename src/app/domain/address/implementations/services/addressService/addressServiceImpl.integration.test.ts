@@ -85,11 +85,13 @@ describe('AddressServiceImpl', () => {
 
     await dataSource.initialize();
 
+    console.log({ initialized: dataSource.isInitialized });
+
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
 
   afterAll(async () => {
-    dataSource.destroy();
+    await dataSource.destroy();
   });
 
   describe('Create address', () => {

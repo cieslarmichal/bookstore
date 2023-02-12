@@ -10,8 +10,8 @@ export class UserMapperImpl implements UserMapper {
 
     return new User({
       id,
-      email,
-      phoneNumber,
+      email: email || undefined,
+      phoneNumber: phoneNumber || undefined,
       password,
       role,
     });

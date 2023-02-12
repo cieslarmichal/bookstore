@@ -5,9 +5,7 @@ import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/catego
 
 @Injectable()
 export class CategoryMapperImpl implements CategoryMapper {
-  public map(entity: CategoryEntity): Category {
-    const { id, name } = entity;
-
+  public map({ id, name }: CategoryEntity): Category {
     return new Category({
       id,
       name,

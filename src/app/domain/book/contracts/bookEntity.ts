@@ -38,7 +38,7 @@ export class BookEntity {
 
   @Column({ type: 'text', nullable: true })
   //@ts-ignore
-  public description?: string;
+  public description?: string | null;
 
   @OneToMany(() => AuthorBookEntity, (authorBook) => authorBook.book)
   public authorBooks?: AuthorBookEntity[];
