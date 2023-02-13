@@ -80,10 +80,14 @@ export class BookCategoryController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { bookId } = request.params;
 
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findCategoriesFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findCategoriesFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 
@@ -111,10 +115,14 @@ export class BookCategoryController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { categoryId } = request.params;
 
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findBooksFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findBooksFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 

@@ -71,10 +71,14 @@ export class AuthorBookController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { authorId } = request.params;
 
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findBooksFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findBooksFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 
@@ -82,6 +86,7 @@ export class AuthorBookController {
 
         const pagination = this.paginationDataBuilder.build({ page, limit });
 
+        console.log({ authorId });
         const books = await this.findBooksByAuthorId({ authorId: authorId as string, filters, pagination });
 
         const controllerResponse: ControllerResponse = { data: { books }, statusCode: HttpStatusCode.ok };
@@ -98,10 +103,14 @@ export class AuthorBookController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { bookId } = request.params;
 
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findAuthorsFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findAuthorsFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 

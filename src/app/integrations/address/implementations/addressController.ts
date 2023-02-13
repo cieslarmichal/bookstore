@@ -115,10 +115,14 @@ export class AddressController {
       this.addressesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findAddressesFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findAddressesFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 

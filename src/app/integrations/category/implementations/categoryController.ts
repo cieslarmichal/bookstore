@@ -81,10 +81,14 @@ export class CategoryController {
       this.categoriesEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findCategoriesFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findCategoriesFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 

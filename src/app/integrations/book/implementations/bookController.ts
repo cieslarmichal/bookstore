@@ -84,10 +84,14 @@ export class BookController {
       this.booksEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const filters = this.filterDataParser.parse({
-          jsonData: request.query[QueryParameterName.filter] as string,
-          supportedFieldsFilters: findBooksFilters,
-        });
+        const filtersInput = request.query[QueryParameterName.filter] as string;
+
+        const filters = filtersInput
+          ? this.filterDataParser.parse({
+              jsonData: filtersInput,
+              supportedFieldsFilters: findBooksFilters,
+            })
+          : [];
 
         const page = Number(request.query[QueryParameterName.page] ?? 0);
 

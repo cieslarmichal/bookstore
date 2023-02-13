@@ -7,9 +7,15 @@ import { ValidationError } from '../../../common/validator/errors/validationErro
 export function errorMiddleware(error: Error, _request: Request, response: Response, _next: NextFunction): void {
   let statusCode = HttpStatusCode.internalServerErrror;
 
+  let errorContext: unknown | undefined = undefined;
+
   if (error instanceof ValidationError) {
     statusCode = HttpStatusCode.badRequest;
+
+    errorContext = error.context;
   }
 
-  response.status(statusCode).send({ error: error.message });
+  const errorData = { name: error.name, message: error.message, context: errorContext };
+
+  response.status(statusCode).send({ error: errorData });
 }

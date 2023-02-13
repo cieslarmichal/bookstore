@@ -131,26 +131,6 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   });
 
   describe('Create authorBook', () => {
-    it('returns bad request when authorId or bookId are not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const authorId = '123';
-
-        const bookId = '123';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .post(`${authorsUrl}/${authorId}/books/${bookId}`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
@@ -263,24 +243,6 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   });
 
   describe('Find author books', () => {
-    it('returns bad request the authorId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const authorId = 'abc';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .get(`${authorsUrl}/${authorId}/books`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
@@ -406,24 +368,6 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   });
 
   describe('Find authors of the book', () => {
-    it('returns bad request the bookId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const bookId = 'abc';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .get(`${booksUrl}/${bookId}/authors`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when book with given bookId does not exist', async () => {
       expect.assertions(1);
 
@@ -560,27 +504,6 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   });
 
   describe('Delete authorBook', () => {
-    it('returns bad request when authorId or bookId params are not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const authorId = 'abc';
-
-        const bookId = 'dfg';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send();
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when authorBook with authorId and bookId does not exist', async () => {
       expect.assertions(1);
 

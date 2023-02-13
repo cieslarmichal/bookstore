@@ -417,7 +417,7 @@ describe(`AuthorController (${baseUrl})`, () => {
       });
     });
 
-    it.only('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
+    it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
