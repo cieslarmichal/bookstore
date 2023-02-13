@@ -56,7 +56,7 @@ export class BookController {
 
         const book = await this.createBook({ title, releaseYear, language, format, description, price });
 
-        const controllerResponse: ControllerResponse = { data: { book }, statusCode: HttpStatusCode.ok };
+        const controllerResponse: ControllerResponse = { data: { book }, statusCode: HttpStatusCode.created };
 
         response.locals[LocalsName.controllerResponse] = controllerResponse;
 
