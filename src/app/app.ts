@@ -41,11 +41,9 @@ export class App {
 
   public constructor(private readonly config: AppConfig) {
     this.instance = express();
-
-    this.setup();
   }
 
-  private async setup(): Promise<void> {
+  public async initialize(): Promise<void> {
     const {
       databaseHost,
       databasePort,

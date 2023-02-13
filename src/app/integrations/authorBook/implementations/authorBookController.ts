@@ -86,7 +86,6 @@ export class AuthorBookController {
 
         const pagination = this.paginationDataBuilder.build({ page, limit });
 
-        console.log({ authorId });
         const books = await this.findBooksByAuthorId({ authorId: authorId as string, filters, pagination });
 
         const controllerResponse: ControllerResponse = { data: { books }, statusCode: HttpStatusCode.ok };

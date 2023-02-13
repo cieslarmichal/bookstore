@@ -67,6 +67,8 @@ async function main(): Promise<void> {
 
   const app = new App(appConfig);
 
+  await app.initialize();
+
   const server = new HttpServer(app.instance, { host: httpHost, port: httpPort });
 
   await server.listen();

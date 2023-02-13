@@ -101,9 +101,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
-    if (!dataSource.isInitialized) {
-      await dataSource.initialize();
-    }
+    await app.initialize();
 
     server = new HttpServer(app.instance, httpServerConfig);
 

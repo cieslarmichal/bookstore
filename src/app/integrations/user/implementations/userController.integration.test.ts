@@ -94,18 +94,16 @@ describe(`UserController (${baseUrl})`, () => {
 
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
-    hashService = container.get<HashService>(userSymbols.hashService);
-    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
-    tokenService = container.get<TokenService>(userSymbols.tokenService);
-
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
-    if (!dataSource.isInitialized) {
-      await dataSource.initialize();
-    }
+    await app.initialize();
+
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    hashService = container.get<HashService>(userSymbols.hashService);
+    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     server = new HttpServer(app.instance, httpServerConfig);
 
