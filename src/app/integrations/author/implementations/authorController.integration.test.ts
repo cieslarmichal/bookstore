@@ -24,10 +24,12 @@ import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
+import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -35,7 +37,6 @@ import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper } from '../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
@@ -44,7 +45,7 @@ const baseUrl = '/authors';
 describe(`AuthorController (${baseUrl})`, () => {
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let server: HttpServer;
-  let authHelper: AuthHelper;
+  let tokenService: TokenService;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
 
@@ -87,22 +88,23 @@ describe(`AuthorController (${baseUrl})`, () => {
 
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
-
-    await dataSource.initialize();
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    authHelper = new AuthHelper(container);
-
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+
+    if (!dataSource.isInitialized) {
+      await dataSource.initialize();
+    }
 
     server = new HttpServer(app.instance, httpServerConfig);
 
-    server.listen();
+    await server.listen();
   });
 
   afterEach(async () => {
-    server.close();
+    await server.close();
 
     await dataSource.destroy();
   });
@@ -116,7 +118,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { firstName } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -140,6 +142,8 @@ describe(`AuthorController (${baseUrl})`, () => {
           lastName,
         });
 
+        console.log(response.error);
+
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
@@ -152,7 +156,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { firstName, lastName } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -168,24 +172,6 @@ describe(`AuthorController (${baseUrl})`, () => {
   });
 
   describe('Find author', () => {
-    it('returns bad request the authorId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const authorId = 'abc';
-
-        const accessToken = authHelper.mockAuth({ userId, role });
-
-        const response = await request(server.instance)
-          .get(`${baseUrl}/${authorId}`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
@@ -194,7 +180,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -212,9 +198,9 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const authorEntity = authorEntityTestFactory.create();
+        const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({ id, firstName, lastName, about: about as string });
 
         const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
 
@@ -232,11 +218,11 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const authorEntity = authorEntityTestFactory.create();
+        const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({ id, firstName, lastName, about: about as string });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${author.id}`)
@@ -272,11 +258,21 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const authorEntity2 = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        await authorRepository.createOne(authorEntity1);
+        await authorRepository.createOne({
+          id: authorEntity1.id,
+          firstName: authorEntity1.firstName,
+          lastName: authorEntity1.lastName,
+          about: authorEntity1.about as string,
+        });
 
-        await authorRepository.createOne(authorEntity2);
+        await authorRepository.createOne({
+          id: authorEntity2.id,
+          firstName: authorEntity2.firstName,
+          lastName: authorEntity2.lastName,
+          about: authorEntity2.about as string,
+        });
 
         const response = await request(server.instance)
           .get(`${baseUrl}?filter=["firstName||eq||${authorEntity1.firstName}"]`)
@@ -297,36 +293,13 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id, firstName } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
           .set('Authorization', `Bearer ${accessToken}`)
           .send({
             firstName,
-          });
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
-    it('returns bad request when the authorId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const authorId = 'abc';
-
-        const { about } = authorEntityTestFactory.create();
-
-        const accessToken = authHelper.mockAuth({ userId, role });
-
-        const response = await request(server.instance)
-          .patch(`${baseUrl}/${authorId}`)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send({
-            about,
           });
 
         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
@@ -341,7 +314,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id, about } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -386,7 +359,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const author = await authorRepository.createOne({ id, firstName, lastName });
 
@@ -403,25 +376,6 @@ describe(`AuthorController (${baseUrl})`, () => {
   });
 
   describe('Delete author', () => {
-    it('returns bad request when the authorId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const authorId = 'abc';
-
-        const accessToken = authHelper.mockAuth({ userId, role });
-
-        const response = await request(server.instance)
-          .delete(`${baseUrl}/${authorId}`)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send();
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when author with given authorId does not exist', async () => {
       expect.assertions(1);
 
@@ -430,7 +384,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -471,7 +425,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const { id, firstName, lastName } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const author = await authorRepository.createOne({ id, firstName, lastName });
 

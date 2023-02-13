@@ -12,13 +12,15 @@ export class TokenServiceImpl implements TokenService {
     private readonly userModuleConfig: UserModuleConfig,
   ) {}
 
-  public async createToken(data: Record<string, string>): Promise<string> {
+  public createToken(data: Record<string, string>): string {
     const { jwtSecret, jwtExpiresIn } = this.userModuleConfig;
 
-    return sign(data, jwtSecret, { expiresIn: jwtExpiresIn, algorithm: 'HS512' });
+    const token = sign(data, jwtSecret, { expiresIn: jwtExpiresIn, algorithm: 'HS512' });
+
+    return token;
   }
 
-  public async verifyToken(token: string): Promise<Record<string, string>> {
+  public verifyToken(token: string): Record<string, string> {
     const { jwtSecret } = this.userModuleConfig;
 
     const data = verify(token, jwtSecret, { algorithms: ['HS512'] });

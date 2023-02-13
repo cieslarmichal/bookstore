@@ -1,4 +1,5 @@
 import express, { json, urlencoded } from 'express';
+import { DataSource } from 'typeorm';
 
 import { AppConfig } from './appConfig';
 import { AddressModule } from './domain/address/addressModule';
@@ -32,6 +33,7 @@ import { UserController } from './integrations/user/implementations/userControll
 import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from './libs/logger/loggerModule';
 import { PostgresModule } from './libs/postgres/postgresModule';
+import { postgresSymbols } from './libs/postgres/postgresSymbols';
 import { UnitOfWorkModule } from './libs/unitOfWork/unitOfWorkModule';
 
 export class App {
@@ -83,6 +85,10 @@ export class App {
         new UnitOfWorkModule(),
       ],
     });
+
+    const dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+
+    await dataSource.initialize();
 
     const bookController = container.get<BookController>(integrationsSymbols.bookController);
     const authorController = container.get<AuthorController>(integrationsSymbols.authorController);

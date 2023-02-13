@@ -103,21 +103,23 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
     );
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
 
-    await dataSource.initialize();
-
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
     authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
+    if (!dataSource.isInitialized) {
+      await dataSource.initialize();
+    }
+
     server = new HttpServer(app.instance, httpServerConfig);
 
-    server.listen();
+    await server.listen();
   });
 
   afterEach(async () => {
-    server.close();
+    await server.close();
 
     await dataSource.destroy();
   });
@@ -133,7 +135,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const bookId = '123';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -175,7 +177,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: authorBookId } = authorBookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const book = await bookRepository.createOne(bookEntity);
 
@@ -199,7 +201,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { authorId, bookId } = authorBookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -225,7 +227,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const authorEntity = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const book = await bookRepository.createOne(bookEntity);
 
@@ -249,7 +251,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const authorId = 'abc';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${authorId}/books`)
@@ -267,7 +269,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id } = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${id}/books`)
@@ -307,7 +309,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const authorEntity = authorEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const author = await authorRepository.createOne(authorEntity);
 
@@ -343,7 +345,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: authorBookId2 } = authorBookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const book1 = await bookRepository.createOne(bookEntity1);
 
@@ -374,7 +376,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const bookId = 'abc';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${bookId}/authors`)
@@ -392,7 +394,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id } = bookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${id}/authors`)
@@ -432,7 +434,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const book = await bookRepository.createOne(bookEntity);
 
@@ -468,7 +470,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: authorBookId2 } = authorBookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const book = await bookRepository.createOne(bookEntity);
 
@@ -501,7 +503,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const bookId = 'dfg';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -520,7 +522,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { authorId, bookId } = authorBookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
@@ -581,7 +583,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: authorBookId } = authorBookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const book = await bookRepository.createOne(bookEntity);
 

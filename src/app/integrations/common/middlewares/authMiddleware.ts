@@ -14,7 +14,7 @@ export class AuthMiddleware {
     private readonly tokenService: TokenService,
   ) {}
 
-  public async verifyToken(request: Request, response: Response, next: NextFunction): Promise<void> {
+  public verifyToken(request: Request, response: Response, next: NextFunction): void {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
@@ -32,7 +32,7 @@ export class AuthMiddleware {
     }
 
     try {
-      const tokenPayload = await this.tokenService.verifyToken(token);
+      const tokenPayload = this.tokenService.verifyToken(token);
 
       const accessTokenData = tokenPayload as unknown as AccessTokenData;
 

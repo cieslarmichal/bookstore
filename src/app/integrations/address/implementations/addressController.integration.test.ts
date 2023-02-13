@@ -104,21 +104,23 @@ describe(`AddressController (${baseUrl})`, () => {
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
     tokenService = container.get<TokenService>(userSymbols.tokenService);
 
-    await dataSource.initialize();
-
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
+    if (!dataSource.isInitialized) {
+      await dataSource.initialize();
+    }
+
     server = new HttpServer(app.instance, httpServerConfig);
 
-    server.listen();
+    await server.listen();
   });
 
   afterEach(async () => {
     DependencyInjectionContainerFactory.create = createContainerFunction;
 
-    server.close();
+    await server.close();
 
     await dataSource.destroy();
   });
@@ -130,7 +132,7 @@ describe(`AddressController (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -192,7 +194,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -236,7 +238,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -333,7 +335,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId: otherUserId, role });
+        const accessToken = tokenService.createToken({ userId: otherUserId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -388,7 +390,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -461,7 +463,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: addressId2 } = addressEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId: userId1, role });
+        const accessToken = tokenService.createToken({ userId: userId1, role });
 
         const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password, role });
 
@@ -514,7 +516,7 @@ describe(`AddressController (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const { id } = addressEntityTestFactory.create();
 
@@ -606,7 +608,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = await tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 

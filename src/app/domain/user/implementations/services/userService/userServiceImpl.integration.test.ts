@@ -225,7 +225,7 @@ describe('UserServiceImpl', () => {
           },
         });
 
-        const data = await tokenService.verifyToken(accessToken);
+        const data = tokenService.verifyToken(accessToken);
 
         expect(data['id']).toBe(user.id);
         expect(data['role']).toBe(UserRole.user);
@@ -314,7 +314,7 @@ describe('UserServiceImpl', () => {
           },
         });
 
-        const data = await tokenService.verifyToken(accessToken);
+        const data = tokenService.verifyToken(accessToken);
 
         expect(data['id']).toBe(user.id);
         expect(data['role']).toBe(UserRole.user);

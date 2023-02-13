@@ -9,13 +9,17 @@ export class HttpServer {
     this.instance = http.createServer(listener);
   }
 
-  public listen(): void {
+  public async listen(): Promise<void> {
     const { host, port } = this.config;
 
-    this.instance.listen(port, host);
+    return new Promise((resolve, reject) => {
+      this.instance.listen(port, host).once('listening', resolve).once('error', reject);
+    });
   }
 
-  public close(): void {
-    this.instance.close();
+  public async close(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.instance.close().once('close', resolve).once('error', reject);
+    });
   }
 }

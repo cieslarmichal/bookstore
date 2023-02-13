@@ -1,4 +1,4 @@
 export interface TokenService {
-  createToken(data: Record<string, string>): Promise<string>;
-  verifyToken(token: string): Promise<Record<string, string>>;
+  createToken(data: Record<string, string>): string;
+  verifyToken(token: string): Record<string, string>;
 }

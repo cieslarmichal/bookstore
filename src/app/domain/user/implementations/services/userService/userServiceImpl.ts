@@ -146,7 +146,7 @@ export class UserServiceImpl implements UserService {
       throw new UserNotFoundError({ email });
     }
 
-    const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
+    const accessToken = this.tokenService.createToken({ id: user.id, role: user.role });
 
     this.loggerService.info({ message: 'User logged in.', context: { email, userId: user.id, accessToken } });
 
@@ -177,7 +177,7 @@ export class UserServiceImpl implements UserService {
       throw new UserNotFoundError({ phoneNumber });
     }
 
-    const accessToken = await this.tokenService.createToken({ id: user.id, role: user.role });
+    const accessToken = this.tokenService.createToken({ id: user.id, role: user.role });
 
     this.loggerService.info({ message: 'User logged in.', context: { phoneNumber, userId: user.id, accessToken } });
 

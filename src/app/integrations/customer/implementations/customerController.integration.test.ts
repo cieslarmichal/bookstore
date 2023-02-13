@@ -92,21 +92,23 @@ describe(`CustomerController (${baseUrl})`, () => {
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
 
-    await dataSource.initialize();
-
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
     authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
+    if (!dataSource.isInitialized) {
+      await dataSource.initialize();
+    }
+
     server = new HttpServer(app.instance, httpServerConfig);
 
-    server.listen();
+    await server.listen();
   });
 
   afterEach(async () => {
-    server.close();
+    await server.close();
 
     await dataSource.destroy();
   });
@@ -118,7 +120,7 @@ describe(`CustomerController (${baseUrl})`, () => {
       await testTransactionRunner.runInTestTransaction(async () => {
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -157,7 +159,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const { email, password, id: userId, role } = userEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -182,7 +184,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const customerId = 'abc';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${customerId}`)
@@ -200,7 +202,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const { id } = customerEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -248,7 +250,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
@@ -272,7 +274,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const customerId = 'abc';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${customerId}`)
@@ -291,7 +293,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const { id } = customerEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -340,7 +342,7 @@ describe(`CustomerController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
