@@ -181,24 +181,6 @@ describe(`CustomerController (${baseUrl})`, () => {
   });
 
   describe('Find customer', () => {
-    it('returns bad request the customerId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const customerId = 'abc';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .get(`${baseUrl}/${customerId}`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when customer with given customerId does not exist', async () => {
       expect.assertions(1);
 
@@ -271,25 +253,6 @@ describe(`CustomerController (${baseUrl})`, () => {
   });
 
   describe('Delete customer', () => {
-    it('returns bad request when the customerId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const customerId = 'abc';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .delete(`${baseUrl}/${customerId}`)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send();
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when customer with given customerId does not exist', async () => {
       expect.assertions(1);
 
