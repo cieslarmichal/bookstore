@@ -9,7 +9,7 @@
     "build:dev": "tsc --build tsconfig.json",
     "test:unit": "jest --config tests-unit.config.js",
     "test:unit:watch": "npm run test:unit -- --watch",
-    "test:integration": "jest --config tests-integration.config.js --runInBand",
+    "test:integration": "jest --config tests-integration.config.js --runInBand --detectOpenHandles",
     "test:integration:watch": "npm run test:integration -- --watch",
     "test:clean": "jest --clearCache",
     "lint": "eslint . --ext .ts --cache --max-warnings 0",

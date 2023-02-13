@@ -19,7 +19,13 @@ export class HttpServer {
 
   public async close(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.instance.close().once('close', resolve).once('error', reject);
+      this.instance.close((error) => {
+        if (error) {
+          reject();
+        }
+
+        resolve();
+      });
     });
   }
 }
