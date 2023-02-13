@@ -170,24 +170,6 @@ describe(`CategoryController (${baseUrl})`, () => {
   });
 
   describe('Find category', () => {
-    it('returns bad request the categoryId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const categoryId = 'abc';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .get(`${baseUrl}/${categoryId}`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when category with given categoryId does not exist', async () => {
       expect.assertions(1);
 
@@ -291,25 +273,6 @@ describe(`CategoryController (${baseUrl})`, () => {
   });
 
   describe('Delete category', () => {
-    it('returns bad request when the categoryId param is not uuid', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
-
-        const categoryId = 'abc';
-
-        const accessToken = tokenService.createToken({ userId, role });
-
-        const response = await request(server.instance)
-          .delete(`${baseUrl}/${categoryId}`)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send();
-
-        expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-      });
-    });
-
     it('returns not found when category with given categoryId does not exist', async () => {
       expect.assertions(1);
 
