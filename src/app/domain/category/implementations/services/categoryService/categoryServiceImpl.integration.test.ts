@@ -249,7 +249,14 @@ describe('CategoryServiceImpl', () => {
 
         const category2 = await categoryRepository.createOne(categoryEntity2);
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         await bookCategoryRepository.createOne({
           id: bookCategoryId1,

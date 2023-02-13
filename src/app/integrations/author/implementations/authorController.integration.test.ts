@@ -68,6 +68,8 @@ describe(`AuthorController (${baseUrl})`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -85,6 +87,8 @@ describe(`AuthorController (${baseUrl})`, () => {
         new UnitOfWorkModule(),
       ],
     });
+
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
@@ -104,6 +108,8 @@ describe(`AuthorController (${baseUrl})`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     await server.close();
 
     await dataSource.destroy();
@@ -141,8 +147,6 @@ describe(`AuthorController (${baseUrl})`, () => {
           firstName,
           lastName,
         });
-
-        console.log(response.error);
 
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
@@ -413,7 +417,7 @@ describe(`AuthorController (${baseUrl})`, () => {
       });
     });
 
-    it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
+    it.only('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {

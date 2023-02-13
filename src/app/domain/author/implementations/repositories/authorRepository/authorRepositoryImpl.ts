@@ -41,13 +41,18 @@ export class AuthorRepositoryImpl implements AuthorRepository {
 
     const savedAuthorEntity = await this.entityManager.save(authorEntity);
 
+    console.log({ savedAuthorEntity });
+
+    const authors = await this.entityManager.find(AuthorEntity);
+    console.log({ authors });
+
     return this.authorMapper.map(savedAuthorEntity);
   }
 
   public async findOne(input: FindOnePayload): Promise<Author | null> {
     const { id } = PayloadFactory.create(findOnePayloadSchema, input);
 
-    const authorEntity = await this.entityManager.findOne(AuthorEntity, { where: { id } });
+    const authorEntity = await this.entityManager.findOneBy(AuthorEntity, { id });
 
     if (!authorEntity) {
       return null;
@@ -98,7 +103,11 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
     const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
 
+    console.log({ id });
+
     const authorEntity = await this.findOne({ id });
+
+    console.log({ authorEntity });
 
     if (!authorEntity) {
       throw new AuthorNotFoundError({ id });

@@ -85,8 +85,6 @@ describe('AddressServiceImpl', () => {
 
     await dataSource.initialize();
 
-    console.log({ initialized: dataSource.isInitialized });
-
     testTransactionRunner = new TestTransactionInternalRunner(container);
   });
 

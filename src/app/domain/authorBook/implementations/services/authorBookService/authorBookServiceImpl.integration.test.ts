@@ -108,9 +108,20 @@ describe('AuthorBookServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const authorBook = await authorBookService.createAuthorBook({
           unitOfWork,
@@ -140,9 +151,20 @@ describe('AuthorBookServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         await authorBookService.createAuthorBook({
           unitOfWork,
@@ -186,9 +208,20 @@ describe('AuthorBookServiceImpl', () => {
 
         const { id } = authorBookEntityTestFactory.create();
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const authorBook = await authorBookRepository.createOne({
           id,

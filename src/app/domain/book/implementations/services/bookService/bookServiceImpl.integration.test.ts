@@ -547,13 +547,38 @@ describe('BookServiceImpl', () => {
 
         const { id: authorBookId2 } = authorBookEntityTestFactory.create();
 
-        const book1 = await bookRepository.createOne(bookEntity1);
+        const book1 = await bookRepository.createOne({
+          id: bookEntity1.id,
+          format: bookEntity1.format,
+          language: bookEntity1.language,
+          price: bookEntity1.price,
+          title: bookEntity1.title,
+          releaseYear: bookEntity1.releaseYear,
+        });
 
-        const book2 = await bookRepository.createOne(bookEntity2);
+        const book2 = await bookRepository.createOne({
+          id: bookEntity2.id,
+          format: bookEntity2.format,
+          language: bookEntity2.language,
+          price: bookEntity2.price,
+          title: bookEntity2.title,
+          releaseYear: bookEntity2.releaseYear,
+        });
 
-        await bookRepository.createOne(bookEntity3);
+        await bookRepository.createOne({
+          id: bookEntity3.id,
+          format: bookEntity3.format,
+          language: bookEntity3.language,
+          price: bookEntity3.price,
+          title: bookEntity3.title,
+          releaseYear: bookEntity3.releaseYear,
+        });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
         await authorBookRepository.createOne({ id: authorBookId1, bookId: book1.id, authorId: author.id });
 
@@ -612,9 +637,23 @@ describe('BookServiceImpl', () => {
 
         const category2 = await categoryRepository.createOne(categoryEntity2);
 
-        const book1 = await bookRepository.createOne(bookEntity1);
+        const book1 = await bookRepository.createOne({
+          id: bookEntity1.id,
+          format: bookEntity1.format,
+          language: bookEntity1.language,
+          price: bookEntity1.price,
+          title: bookEntity1.title,
+          releaseYear: bookEntity1.releaseYear,
+        });
 
-        const book2 = await bookRepository.createOne(bookEntity2);
+        const book2 = await bookRepository.createOne({
+          id: bookEntity2.id,
+          format: bookEntity2.format,
+          language: bookEntity2.language,
+          price: bookEntity2.price,
+          title: bookEntity2.title,
+          releaseYear: bookEntity2.releaseYear,
+        });
 
         await bookCategoryRepository.createOne({
           id: bookCategoryId1,

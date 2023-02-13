@@ -25,6 +25,7 @@ import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
@@ -37,7 +38,6 @@ import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper } from '../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
@@ -47,7 +47,7 @@ describe(`CustomerController (${baseUrl})`, () => {
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let server: HttpServer;
-  let authHelper: AuthHelper;
+  let tokenService: TokenService;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
 
@@ -70,6 +70,8 @@ describe(`CustomerController (${baseUrl})`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -88,13 +90,14 @@ describe(`CustomerController (${baseUrl})`, () => {
       ],
     });
 
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -108,6 +111,8 @@ describe(`CustomerController (${baseUrl})`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     await server.close();
 
     await dataSource.destroy();

@@ -108,7 +108,14 @@ describe('BookCategoryService', () => {
 
         const category = await categoryRepository.createOne(categoryEntity);
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const bookCategory = await bookCategoryService.createBookCategory({
           unitOfWork,
@@ -140,7 +147,14 @@ describe('BookCategoryService', () => {
 
         const category = await categoryRepository.createOne(categoryEntity);
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         await bookCategoryService.createBookCategory({
           unitOfWork,
@@ -186,7 +200,14 @@ describe('BookCategoryService', () => {
 
         const category = await categoryRepository.createOne(categoryEntity);
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const bookCategory = await bookCategoryRepository.createOne({
           id: bookCategoryId,

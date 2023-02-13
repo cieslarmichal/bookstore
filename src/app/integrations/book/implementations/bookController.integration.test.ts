@@ -24,10 +24,12 @@ import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
+import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -35,7 +37,6 @@ import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper } from '../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
@@ -44,7 +45,7 @@ const baseUrl = '/books';
 describe(`BookController (${baseUrl})`, () => {
   let bookRepositoryFactory: BookRepositoryFactory;
   let server: HttpServer;
-  let authHelper: AuthHelper;
+  let tokenService: TokenService;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
 
@@ -67,6 +68,8 @@ describe(`BookController (${baseUrl})`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -85,12 +88,13 @@ describe(`BookController (${baseUrl})`, () => {
       ],
     });
 
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -104,6 +108,8 @@ describe(`BookController (${baseUrl})`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     await server.close();
 
     await dataSource.destroy();
@@ -296,9 +302,23 @@ describe(`BookController (${baseUrl})`, () => {
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        await bookRepository.createOne(bookEntity1);
+        await bookRepository.createOne({
+          id: bookEntity1.id,
+          format: bookEntity1.format,
+          language: bookEntity1.language,
+          price: bookEntity1.price,
+          title: bookEntity1.title,
+          releaseYear: bookEntity1.releaseYear,
+        });
 
-        await bookRepository.createOne(bookEntity2);
+        await bookRepository.createOne({
+          id: bookEntity2.id,
+          format: bookEntity2.format,
+          language: bookEntity2.language,
+          price: bookEntity2.price,
+          title: bookEntity2.title,
+          releaseYear: bookEntity2.releaseYear,
+        });
 
         const response = await request(server.instance)
           .get(`${baseUrl}?filter=["title||eq||${bookEntity1.title}"]`)

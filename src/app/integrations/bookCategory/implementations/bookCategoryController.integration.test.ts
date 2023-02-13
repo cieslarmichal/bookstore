@@ -31,10 +31,12 @@ import { CategoryRepositoryFactory } from '../../../domain/category/contracts/fa
 import { CategoryEntityTestFactory } from '../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
+import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -53,7 +55,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let server: HttpServer;
-  let authHelper: AuthHelper;
+  let tokenService: TokenService;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
 
@@ -78,6 +80,8 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -96,16 +100,17 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
       ],
     });
 
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+
     categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategorySymbols.bookCategoryRepositoryFactory,
     );
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -119,6 +124,8 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     await server.close();
 
     await dataSource.destroy();
@@ -135,7 +142,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const bookId = '123';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
@@ -177,9 +184,16 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id } = bookCategoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const category = await categoryRepository.createOne(categoryEntity);
 
@@ -201,7 +215,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .post(`${booksUrl}/${bookId}/categories/${categoryId}`)
@@ -227,9 +241,16 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const categoryEntity = categoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const category = await categoryRepository.createOne(categoryEntity);
 
@@ -251,7 +272,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const categoryId = 'abc';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${categoriesUrl}/${categoryId}/books`)
@@ -269,7 +290,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id } = categoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${categoriesUrl}/${id}/books`)
@@ -325,13 +346,34 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id: bookCategoryId3 } = bookCategoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        const book1 = await bookRepository.createOne(bookEntity1);
+        const book1 = await bookRepository.createOne({
+          id: bookEntity1.id,
+          format: bookEntity1.format,
+          language: bookEntity1.language,
+          price: bookEntity1.price,
+          title: bookEntity1.title,
+          releaseYear: bookEntity1.releaseYear,
+        });
 
-        const book2 = await bookRepository.createOne(bookEntity2);
+        const book2 = await bookRepository.createOne({
+          id: bookEntity2.id,
+          format: bookEntity2.format,
+          language: bookEntity2.language,
+          price: bookEntity2.price,
+          title: bookEntity2.title,
+          releaseYear: bookEntity2.releaseYear,
+        });
 
-        const book3 = await bookRepository.createOne(bookEntity3);
+        const book3 = await bookRepository.createOne({
+          id: bookEntity3.id,
+          format: bookEntity3.format,
+          language: bookEntity3.language,
+          price: bookEntity3.price,
+          title: bookEntity3.title,
+          releaseYear: bookEntity3.releaseYear,
+        });
 
         const category = await categoryRepository.createOne(categoryEntity);
 
@@ -360,7 +402,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const bookId = 'abc';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${bookId}/categories`)
@@ -378,7 +420,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id } = bookEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${id}/categories`)
@@ -437,9 +479,16 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id: bookCategoryId2 } = bookCategoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const category1 = await categoryRepository.createOne(categoryEntity1);
 
@@ -470,7 +519,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const bookId = 'dfg';
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${booksUrl}/${bookId}/categories/${categoryId}`)
@@ -489,7 +538,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
         const response = await request(server.instance)
           .delete(`${booksUrl}/${bookId}/categories/${categoryId}`)
@@ -518,7 +567,14 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id: bookCategoryId } = bookCategoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const category = await categoryRepository.createOne(categoryEntity);
 
@@ -552,9 +608,16 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const { id: bookCategoryId } = bookCategoryEntityTestFactory.create();
 
-        const accessToken = authHelper.mockAuth({ userId, role });
+        const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const category = await categoryRepository.createOne(categoryEntity);
 

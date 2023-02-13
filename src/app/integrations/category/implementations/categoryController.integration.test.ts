@@ -24,10 +24,12 @@ import { CategoryRepositoryFactory } from '../../../domain/category/contracts/fa
 import { CategoryEntityTestFactory } from '../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
+import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -35,7 +37,6 @@ import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper } from '../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
@@ -44,7 +45,7 @@ const baseUrl = '/categories';
 describe(`CategoryController (${baseUrl})`, () => {
   let categoryRepositoryFactory: CategoryRepositoryFactory;
   let server: HttpServer;
-  let authHelper: AuthHelper;
+  let tokenService: TokenService;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
 
@@ -67,6 +68,8 @@ describe(`CategoryController (${baseUrl})`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -85,12 +88,13 @@ describe(`CategoryController (${baseUrl})`, () => {
       ],
     });
 
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+
     categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -104,6 +108,8 @@ describe(`CategoryController (${baseUrl})`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     await server.close();
 
     await dataSource.destroy();

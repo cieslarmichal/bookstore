@@ -30,10 +30,12 @@ import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
+import { userSymbols } from '../../../domain/user/userSymbols';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -41,7 +43,6 @@ import { PostgresModule } from '../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-import { AuthHelper } from '../../common/tests/auth/authHelper';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
@@ -53,7 +54,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   let authorRepositoryFactory: AuthorRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let server: HttpServer;
-  let authHelper: AuthHelper;
+  let tokenService: TokenService;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
 
@@ -78,6 +79,8 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
   const httpServerConfig = new HttpServerConfigTestFactory().create();
 
+  const createContainerFunction = DependencyInjectionContainerFactory.create;
+
   beforeEach(async () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
@@ -96,16 +99,17 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
       ],
     });
 
+    DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
       authorBookSymbols.authorBookRepositoryFactory,
     );
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    authHelper = new AuthHelper(container);
 
     const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
@@ -119,6 +123,8 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
   });
 
   afterEach(async () => {
+    DependencyInjectionContainerFactory.create = createContainerFunction;
+
     await server.close();
 
     await dataSource.destroy();
@@ -171,17 +177,24 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const bookEntity = bookEntityTestFactory.create();
+        const { id: bookId, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
 
-        const authorEntity = authorEntityTestFactory.create();
+        const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
 
         const { id: authorBookId } = authorBookEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookId,
+          format,
+          language,
+          price,
+          releaseYear,
+          title,
+        });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({ id: authorId, firstName, lastName });
 
         await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
 
@@ -223,15 +236,22 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const bookEntity = bookEntityTestFactory.create();
+        const { id: bookId, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
 
-        const authorEntity = authorEntityTestFactory.create();
+        const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookId,
+          format,
+          language,
+          price,
+          releaseYear,
+          title,
+        });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({ id: authorId, firstName, lastName });
 
         const response = await request(server.instance)
           .post(`${authorsUrl}/${author.id}/books/${book.id}`)
@@ -287,9 +307,9 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const authorEntity = authorEntityTestFactory.create();
+        const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({ id: authorId, firstName, lastName });
 
         const response = await request(server.instance).get(`${authorsUrl}/${author.id}/books`);
 
@@ -307,11 +327,11 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const authorEntity = authorEntityTestFactory.create();
+        const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({ id: authorId, firstName, lastName });
 
         const response = await request(server.instance)
           .get(`${authorsUrl}/${author.id}/books`)
@@ -347,11 +367,29 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const book1 = await bookRepository.createOne(bookEntity1);
+        const book1 = await bookRepository.createOne({
+          id: bookEntity1.id,
+          format: bookEntity1.format,
+          language: bookEntity1.language,
+          price: bookEntity1.price,
+          title: bookEntity1.title,
+          releaseYear: bookEntity1.releaseYear,
+        });
 
-        const book2 = await bookRepository.createOne(bookEntity2);
+        const book2 = await bookRepository.createOne({
+          id: bookEntity2.id,
+          format: bookEntity2.format,
+          language: bookEntity2.language,
+          price: bookEntity2.price,
+          title: bookEntity2.title,
+          releaseYear: bookEntity2.releaseYear,
+        });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
         await authorBookRepository.createOne({ id: authorBookId1, authorId: author.id, bookId: book1.id });
 
@@ -414,7 +452,14 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const response = await request(server.instance).get(`${booksUrl}/${book.id}/authors`);
 
@@ -436,7 +481,14 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
         const response = await request(server.instance)
           .get(`${booksUrl}/${book.id}/authors`)
@@ -472,11 +524,26 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
-        const author1 = await authorRepository.createOne(authorEntity1);
+        const author1 = await authorRepository.createOne({
+          id: authorEntity1.id,
+          firstName: authorEntity1.firstName,
+          lastName: authorEntity1.lastName,
+        });
 
-        const author2 = await authorRepository.createOne(authorEntity2);
+        const author2 = await authorRepository.createOne({
+          id: authorEntity2.id,
+          firstName: authorEntity2.firstName,
+          lastName: authorEntity2.lastName,
+        });
 
         await authorBookRepository.createOne({ id: authorBookId1, authorId: author1.id, bookId: book.id });
 
@@ -551,9 +618,20 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: authorBookId } = authorBookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
         await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
 
@@ -585,9 +663,20 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const accessToken = tokenService.createToken({ userId, role });
 
-        const book = await bookRepository.createOne(bookEntity);
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          releaseYear: bookEntity.releaseYear,
+        });
 
-        const author = await authorRepository.createOne(authorEntity);
+        const author = await authorRepository.createOne({
+          id: authorEntity.id,
+          firstName: authorEntity.firstName,
+          lastName: authorEntity.lastName,
+        });
 
         await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
 
