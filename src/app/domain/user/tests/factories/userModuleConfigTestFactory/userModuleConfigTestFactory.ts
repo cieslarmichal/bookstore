@@ -6,7 +6,7 @@ export class UserModuleConfigTestFactory {
   public create(input: Partial<UserModuleConfig> = {}): UserModuleConfig {
     return {
       jwtSecret: faker.internet.password(),
-      jwtExpiresIn: faker.datatype.number({ max: 10000 }).toString(),
+      jwtExpiresIn: '1000000',
       hashSaltRounds: 6,
       ...input,
     };

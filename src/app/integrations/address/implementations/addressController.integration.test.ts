@@ -98,6 +98,10 @@ describe(`AddressController (${baseUrl})`, () => {
 
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
+    const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+
+    await app.initialize();
+
     addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
@@ -105,10 +109,6 @@ describe(`AddressController (${baseUrl})`, () => {
     tokenService = container.get<TokenService>(userSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
-
-    const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
-
-    await app.initialize();
 
     server = new HttpServer(app.instance, httpServerConfig);
 
