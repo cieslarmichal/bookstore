@@ -20,6 +20,10 @@ export class BookEntity {
   //@ts-ignore
   public title: string;
 
+  @Column({ type: 'text' })
+  //@ts-ignore
+  public isbn: string;
+
   @Column({ type: 'int' })
   //@ts-ignore
   public releaseYear: number;

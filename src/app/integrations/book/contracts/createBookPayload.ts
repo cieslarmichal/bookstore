@@ -5,6 +5,7 @@ import { BookLanguage } from '../../../domain/book/contracts/bookLanguage';
 
 export const createBookPayloadSchema = Schema.object({
   title: Schema.notEmptyString(),
+  isbn: Schema.notEmptyString(),
   releaseYear: Schema.positiveInteger(),
   language: Schema.enum(BookLanguage),
   format: Schema.enum(BookFormat),

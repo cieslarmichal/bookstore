@@ -155,7 +155,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const { id: bookId, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
+        const { id: bookId, isbn, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
 
         const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
 
@@ -166,6 +166,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
         const book = await bookRepository.createOne({
           id: bookId,
           format,
+          isbn,
           language,
           price,
           releaseYear,
@@ -214,7 +215,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
 
         const { id: userId, role } = userEntityTestFactory.create();
 
-        const { id: bookId, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
+        const { id: bookId, isbn, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
 
         const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
 
@@ -223,6 +224,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
         const book = await bookRepository.createOne({
           id: bookId,
           format,
+          isbn,
           language,
           price,
           releaseYear,
@@ -333,6 +335,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity1.language,
           price: bookEntity1.price,
           title: bookEntity1.title,
+          isbn: bookEntity1.isbn,
           releaseYear: bookEntity1.releaseYear,
         });
 
@@ -342,6 +345,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity2.language,
           price: bookEntity2.price,
           title: bookEntity2.title,
+          isbn: bookEntity2.isbn,
           releaseYear: bookEntity2.releaseYear,
         });
 
@@ -400,6 +404,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -429,6 +434,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -472,6 +478,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -545,6 +552,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -590,6 +598,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 

@@ -114,6 +114,7 @@ describe('BookCategoryService', () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -153,6 +154,7 @@ describe('BookCategoryService', () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -206,6 +208,7 @@ describe('BookCategoryService', () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 

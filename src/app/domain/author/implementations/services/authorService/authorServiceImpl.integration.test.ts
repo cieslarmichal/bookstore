@@ -281,7 +281,7 @@ describe('AuthorServiceImpl', () => {
 
         const authorBookRepository = authorBookRepositoryFactory.create(entityManager);
 
-        const { id: bookId, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id: bookId, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const { id: authorId1, firstName: firstName1, lastName: lastName1 } = authorEntityTestFactory.create();
 
@@ -296,6 +296,7 @@ describe('AuthorServiceImpl', () => {
         const book = await bookRepository.createOne({
           id: bookId,
           title,
+          isbn,
           releaseYear,
           language,
           format,

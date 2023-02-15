@@ -7,6 +7,7 @@ import { Schema } from '../../../common/validator/implementations/schema';
 export const bookInputSchema = Schema.object({
   id: Schema.notEmptyString(),
   title: Schema.notEmptyString(),
+  isbn: Schema.notEmptyString(),
   releaseYear: Schema.positiveInteger(),
   language: Schema.enum(BookLanguage),
   format: Schema.enum(BookFormat),
@@ -19,6 +20,7 @@ export type BookInput = SchemaType<typeof bookInputSchema>;
 export class Book {
   public readonly id: string;
   public readonly title: string;
+  public readonly isbn: string;
   public readonly releaseYear: number;
   public readonly language: BookLanguage;
   public readonly format: BookFormat;
@@ -26,13 +28,14 @@ export class Book {
   public readonly description?: string;
 
   public constructor(input: BookInput) {
-    const { id, title, releaseYear, language, format, price, description } = PayloadFactory.create(
+    const { id, title, isbn, releaseYear, language, format, price, description } = PayloadFactory.create(
       bookInputSchema,
       input,
     );
 
     this.id = id;
     this.title = title;
+    this.isbn = isbn;
     this.releaseYear = releaseYear;
     this.language = language;
     this.format = format;

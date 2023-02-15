@@ -120,12 +120,13 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookService.createBook({
           unitOfWork,
           draft: {
             title,
+            isbn,
             releaseYear,
             language,
             format,
@@ -149,11 +150,12 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           id,
           title,
+          isbn,
           releaseYear,
           language,
           format,
@@ -190,13 +192,22 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: id1, title: title1, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const {
+          id: id1,
+          title: title1,
+          isbn: isbn1,
+          releaseYear,
+          language,
+          format,
+          price,
+        } = bookEntityTestFactory.create();
 
-        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+        const { id: id2, title: title2, isbn: isbn2 } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           id: id1,
           title: title1,
+          isbn: isbn1,
           releaseYear,
           language,
           format,
@@ -206,6 +217,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id2,
           title: title2,
+          isbn: isbn2,
           releaseYear,
           language,
           format,
@@ -241,15 +253,16 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: id1, title, language, format, price } = bookEntityTestFactory.create();
+        const { id: id1, title, isbn: isbn1, language, format, price } = bookEntityTestFactory.create();
 
-        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+        const { id: id2, title: title2, isbn: isbn2 } = bookEntityTestFactory.create();
 
-        const { id: id3, title: title3 } = bookEntityTestFactory.create();
+        const { id: id3, title: title3, isbn: isbn3 } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
           id: id1,
           title,
+          isbn: isbn1,
           releaseYear: 1997,
           language,
           format,
@@ -259,6 +272,7 @@ describe('BookServiceImpl', () => {
         const book2 = await bookRepository.createOne({
           id: id2,
           title: title2,
+          isbn: isbn2,
           releaseYear: 1999,
           language,
           format,
@@ -268,6 +282,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id3,
           title: title3,
+          isbn: isbn3,
           releaseYear: 2005,
           language,
           format,
@@ -308,15 +323,16 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: id1, title, language, releaseYear, format } = bookEntityTestFactory.create();
+        const { id: id1, title, isbn: isbn1, language, releaseYear, format } = bookEntityTestFactory.create();
 
-        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+        const { id: id2, title: title2, isbn: isbn2 } = bookEntityTestFactory.create();
 
-        const { id: id3, title: title3 } = bookEntityTestFactory.create();
+        const { id: id3, title: title3, isbn: isbn3 } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
           id: id1,
           title,
+          isbn: isbn1,
           releaseYear,
           language,
           format,
@@ -326,6 +342,7 @@ describe('BookServiceImpl', () => {
         const book2 = await bookRepository.createOne({
           id: id2,
           title: title2,
+          isbn: isbn2,
           releaseYear,
           language,
           format,
@@ -335,6 +352,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id3,
           title: title3,
+          isbn: isbn3,
           releaseYear,
           language,
           format,
@@ -372,15 +390,16 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: id1, title, language, releaseYear, price } = bookEntityTestFactory.create();
+        const { id: id1, title, isbn: isbn1, language, releaseYear, price } = bookEntityTestFactory.create();
 
-        const { id: id2, title: title2 } = bookEntityTestFactory.create();
+        const { id: id2, title: title2, isbn: isbn2 } = bookEntityTestFactory.create();
 
-        const { id: id3, title: title3 } = bookEntityTestFactory.create();
+        const { id: id3, title: title3, isbn: isbn3 } = bookEntityTestFactory.create();
 
         const book1 = await bookRepository.createOne({
           id: id1,
           title,
+          isbn: isbn1,
           releaseYear,
           language,
           format: BookFormat.paperback,
@@ -390,6 +409,7 @@ describe('BookServiceImpl', () => {
         const book2 = await bookRepository.createOne({
           id: id2,
           title: title2,
+          isbn: isbn2,
           releaseYear,
           language,
           format: BookFormat.kindle,
@@ -399,6 +419,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id3,
           title: title3,
+          isbn: isbn3,
           releaseYear,
           language,
           format: BookFormat.hardcover,
@@ -431,13 +452,14 @@ describe('BookServiceImpl', () => {
         const entityManager = unitOfWork.getEntityManager();
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: id1, title, releaseYear, price, format } = bookEntityTestFactory.create();
+        const { id: id1, title, isbn, releaseYear, price, format } = bookEntityTestFactory.create();
 
         const { id: id2 } = bookEntityTestFactory.create();
 
         await bookRepository.createOne({
           id: id1,
           title,
+          isbn,
           releaseYear,
           language: BookLanguage.en,
           format,
@@ -447,6 +469,7 @@ describe('BookServiceImpl', () => {
         const polishBook = await bookRepository.createOne({
           id: id2,
           title,
+          isbn,
           releaseYear,
           language: BookLanguage.pl,
           format,
@@ -482,7 +505,7 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: id1, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id: id1, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const { id: id2 } = bookEntityTestFactory.create();
 
@@ -491,6 +514,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id1,
           title,
+          isbn,
           releaseYear,
           language,
           format,
@@ -500,6 +524,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id2,
           title,
+          isbn,
           releaseYear,
           language,
           format,
@@ -509,6 +534,7 @@ describe('BookServiceImpl', () => {
         await bookRepository.createOne({
           id: id3,
           title,
+          isbn,
           releaseYear,
           language,
           format,
@@ -553,6 +579,7 @@ describe('BookServiceImpl', () => {
           language: bookEntity1.language,
           price: bookEntity1.price,
           title: bookEntity1.title,
+          isbn: bookEntity1.isbn,
           releaseYear: bookEntity1.releaseYear,
         });
 
@@ -562,6 +589,7 @@ describe('BookServiceImpl', () => {
           language: bookEntity2.language,
           price: bookEntity2.price,
           title: bookEntity2.title,
+          isbn: bookEntity2.isbn,
           releaseYear: bookEntity2.releaseYear,
         });
 
@@ -571,6 +599,7 @@ describe('BookServiceImpl', () => {
           language: bookEntity3.language,
           price: bookEntity3.price,
           title: bookEntity3.title,
+          isbn: bookEntity3.isbn,
           releaseYear: bookEntity3.releaseYear,
         });
 
@@ -643,6 +672,7 @@ describe('BookServiceImpl', () => {
           language: bookEntity1.language,
           price: bookEntity1.price,
           title: bookEntity1.title,
+          isbn: bookEntity1.isbn,
           releaseYear: bookEntity1.releaseYear,
         });
 
@@ -652,6 +682,7 @@ describe('BookServiceImpl', () => {
           language: bookEntity2.language,
           price: bookEntity2.price,
           title: bookEntity2.title,
+          isbn: bookEntity2.isbn,
           releaseYear: bookEntity2.releaseYear,
         });
 
@@ -692,13 +723,14 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const newPrice = price + 1;
 
         const book = await bookRepository.createOne({
           id,
           title,
+          isbn,
           releaseYear,
           language,
           format,
@@ -736,11 +768,12 @@ describe('BookServiceImpl', () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           id,
           title,
+          isbn,
           releaseYear,
           language,
           format,

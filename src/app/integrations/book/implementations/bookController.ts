@@ -52,9 +52,9 @@ export class BookController {
       this.booksEndpoint,
       [verifyAccessToken],
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-        const { title, releaseYear, language, format, description, price } = request.body;
+        const { title, isbn, releaseYear, language, format, description, price } = request.body;
 
-        const book = await this.createBook({ title, releaseYear, language, format, description, price });
+        const book = await this.createBook({ title, isbn, releaseYear, language, format, description, price });
 
         const controllerResponse: ControllerResponse = { data: { book }, statusCode: HttpStatusCode.created };
 
@@ -149,7 +149,7 @@ export class BookController {
   }
 
   private async createBook(input: CreateBookPayload): Promise<Book> {
-    const { title, releaseYear, language, format, description, price } = PayloadFactory.create(
+    const { title, isbn, releaseYear, language, format, description, price } = PayloadFactory.create(
       createBookPayloadSchema,
       input,
     );
@@ -159,6 +159,7 @@ export class BookController {
     const book = await unitOfWork.runInTransaction(async () => {
       let createBookDraft: CreateBookDraft = {
         title,
+        isbn,
         releaseYear,
         language,
         format,

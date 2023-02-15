@@ -26,12 +26,12 @@ export class BookRepositoryImpl implements BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Book> {
-    const { id, title, releaseYear, format, language, price, description } = PayloadFactory.create(
+    const { id, title, isbn, releaseYear, format, language, price, description } = PayloadFactory.create(
       createOnePayloadSchema,
       input,
     );
 
-    let bookEntityInput: BookEntity = { id, title, releaseYear, format, language, price };
+    let bookEntityInput: BookEntity = { id, title, isbn, releaseYear, format, language, price };
 
     if (description) {
       bookEntityInput = { ...bookEntityInput, description };

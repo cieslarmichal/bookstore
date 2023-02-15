@@ -120,6 +120,7 @@ describe('AuthorBookServiceImpl', () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -163,6 +164,7 @@ describe('AuthorBookServiceImpl', () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -220,6 +222,7 @@ describe('AuthorBookServiceImpl', () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 

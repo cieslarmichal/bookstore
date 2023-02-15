@@ -22,6 +22,7 @@ describe('BookMapperImpl', () => {
     expect(book).toEqual({
       id: bookEntity.id,
       title: bookEntity.title,
+      isbn: bookEntity.isbn,
       releaseYear: bookEntity.releaseYear,
       language: bookEntity.language,
       format: bookEntity.format,

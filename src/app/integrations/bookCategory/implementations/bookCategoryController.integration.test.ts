@@ -170,6 +170,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -227,6 +228,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -314,6 +316,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity1.language,
           price: bookEntity1.price,
           title: bookEntity1.title,
+          isbn: bookEntity1.isbn,
           releaseYear: bookEntity1.releaseYear,
         });
 
@@ -323,6 +326,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity2.language,
           price: bookEntity2.price,
           title: bookEntity2.title,
+          isbn: bookEntity2.isbn,
           releaseYear: bookEntity2.releaseYear,
         });
 
@@ -332,6 +336,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity3.language,
           price: bookEntity3.price,
           title: bookEntity3.title,
+          isbn: bookEntity2.isbn,
           releaseYear: bookEntity3.releaseYear,
         });
 
@@ -380,11 +385,12 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id, title, releaseYear, language, format, price } = bookEntityTestFactory.create();
+        const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const book = await bookRepository.createOne({
           id,
           title,
+          isbn,
           releaseYear,
           language,
           format,
@@ -429,6 +435,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -494,6 +501,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
@@ -537,6 +545,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
           language: bookEntity.language,
           price: bookEntity.price,
           title: bookEntity.title,
+          isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
         });
 
