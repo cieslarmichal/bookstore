@@ -4,6 +4,8 @@ import asyncHandler from 'express-async-handler';
 
 import { addressErrorMiddleware } from './addressErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { Filter } from '../../../common/types/contracts/filter';
+import { FilterName } from '../../../common/types/contracts/filterName';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { addressSymbols } from '../../../domain/address/addressSymbols';
 import { Address } from '../../../domain/address/contracts/address';
@@ -30,7 +32,9 @@ import { DeleteAddressPayload, deleteAddressPayloadSchema } from '../contracts/d
 import { findAddressesFilters } from '../contracts/findAddressesFilters';
 import { FindAddressesPayload, findAddressesPayloadSchema } from '../contracts/findAddressesPayload';
 import { FindAddressPayload, findAddressPayloadSchema } from '../contracts/findAddressPayload';
+import { UpdateAddressPayload, updateAddressPayloadSchema } from '../contracts/updateAddressPayload';
 import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
+import { CustomerIdNotProvidedError } from '../errors/customerIdNotProvidedError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
 @Injectable()
@@ -72,6 +76,8 @@ export class AddressController {
           customerId,
         } = request.body;
 
+        const accessTokenData: AccessTokenData = response.locals[LocalsName.accessTokenData];
+
         const address = await this.createAddress({
           firstName,
           lastName,
@@ -83,6 +89,7 @@ export class AddressController {
           streetAddress,
           deliveryInstructions,
           customerId,
+          accessTokenData,
         });
 
         const controllerResponse: ControllerResponse = { data: { address }, statusCode: HttpStatusCode.created };
@@ -130,9 +137,44 @@ export class AddressController {
 
         const pagination = this.paginationDataBuilder.build({ page, limit });
 
-        const addresses = await this.findAddresses({ filters, pagination });
+        const accessTokenData: AccessTokenData = response.locals[LocalsName.accessTokenData];
+
+        const addresses = await this.findAddresses({ filters, pagination, accessTokenData });
 
         const controllerResponse: ControllerResponse = { data: { addresses }, statusCode: HttpStatusCode.ok };
+
+        response.locals[LocalsName.controllerResponse] = controllerResponse;
+
+        next();
+      }),
+    );
+
+    this.router.patch(
+      this.addressEndpoint,
+      [verifyAccessToken],
+      asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        const { id } = request.params;
+
+        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions } =
+          request.body;
+
+        const accessTokenData: AccessTokenData = response.locals[LocalsName.accessTokenData];
+
+        const address = await this.updateAddress({
+          id: id as string,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          deliveryInstructions,
+          accessTokenData,
+        });
+
+        const controllerResponse: ControllerResponse = { data: { address }, statusCode: HttpStatusCode.ok };
 
         response.locals[LocalsName.controllerResponse] = controllerResponse;
 
@@ -146,7 +188,9 @@ export class AddressController {
       asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         const { id } = request.params;
 
-        await this.deleteAddress({ id: id as string });
+        const accessTokenData: AccessTokenData = response.locals[LocalsName.accessTokenData];
+
+        await this.deleteAddress({ id: id as string, accessTokenData });
 
         const controllerResponse: ControllerResponse = { statusCode: HttpStatusCode.noContent };
 
@@ -173,6 +217,7 @@ export class AddressController {
       streetAddress,
       deliveryInstructions,
       customerId,
+      accessTokenData,
     } = PayloadFactory.create(createAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
@@ -186,17 +231,22 @@ export class AddressController {
       city,
       zipCode,
       streetAddress,
+      customerId,
     };
 
     if (deliveryInstructions) {
       createAddressDraft = { ...createAddressDraft, deliveryInstructions };
     }
 
-    if (customerId) {
-      createAddressDraft = { ...createAddressDraft, customerId };
-    }
-
     const address = await unitOfWork.runInTransaction(async () => {
+      const { userId } = accessTokenData;
+
+      try {
+        await this.customerService.findCustomer({ unitOfWork, userId });
+      } catch (error) {
+        throw new UserIsNotCustomerError({ userId });
+      }
+
       return this.addressService.createAddress({
         unitOfWork,
         draft: createAddressDraft,
@@ -238,9 +288,29 @@ export class AddressController {
   }
 
   private async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
-    const { filters, pagination } = PayloadFactory.create(findAddressesPayloadSchema, input);
+    const { filters, pagination, accessTokenData } = PayloadFactory.create(findAddressesPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
+
+    if (!filters.length) {
+      throw new CustomerIdNotProvidedError();
+    }
+
+    const { userId } = accessTokenData;
+
+    let customer: Customer;
+
+    try {
+      customer = await this.customerService.findCustomer({ unitOfWork, userId });
+    } catch (error) {
+      throw new UserIsNotCustomerError({ userId });
+    }
+
+    filters.map((filter: Filter) => {
+      if (filter.filterName === FilterName.equal && (filter.values.length !== 1 || filter.values[0] !== customer.id)) {
+        throw new CustomerIdNotProvidedError();
+      }
+    });
 
     const addresses = await unitOfWork.runInTransaction(async () => {
       return this.addressService.findAddresses({ unitOfWork, filters, pagination });
@@ -249,13 +319,81 @@ export class AddressController {
     return addresses;
   }
 
+  private async updateAddress(input: UpdateAddressPayload): Promise<Address> {
+    const {
+      id,
+      city,
+      country,
+      deliveryInstructions,
+      firstName,
+      lastName,
+      phoneNumber,
+      state,
+      streetAddress,
+      zipCode,
+      accessTokenData,
+    } = PayloadFactory.create(updateAddressPayloadSchema, input);
+
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
+    const address = await unitOfWork.runInTransaction(async () => {
+      const { userId, role } = accessTokenData;
+
+      let customer: Customer;
+
+      try {
+        customer = await this.customerService.findCustomer({ unitOfWork, userId });
+      } catch (error) {
+        throw new UserIsNotCustomerError({ userId });
+      }
+
+      const customerAddress = await this.addressService.findAddress({ unitOfWork, addressId: id });
+
+      if (customerAddress.customerId !== customer.id && role === UserRole.user) {
+        throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
+          customerId: customer.id,
+          targetCustomerId: customerAddress.customerId,
+        });
+      }
+
+      const updatedAddress = await this.addressService.updateAddress({
+        unitOfWork,
+        addressId: id,
+        draft: { city, country, deliveryInstructions, firstName, lastName, phoneNumber, state, streetAddress, zipCode },
+      });
+
+      return updatedAddress;
+    });
+
+    return address;
+  }
+
   private async deleteAddress(input: DeleteAddressPayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteAddressPayloadSchema, input);
+    const { id, accessTokenData } = PayloadFactory.create(deleteAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     await unitOfWork.runInTransaction(async () => {
-      await this.addressService.deleteAddress({ unitOfWork, addressId: id as string });
+      const { userId, role } = accessTokenData;
+
+      let customer: Customer;
+
+      try {
+        customer = await this.customerService.findCustomer({ unitOfWork, userId });
+      } catch (error) {
+        throw new UserIsNotCustomerError({ userId });
+      }
+
+      const customerAddress = await this.addressService.findAddress({ unitOfWork, addressId: id });
+
+      if (customerAddress.customerId !== customer.id && role === UserRole.user) {
+        throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
+          customerId: customer.id,
+          targetCustomerId: customerAddress.customerId,
+        });
+      }
+
+      await this.addressService.deleteAddress({ unitOfWork, addressId: id });
     });
   }
 }

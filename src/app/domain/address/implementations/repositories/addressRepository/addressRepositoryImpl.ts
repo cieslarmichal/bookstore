@@ -53,14 +53,11 @@ export class AddressRepositoryImpl implements AddressRepository {
       city,
       zipCode,
       streetAddress,
+      customerId,
     };
 
     if (deliveryInstructions) {
       addressEntityInput = { ...addressEntityInput, deliveryInstructions };
-    }
-
-    if (customerId) {
-      addressEntityInput = { ...addressEntityInput, customerId };
     }
 
     const addressEntity = this.entityManager.create(AddressEntity, addressEntityInput);

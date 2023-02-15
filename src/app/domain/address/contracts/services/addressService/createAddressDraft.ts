@@ -10,8 +10,8 @@ export const createAddressDraftSchema = Schema.object({
   city: Schema.notEmptyString(),
   zipCode: Schema.notEmptyString(),
   streetAddress: Schema.notEmptyString(),
+  customerId: Schema.notEmptyString(),
   deliveryInstructions: Schema.notEmptyString().optional(),
-  customerId: Schema.notEmptyString().optional(),
 });
 
 export type CreateAddressDraft = SchemaType<typeof createAddressDraftSchema>;

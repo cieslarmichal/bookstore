@@ -507,14 +507,110 @@ describe(`AddressController (${baseUrl})`, () => {
     });
   });
 
+  describe('Update address', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id, firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+          addressEntityTestFactory.create();
+
+        const response = await request(server.instance).patch(`${baseUrl}/${id}`).send({
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+        });
+
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+      });
+    });
+
+    it('accepts a request and returns ok when all required body properties are provided', async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const entityManager = unitOfWork.getEntityManager();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const {
+          id: addressId,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+        } = addressEntityTestFactory.create();
+
+        const { streetAddress: updatedStreetAddress } = addressEntityTestFactory.create();
+
+        const accessToken = tokenService.createToken({ userId, role });
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const address = await addressRepository.createOne({
+          id: addressId,
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        });
+
+        const response = await request(server.instance)
+          .patch(`${baseUrl}/${address.id}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            streetAddress: updatedStreetAddress,
+          });
+
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
+      });
+    });
+  });
+
   describe('Delete address', () => {
     it('returns not found when address with given addressId does not exist', async () => {
       expect.assertions(1);
 
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const entityManager = unitOfWork.getEntityManager();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        await customerRepository.createOne({ id: customerId, userId: user.id });
 
         const { id } = addressEntityTestFactory.create();
 

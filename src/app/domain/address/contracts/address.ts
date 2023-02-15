@@ -12,8 +12,8 @@ export const addressInputSchema = Schema.object({
   city: Schema.notEmptyString(),
   zipCode: Schema.notEmptyString(),
   streetAddress: Schema.notEmptyString(),
+  customerId: Schema.notEmptyString(),
   deliveryInstructions: Schema.notEmptyString().optional(),
-  customerId: Schema.notEmptyString().optional(),
 });
 
 export type AddressInput = SchemaType<typeof addressInputSchema>;
@@ -29,7 +29,7 @@ export class Address {
   public readonly zipCode: string;
   public readonly streetAddress: string;
   public readonly deliveryInstructions?: string;
-  public readonly customerId?: string;
+  public readonly customerId: string;
 
   public constructor(input: AddressInput) {
     const {
@@ -55,13 +55,10 @@ export class Address {
     this.city = city;
     this.zipCode = zipCode;
     this.streetAddress = streetAddress;
+    this.customerId = customerId;
 
     if (deliveryInstructions) {
       this.deliveryInstructions = deliveryInstructions;
-    }
-
-    if (customerId) {
-      this.customerId = customerId;
     }
   }
 }

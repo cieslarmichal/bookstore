@@ -52,5 +52,6 @@ export class AddressEntity {
   public customer?: CustomerEntity;
 
   @Column({ type: 'uuid' })
-  public customerId?: string;
+  //@ts-ignore
+  public customerId: string;
 }
