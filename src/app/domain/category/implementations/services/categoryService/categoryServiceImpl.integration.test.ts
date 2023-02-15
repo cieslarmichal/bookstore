@@ -27,6 +27,7 @@ import { bookCategorySymbols } from '../../../../bookCategory/bookCategorySymbol
 import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
+import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { CategoryModule } from '../../../categoryModule';
@@ -61,6 +62,7 @@ describe('CategoryServiceImpl', () => {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ],
   });
 

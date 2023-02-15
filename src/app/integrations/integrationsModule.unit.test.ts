@@ -15,6 +15,7 @@ import { AuthorModule } from '../domain/author/authorModule';
 import { AuthorBookModule } from '../domain/authorBook/authorBookModule';
 import { BookModule } from '../domain/book/bookModule';
 import { BookCategoryModule } from '../domain/bookCategory/bookCategoryModule';
+import { CartModule } from '../domain/cart/cartModule';
 import { CategoryModule } from '../domain/category/categoryModule';
 import { CustomerModule } from '../domain/customer/customerModule';
 import { UserModuleConfigTestFactory } from '../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
@@ -49,6 +50,7 @@ describe('IntegrationsModule', () => {
         new CustomerModule(),
         new UserModule(userModuleConfig),
         new IntegrationsModule(),
+        new CartModule(),
       ],
     });
   });

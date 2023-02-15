@@ -15,6 +15,7 @@ import { AuthorEntity } from '../../../../author/contracts/authorEntity';
 import { AuthorBookEntity } from '../../../../authorBook/contracts/authorBookEntity';
 import { BookEntity } from '../../../../book/contracts/bookEntity';
 import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
+import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
@@ -54,6 +55,7 @@ describe('UserServiceImpl', () => {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();

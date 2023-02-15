@@ -17,6 +17,8 @@ import { BookModule } from '../../../domain/book/bookModule';
 import { BookEntity } from '../../../domain/book/contracts/bookEntity';
 import { BookCategoryModule } from '../../../domain/bookCategory/bookCategoryModule';
 import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookCategoryEntity';
+import { CartModule } from '../../../domain/cart/cartModule';
+import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
 import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
@@ -65,6 +67,7 @@ describe(`CustomerController (${baseUrl})`, () => {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -87,6 +90,7 @@ describe(`CustomerController (${baseUrl})`, () => {
         new CustomerModule(),
         new AddressModule(),
         new UnitOfWorkModule(),
+        new CartModule(),
       ],
     });
 

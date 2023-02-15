@@ -17,6 +17,7 @@ import { AuthorEntity } from '../../../../author/contracts/authorEntity';
 import { AuthorBookEntity } from '../../../../authorBook/contracts/authorBookEntity';
 import { BookEntity } from '../../../../book/contracts/bookEntity';
 import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
+import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { CustomerRepositoryFactory } from '../../../../customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
@@ -62,6 +63,7 @@ describe('AddressServiceImpl', () => {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ],
   });
 

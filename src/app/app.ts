@@ -12,6 +12,8 @@ import { BookModule } from './domain/book/bookModule';
 import { BookEntity } from './domain/book/contracts/bookEntity';
 import { BookCategoryModule } from './domain/bookCategory/bookCategoryModule';
 import { BookCategoryEntity } from './domain/bookCategory/contracts/bookCategoryEntity';
+import { CartModule } from './domain/cart/cartModule';
+import { CartEntity } from './domain/cart/contracts/cartEntity';
 import { CategoryModule } from './domain/category/categoryModule';
 import { CategoryEntity } from './domain/category/contracts/categoryEntity';
 import { CustomerEntity } from './domain/customer/contracts/customerEntity';
@@ -65,22 +67,24 @@ export class App {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ];
 
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
+        new LoggerModule({ logLevel }),
         new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword, entities }),
+        new UnitOfWorkModule(),
+        new IntegrationsModule(),
         new CategoryModule(),
         new BookModule(),
         new AuthorModule(),
         new UserModule({ jwtSecret, jwtExpiresIn, hashSaltRounds }),
-        new IntegrationsModule(),
         new AuthorBookModule(),
-        new LoggerModule({ logLevel }),
         new BookCategoryModule(),
         new AddressModule(),
         new CustomerModule(),
-        new UnitOfWorkModule(),
+        new CartModule(),
       ],
     });
 

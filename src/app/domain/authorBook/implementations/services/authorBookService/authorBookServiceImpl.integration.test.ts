@@ -22,6 +22,7 @@ import { BookEntity } from '../../../../book/contracts/bookEntity';
 import { BookRepositoryFactory } from '../../../../book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
 import { BookEntityTestFactory } from '../../../../book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
+import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
@@ -58,6 +59,7 @@ describe('AuthorBookServiceImpl', () => {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ],
   });
 

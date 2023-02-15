@@ -20,6 +20,8 @@ import { BookRepositoryFactory } from '../../../domain/book/contracts/factories/
 import { BookEntityTestFactory } from '../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { BookCategoryModule } from '../../../domain/bookCategory/bookCategoryModule';
 import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookCategoryEntity';
+import { CartModule } from '../../../domain/cart/cartModule';
+import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
 import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
@@ -63,6 +65,7 @@ describe(`BookController (${baseUrl})`, () => {
       BookCategoryEntity,
       AddressEntity,
       CustomerEntity,
+      CartEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -85,6 +88,7 @@ describe(`BookController (${baseUrl})`, () => {
         new AddressModule(),
         new CustomerModule(),
         new UnitOfWorkModule(),
+        new CartModule(),
       ],
     });
 

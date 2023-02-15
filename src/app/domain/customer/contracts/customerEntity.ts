@@ -2,6 +2,7 @@
 import { Entity, OneToMany, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 
 import { AddressEntity } from '../../address/contracts/addressEntity';
+import { CartEntity } from '../../cart/contracts/cartEntity';
 import { UserEntity } from '../../user/contracts/userEntity';
 
 export const customersTableName = 'customers';
@@ -16,6 +17,9 @@ export class CustomerEntity {
 
   @OneToMany(() => AddressEntity, (address) => address.customer)
   public addresses?: AddressEntity[];
+
+  @OneToMany(() => CartEntity, (cart) => cart.customer)
+  public carts?: CartEntity[];
 
   @OneToOne(() => UserEntity, (user) => user.customer, { onDelete: 'CASCADE' })
   @JoinColumn()
