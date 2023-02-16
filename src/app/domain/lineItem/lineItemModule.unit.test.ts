@@ -1,18 +1,17 @@
 import 'reflect-metadata';
 
-import { CartModule } from './cartModule';
-import { cartSymbols } from './cartSymbols';
-import { CartService } from './contracts/services/cartService/cartService';
-import { CartServiceImpl } from './implementations/services/cartService/cartServiceImpl';
+import { LineItemRepositoryFactory } from './contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
+import { LineItemRepositoryFactoryImpl } from './implementations/factories/lineItemRepositoryFactory/lineItemRepositoryFactoryImpl';
+import { LineItemModule } from './lineItemModule';
+import { lineItemSymbols } from './lineItemSymbols';
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../libs/postgres/postgresModule';
 import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { LineItemModule } from '../lineItem/lineItemModule';
 
-describe('CartModule', () => {
+describe('LineItemModule', () => {
   let container: DependencyInjectionContainer;
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
@@ -20,18 +19,15 @@ describe('CartModule', () => {
 
   beforeAll(async () => {
     container = await DependencyInjectionContainerFactory.create({
-      modules: [
-        new PostgresModule(postgresModuleConfig),
-        new LoggerModule(loggerModuleConfig),
-        new CartModule(),
-        new LineItemModule(),
-      ],
+      modules: [new PostgresModule(postgresModuleConfig), new LoggerModule(loggerModuleConfig), new LineItemModule()],
     });
   });
 
   it('declares bindings', async () => {
     expect.assertions(1);
 
-    expect(container.get<CartService>(cartSymbols.cartService)).toBeInstanceOf(CartServiceImpl);
+    expect(container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory)).toBeInstanceOf(
+      LineItemRepositoryFactoryImpl,
+    );
   });
 });

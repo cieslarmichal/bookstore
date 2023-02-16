@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { CartStatus } from './cartStatus';
 import { DeliveryMethod } from './deliveryMethod';
 import { CustomerEntity } from '../../customer/contracts/customerEntity';
+import { LineItemEntity } from '../../lineItem/contracts/lineItemEntity';
 
 export const cartsTableName = 'carts';
 
@@ -40,6 +41,6 @@ export class CartEntity {
   //@ts-ignore
   public customerId: string;
 
-  // @OneToMany(() => LineItemEntity, (lineItem) => lineItem.cart)
-  // public lineItems?: LineItemEntity[];
+  @OneToMany(() => LineItemEntity, (lineItem) => lineItem.cart)
+  public lineItems?: LineItemEntity[];
 }
