@@ -3,6 +3,7 @@ import { DeliveryMethod } from './deliveryMethod';
 import { SchemaType } from '../../../common/validator/contracts/schemaType';
 import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Schema } from '../../../common/validator/implementations/schema';
+import { LineItem } from '../../lineItem/contracts/lineItem';
 
 export const cartInputSchema = Schema.object({
   id: Schema.notEmptyString(),
@@ -12,6 +13,7 @@ export const cartInputSchema = Schema.object({
   billingAddressId: Schema.notEmptyString().optional(),
   shippingAddressId: Schema.notEmptyString().optional(),
   deliveryMethod: Schema.enum(DeliveryMethod).optional(),
+  lineItems: Schema.array(Schema.instanceof(LineItem)).optional(),
 });
 
 export type CartInput = SchemaType<typeof cartInputSchema>;
@@ -24,9 +26,10 @@ export class Cart {
   public readonly billingAddressId?: string;
   public readonly shippingAddressId?: string;
   public readonly deliveryMethod?: DeliveryMethod;
+  public readonly lineItems?: LineItem[];
 
   public constructor(input: CartInput) {
-    const { id, customerId, status, totalPrice, billingAddressId, shippingAddressId, deliveryMethod } =
+    const { id, customerId, status, totalPrice, billingAddressId, shippingAddressId, deliveryMethod, lineItems } =
       PayloadFactory.create(cartInputSchema, input);
 
     this.id = id;
@@ -44,6 +47,10 @@ export class Cart {
 
     if (deliveryMethod) {
       this.deliveryMethod = deliveryMethod;
+    }
+
+    if (lineItems) {
+      this.lineItems = lineItems;
     }
   }
 }

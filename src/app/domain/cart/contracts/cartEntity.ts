@@ -41,6 +41,6 @@ export class CartEntity {
   //@ts-ignore
   public customerId: string;
 
-  @OneToMany(() => LineItemEntity, (lineItem) => lineItem.cart)
+  @OneToMany(() => LineItemEntity, (lineItem) => lineItem.cart, { eager: true })
   public lineItems?: LineItemEntity[];
 }

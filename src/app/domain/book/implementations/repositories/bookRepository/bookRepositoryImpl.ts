@@ -94,7 +94,7 @@ export class BookRepositoryImpl implements BookRepository {
 
     let findOneInput = {};
 
-    if (price) {
+    if (price !== undefined) {
       findOneInput = { ...findOneInput, price };
     }
 

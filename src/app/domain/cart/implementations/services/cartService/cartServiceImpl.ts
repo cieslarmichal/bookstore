@@ -3,14 +3,27 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/cont
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { bookSymbols } from '../../../../book/bookSymbols';
+import { BookService } from '../../../../book/contracts/services/bookService/bookService';
+import { LineItemRepositoryFactory } from '../../../../lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
+import { LineItemNotFoundError } from '../../../../lineItem/errors/lineItemNotFoundError';
+import { lineItemSymbols } from '../../../../lineItem/lineItemSymbols';
 import { cartSymbols } from '../../../cartSymbols';
 import { Cart } from '../../../contracts/cart';
 import { CartStatus } from '../../../contracts/cartStatus';
 import { CartRepositoryFactory } from '../../../contracts/factories/cartRepositoryFactory/cartRepositoryFactory';
+import {
+  AddLineItemPayload,
+  addLineItemPayloadSchema,
+} from '../../../contracts/services/cartService/addLineItemPayload';
 import { CartService } from '../../../contracts/services/cartService/cartService';
 import { CreateCartPayload, createCartPayloadSchema } from '../../../contracts/services/cartService/createCartPayload';
 import { DeleteCartPayload, deleteCartPayloadSchema } from '../../../contracts/services/cartService/deleteCartPayload';
 import { FindCartPayload, findCartPayloadSchema } from '../../../contracts/services/cartService/findCartPayload';
+import {
+  RemoveLineItemPayload,
+  removeLineItemPayloadSchema,
+} from '../../../contracts/services/cartService/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from '../../../contracts/services/cartService/updateCartPayload';
 import { CartNotFoundError } from '../../../errors/cartNotFoundError';
 
@@ -19,6 +32,10 @@ export class CartServiceImpl implements CartService {
   public constructor(
     @Inject(cartSymbols.cartRepositoryFactory)
     private readonly cartRepositoryFactory: CartRepositoryFactory,
+    @Inject(lineItemSymbols.lineItemRepositoryFactory)
+    private readonly lineItemRepositoryFactory: LineItemRepositoryFactory,
+    @Inject(bookSymbols.bookService)
+    private readonly bookService: BookService,
     @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
@@ -42,7 +59,7 @@ export class CartServiceImpl implements CartService {
       totalPrice: 0,
     });
 
-    this.loggerService.info({ message: 'Cart created.', context: { cartId: cart.id } });
+    this.loggerService.info({ message: 'Cart created.', context: { cartId: cart.id, customerId } });
 
     return cart;
   }
@@ -87,6 +104,103 @@ export class CartServiceImpl implements CartService {
     this.loggerService.info({ message: 'Cart updated.', context: { cartId: cart.id } });
 
     return cart;
+  }
+
+  public async addLineItem(input: AddLineItemPayload): Promise<Cart> {
+    const {
+      unitOfWork,
+      cartId,
+      draft: { bookId, quantity },
+    } = PayloadFactory.create(addLineItemPayloadSchema, input);
+
+    this.loggerService.debug({ message: 'Adding line item to a cart...', context: { cartId, bookId, quantity } });
+
+    const entityManager = unitOfWork.getEntityManager();
+
+    const lineItemRepository = this.lineItemRepositoryFactory.create(entityManager);
+
+    const cartRepository = this.cartRepositoryFactory.create(entityManager);
+
+    const cart = await this.findCart({ unitOfWork, cartId });
+
+    const { price } = await this.bookService.findBook({ unitOfWork, bookId });
+
+    const totalLineItemPrice = price * quantity;
+
+    await lineItemRepository.createOne({
+      id: UuidGenerator.generateUuid(),
+      cartId,
+      bookId,
+      quantity,
+      price,
+      totalPrice: totalLineItemPrice,
+    });
+
+    const cartTotalPrice = cart.totalPrice + totalLineItemPrice;
+
+    const updatedCart = await cartRepository.updateOne({
+      id: cartId,
+      draft: { totalPrice: cartTotalPrice },
+    });
+
+    this.loggerService.info({ message: 'Line item added to a cart.', context: { cartId, bookId, quantity } });
+
+    return updatedCart;
+  }
+
+  public async removeLineItem(input: RemoveLineItemPayload): Promise<Cart> {
+    const {
+      unitOfWork,
+      cartId,
+      draft: { lineItemId, quantity },
+    } = PayloadFactory.create(removeLineItemPayloadSchema, input);
+
+    this.loggerService.debug({
+      message: 'Removing line item from a cart...',
+      context: { cartId, lineItemId, quantity },
+    });
+
+    const entityManager = unitOfWork.getEntityManager();
+
+    const lineItemRepository = this.lineItemRepositoryFactory.create(entityManager);
+
+    const cartRepository = this.cartRepositoryFactory.create(entityManager);
+
+    const cart = await this.findCart({ unitOfWork, cartId });
+
+    const existingLineItem = await lineItemRepository.findOne({ id: lineItemId });
+
+    if (!existingLineItem) {
+      throw new LineItemNotFoundError({ id: lineItemId });
+    }
+
+    let totalLineItemPrice: number;
+
+    if (existingLineItem.quantity <= quantity) {
+      totalLineItemPrice = existingLineItem.totalPrice;
+
+      await lineItemRepository.deleteOne({ id: lineItemId });
+    } else {
+      const updatedQuantity = existingLineItem.quantity - quantity;
+
+      totalLineItemPrice = existingLineItem.price * updatedQuantity;
+
+      await lineItemRepository.updateOne({
+        id: lineItemId,
+        draft: { quantity: updatedQuantity, totalPrice: totalLineItemPrice },
+      });
+    }
+
+    const cartTotalPrice = cart.totalPrice - totalLineItemPrice;
+
+    const updatedCart = await cartRepository.updateOne({
+      id: cartId,
+      draft: { totalPrice: cartTotalPrice },
+    });
+
+    this.loggerService.info({ message: 'Line item removed from a cart.', context: { cartId, lineItemId, quantity } });
+
+    return updatedCart;
   }
 
   public async deleteCart(input: DeleteCartPayload): Promise<void> {

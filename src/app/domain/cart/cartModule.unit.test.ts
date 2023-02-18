@@ -10,6 +10,7 @@ import { LoggerModule } from '../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../libs/postgres/postgresModule';
 import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { BookModule } from '../book/bookModule';
 import { LineItemModule } from '../lineItem/lineItemModule';
 
 describe('CartModule', () => {
@@ -25,6 +26,7 @@ describe('CartModule', () => {
         new LoggerModule(loggerModuleConfig),
         new CartModule(),
         new LineItemModule(),
+        new BookModule(),
       ],
     });
   });

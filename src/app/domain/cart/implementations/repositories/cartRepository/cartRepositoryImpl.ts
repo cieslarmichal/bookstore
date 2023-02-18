@@ -83,7 +83,7 @@ export class CartRepositoryImpl implements CartRepository {
       cartEntityInput = { ...cartEntityInput, status };
     }
 
-    if (totalPrice) {
+    if (totalPrice !== undefined) {
       cartEntityInput = { ...cartEntityInput, totalPrice };
     }
 

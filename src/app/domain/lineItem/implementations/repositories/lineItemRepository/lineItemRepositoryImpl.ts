@@ -87,15 +87,15 @@ export class LineItemRepositoryImpl implements LineItemRepository {
 
     let lineItemEntityInput: Partial<LineItemEntity> = {};
 
-    if (price) {
+    if (price !== undefined) {
       lineItemEntityInput = { ...lineItemEntityInput, price };
     }
 
-    if (totalPrice) {
+    if (totalPrice !== undefined) {
       lineItemEntityInput = { ...lineItemEntityInput, totalPrice };
     }
 
-    if (quantity) {
+    if (quantity !== undefined) {
       lineItemEntityInput = { ...lineItemEntityInput, quantity };
     }
 

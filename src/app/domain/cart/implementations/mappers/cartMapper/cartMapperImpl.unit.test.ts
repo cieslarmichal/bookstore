@@ -1,15 +1,19 @@
 import 'reflect-metadata';
 
 import { CartMapperImpl } from './cartMapperImpl';
+import { DummyFactory } from '../../../../../common/tests/implementations/dummyFactory';
+import { LineItemMapper } from '../../../../lineItem/contracts/mappers/lineItemMapper/lineItemMapper';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 
 describe('CartMapperImpl', () => {
+  let lineItemMapper: LineItemMapper;
   let cartMapperImpl: CartMapperImpl;
-  let cartEntityTestFactory: CartEntityTestFactory;
+
+  const cartEntityTestFactory = new CartEntityTestFactory();
 
   beforeAll(async () => {
-    cartEntityTestFactory = new CartEntityTestFactory();
-    cartMapperImpl = new CartMapperImpl();
+    lineItemMapper = new DummyFactory().create();
+    cartMapperImpl = new CartMapperImpl(lineItemMapper);
   });
 
   it('maps a cart entity to a cart', async () => {
@@ -27,6 +31,7 @@ describe('CartMapperImpl', () => {
       deliveryMethod: cartEntity.deliveryMethod,
       billingAddressId: cartEntity.billingAddressId,
       shippingAddressId: cartEntity.shippingAddressId,
+      lineItems: cartEntity.lineItems,
     });
   });
 });

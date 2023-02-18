@@ -14,6 +14,7 @@ export class CartEntityTestFactory {
       deliveryMethod: faker.helpers.arrayElement([DeliveryMethod.fedex, DeliveryMethod.ups]),
       billingAddressId: faker.datatype.uuid(),
       shippingAddressId: faker.datatype.uuid(),
+      lineItems: [],
       ...input,
     };
   }
