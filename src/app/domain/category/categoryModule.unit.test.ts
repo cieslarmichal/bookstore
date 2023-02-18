@@ -2,7 +2,11 @@ import 'reflect-metadata';
 
 import { CategoryModule } from './categoryModule';
 import { categorySymbols } from './categorySymbols';
+import { CategoryRepositoryFactory } from './contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
+import { CategoryMapper } from './contracts/mappers/categoryMapper/categoryMapper';
 import { CategoryService } from './contracts/services/categoryService/categoryService';
+import { CategoryRepositoryFactoryImpl } from './implementations/factories/categoryRepositoryFactory/categoryRepositoryFactoryImpl';
+import { CategoryMapperImpl } from './implementations/mappers/categoryMapper/categoryMapperImpl';
 import { CategoryServiceImpl } from './implementations/services/categoryService/categoryServiceImpl';
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
@@ -24,7 +28,13 @@ describe('CategoryModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(1);
+    expect.assertions(3);
+
+    expect(container.get<CategoryMapper>(categorySymbols.categoryMapper)).toBeInstanceOf(CategoryMapperImpl);
+
+    expect(container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory)).toBeInstanceOf(
+      CategoryRepositoryFactoryImpl,
+    );
 
     expect(container.get<CategoryService>(categorySymbols.categoryService)).toBeInstanceOf(CategoryServiceImpl);
   });

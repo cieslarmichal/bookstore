@@ -2,7 +2,11 @@ import 'reflect-metadata';
 
 import { AuthorModule } from './authorModule';
 import { authorSymbols } from './authorSymbols';
+import { AuthorRepositoryFactory } from './contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
+import { AuthorMapper } from './contracts/mappers/authorMapper/authorMapper';
 import { AuthorService } from './contracts/services/authorService/authorService';
+import { AuthorRepositoryFactoryImpl } from './implementations/factories/authorRepositoryFactory/authorRepositoryFactoryImpl';
+import { AuthorMapperImpl } from './implementations/mappers/authorMapper/authorMapperImpl';
 import { AuthorServiceImpl } from './implementations/services/authorService/authorServiceImpl';
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
@@ -24,7 +28,13 @@ describe('AuthorModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(1);
+    expect.assertions(3);
+
+    expect(container.get<AuthorMapper>(authorSymbols.authorMapper)).toBeInstanceOf(AuthorMapperImpl);
+
+    expect(container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory)).toBeInstanceOf(
+      AuthorRepositoryFactoryImpl,
+    );
 
     expect(container.get<AuthorService>(authorSymbols.authorService)).toBeInstanceOf(AuthorServiceImpl);
   });

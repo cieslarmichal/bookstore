@@ -2,7 +2,11 @@ import 'reflect-metadata';
 
 import { AddressModule } from './addressModule';
 import { addressSymbols } from './addressSymbols';
+import { AddressRepositoryFactory } from './contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
+import { AddressMapper } from './contracts/mappers/addressMapper/addressMapper';
 import { AddressService } from './contracts/services/addressService/addressService';
+import { AddressRepositoryFactoryImpl } from './implementations/factories/addressRepositoryFactory/addressRepositoryFactoryImpl';
+import { AddressMapperImpl } from './implementations/mappers/addressMapper/addressMapperImpl';
 import { AddressServiceImpl } from './implementations/services/addressService/addressServiceImpl';
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
@@ -24,7 +28,13 @@ describe('AddressModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(1);
+    expect.assertions(3);
+
+    expect(container.get<AddressMapper>(addressSymbols.addressMapper)).toBeInstanceOf(AddressMapperImpl);
+
+    expect(container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory)).toBeInstanceOf(
+      AddressRepositoryFactoryImpl,
+    );
 
     expect(container.get<AddressService>(addressSymbols.addressService)).toBeInstanceOf(AddressServiceImpl);
   });

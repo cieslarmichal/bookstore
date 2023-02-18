@@ -5,10 +5,10 @@ import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFa
 
 describe('UserMapperImpl', () => {
   let userMapperImpl: UserMapperImpl;
-  let userEntityTestFactory: UserEntityTestFactory;
+
+  const userEntityTestFactory = new UserEntityTestFactory();
 
   beforeAll(async () => {
-    userEntityTestFactory = new UserEntityTestFactory();
     userMapperImpl = new UserMapperImpl();
   });
 

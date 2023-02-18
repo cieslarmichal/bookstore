@@ -5,10 +5,10 @@ import { AddressEntityTestFactory } from '../../../tests/factories/addressEntity
 
 describe('AddressMapperImpl', () => {
   let addressMapperImpl: AddressMapperImpl;
-  let addressEntityTestFactory: AddressEntityTestFactory;
+
+  const addressEntityTestFactory = new AddressEntityTestFactory();
 
   beforeAll(async () => {
-    addressEntityTestFactory = new AddressEntityTestFactory();
     addressMapperImpl = new AddressMapperImpl();
   });
 

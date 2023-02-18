@@ -5,10 +5,10 @@ import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEnti
 
 describe('LineItemMapperImpl', () => {
   let lineItemMapperImpl: LineItemMapperImpl;
-  let lineItemEntityTestFactory: LineItemEntityTestFactory;
+
+  const lineItemEntityTestFactory = new LineItemEntityTestFactory();
 
   beforeAll(async () => {
-    lineItemEntityTestFactory = new LineItemEntityTestFactory();
     lineItemMapperImpl = new LineItemMapperImpl();
   });
 

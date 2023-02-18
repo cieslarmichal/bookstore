@@ -5,10 +5,10 @@ import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCate
 
 describe('BookCategoryMapperImpl', () => {
   let bookCategoryMapperImpl: BookCategoryMapperImpl;
-  let bookCategoryEntityTestFactory: BookCategoryEntityTestFactory;
+
+  const bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
 
   beforeAll(async () => {
-    bookCategoryEntityTestFactory = new BookCategoryEntityTestFactory();
     bookCategoryMapperImpl = new BookCategoryMapperImpl();
   });
 

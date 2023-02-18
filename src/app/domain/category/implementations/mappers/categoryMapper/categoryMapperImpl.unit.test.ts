@@ -5,10 +5,10 @@ import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEnti
 
 describe('CategoryMapperImpl', () => {
   let categoryMapperImpl: CategoryMapperImpl;
-  let categoryEntityTestFactory: CategoryEntityTestFactory;
+
+  const categoryEntityTestFactory = new CategoryEntityTestFactory();
 
   beforeAll(async () => {
-    categoryEntityTestFactory = new CategoryEntityTestFactory();
     categoryMapperImpl = new CategoryMapperImpl();
   });
 

@@ -5,10 +5,10 @@ import { AuthorBookEntityTestFactory } from '../../../tests/factories/authorBook
 
 describe('AuthorBookMapperImpl', () => {
   let authorBookMapperImpl: AuthorBookMapperImpl;
-  let authorBookEntityTestFactory: AuthorBookEntityTestFactory;
+
+  const authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
 
   beforeAll(async () => {
-    authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
     authorBookMapperImpl = new AuthorBookMapperImpl();
   });
 

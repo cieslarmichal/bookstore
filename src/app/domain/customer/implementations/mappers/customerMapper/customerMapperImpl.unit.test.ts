@@ -5,10 +5,10 @@ import { CustomerEntityTestFactory } from '../../../tests/factories/customerEnti
 
 describe('CustomerMapperImpl', () => {
   let customerMapperImpl: CustomerMapperImpl;
-  let customerEntityTestFactory: CustomerEntityTestFactory;
+
+  const customerEntityTestFactory = new CustomerEntityTestFactory();
 
   beforeAll(async () => {
-    customerEntityTestFactory = new CustomerEntityTestFactory();
     customerMapperImpl = new CustomerMapperImpl();
   });
 
