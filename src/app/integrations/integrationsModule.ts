@@ -3,6 +3,7 @@ import { AuthorController } from './author/implementations/authorController';
 import { AuthorBookController } from './authorBook/implementations/authorBookController';
 import { BookController } from './book/implementations/bookController';
 import { BookCategoryController } from './bookCategory/implementations/bookCategoryController';
+import { CartController } from './cart/implementations/cartController';
 import { CategoryController } from './category/implementations/categoryController';
 import { FilterDataParser } from './common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from './common/middlewares/authMiddleware';
@@ -42,5 +43,7 @@ export class IntegrationsModule implements DependencyInjectionModule {
     container.bindToConstructor<AddressController>(integrationsSymbols.addressController, AddressController);
 
     container.bindToConstructor<CustomerController>(integrationsSymbols.customerController, CustomerController);
+
+    container.bindToConstructor<CartController>(integrationsSymbols.cartController, CartController);
   }
 }

@@ -32,6 +32,8 @@ import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
+import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
@@ -77,6 +79,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -100,6 +103,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
         new CustomerModule(),
         new UnitOfWorkModule(),
         new CartModule(),
+        new LineItemModule(),
       ],
     });
 

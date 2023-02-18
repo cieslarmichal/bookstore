@@ -2,7 +2,9 @@ import 'reflect-metadata';
 
 import { CartModule } from './cartModule';
 import { cartSymbols } from './cartSymbols';
+import { CartRepositoryFactory } from './contracts/factories/cartRepositoryFactory/cartRepositoryFactory';
 import { CartService } from './contracts/services/cartService/cartService';
+import { CartRepositoryFactoryImpl } from './implementations/factories/cartRepositoryFactory/cartRepositoryFactoryImpl';
 import { CartServiceImpl } from './implementations/services/cartService/cartServiceImpl';
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
@@ -32,7 +34,11 @@ describe('CartModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
+
+    expect(container.get<CartRepositoryFactory>(cartSymbols.cartRepositoryFactory)).toBeInstanceOf(
+      CartRepositoryFactoryImpl,
+    );
 
     expect(container.get<CartService>(cartSymbols.cartService)).toBeInstanceOf(CartServiceImpl);
   });

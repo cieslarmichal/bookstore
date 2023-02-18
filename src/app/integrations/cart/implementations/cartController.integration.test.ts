@@ -8,20 +8,23 @@ import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/
 import { App } from '../../../app';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { AddressModule } from '../../../domain/address/addressModule';
-import { addressSymbols } from '../../../domain/address/addressSymbols';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
-import { AddressRepositoryFactory } from '../../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
-import { AddressEntityTestFactory } from '../../../domain/address/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 import { AuthorModule } from '../../../domain/author/authorModule';
 import { AuthorEntity } from '../../../domain/author/contracts/authorEntity';
 import { AuthorBookModule } from '../../../domain/authorBook/authorBookModule';
 import { AuthorBookEntity } from '../../../domain/authorBook/contracts/authorBookEntity';
 import { BookModule } from '../../../domain/book/bookModule';
+import { bookSymbols } from '../../../domain/book/bookSymbols';
 import { BookEntity } from '../../../domain/book/contracts/bookEntity';
+import { BookRepositoryFactory } from '../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
+import { BookEntityTestFactory } from '../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { BookCategoryModule } from '../../../domain/bookCategory/bookCategoryModule';
 import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookCategoryEntity';
 import { CartModule } from '../../../domain/cart/cartModule';
+import { cartSymbols } from '../../../domain/cart/cartSymbols';
 import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
+import { CartRepositoryFactory } from '../../../domain/cart/contracts/factories/cartRepositoryFactory/cartRepositoryFactory';
+import { CartEntityTestFactory } from '../../../domain/cart/tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
@@ -29,8 +32,11 @@ import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/fa
 import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { LineItemRepositoryFactory } from '../../../domain/lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
+import { lineItemSymbols } from '../../../domain/lineItem/lineItemSymbols';
+import { LineItemEntityTestFactory } from '../../../domain/lineItem/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
@@ -48,21 +54,25 @@ import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
 import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrationsModule';
 
-const baseUrl = '/addresses';
+const baseUrl = '/carts';
 
-describe(`AddressController (${baseUrl})`, () => {
-  let addressRepositoryFactory: AddressRepositoryFactory;
+describe(`CartController (${baseUrl})`, () => {
+  let cartRepositoryFactory: CartRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
+  let bookRepositoryFactory: BookRepositoryFactory;
+  let lineItemRepositoryFactory: LineItemRepositoryFactory;
 
   let server: HttpServer;
   let testTransactionRunner: TestTransactionExternalRunner;
   let dataSource: DataSource;
   let tokenService: TokenService;
 
-  const addressEntityTestFactory = new AddressEntityTestFactory();
+  const cartEntityTestFactory = new CartEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
   const customerEntityTestFactory = new CustomerEntityTestFactory();
+  const bookEntityTestFactory = new BookEntityTestFactory();
+  const lineItemEntityTestFactory = new LineItemEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
@@ -73,10 +83,11 @@ describe(`AddressController (${baseUrl})`, () => {
       CategoryEntity,
       AuthorBookEntity,
       BookCategoryEntity,
-      AddressEntity,
       CustomerEntity,
       CartEntity,
+      BookEntity,
       LineItemEntity,
+      AddressEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -88,7 +99,7 @@ describe(`AddressController (${baseUrl})`, () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
-        new AddressModule(),
+        new CartModule(),
         new BookModule(),
         new AuthorModule(),
         new UserModule(userModuleConfig),
@@ -99,7 +110,7 @@ describe(`AddressController (${baseUrl})`, () => {
         new CategoryModule(),
         new CustomerModule(),
         new UnitOfWorkModule(),
-        new CartModule(),
+        new AddressModule(),
         new LineItemModule(),
       ],
     });
@@ -110,9 +121,11 @@ describe(`AddressController (${baseUrl})`, () => {
 
     await app.initialize();
 
-    addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
+    cartRepositoryFactory = container.get<CartRepositoryFactory>(cartSymbols.cartRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
+    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
     tokenService = container.get<TokenService>(userSymbols.tokenService);
 
@@ -131,7 +144,7 @@ describe(`AddressController (${baseUrl})`, () => {
     await dataSource.destroy();
   });
 
-  describe('Create address', () => {
+  describe('Create cart', () => {
     it('returns bad request when not all required properties in body are provided', async () => {
       expect.assertions(1);
 
@@ -167,18 +180,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
-
         const response = await request(server.instance).post(baseUrl).send({
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
           customerId: customer.id,
         });
 
@@ -206,21 +208,10 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
-
         const response = await request(server.instance)
           .post(baseUrl)
           .set('Authorization', `Bearer ${accessToken}`)
           .send({
-            firstName,
-            lastName,
-            phoneNumber,
-            country,
-            state,
-            city,
-            zipCode,
-            streetAddress,
             customerId: customer.id,
           });
 
@@ -229,8 +220,8 @@ describe(`AddressController (${baseUrl})`, () => {
     });
   });
 
-  describe('Find address', () => {
-    it('returns not found when address with given addressId does not exist', async () => {
+  describe('Find cart', () => {
+    it('returns not found when cart with given cartId does not exist', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
@@ -250,7 +241,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const { id } = addressEntityTestFactory.create();
+        const { id } = cartEntityTestFactory.create();
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -270,48 +261,32 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const cartRepository = cartRepositoryFactory.create(entityManager);
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const {
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const address = await addressRepository.createOne({
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+        const cart = await cartRepository.createOne({
+          id: cartId,
           customerId: customer.id,
+          status,
+          totalPrice,
         });
 
-        const response = await request(server.instance).get(`${baseUrl}/${address.id}`);
+        const response = await request(server.instance).get(`${baseUrl}/${cart.id}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
-    it(`returns forbidden when user requests other customer's address`, async () => {
+    it(`returns forbidden when user requests other customer's cart`, async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
@@ -321,7 +296,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const cartRepository = cartRepositoryFactory.create(entityManager);
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
@@ -329,17 +304,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const {
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId: otherUserId, role });
 
@@ -347,28 +312,22 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const address = await addressRepository.createOne({
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+        const cart = await cartRepository.createOne({
+          id: cartId,
           customerId: customer.id,
+          status,
+          totalPrice,
         });
 
         const response = await request(server.instance)
-          .get(`${baseUrl}/${address.id}`)
+          .get(`${baseUrl}/${cart.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.forbidden);
       });
     });
 
-    it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
+    it('accepts a request and returns ok when cartId have corresponding cart', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
@@ -378,23 +337,13 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const cartRepository = cartRepositoryFactory.create(entityManager);
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const {
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
@@ -402,21 +351,15 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const address = await addressRepository.createOne({
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+        const cart = await cartRepository.createOne({
+          id: cartId,
           customerId: customer.id,
+          status,
+          totalPrice,
         });
 
         const response = await request(server.instance)
-          .get(`${baseUrl}/${address.id}`)
+          .get(`${baseUrl}/${cart.id}`)
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -424,114 +367,16 @@ describe(`AddressController (${baseUrl})`, () => {
     });
   });
 
-  describe('Find addresses', () => {
+  describe('Update cart', () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const response = await request(server.instance).get(`${baseUrl}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-      });
-    });
-
-    it('returns addresses with filtering provided', async () => {
-      expect.assertions(2);
-
-      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const entityManager = unitOfWork.getEntityManager();
-
-        const userRepository = userRepositoryFactory.create(entityManager);
-
-        const customerRepository = customerRepositoryFactory.create(entityManager);
-
-        const addressRepository = addressRepositoryFactory.create(entityManager);
-
-        const { id: userId1, email: email1, password, role } = userEntityTestFactory.create();
-
-        const { id: userId2, email: email2 } = userEntityTestFactory.create();
-
-        const { id: customerId1 } = customerEntityTestFactory.create();
-
-        const { id: customerId2 } = customerEntityTestFactory.create();
-
-        const {
-          id: addressId1,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
-
-        const { id: addressId2 } = addressEntityTestFactory.create();
-
-        const accessToken = tokenService.createToken({ userId: userId1, role });
-
-        const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password, role });
-
-        const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password, role });
-
-        const customer1 = await customerRepository.createOne({ id: customerId1, userId: user1.id });
-
-        const customer2 = await customerRepository.createOne({ id: customerId2, userId: user2.id });
-
-        await addressRepository.createOne({
-          id: addressId1,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-          customerId: customer1.id,
-        });
-
-        await addressRepository.createOne({
-          id: addressId2,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-          customerId: customer2.id,
-        });
-
-        const response = await request(server.instance)
-          .get(`${baseUrl}?filter=["customerId||eq||${customer1.id}"]`)
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(HttpStatusCode.ok);
-        expect(response.body.data.addresses.length).toBe(1);
-      });
-    });
-  });
-
-  describe('Update address', () => {
-    it('returns unauthorized when access token is not provided', async () => {
-      expect.assertions(1);
-
-      await testTransactionRunner.runInTestTransaction(async () => {
-        const { id, firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-          addressEntityTestFactory.create();
+        const { id, billingAddressId, shippingAddressId } = cartEntityTestFactory.create();
 
         const response = await request(server.instance).patch(`${baseUrl}/${id}`).send({
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+          billingAddressId,
+          shippingAddressId,
         });
 
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -548,25 +393,16 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const cartRepository = cartRepositoryFactory.create(entityManager);
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const {
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
+        const { id: cartId, billingAddressId, shippingAddressId, status, totalPrice } = cartEntityTestFactory.create();
 
-        const { streetAddress: updatedStreetAddress } = addressEntityTestFactory.create();
+        const { billingAddressId: updatedBillingAddressId, shippingAddressId: updatedShippingAddressId } =
+          cartEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
@@ -574,24 +410,21 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const address = await addressRepository.createOne({
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+        const cart = await cartRepository.createOne({
+          id: cartId,
           customerId: customer.id,
+          status,
+          totalPrice,
+          billingAddressId: billingAddressId as string,
+          shippingAddressId: shippingAddressId as string,
         });
 
         const response = await request(server.instance)
-          .patch(`${baseUrl}/${address.id}`)
+          .patch(`${baseUrl}/${cart.id}`)
           .set('Authorization', `Bearer ${accessToken}`)
           .send({
-            streetAddress: updatedStreetAddress,
+            billingAddressId: updatedBillingAddressId,
+            shippingAddressId: updatedShippingAddressId,
           });
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -599,8 +432,269 @@ describe(`AddressController (${baseUrl})`, () => {
     });
   });
 
-  describe('Delete address', () => {
-    it('returns not found when address with given addressId does not exist', async () => {
+  describe('Add line item', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id } = cartEntityTestFactory.create();
+
+        const { quantity, bookId } = lineItemEntityTestFactory.create();
+
+        const response = await request(server.instance).post(`${baseUrl}/${id}/add-line-item`).send({
+          quantity,
+          bookId,
+        });
+
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+      });
+    });
+
+    it(`returns forbidden when user requests other customer's cart`, async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const entityManager = unitOfWork.getEntityManager();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const cartRepository = cartRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: otherUserId } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
+
+        const { quantity, bookId } = lineItemEntityTestFactory.create();
+
+        const accessToken = tokenService.createToken({ userId: otherUserId, role });
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const cart = await cartRepository.createOne({
+          id: cartId,
+          customerId: customer.id,
+          status,
+          totalPrice,
+        });
+
+        const response = await request(server.instance)
+          .post(`${baseUrl}/${cart.id}/add-line-item`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            quantity,
+            bookId,
+          });
+
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
+      });
+    });
+
+    it('accepts a request and returns ok when all required body properties are provided', async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const entityManager = unitOfWork.getEntityManager();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const cartRepository = cartRepositoryFactory.create(entityManager);
+
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
+
+        const bookEntity = bookEntityTestFactory.create();
+
+        const { quantity } = lineItemEntityTestFactory.create();
+
+        const accessToken = tokenService.createToken({ userId, role });
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const cart = await cartRepository.createOne({
+          id: cartId,
+          customerId: customer.id,
+          status,
+          totalPrice,
+        });
+
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          isbn: bookEntity.isbn,
+          releaseYear: bookEntity.releaseYear,
+        });
+
+        const response = await request(server.instance)
+          .post(`${baseUrl}/${cart.id}/add-line-item`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            quantity,
+            bookId: book.id,
+          });
+
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
+      });
+    });
+  });
+
+  describe('Remove line item', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async () => {
+        const { id } = cartEntityTestFactory.create();
+
+        const { quantity, id: lineItemId } = lineItemEntityTestFactory.create();
+
+        const response = await request(server.instance).post(`${baseUrl}/${id}/remove-line-item`).send({
+          quantity,
+          lineItemId,
+        });
+
+        expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+      });
+    });
+
+    it(`returns forbidden when user requests other customer's cart`, async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const entityManager = unitOfWork.getEntityManager();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const cartRepository = cartRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: otherUserId } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
+
+        const { quantity, id: lineItemId } = lineItemEntityTestFactory.create();
+
+        const accessToken = tokenService.createToken({ userId: otherUserId, role });
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const cart = await cartRepository.createOne({
+          id: cartId,
+          customerId: customer.id,
+          status,
+          totalPrice,
+        });
+
+        const response = await request(server.instance)
+          .post(`${baseUrl}/${cart.id}/remove-line-item`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            quantity,
+            lineItemId,
+          });
+
+        expect(response.statusCode).toBe(HttpStatusCode.forbidden);
+      });
+    });
+
+    it('accepts a request and returns ok when all required body properties are provided', async () => {
+      expect.assertions(1);
+
+      await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
+        const entityManager = unitOfWork.getEntityManager();
+
+        const userRepository = userRepositoryFactory.create(entityManager);
+
+        const customerRepository = customerRepositoryFactory.create(entityManager);
+
+        const cartRepository = cartRepositoryFactory.create(entityManager);
+
+        const bookRepository = bookRepositoryFactory.create(entityManager);
+
+        const lineItemRepository = lineItemRepositoryFactory.create(entityManager);
+
+        const { id: userId, email, password, role } = userEntityTestFactory.create();
+
+        const { id: customerId } = customerEntityTestFactory.create();
+
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
+
+        const bookEntity = bookEntityTestFactory.create();
+
+        const { id: lineItemId, quantity, price, totalPrice: lineItemTotalPrice } = lineItemEntityTestFactory.create();
+
+        const accessToken = tokenService.createToken({ userId, role });
+
+        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+
+        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+
+        const cart = await cartRepository.createOne({
+          id: cartId,
+          customerId: customer.id,
+          status,
+          totalPrice,
+        });
+
+        const book = await bookRepository.createOne({
+          id: bookEntity.id,
+          format: bookEntity.format,
+          language: bookEntity.language,
+          price: bookEntity.price,
+          title: bookEntity.title,
+          isbn: bookEntity.isbn,
+          releaseYear: bookEntity.releaseYear,
+        });
+
+        const lineItem = await lineItemRepository.createOne({
+          id: lineItemId,
+          quantity,
+          price,
+          totalPrice: lineItemTotalPrice,
+          bookId: book.id,
+          cartId: cart.id,
+        });
+
+        const response = await request(server.instance)
+          .post(`${baseUrl}/${cart.id}/remove-line-item`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            quantity,
+            lineItemId: lineItem.id,
+          });
+
+        expect(response.statusCode).toBe(HttpStatusCode.ok);
+      });
+    });
+  });
+
+  describe('Delete cart', () => {
+    it('returns not found when cart with given cartId does not exist', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
@@ -620,7 +714,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const { id } = addressEntityTestFactory.create();
+        const { id } = cartEntityTestFactory.create();
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -641,48 +735,32 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const cartRepository = cartRepositoryFactory.create(entityManager);
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const {
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const address = await addressRepository.createOne({
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+        const cart = await cartRepository.createOne({
+          id: cartId,
           customerId: customer.id,
+          status,
+          totalPrice,
         });
 
-        const response = await request(server.instance).delete(`${baseUrl}/${address.id}`).send();
+        const response = await request(server.instance).delete(`${baseUrl}/${cart.id}`).send();
 
         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
       });
     });
 
-    it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
+    it('accepts a request and returns no content when cartId is uuid and corresponds to existing cart', async () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
@@ -692,23 +770,13 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const addressRepository = addressRepositoryFactory.create(entityManager);
+        const cartRepository = cartRepositoryFactory.create(entityManager);
 
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const {
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
-        } = addressEntityTestFactory.create();
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
@@ -716,21 +784,15 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const address = await addressRepository.createOne({
-          id: addressId,
-          firstName,
-          lastName,
-          phoneNumber,
-          country,
-          state,
-          city,
-          zipCode,
-          streetAddress,
+        const cart = await cartRepository.createOne({
+          id: cartId,
           customerId: customer.id,
+          status,
+          totalPrice,
         });
 
         const response = await request(server.instance)
-          .delete(`${baseUrl}/${address.id}`)
+          .delete(`${baseUrl}/${cart.id}`)
           .set('Authorization', `Bearer ${accessToken}`)
           .send();
 

@@ -5,6 +5,7 @@ import { AuthorController } from './author/implementations/authorController';
 import { AuthorBookController } from './authorBook/implementations/authorBookController';
 import { BookController } from './book/implementations/bookController';
 import { BookCategoryController } from './bookCategory/implementations/bookCategoryController';
+import { CartController } from './cart/implementations/cartController';
 import { CategoryController } from './category/implementations/categoryController';
 import { CustomerController } from './customer/implementations/customerController';
 import { IntegrationsModule } from './integrationsModule';
@@ -18,6 +19,7 @@ import { BookCategoryModule } from '../domain/bookCategory/bookCategoryModule';
 import { CartModule } from '../domain/cart/cartModule';
 import { CategoryModule } from '../domain/category/categoryModule';
 import { CustomerModule } from '../domain/customer/customerModule';
+import { LineItemModule } from '../domain/lineItem/lineItemModule';
 import { UserModuleConfigTestFactory } from '../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../domain/user/userModule';
 import { DependencyInjectionContainer } from '../libs/dependencyInjection/implementations/dependencyInjectionContainer';
@@ -51,12 +53,13 @@ describe('IntegrationsModule', () => {
         new UserModule(userModuleConfig),
         new IntegrationsModule(),
         new CartModule(),
+        new LineItemModule(),
       ],
     });
   });
 
   it('declares bindings', async () => {
-    expect.assertions(8);
+    expect.assertions(9);
 
     expect(container.get<BookController>(integrationsSymbols.bookController)).toBeInstanceOf(BookController);
 
@@ -81,5 +84,7 @@ describe('IntegrationsModule', () => {
     expect(container.get<CustomerController>(integrationsSymbols.customerController)).toBeInstanceOf(
       CustomerController,
     );
+
+    expect(container.get<CartController>(integrationsSymbols.cartController)).toBeInstanceOf(CartController);
   });
 });

@@ -23,6 +23,8 @@ import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
+import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../domain/user/contracts/services/hashService/hashService';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
@@ -70,6 +72,7 @@ describe(`UserController (${baseUrl})`, () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -93,6 +96,7 @@ describe(`UserController (${baseUrl})`, () => {
         new CustomerModule(),
         new UnitOfWorkModule(),
         new CartModule(),
+        new LineItemModule(),
       ],
     });
 

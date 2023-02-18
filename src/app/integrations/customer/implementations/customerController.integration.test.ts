@@ -26,6 +26,8 @@ import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/fa
 import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
+import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
@@ -68,6 +70,7 @@ describe(`CustomerController (${baseUrl})`, () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -91,6 +94,7 @@ describe(`CustomerController (${baseUrl})`, () => {
         new AddressModule(),
         new UnitOfWorkModule(),
         new CartModule(),
+        new LineItemModule(),
       ],
     });
 

@@ -18,6 +18,8 @@ import { CategoryModule } from './domain/category/categoryModule';
 import { CategoryEntity } from './domain/category/contracts/categoryEntity';
 import { CustomerEntity } from './domain/customer/contracts/customerEntity';
 import { CustomerModule } from './domain/customer/customerModule';
+import { LineItemEntity } from './domain/lineItem/contracts/lineItemEntity';
+import { LineItemModule } from './domain/lineItem/lineItemModule';
 import { UserEntity } from './domain/user/contracts/userEntity';
 import { UserModule } from './domain/user/userModule';
 import { AddressController } from './integrations/address/implementations/addressController';
@@ -25,6 +27,7 @@ import { AuthorController } from './integrations/author/implementations/authorCo
 import { AuthorBookController } from './integrations/authorBook/implementations/authorBookController';
 import { BookController } from './integrations/book/implementations/bookController';
 import { BookCategoryController } from './integrations/bookCategory/implementations/bookCategoryController';
+import { CartController } from './integrations/cart/implementations/cartController';
 import { CategoryController } from './integrations/category/implementations/categoryController';
 import { errorMiddleware } from './integrations/common/middlewares/errorMiddleware';
 import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
@@ -68,6 +71,7 @@ export class App {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
     ];
 
     const container = await DependencyInjectionContainerFactory.create({
@@ -85,6 +89,7 @@ export class App {
         new AddressModule(),
         new CustomerModule(),
         new CartModule(),
+        new LineItemModule(),
       ],
     });
 
@@ -100,6 +105,7 @@ export class App {
     const bookCategoryController = container.get<BookCategoryController>(integrationsSymbols.bookCategoryController);
     const addressController = container.get<AddressController>(integrationsSymbols.addressController);
     const customerController = container.get<CustomerController>(integrationsSymbols.customerController);
+    const cartController = container.get<CartController>(integrationsSymbols.cartController);
 
     this.instance.use(json());
     this.instance.use(urlencoded({ extended: false }));
@@ -113,6 +119,7 @@ export class App {
     this.instance.use('/', bookCategoryController.router);
     this.instance.use('/', addressController.router);
     this.instance.use('/', customerController.router);
+    this.instance.use('/', cartController.router);
 
     this.instance.use(errorMiddleware);
   }

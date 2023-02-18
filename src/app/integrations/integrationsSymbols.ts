@@ -10,4 +10,5 @@ export const integrationsSymbols = {
   bookCategoryController: Symbol('bookCategoryController'),
   addressController: Symbol('addressController'),
   customerController: Symbol('customerController'),
+  cartController: Symbol('cartController'),
 };
