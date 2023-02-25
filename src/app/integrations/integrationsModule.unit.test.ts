@@ -10,6 +10,7 @@ import { CategoryController } from './category/implementations/categoryControlle
 import { CustomerController } from './customer/implementations/customerController';
 import { IntegrationsModule } from './integrationsModule';
 import { integrationsSymbols } from './integrationsSymbols';
+import { OrderController } from './order/implementations/orderController';
 import { UserController } from './user/implementations/userController';
 import { AddressModule } from '../domain/address/addressModule';
 import { AuthorModule } from '../domain/author/authorModule';
@@ -86,5 +87,7 @@ describe('IntegrationsModule', () => {
     );
 
     expect(container.get<CartController>(integrationsSymbols.cartController)).toBeInstanceOf(CartController);
+
+    expect(container.get<OrderController>(integrationsSymbols.orderController)).toBeInstanceOf(OrderController);
   });
 });

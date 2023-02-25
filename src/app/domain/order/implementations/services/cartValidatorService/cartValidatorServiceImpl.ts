@@ -13,6 +13,7 @@ import { CartNotActiveError } from '../../../errors/cartNotActiveError';
 import { DeliveryMethodNotProvidedError } from '../../../errors/deliveryMethodNotProvidedError';
 import { InvalidTotalPriceError } from '../../../errors/invalidTotalPriceError';
 import { LineItemsNotProvidedError } from '../../../errors/lineItemsNotProvidedError';
+import { OrderCreatorNotMatchingCustomerIdFromCart } from '../../../errors/orderCreatorNotMatchingCustomerIdFromCart';
 import { ShippingAddressNotProvidedError } from '../../../errors/shippingAddressNotProvidedError';
 
 @Injectable()
@@ -23,14 +24,37 @@ export class CartValidatorServiceImpl implements CartValidatorService {
   ) {}
 
   public validate(input: ValidatePayload): void {
-    const { cart } = PayloadFactory.create(validatePayloadSchema, input);
+    const { cart, orderCreatorId } = PayloadFactory.create(validatePayloadSchema, input);
 
-    const { id: cartId, status, billingAddressId, shippingAddressId, deliveryMethod, totalPrice, lineItems } = cart;
+    const {
+      id: cartId,
+      status,
+      billingAddressId,
+      shippingAddressId,
+      deliveryMethod,
+      totalPrice,
+      lineItems,
+      customerId,
+    } = cart;
 
     this.loggerService.debug({
       message: 'Validating cart...',
-      context: { cartId, status, billingAddressId, shippingAddressId, deliveryMethod, totalPrice, lineItems },
+      context: {
+        cartId,
+        status,
+        billingAddressId,
+        shippingAddressId,
+        deliveryMethod,
+        totalPrice,
+        lineItems,
+        customerId,
+        orderCreatorId,
+      },
     });
+
+    if (orderCreatorId !== orderCreatorId) {
+      throw new OrderCreatorNotMatchingCustomerIdFromCart({ orderCreatorId, cartCustomerId: customerId });
+    }
 
     if (status === CartStatus.inactive) {
       throw new CartNotActiveError({ cartId });

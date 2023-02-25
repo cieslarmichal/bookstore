@@ -4,6 +4,7 @@ import { Cart } from '../../../../cart/contracts/cart';
 
 export const validatePayloadSchema = Schema.object({
   cart: Schema.instanceof(Cart),
+  orderCreatorId: Schema.notEmptyString(),
 });
 
 export type ValidatePayload = SchemaType<typeof validatePayloadSchema>;

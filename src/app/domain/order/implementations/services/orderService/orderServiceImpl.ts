@@ -33,7 +33,7 @@ export class OrderServiceImpl implements OrderService {
   public async createOrder(input: CreateOrderPayload): Promise<Order> {
     const {
       unitOfWork,
-      draft: { cartId, paymentMethod },
+      draft: { cartId, paymentMethod, orderCreatorId },
     } = PayloadFactory.create(createOrderPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
@@ -47,7 +47,7 @@ export class OrderServiceImpl implements OrderService {
       context: { cartId, paymentMethod, customerId: cart.customerId },
     });
 
-    this.cartValidatorService.validate({ cart });
+    this.cartValidatorService.validate({ cart, orderCreatorId });
 
     const order = await orderRepository.createOne({
       id: UuidGenerator.generateUuid(),

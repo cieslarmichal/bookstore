@@ -9,12 +9,15 @@ import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 export function cartErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof CartNotFoundError) {
     response.status(HttpStatusCode.notFound).send({ error: error.message });
+
     return;
   } else if (
     error instanceof CustomerFromAccessTokenNotMatchingCustomerFromCartError ||
     error instanceof UserIsNotCustomerError
   ) {
     response.status(HttpStatusCode.forbidden).send({ error: error.message });
+
+    return;
   }
 
   next(error);

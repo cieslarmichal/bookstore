@@ -199,7 +199,7 @@ describe('OrderServiceImpl', () => {
 
         const order = await orderService.createOrder({
           unitOfWork,
-          draft: { cartId: cart.id, paymentMethod: PaymentMethod.bankTransfer },
+          draft: { cartId: cart.id, paymentMethod: PaymentMethod.bankTransfer, orderCreatorId: customer.id },
         });
 
         const foundOrder = await orderRepository.findOne({ id: order.id });
@@ -212,10 +212,13 @@ describe('OrderServiceImpl', () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-        const { id: cartId } = cartEntityTestFactory.create();
+        const { id: cartId, customerId } = cartEntityTestFactory.create();
 
         try {
-          await orderService.createOrder({ unitOfWork, draft: { cartId, paymentMethod: PaymentMethod.bankTransfer } });
+          await orderService.createOrder({
+            unitOfWork,
+            draft: { cartId, paymentMethod: PaymentMethod.bankTransfer, orderCreatorId: customerId },
+          });
         } catch (error) {
           expect(error).toBeInstanceOf(CartNotFoundError);
         }

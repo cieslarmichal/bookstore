@@ -10,6 +10,7 @@ import { AuthMiddleware } from './common/middlewares/authMiddleware';
 import { PaginationDataBuilder } from './common/paginationDataBuilder/paginationDataBuilder';
 import { CustomerController } from './customer/implementations/customerController';
 import { integrationsSymbols } from './integrationsSymbols';
+import { OrderController } from './order/implementations/orderController';
 import { UserController } from './user/implementations/userController';
 import { DependencyInjectionModule } from '../libs/dependencyInjection/contracts/dependencyInjectionModule';
 import { DependencyInjectionContainer } from '../libs/dependencyInjection/implementations/dependencyInjectionContainer';
@@ -45,5 +46,7 @@ export class IntegrationsModule implements DependencyInjectionModule {
     container.bindToConstructor<CustomerController>(integrationsSymbols.customerController, CustomerController);
 
     container.bindToConstructor<CartController>(integrationsSymbols.cartController, CartController);
+
+    container.bindToConstructor<OrderController>(integrationsSymbols.orderController, OrderController);
   }
 }

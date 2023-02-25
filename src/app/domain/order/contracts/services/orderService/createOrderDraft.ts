@@ -4,6 +4,7 @@ import { PaymentMethod } from '../../paymentMethod';
 
 export const createOrderDraftSchema = Schema.object({
   cartId: Schema.notEmptyString(),
+  orderCreatorId: Schema.notEmptyString(),
   paymentMethod: Schema.enum(PaymentMethod),
 });
 

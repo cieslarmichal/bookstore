@@ -24,13 +24,27 @@ describe('CartValidatorServiceImpl', () => {
     cartValidatorServiceImpl = new CartValidatorServiceImpl(loggerService);
   });
 
+  it('should throw an error when order creator id does not match customer id from cart', async () => {
+    expect.assertions(1);
+
+    const cart = cartTestFactory.create();
+
+    const { customerId: orderCreatorId } = cartTestFactory.create();
+
+    try {
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId });
+    } catch (error) {
+      expect(error).toBeInstanceOf(CartNotActiveError);
+    }
+  });
+
   it('should throw an error when cart is not active', async () => {
     expect.assertions(1);
 
     const cart = cartTestFactory.create({ status: CartStatus.inactive });
 
     try {
-      cartValidatorServiceImpl.validate({ cart });
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId: cart.customerId });
     } catch (error) {
       expect(error).toBeInstanceOf(CartNotActiveError);
     }
@@ -42,7 +56,7 @@ describe('CartValidatorServiceImpl', () => {
     const cart = cartTestFactory.create({ billingAddressId: undefined });
 
     try {
-      cartValidatorServiceImpl.validate({ cart });
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId: cart.customerId });
     } catch (error) {
       expect(error).toBeInstanceOf(BillingAddressNotProvidedError);
     }
@@ -54,7 +68,7 @@ describe('CartValidatorServiceImpl', () => {
     const cart = cartTestFactory.create({ shippingAddressId: undefined });
 
     try {
-      cartValidatorServiceImpl.validate({ cart });
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId: cart.customerId });
     } catch (error) {
       expect(error).toBeInstanceOf(ShippingAddressNotProvidedError);
     }
@@ -66,7 +80,7 @@ describe('CartValidatorServiceImpl', () => {
     const cart = cartTestFactory.create({ lineItems: [] });
 
     try {
-      cartValidatorServiceImpl.validate({ cart });
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId: cart.customerId });
     } catch (error) {
       expect(error).toBeInstanceOf(LineItemsNotProvidedError);
     }
@@ -78,7 +92,7 @@ describe('CartValidatorServiceImpl', () => {
     const cart = cartTestFactory.create({ deliveryMethod: undefined });
 
     try {
-      cartValidatorServiceImpl.validate({ cart });
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId: cart.customerId });
     } catch (error) {
       expect(error).toBeInstanceOf(DeliveryMethodNotProvidedError);
     }
@@ -90,7 +104,7 @@ describe('CartValidatorServiceImpl', () => {
     const cart = cartTestFactory.create({ lineItems: [lineItemTestFactory.create({ price: 400 })], totalPrice: 200 });
 
     try {
-      cartValidatorServiceImpl.validate({ cart });
+      cartValidatorServiceImpl.validate({ cart, orderCreatorId: cart.customerId });
     } catch (error) {
       expect(error).toBeInstanceOf(InvalidTotalPriceError);
     }
