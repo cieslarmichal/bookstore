@@ -31,6 +31,8 @@ import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
+import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
+import { OrderModule } from '../../../domain/order/orderModule';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
@@ -77,6 +79,7 @@ describe(`AddressController (${baseUrl})`, () => {
       CustomerEntity,
       CartEntity,
       LineItemEntity,
+      OrderEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -101,6 +104,7 @@ describe(`AddressController (${baseUrl})`, () => {
         new UnitOfWorkModule(),
         new CartModule(),
         new LineItemModule(),
+        new OrderModule(),
       ],
     });
 

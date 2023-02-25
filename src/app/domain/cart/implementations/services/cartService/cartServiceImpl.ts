@@ -3,6 +3,8 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/cont
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { addressSymbols } from '../../../../address/addressSymbols';
+import { AddressService } from '../../../../address/contracts/services/addressService/addressService';
 import { bookSymbols } from '../../../../book/bookSymbols';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
 import { LineItemRepositoryFactory } from '../../../../lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
@@ -36,6 +38,8 @@ export class CartServiceImpl implements CartService {
     private readonly lineItemRepositoryFactory: LineItemRepositoryFactory,
     @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
+    @Inject(addressSymbols.addressService)
+    private readonly addressService: AddressService,
     @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
@@ -95,6 +99,14 @@ export class CartServiceImpl implements CartService {
     const entityManager = unitOfWork.getEntityManager();
 
     const cartRepository = this.cartRepositoryFactory.create(entityManager);
+
+    if (billingAddressId) {
+      await this.addressService.findAddress({ unitOfWork, addressId: billingAddressId });
+    }
+
+    if (shippingAddressId) {
+      await this.addressService.findAddress({ unitOfWork, addressId: shippingAddressId });
+    }
 
     const cart = await cartRepository.updateOne({
       id: cartId,

@@ -10,6 +10,7 @@ import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
 import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { AddressModule } from '../../../../address/addressModule';
 import { AddressEntity } from '../../../../address/contracts/addressEntity';
 import { AuthorEntity } from '../../../../author/contracts/authorEntity';
 import { AuthorBookEntity } from '../../../../authorBook/contracts/authorBookEntity';
@@ -101,6 +102,7 @@ describe('OrderServiceImpl', () => {
         new LineItemModule(),
         new BookModule(),
         new OrderModule(),
+        new AddressModule(),
       ],
     });
 

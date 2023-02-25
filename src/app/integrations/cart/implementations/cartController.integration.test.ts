@@ -8,7 +8,10 @@ import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/
 import { App } from '../../../app';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { AddressModule } from '../../../domain/address/addressModule';
+import { addressSymbols } from '../../../domain/address/addressSymbols';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
+import { AddressRepositoryFactory } from '../../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
+import { AddressEntityTestFactory } from '../../../domain/address/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 import { AuthorModule } from '../../../domain/author/authorModule';
 import { AuthorEntity } from '../../../domain/author/contracts/authorEntity';
 import { AuthorBookModule } from '../../../domain/authorBook/authorBookModule';
@@ -37,6 +40,8 @@ import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntit
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { lineItemSymbols } from '../../../domain/lineItem/lineItemSymbols';
 import { LineItemEntityTestFactory } from '../../../domain/lineItem/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
+import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
+import { OrderModule } from '../../../domain/order/orderModule';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { UserEntity } from '../../../domain/user/contracts/userEntity';
@@ -62,6 +67,7 @@ describe(`CartController (${baseUrl})`, () => {
   let userRepositoryFactory: UserRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let lineItemRepositoryFactory: LineItemRepositoryFactory;
+  let addressRepositoryFactory: AddressRepositoryFactory;
 
   let server: HttpServer;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -73,6 +79,7 @@ describe(`CartController (${baseUrl})`, () => {
   const customerEntityTestFactory = new CustomerEntityTestFactory();
   const bookEntityTestFactory = new BookEntityTestFactory();
   const lineItemEntityTestFactory = new LineItemEntityTestFactory();
+  const addressEntityTestFactory = new AddressEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
@@ -88,6 +95,7 @@ describe(`CartController (${baseUrl})`, () => {
       BookEntity,
       LineItemEntity,
       AddressEntity,
+      OrderEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -112,6 +120,7 @@ describe(`CartController (${baseUrl})`, () => {
         new UnitOfWorkModule(),
         new AddressModule(),
         new LineItemModule(),
+        new OrderModule(),
       ],
     });
 
@@ -126,6 +135,7 @@ describe(`CartController (${baseUrl})`, () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory);
+    addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
     tokenService = container.get<TokenService>(userSymbols.tokenService);
 
@@ -395,14 +405,17 @@ describe(`CartController (${baseUrl})`, () => {
 
         const cartRepository = cartRepositoryFactory.create(entityManager);
 
+        const addressRepository = addressRepositoryFactory.create(entityManager);
+
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const { id: cartId, billingAddressId, shippingAddressId, status, totalPrice } = cartEntityTestFactory.create();
+        const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
-        const { billingAddressId: updatedBillingAddressId, shippingAddressId: updatedShippingAddressId } =
-          cartEntityTestFactory.create();
+        const addressEntity1 = addressEntityTestFactory.create();
+
+        const addressEntity2 = addressEntityTestFactory.create();
 
         const accessToken = tokenService.createToken({ userId, role });
 
@@ -415,16 +428,40 @@ describe(`CartController (${baseUrl})`, () => {
           customerId: customer.id,
           status,
           totalPrice,
-          billingAddressId: billingAddressId as string,
-          shippingAddressId: shippingAddressId as string,
+        });
+
+        const address1 = await addressRepository.createOne({
+          id: addressEntity1.id,
+          firstName: addressEntity1.firstName,
+          lastName: addressEntity1.lastName,
+          phoneNumber: addressEntity1.phoneNumber,
+          country: addressEntity1.country,
+          state: addressEntity1.state,
+          city: addressEntity1.city,
+          zipCode: addressEntity1.zipCode,
+          streetAddress: addressEntity1.streetAddress,
+          customerId: customer.id,
+        });
+
+        const address2 = await addressRepository.createOne({
+          id: addressEntity2.id,
+          firstName: addressEntity2.firstName,
+          lastName: addressEntity2.lastName,
+          phoneNumber: addressEntity2.phoneNumber,
+          country: addressEntity2.country,
+          state: addressEntity2.state,
+          city: addressEntity2.city,
+          zipCode: addressEntity2.zipCode,
+          streetAddress: addressEntity2.streetAddress,
+          customerId: customer.id,
         });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${cart.id}`)
           .set('Authorization', `Bearer ${accessToken}`)
           .send({
-            billingAddressId: updatedBillingAddressId,
-            shippingAddressId: updatedShippingAddressId,
+            billingAddressId: address1.id,
+            shippingAddressId: address2.id,
           });
 
         expect(response.statusCode).toBe(HttpStatusCode.ok);
