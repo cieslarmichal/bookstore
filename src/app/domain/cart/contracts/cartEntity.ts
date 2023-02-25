@@ -34,7 +34,7 @@ export class CartEntity {
   //@ts-ignore
   public deliveryMethod?: DeliveryMethod | null;
 
-  @ManyToOne(() => CustomerEntity, (customer) => customer.carts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => CustomerEntity, (customer) => customer.carts, { onDelete: 'CASCADE', eager: true })
   public customer?: CustomerEntity;
 
   @Column({ type: 'uuid' })
