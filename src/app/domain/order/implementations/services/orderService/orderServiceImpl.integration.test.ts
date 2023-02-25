@@ -124,7 +124,7 @@ describe('OrderServiceImpl', () => {
 
   describe('Create order', () => {
     it('creates order in database', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
@@ -204,7 +204,10 @@ describe('OrderServiceImpl', () => {
 
         const foundOrder = await orderRepository.findOne({ id: order.id });
 
+        const foundCart = await cartRepository.findOne({ id: cartId });
+
         expect(foundOrder).not.toBeNull();
+        expect(foundCart?.status).toEqual(CartStatus.inactive);
       });
     });
 

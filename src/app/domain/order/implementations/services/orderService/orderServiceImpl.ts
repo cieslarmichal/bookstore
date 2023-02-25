@@ -4,6 +4,7 @@ import { LoggerService } from '../../../../../libs/logger/contracts/services/log
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { cartSymbols } from '../../../../cart/cartSymbols';
+import { CartStatus } from '../../../../cart/contracts/cartStatus';
 import { CartService } from '../../../../cart/contracts/services/cartService/cartService';
 import { OrderRepositoryFactory } from '../../../contracts/factories/orderRepositoryFactory/orderRepositoryFactory';
 import { Order } from '../../../contracts/order';
@@ -57,6 +58,8 @@ export class OrderServiceImpl implements OrderService {
       paymentMethod,
       status: OrderStatus.created,
     });
+
+    await this.cartService.updateCart({ unitOfWork, cartId, draft: { status: CartStatus.inactive } });
 
     this.loggerService.info({
       message: 'Order created.',
