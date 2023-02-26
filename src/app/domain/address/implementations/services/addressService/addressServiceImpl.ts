@@ -80,9 +80,9 @@ export class AddressServiceImpl implements AddressService {
 
     const addressRepository = this.addressRepositoryFactory.create(entityManager);
 
-    const authors = await addressRepository.findMany({ filters, pagination });
+    const addresses = await addressRepository.findMany({ filters, pagination });
 
-    return authors;
+    return addresses;
   }
 
   public async updateAddress(input: UpdateAddressPayload): Promise<Address> {
