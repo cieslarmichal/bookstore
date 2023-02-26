@@ -32,6 +32,8 @@ import { CategoryModule } from '../../../domain/category/categoryModule';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
+import { InventoryModule } from '../../../domain/inventory/inventoryModule';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
@@ -83,6 +85,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
       CartEntity,
       LineItemEntity,
       OrderEntity,
+      InventoryEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -108,6 +111,7 @@ describe(`AuthorBookController ${authorsUrl}, ${booksUrl}`, () => {
         new CartModule(),
         new LineItemModule(),
         new OrderModule(),
+        new InventoryModule(),
       ],
     });
 

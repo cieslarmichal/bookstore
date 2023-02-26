@@ -18,6 +18,8 @@ import { CategoryModule } from './domain/category/categoryModule';
 import { CategoryEntity } from './domain/category/contracts/categoryEntity';
 import { CustomerEntity } from './domain/customer/contracts/customerEntity';
 import { CustomerModule } from './domain/customer/customerModule';
+import { InventoryEntity } from './domain/inventory/contracts/inventoryEntity';
+import { InventoryModule } from './domain/inventory/inventoryModule';
 import { LineItemEntity } from './domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from './domain/lineItem/lineItemModule';
 import { OrderEntity } from './domain/order/contracts/orderEntity';
@@ -36,6 +38,7 @@ import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware
 import { CustomerController } from './integrations/customer/implementations/customerController';
 import { IntegrationsModule } from './integrations/integrationsModule';
 import { integrationsSymbols } from './integrations/integrationsSymbols';
+import { InventoryController } from './integrations/inventory/implementations/inventoryController';
 import { OrderController } from './integrations/order/implementations/orderController';
 import { UserController } from './integrations/user/implementations/userController';
 import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
@@ -76,6 +79,7 @@ export class App {
       CartEntity,
       LineItemEntity,
       OrderEntity,
+      InventoryEntity,
     ];
 
     const container = await DependencyInjectionContainerFactory.create({
@@ -95,6 +99,7 @@ export class App {
         new CartModule(),
         new LineItemModule(),
         new OrderModule(),
+        new InventoryModule(),
       ],
     });
 
@@ -112,6 +117,7 @@ export class App {
     const customerController = container.get<CustomerController>(integrationsSymbols.customerController);
     const cartController = container.get<CartController>(integrationsSymbols.cartController);
     const orderController = container.get<OrderController>(integrationsSymbols.orderController);
+    const inventoryController = container.get<InventoryController>(integrationsSymbols.inventoryController);
 
     this.instance.use(json());
     this.instance.use(urlencoded({ extended: false }));
@@ -127,6 +133,7 @@ export class App {
     this.instance.use('/', customerController.router);
     this.instance.use('/', cartController.router);
     this.instance.use('/', orderController.router);
+    this.instance.use('/', inventoryController.router);
 
     this.instance.use(errorMiddleware);
   }

@@ -35,6 +35,8 @@ import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/fa
 import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
+import { InventoryModule } from '../../../domain/inventory/inventoryModule';
 import { LineItemRepositoryFactory } from '../../../domain/lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
@@ -96,6 +98,7 @@ describe(`CartController (${baseUrl})`, () => {
       LineItemEntity,
       AddressEntity,
       OrderEntity,
+      InventoryEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -121,6 +124,7 @@ describe(`CartController (${baseUrl})`, () => {
         new AddressModule(),
         new LineItemModule(),
         new OrderModule(),
+        new InventoryModule(),
       ],
     });
 

@@ -26,6 +26,8 @@ import { CategoryRepositoryFactory } from '../../../domain/category/contracts/fa
 import { CategoryEntityTestFactory } from '../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
 import { CustomerModule } from '../../../domain/customer/customerModule';
+import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
+import { InventoryModule } from '../../../domain/inventory/inventoryModule';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
@@ -72,6 +74,7 @@ describe(`CategoryController (${baseUrl})`, () => {
       CartEntity,
       LineItemEntity,
       OrderEntity,
+      InventoryEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -97,6 +100,7 @@ describe(`CategoryController (${baseUrl})`, () => {
         new CartModule(),
         new LineItemModule(),
         new OrderModule(),
+        new InventoryModule(),
       ],
     });
 

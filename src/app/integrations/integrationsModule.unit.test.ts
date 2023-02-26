@@ -10,6 +10,7 @@ import { CategoryController } from './category/implementations/categoryControlle
 import { CustomerController } from './customer/implementations/customerController';
 import { IntegrationsModule } from './integrationsModule';
 import { integrationsSymbols } from './integrationsSymbols';
+import { InventoryController } from './inventory/implementations/inventoryController';
 import { OrderController } from './order/implementations/orderController';
 import { UserController } from './user/implementations/userController';
 import { AddressModule } from '../domain/address/addressModule';
@@ -60,8 +61,6 @@ describe('IntegrationsModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(9);
-
     expect(container.get<BookController>(integrationsSymbols.bookController)).toBeInstanceOf(BookController);
 
     expect(container.get<AuthorController>(integrationsSymbols.authorController)).toBeInstanceOf(AuthorController);
@@ -89,5 +88,9 @@ describe('IntegrationsModule', () => {
     expect(container.get<CartController>(integrationsSymbols.cartController)).toBeInstanceOf(CartController);
 
     expect(container.get<OrderController>(integrationsSymbols.orderController)).toBeInstanceOf(OrderController);
+
+    expect(container.get<InventoryController>(integrationsSymbols.inventoryController)).toBeInstanceOf(
+      InventoryController,
+    );
   });
 });
