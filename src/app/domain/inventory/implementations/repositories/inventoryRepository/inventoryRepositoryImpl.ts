@@ -84,10 +84,10 @@ export class InventoryRepositoryImpl implements InventoryRepository {
       draft: { quantity },
     } = PayloadFactory.create(updateOnePayloadSchema, input);
 
-    const addressEntity = await this.findOne({ id });
+    const inventoryEntity = await this.findOne({ id });
 
-    if (!addressEntity) {
-      throw new InventoryNotFoundError({ id });
+    if (!inventoryEntity) {
+      throw new InventoryNotFoundError({ inventoryId: id });
     }
 
     await this.entityManager.update(InventoryEntity, { id }, { quantity });
@@ -103,7 +103,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
     const inventoryEntity = await this.findOne({ id });
 
     if (!inventoryEntity) {
-      throw new InventoryNotFoundError({ id });
+      throw new InventoryNotFoundError({ inventoryId: id });
     }
 
     await this.entityManager.delete(InventoryEntity, { id });

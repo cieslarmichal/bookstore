@@ -3,6 +3,8 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/cont
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { CartStatus } from '../../../../cart/contracts/cartStatus';
+import { InventoryService } from '../../../../inventory/contracts/services/inventoryService/inventoryService';
+import { inventorySymbols } from '../../../../inventory/inventorySymbols';
 import { CartValidatorService } from '../../../contracts/services/cartValidatorService/cartValidatorService';
 import {
   ValidatePayload,
@@ -12,6 +14,7 @@ import { BillingAddressNotProvidedError } from '../../../errors/billingAddressNo
 import { CartNotActiveError } from '../../../errors/cartNotActiveError';
 import { DeliveryMethodNotProvidedError } from '../../../errors/deliveryMethodNotProvidedError';
 import { InvalidTotalPriceError } from '../../../errors/invalidTotalPriceError';
+import { LineItemOutOfInventoryError } from '../../../errors/lineItemOutOfInventoryError';
 import { LineItemsNotProvidedError } from '../../../errors/lineItemsNotProvidedError';
 import { OrderCreatorNotMatchingCustomerIdFromCart } from '../../../errors/orderCreatorNotMatchingCustomerIdFromCart';
 import { ShippingAddressNotProvidedError } from '../../../errors/shippingAddressNotProvidedError';
@@ -19,12 +22,14 @@ import { ShippingAddressNotProvidedError } from '../../../errors/shippingAddress
 @Injectable()
 export class CartValidatorServiceImpl implements CartValidatorService {
   public constructor(
+    @Inject(inventorySymbols.inventoryService)
+    private readonly inventoryService: InventoryService,
     @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 
-  public validate(input: ValidatePayload): void {
-    const { cart, orderCreatorId } = PayloadFactory.create(validatePayloadSchema, input);
+  public async validate(input: ValidatePayload): Promise<void> {
+    const { unitOfWork, cart, orderCreatorId } = PayloadFactory.create(validatePayloadSchema, input);
 
     const {
       id: cartId,
@@ -52,7 +57,7 @@ export class CartValidatorServiceImpl implements CartValidatorService {
       },
     });
 
-    if (orderCreatorId !== orderCreatorId) {
+    if (customerId !== orderCreatorId) {
       throw new OrderCreatorNotMatchingCustomerIdFromCart({ orderCreatorId, cartCustomerId: customerId });
     }
 
@@ -81,6 +86,19 @@ export class CartValidatorServiceImpl implements CartValidatorService {
     if (totalPrice !== sumOfLineItemsPrices) {
       throw new InvalidTotalPriceError({ cartId, totalPrice, sumOfLineItemsPrices });
     }
+
+    await Promise.all(
+      lineItems.map(async (lineItem) => {
+        const inventory = await this.inventoryService.findInventory({ unitOfWork, bookId: lineItem.bookId });
+
+        if (inventory.quantity < lineItem.quantity) {
+          throw new LineItemOutOfInventoryError({
+            inventoryQuantity: inventory.quantity,
+            lineItemQuantity: lineItem.quantity,
+          });
+        }
+      }),
+    );
 
     this.loggerService.info({ message: 'Cart validated.', context: { cartId } });
   }

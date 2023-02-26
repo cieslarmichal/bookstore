@@ -7,6 +7,8 @@ import { addressSymbols } from '../../../../address/addressSymbols';
 import { AddressService } from '../../../../address/contracts/services/addressService/addressService';
 import { bookSymbols } from '../../../../book/bookSymbols';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
+import { InventoryService } from '../../../../inventory/contracts/services/inventoryService/inventoryService';
+import { inventorySymbols } from '../../../../inventory/inventorySymbols';
 import { LineItemRepositoryFactory } from '../../../../lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItemNotFoundError } from '../../../../lineItem/errors/lineItemNotFoundError';
 import { lineItemSymbols } from '../../../../lineItem/lineItemSymbols';
@@ -28,6 +30,7 @@ import {
 } from '../../../contracts/services/cartService/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from '../../../contracts/services/cartService/updateCartPayload';
 import { CartNotFoundError } from '../../../errors/cartNotFoundError';
+import { LineItemOutOfInventoryError } from '../../../errors/lineItemOutOfInventoryError';
 
 @Injectable()
 export class CartServiceImpl implements CartService {
@@ -40,6 +43,8 @@ export class CartServiceImpl implements CartService {
     private readonly bookService: BookService,
     @Inject(addressSymbols.addressService)
     private readonly addressService: AddressService,
+    @Inject(inventorySymbols.inventoryService)
+    private readonly inventoryService: InventoryService,
     @Inject(loggerSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
@@ -134,6 +139,12 @@ export class CartServiceImpl implements CartService {
     const cartRepository = this.cartRepositoryFactory.create(entityManager);
 
     const cart = await this.findCart({ unitOfWork, cartId });
+
+    const inventory = await this.inventoryService.findInventory({ unitOfWork, bookId });
+
+    if (inventory.quantity < quantity) {
+      throw new LineItemOutOfInventoryError({ inventoryQuantity: inventory.quantity, lineItemQuantity: quantity });
+    }
 
     const { price } = await this.bookService.findBook({ unitOfWork, bookId });
 

@@ -21,7 +21,9 @@ import { BookCategoryModule } from '../domain/bookCategory/bookCategoryModule';
 import { CartModule } from '../domain/cart/cartModule';
 import { CategoryModule } from '../domain/category/categoryModule';
 import { CustomerModule } from '../domain/customer/customerModule';
+import { InventoryModule } from '../domain/inventory/inventoryModule';
 import { LineItemModule } from '../domain/lineItem/lineItemModule';
+import { OrderModule } from '../domain/order/orderModule';
 import { UserModuleConfigTestFactory } from '../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../domain/user/userModule';
 import { DependencyInjectionContainer } from '../libs/dependencyInjection/implementations/dependencyInjectionContainer';
@@ -56,6 +58,8 @@ describe('IntegrationsModule', () => {
         new IntegrationsModule(),
         new CartModule(),
         new LineItemModule(),
+        new InventoryModule(),
+        new OrderModule(),
       ],
     });
   });

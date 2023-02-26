@@ -68,16 +68,26 @@ export class InventoryServiceImpl implements InventoryService {
   }
 
   public async findInventory(input: FindInventoryPayload): Promise<Inventory> {
-    const { unitOfWork, inventoryId } = PayloadFactory.create(findInventoryPayloadSchema, input);
+    const { unitOfWork, inventoryId, bookId } = PayloadFactory.create(findInventoryPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
     const inventoryRepository = this.inventoryRepositoryFactory.create(entityManager);
 
-    const inventory = await inventoryRepository.findOne({ id: inventoryId });
+    let findInventoryInput = {};
+
+    if (inventoryId) {
+      findInventoryInput = { ...findInventoryInput, inventoryId };
+    }
+
+    if (bookId) {
+      findInventoryInput = { ...findInventoryInput, bookId };
+    }
+
+    const inventory = await inventoryRepository.findOne(findInventoryInput);
 
     if (!inventory) {
-      throw new InventoryNotFoundError({ id: inventoryId });
+      throw new InventoryNotFoundError(findInventoryInput);
     }
 
     return inventory;

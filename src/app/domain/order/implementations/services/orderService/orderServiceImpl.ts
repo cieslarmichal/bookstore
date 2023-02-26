@@ -6,6 +6,9 @@ import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGene
 import { cartSymbols } from '../../../../cart/cartSymbols';
 import { CartStatus } from '../../../../cart/contracts/cartStatus';
 import { CartService } from '../../../../cart/contracts/services/cartService/cartService';
+import { InventoryService } from '../../../../inventory/contracts/services/inventoryService/inventoryService';
+import { inventorySymbols } from '../../../../inventory/inventorySymbols';
+import { LineItem } from '../../../../lineItem/contracts/lineItem';
 import { OrderRepositoryFactory } from '../../../contracts/factories/orderRepositoryFactory/orderRepositoryFactory';
 import { Order } from '../../../contracts/order';
 import { OrderStatus } from '../../../contracts/orderStatus';
@@ -27,6 +30,8 @@ export class OrderServiceImpl implements OrderService {
     private readonly loggerService: LoggerService,
     @Inject(cartSymbols.cartService)
     private readonly cartService: CartService,
+    @Inject(inventorySymbols.inventoryService)
+    private readonly inventoryService: InventoryService,
     @Inject(orderSymbols.cartValidatorService)
     private readonly cartValidatorService: CartValidatorService,
   ) {}
@@ -48,7 +53,7 @@ export class OrderServiceImpl implements OrderService {
       context: { cartId, paymentMethod, customerId: cart.customerId },
     });
 
-    this.cartValidatorService.validate({ cart, orderCreatorId });
+    await this.cartValidatorService.validate({ unitOfWork, cart, orderCreatorId });
 
     const order = await orderRepository.createOne({
       id: UuidGenerator.generateUuid(),
@@ -58,6 +63,22 @@ export class OrderServiceImpl implements OrderService {
       paymentMethod,
       status: OrderStatus.created,
     });
+
+    const lineItems = cart.lineItems as LineItem[];
+
+    await Promise.all(
+      lineItems.map(async (lineItem) => {
+        const inventory = await this.inventoryService.findInventory({ unitOfWork, bookId: lineItem.bookId });
+
+        const updatedQuantity = inventory.quantity - lineItem.quantity;
+
+        await this.inventoryService.updateInventory({
+          unitOfWork,
+          inventoryId: inventory.id,
+          draft: { quantity: updatedQuantity },
+        });
+      }),
+    );
 
     await this.cartService.updateCart({ unitOfWork, cartId, draft: { status: CartStatus.inactive } });
 

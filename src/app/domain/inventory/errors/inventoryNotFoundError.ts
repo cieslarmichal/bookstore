@@ -1,7 +1,8 @@
 import { ApplicationError } from '../../../common/errors/contracts/applicationError';
 
 interface Context {
-  readonly id?: string;
+  readonly inventoryId?: string;
+  readonly bookId?: string;
 }
 
 export class InventoryNotFoundError extends ApplicationError<Context> {

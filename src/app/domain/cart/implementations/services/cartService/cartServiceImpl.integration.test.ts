@@ -26,6 +26,11 @@ import { CustomerRepositoryFactory } from '../../../../customer/contracts/factor
 import { CustomerModule } from '../../../../customer/customerModule';
 import { customerSymbols } from '../../../../customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../../customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { InventoryRepositoryFactory } from '../../../../inventory/contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
+import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
+import { InventoryModule } from '../../../../inventory/inventoryModule';
+import { inventorySymbols } from '../../../../inventory/inventorySymbols';
+import { InventoryEntityTestFactory } from '../../../../inventory/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { LineItemRepositoryFactory } from '../../../../lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItem } from '../../../../lineItem/contracts/lineItem';
 import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
@@ -55,6 +60,7 @@ describe('CartServiceImpl', () => {
   let userRepositoryFactory: UserRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
+  let inventoryRepositoryFactory: InventoryRepositoryFactory;
   let lineItemRepositoryFactory: LineItemRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
   let dataSource: DataSource;
@@ -64,6 +70,7 @@ describe('CartServiceImpl', () => {
   const customerEntityTestFactory = new CustomerEntityTestFactory();
   const bookEntityTestFactory = new BookEntityTestFactory();
   const lineItemEntityTestFactory = new LineItemEntityTestFactory();
+  const inventoryEntityTestFactory = new InventoryEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
@@ -78,6 +85,7 @@ describe('CartServiceImpl', () => {
       CustomerEntity,
       CartEntity,
       LineItemEntity,
+      InventoryEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -94,6 +102,7 @@ describe('CartServiceImpl', () => {
         new LineItemModule(),
         new BookModule(),
         new AddressModule(),
+        new InventoryModule(),
       ],
     });
 
@@ -102,6 +111,7 @@ describe('CartServiceImpl', () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
+    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
 
@@ -270,11 +280,15 @@ describe('CartServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
+        const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
         const { id: cartId } = cartEntityTestFactory.create();
+
+        const { id: inventoryId, quantity } = inventoryEntityTestFactory.create({ quantity: 10 });
 
         const {
           id: bookId,
@@ -298,6 +312,12 @@ describe('CartServiceImpl', () => {
           language,
           releaseYear,
           title,
+        });
+
+        await inventoryRepository.createOne({
+          id: inventoryId,
+          quantity,
+          bookId,
         });
 
         const cart = await cartRepository.createOne({

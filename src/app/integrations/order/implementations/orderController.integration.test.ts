@@ -34,8 +34,11 @@ import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/fa
 import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { InventoryRepositoryFactory } from '../../../domain/inventory/contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
 import { InventoryModule } from '../../../domain/inventory/inventoryModule';
+import { inventorySymbols } from '../../../domain/inventory/inventorySymbols';
+import { InventoryEntityTestFactory } from '../../../domain/inventory/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { LineItemRepositoryFactory } from '../../../domain/lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
@@ -72,6 +75,7 @@ describe(`OrderController (${baseUrl})`, () => {
   let userRepositoryFactory: UserRepositoryFactory;
   let bookRepositoryFactory: BookRepositoryFactory;
   let lineItemRepositoryFactory: LineItemRepositoryFactory;
+  let inventoryRepositoryFactory: InventoryRepositoryFactory;
 
   let server: HttpServer;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -84,6 +88,7 @@ describe(`OrderController (${baseUrl})`, () => {
   const bookEntityTestFactory = new BookEntityTestFactory();
   const lineItemEntityTestFactory = new LineItemEntityTestFactory();
   const orderEntityTestFactory = new OrderEntityTestFactory();
+  const inventoryEntityTestFactory = new InventoryEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
@@ -142,6 +147,7 @@ describe(`OrderController (${baseUrl})`, () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory);
+    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
     tokenService = container.get<TokenService>(userSymbols.tokenService);
 
@@ -225,6 +231,8 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const lineItemRepository = lineItemRepositoryFactory.create(entityManager);
 
+        const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
@@ -242,7 +250,9 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const { id: lineItemId, quantity, price } = lineItemEntityTestFactory.create();
+        const { id: lineItemId, quantity, price } = lineItemEntityTestFactory.create({ quantity: 2 });
+
+        const { id: inventoryId, quantity: inventoryQuantity } = inventoryEntityTestFactory.create({ quantity: 10 });
 
         const accessToken = tokenService.createToken({ userId, role });
 
@@ -268,6 +278,12 @@ describe(`OrderController (${baseUrl})`, () => {
           title: bookEntity.title,
           isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
+        });
+
+        await inventoryRepository.createOne({
+          id: inventoryId,
+          quantity: inventoryQuantity,
+          bookId: book.id,
         });
 
         await lineItemRepository.createOne({

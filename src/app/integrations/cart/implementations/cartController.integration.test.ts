@@ -35,8 +35,11 @@ import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/fa
 import { CustomerModule } from '../../../domain/customer/customerModule';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { InventoryRepositoryFactory } from '../../../domain/inventory/contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
 import { InventoryModule } from '../../../domain/inventory/inventoryModule';
+import { inventorySymbols } from '../../../domain/inventory/inventorySymbols';
+import { InventoryEntityTestFactory } from '../../../domain/inventory/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { LineItemRepositoryFactory } from '../../../domain/lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
@@ -70,6 +73,7 @@ describe(`CartController (${baseUrl})`, () => {
   let bookRepositoryFactory: BookRepositoryFactory;
   let lineItemRepositoryFactory: LineItemRepositoryFactory;
   let addressRepositoryFactory: AddressRepositoryFactory;
+  let inventoryRepositoryFactory: InventoryRepositoryFactory;
 
   let server: HttpServer;
   let testTransactionRunner: TestTransactionExternalRunner;
@@ -82,6 +86,7 @@ describe(`CartController (${baseUrl})`, () => {
   const bookEntityTestFactory = new BookEntityTestFactory();
   const lineItemEntityTestFactory = new LineItemEntityTestFactory();
   const addressEntityTestFactory = new AddressEntityTestFactory();
+  const inventoryEntityTestFactory = new InventoryEntityTestFactory();
 
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
@@ -140,6 +145,7 @@ describe(`CartController (${baseUrl})`, () => {
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory);
     addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory);
+    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
     tokenService = container.get<TokenService>(userSymbols.tokenService);
 
@@ -552,15 +558,19 @@ describe(`CartController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
+        const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+
         const { id: userId, email, password, role } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
         const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
+        const { id: inventoryId, quantity: inventoryQuantity } = inventoryEntityTestFactory.create({ quantity: 10 });
+
         const bookEntity = bookEntityTestFactory.create();
 
-        const { quantity } = lineItemEntityTestFactory.create();
+        const { quantity } = lineItemEntityTestFactory.create({ quantity: 5 });
 
         const accessToken = tokenService.createToken({ userId, role });
 
@@ -583,6 +593,12 @@ describe(`CartController (${baseUrl})`, () => {
           title: bookEntity.title,
           isbn: bookEntity.isbn,
           releaseYear: bookEntity.releaseYear,
+        });
+
+        await inventoryRepository.createOne({
+          id: inventoryId,
+          quantity: inventoryQuantity,
+          bookId: book.id,
         });
 
         const response = await request(server.instance)
