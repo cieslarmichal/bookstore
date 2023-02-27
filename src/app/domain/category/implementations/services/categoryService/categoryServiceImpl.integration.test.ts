@@ -29,6 +29,10 @@ import { BookCategoryRepositoryFactory } from '../../../../bookCategory/contract
 import { BookCategoryEntityTestFactory } from '../../../../bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
+import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
+import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
+import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { CategoryModule } from '../../../categoryModule';
 import { categorySymbols } from '../../../categorySymbols';
@@ -63,6 +67,10 @@ describe('CategoryServiceImpl', () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
+      OrderEntity,
+      InventoryEntity,
+      ReviewEntity,
     ],
   });
 

@@ -24,6 +24,10 @@ import { CustomerRepositoryFactory } from '../../../../customer/contracts/factor
 import { CustomerModule } from '../../../../customer/customerModule';
 import { customerSymbols } from '../../../../customer/customerSymbols';
 import { CustomerEntityTestFactory } from '../../../../customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
+import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
+import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
@@ -64,6 +68,10 @@ describe('AddressServiceImpl', () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
+      OrderEntity,
+      InventoryEntity,
+      ReviewEntity,
     ],
   });
 

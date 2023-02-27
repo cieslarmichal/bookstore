@@ -248,11 +248,30 @@ export class ReviewController {
   }
 
   private async deleteReview(input: DeleteReviewPayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteReviewPayloadSchema, input);
+    const { id, accessTokenData } = PayloadFactory.create(deleteReviewPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     await unitOfWork.runInTransaction(async () => {
+      const { userId } = accessTokenData;
+
+      let customer: Customer;
+
+      try {
+        customer = await this.customerService.findCustomer({ unitOfWork, userId });
+      } catch (error) {
+        throw new UserIsNotCustomerError({ userId });
+      }
+
+      const existingReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
+
+      if (existingReview.customerId !== customer.id) {
+        throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
+          customerId: customer.id,
+          reviewCustomerId: existingReview.customerId,
+        });
+      }
+
       await this.reviewService.deleteReview({ unitOfWork, reviewId: id });
     });
   }

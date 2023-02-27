@@ -23,6 +23,8 @@ import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
+import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { InventoryRepositoryFactory } from '../../../contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../contracts/inventoryEntity';
@@ -53,10 +55,12 @@ describe('InventoryServiceImpl', () => {
       AuthorBookEntity,
       BookCategoryEntity,
       AddressEntity,
-      InventoryEntity,
-      CartEntity,
       CustomerEntity,
+      CartEntity,
       LineItemEntity,
+      OrderEntity,
+      InventoryEntity,
+      ReviewEntity,
     ],
   });
 

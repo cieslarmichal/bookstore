@@ -38,6 +38,8 @@ import { LineItemNotFoundError } from '../../../../lineItem/errors/lineItemNotFo
 import { LineItemModule } from '../../../../lineItem/lineItemModule';
 import { lineItemSymbols } from '../../../../lineItem/lineItemSymbols';
 import { LineItemEntityTestFactory } from '../../../../lineItem/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
+import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
@@ -85,7 +87,9 @@ describe('CartServiceImpl', () => {
       CustomerEntity,
       CartEntity,
       LineItemEntity,
+      OrderEntity,
       InventoryEntity,
+      ReviewEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();

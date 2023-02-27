@@ -17,6 +17,10 @@ import { BookEntity } from '../../../../book/contracts/bookEntity';
 import { BookCategoryEntity } from '../../../../bookCategory/contracts/bookCategoryEntity';
 import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
+import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
+import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
+import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
@@ -54,6 +58,10 @@ describe('CustomerServiceImpl', () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
+      OrderEntity,
+      InventoryEntity,
+      ReviewEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();

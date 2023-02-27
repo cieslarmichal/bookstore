@@ -26,6 +26,10 @@ import { CartEntity } from '../../../../cart/contracts/cartEntity';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
+import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
+import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
+import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { AuthorBookModule } from '../../../authorBookModule';
 import { authorBookSymbols } from '../../../authorBookSymbols';
@@ -60,6 +64,10 @@ describe('AuthorBookServiceImpl', () => {
       AddressEntity,
       CustomerEntity,
       CartEntity,
+      LineItemEntity,
+      OrderEntity,
+      InventoryEntity,
+      ReviewEntity,
     ],
   });
 
