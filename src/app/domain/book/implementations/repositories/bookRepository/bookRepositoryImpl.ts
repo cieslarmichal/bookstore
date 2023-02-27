@@ -92,17 +92,17 @@ export class BookRepositoryImpl implements BookRepository {
       throw new BookNotFoundError({ id });
     }
 
-    let findOneInput = {};
+    let updateOneInput = {};
 
     if (price !== undefined) {
-      findOneInput = { ...findOneInput, price };
+      updateOneInput = { ...updateOneInput, price };
     }
 
     if (description) {
-      findOneInput = { ...findOneInput, description };
+      updateOneInput = { ...updateOneInput, description };
     }
 
-    await this.entityManager.update(BookEntity, { id }, { ...findOneInput });
+    await this.entityManager.update(BookEntity, { id }, { ...updateOneInput });
 
     const updatedBookEntity = await this.findOne({ id });
 
