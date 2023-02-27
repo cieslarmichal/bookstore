@@ -12,6 +12,7 @@ import { CustomerController } from './customer/implementations/customerControlle
 import { integrationsSymbols } from './integrationsSymbols';
 import { InventoryController } from './inventory/implementations/inventoryController';
 import { OrderController } from './order/implementations/orderController';
+import { ReviewController } from './review/implementations/reviewController';
 import { UserController } from './user/implementations/userController';
 import { DependencyInjectionModule } from '../libs/dependencyInjection/contracts/dependencyInjectionModule';
 import { DependencyInjectionContainer } from '../libs/dependencyInjection/implementations/dependencyInjectionContainer';
@@ -51,5 +52,7 @@ export class IntegrationsModule implements DependencyInjectionModule {
     container.bindToConstructor<OrderController>(integrationsSymbols.orderController, OrderController);
 
     container.bindToConstructor<InventoryController>(integrationsSymbols.inventoryController, InventoryController);
+
+    container.bindToConstructor<ReviewController>(integrationsSymbols.reviewController, ReviewController);
   }
 }

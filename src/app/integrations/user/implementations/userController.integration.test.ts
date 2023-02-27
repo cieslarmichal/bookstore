@@ -29,6 +29,8 @@ import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntit
 import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
 import { OrderModule } from '../../../domain/order/orderModule';
+import { ReviewEntity } from '../../../domain/review/contracts/reviewEntity';
+import { ReviewModule } from '../../../domain/review/reviewModule';
 import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../domain/user/contracts/services/hashService/hashService';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
@@ -79,6 +81,7 @@ describe(`UserController (${baseUrl})`, () => {
       LineItemEntity,
       OrderEntity,
       InventoryEntity,
+      ReviewEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -105,6 +108,7 @@ describe(`UserController (${baseUrl})`, () => {
         new LineItemModule(),
         new OrderModule(),
         new InventoryModule(),
+        new ReviewModule(),
       ],
     });
 

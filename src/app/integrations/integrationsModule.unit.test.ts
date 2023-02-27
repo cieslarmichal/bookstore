@@ -12,6 +12,7 @@ import { IntegrationsModule } from './integrationsModule';
 import { integrationsSymbols } from './integrationsSymbols';
 import { InventoryController } from './inventory/implementations/inventoryController';
 import { OrderController } from './order/implementations/orderController';
+import { ReviewController } from './review/implementations/reviewController';
 import { UserController } from './user/implementations/userController';
 import { AddressModule } from '../domain/address/addressModule';
 import { AuthorModule } from '../domain/author/authorModule';
@@ -96,5 +97,7 @@ describe('IntegrationsModule', () => {
     expect(container.get<InventoryController>(integrationsSymbols.inventoryController)).toBeInstanceOf(
       InventoryController,
     );
+
+    expect(container.get<ReviewController>(integrationsSymbols.reviewController)).toBeInstanceOf(ReviewController);
   });
 });
