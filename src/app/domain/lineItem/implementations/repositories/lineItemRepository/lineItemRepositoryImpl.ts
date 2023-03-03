@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { LineItem } from '../../../contracts/lineItem';
 import { LineItemEntity } from '../../../contracts/lineItemEntity';
 import { LineItemMapper } from '../../../contracts/mappers/lineItemMapper/lineItemMapper';
@@ -31,7 +31,7 @@ export class LineItemRepositoryImpl implements LineItemRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly lineItemMapper: LineItemMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<LineItem> {
-    const { id, price, totalPrice, quantity, bookId, cartId } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, price, totalPrice, quantity, bookId, cartId } = Validator.validate(createOnePayloadSchema, input);
 
     const lineItemEntity = this.entityManager.create(LineItemEntity, {
       id,
@@ -48,7 +48,7 @@ export class LineItemRepositoryImpl implements LineItemRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<LineItem | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const lineItemEntity = await this.entityManager.findOne(LineItemEntity, { where: { id } });
 
@@ -60,7 +60,7 @@ export class LineItemRepositoryImpl implements LineItemRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<LineItem[]> {
-    const { pagination, cartId } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { pagination, cartId } = Validator.validate(findManyPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -77,7 +77,7 @@ export class LineItemRepositoryImpl implements LineItemRepository {
     const {
       id,
       draft: { price, totalPrice, quantity },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const lineItemEntity = await this.findOne({ id });
 
@@ -107,7 +107,7 @@ export class LineItemRepositoryImpl implements LineItemRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const lineItemEntity = await this.findOne({ id });
 

@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { ReviewRepositoryFactory } from '../../../contracts/factories/reviewRepositoryFactory/reviewRepositoryFactory';
 import { Review } from '../../../contracts/review';
 import {
@@ -39,7 +39,7 @@ export class ReviewServiceImpl implements ReviewService {
   ) {}
 
   public async createReview(input: CreateReviewPayload): Promise<Review> {
-    const { unitOfWork, draft } = PayloadFactory.create(createReviewPayloadSchema, input);
+    const { unitOfWork, draft } = Validator.validate(createReviewPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating review...', context: { ...draft } });
 
@@ -55,7 +55,7 @@ export class ReviewServiceImpl implements ReviewService {
   }
 
   public async findReview(input: FindReviewPayload): Promise<Review> {
-    const { unitOfWork, reviewId } = PayloadFactory.create(findReviewPayloadSchema, input);
+    const { unitOfWork, reviewId } = Validator.validate(findReviewPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -71,7 +71,7 @@ export class ReviewServiceImpl implements ReviewService {
   }
 
   public async findReviews(input: FindReviewsPayload): Promise<Review[]> {
-    const { unitOfWork, pagination, customerId } = PayloadFactory.create(findReviewsPayloadSchema, input);
+    const { unitOfWork, pagination, customerId } = Validator.validate(findReviewsPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -83,7 +83,7 @@ export class ReviewServiceImpl implements ReviewService {
   }
 
   public async updateReview(input: UpdateReviewPayload): Promise<Review> {
-    const { unitOfWork, reviewId, draft } = PayloadFactory.create(updateReviewPayloadSchema, input);
+    const { unitOfWork, reviewId, draft } = Validator.validate(updateReviewPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating review...', context: { reviewId, ...draft } });
 
@@ -99,7 +99,7 @@ export class ReviewServiceImpl implements ReviewService {
   }
 
   public async deleteReview(input: DeleteReviewPayload): Promise<void> {
-    const { unitOfWork, reviewId } = PayloadFactory.create(deleteReviewPayloadSchema, input);
+    const { unitOfWork, reviewId } = Validator.validate(deleteReviewPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting review...', context: { reviewId } });
 

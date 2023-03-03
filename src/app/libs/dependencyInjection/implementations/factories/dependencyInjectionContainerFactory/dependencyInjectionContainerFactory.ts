@@ -1,4 +1,4 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import {
   CreatePayload,
   createPayloadSchema,
@@ -7,7 +7,7 @@ import { DependencyInjectionContainer } from '../../dependencyInjectionContainer
 
 export class DependencyInjectionContainerFactory {
   public static async create(input: CreatePayload): Promise<DependencyInjectionContainer> {
-    const { modules } = PayloadFactory.create(createPayloadSchema, input);
+    const { modules } = Validator.validate(createPayloadSchema, input);
 
     const container = new DependencyInjectionContainer();
 

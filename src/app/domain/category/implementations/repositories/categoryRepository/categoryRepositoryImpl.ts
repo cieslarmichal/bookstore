@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { CategoryQueryBuilder } from './categoryQueryBuilder';
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Category } from '../../../contracts/category';
 import { CategoryEntity } from '../../../contracts/categoryEntity';
 import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/categoryMapper';
@@ -28,7 +28,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Category> {
-    const { id, name } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, name } = Validator.validate(createOnePayloadSchema, input);
 
     const categoryEntity = this.entityManager.create(CategoryEntity, { id, name });
 
@@ -38,7 +38,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Category | null> {
-    const { id, name } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id, name } = Validator.validate(findOnePayloadSchema, input);
 
     let findOneInput = {};
 
@@ -60,7 +60,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Category[]> {
-    const { bookId, filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { bookId, filters, pagination } = Validator.validate(findManyPayloadSchema, input);
 
     let categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
@@ -80,7 +80,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const categoryEntity = await this.findOne({ id });
 

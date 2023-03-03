@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { reviewErrorMiddleware } from './reviewErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Customer } from '../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
@@ -15,6 +14,7 @@ import { reviewSymbols } from '../../../domain/review/reviewSymbols';
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AccessTokenData } from '../../accessTokenData';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
@@ -151,7 +151,7 @@ export class ReviewController {
   }
 
   private async createReview(input: CreateReviewPayload): Promise<Review> {
-    const { isbn, rate, comment, accessTokenData } = PayloadFactory.create(createReviewPayloadSchema, input);
+    const { isbn, rate, comment, accessTokenData } = Validator.validate(createReviewPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -183,7 +183,7 @@ export class ReviewController {
   }
 
   private async findReview(input: FindReviewPayload): Promise<Review> {
-    const { id } = PayloadFactory.create(findReviewPayloadSchema, input);
+    const { id } = Validator.validate(findReviewPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -195,7 +195,7 @@ export class ReviewController {
   }
 
   private async findReviews(input: FindReviewsPayload): Promise<Review[]> {
-    const { pagination, customerId } = PayloadFactory.create(findReviewsPayloadSchema, input);
+    const { pagination, customerId } = Validator.validate(findReviewsPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -207,7 +207,7 @@ export class ReviewController {
   }
 
   private async updateReview(input: UpdateReviewPayload): Promise<Review> {
-    const { id, comment, rate, accessTokenData } = PayloadFactory.create(updateReviewPayloadSchema, input);
+    const { id, comment, rate, accessTokenData } = Validator.validate(updateReviewPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -248,7 +248,7 @@ export class ReviewController {
   }
 
   private async deleteReview(input: DeleteReviewPayload): Promise<void> {
-    const { id, accessTokenData } = PayloadFactory.create(deleteReviewPayloadSchema, input);
+    const { id, accessTokenData } = Validator.validate(deleteReviewPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

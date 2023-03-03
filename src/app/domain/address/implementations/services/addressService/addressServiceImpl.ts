@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { addressSymbols } from '../../../addressSymbols';
 import { Address } from '../../../contracts/address';
 import { AddressRepositoryFactory } from '../../../contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
@@ -39,7 +39,7 @@ export class AddressServiceImpl implements AddressService {
   ) {}
 
   public async createAddress(input: CreateAddressPayload): Promise<Address> {
-    const { unitOfWork, draft } = PayloadFactory.create(createAddressPayloadSchema, input);
+    const { unitOfWork, draft } = Validator.validate(createAddressPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating address...', context: { ...draft } });
 
@@ -58,7 +58,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async findAddress(input: FindAddressPayload): Promise<Address> {
-    const { unitOfWork, addressId } = PayloadFactory.create(findAddressPayloadSchema, input);
+    const { unitOfWork, addressId } = Validator.validate(findAddressPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -74,7 +74,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
-    const { unitOfWork, filters, pagination } = PayloadFactory.create(findAddressesPayloadSchema, input);
+    const { unitOfWork, filters, pagination } = Validator.validate(findAddressesPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -86,7 +86,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async updateAddress(input: UpdateAddressPayload): Promise<Address> {
-    const { unitOfWork, draft, addressId } = PayloadFactory.create(updateAddressPayloadSchema, input);
+    const { unitOfWork, draft, addressId } = Validator.validate(updateAddressPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating address...', context: { addressId, ...draft } });
 
@@ -102,7 +102,7 @@ export class AddressServiceImpl implements AddressService {
   }
 
   public async deleteAddress(input: DeleteAddressPayload): Promise<void> {
-    const { unitOfWork, addressId } = PayloadFactory.create(deleteAddressPayloadSchema, input);
+    const { unitOfWork, addressId } = Validator.validate(deleteAddressPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting address...', context: { addressId } });
 

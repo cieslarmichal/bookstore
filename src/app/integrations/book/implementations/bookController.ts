@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { bookErrorMiddleware } from './bookErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { bookSymbols } from '../../../domain/book/bookSymbols';
 import { Book } from '../../../domain/book/contracts/book';
 import { BookService } from '../../../domain/book/contracts/services/bookService/bookService';
@@ -12,6 +11,7 @@ import { UpdateBookDraft } from '../../../domain/book/contracts/services/bookSer
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
@@ -148,7 +148,7 @@ export class BookController {
   }
 
   private async createBook(input: CreateBookPayload): Promise<Book> {
-    const { title, isbn, releaseYear, language, format, description, price } = PayloadFactory.create(
+    const { title, isbn, releaseYear, language, format, description, price } = Validator.validate(
       createBookPayloadSchema,
       input,
     );
@@ -179,7 +179,7 @@ export class BookController {
   }
 
   private async findBook(input: FindBookPayload): Promise<Book> {
-    const { id } = PayloadFactory.create(findBookPayloadSchema, input);
+    const { id } = Validator.validate(findBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -191,7 +191,7 @@ export class BookController {
   }
 
   private async findBooks(input: FindBooksPayload): Promise<Book[]> {
-    const { filters, pagination } = PayloadFactory.create(findBooksPayloadSchema, input);
+    const { filters, pagination } = Validator.validate(findBooksPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -203,7 +203,7 @@ export class BookController {
   }
 
   private async updateBook(input: UpdateBookPayload): Promise<Book> {
-    const { id, description, price } = PayloadFactory.create(updateBookPayloadSchema, input);
+    const { id, description, price } = Validator.validate(updateBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -225,7 +225,7 @@ export class BookController {
   }
 
   private async deleteBook(input: DeleteBookPayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteBookPayloadSchema, input);
+    const { id } = Validator.validate(deleteBookPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { authorSymbols } from '../../../authorSymbols';
 import { Author } from '../../../contracts/author';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';
@@ -43,7 +43,7 @@ export class AuthorServiceImpl implements AuthorService {
   ) {}
 
   public async createAuthor(input: CreateAuthorPayload): Promise<Author> {
-    const { unitOfWork, draft } = PayloadFactory.create(createAuthorPayloadSchema, input);
+    const { unitOfWork, draft } = Validator.validate(createAuthorPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating author...', context: { ...draft } });
 
@@ -59,7 +59,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async findAuthor(input: FindAuthorPayload): Promise<Author> {
-    const { unitOfWork, authorId } = PayloadFactory.create(findAuthorPayloadSchema, input);
+    const { unitOfWork, authorId } = Validator.validate(findAuthorPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -75,7 +75,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
-    const { unitOfWork, filters, pagination } = PayloadFactory.create(findAuthorsPayloadSchema, input);
+    const { unitOfWork, filters, pagination } = Validator.validate(findAuthorsPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -87,7 +87,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async findAuthorsByBookId(input: FindAuthorsByBookIdPayload): Promise<Author[]> {
-    const { unitOfWork, filters, pagination, bookId } = PayloadFactory.create(findAuthorsByBookIdPayloadSchema, input);
+    const { unitOfWork, filters, pagination, bookId } = Validator.validate(findAuthorsByBookIdPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -99,7 +99,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
-    const { unitOfWork, authorId, draft } = PayloadFactory.create(updateAuthorPayloadSchema, input);
+    const { unitOfWork, authorId, draft } = Validator.validate(updateAuthorPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating author...', context: { authorId, ...draft } });
 
@@ -115,7 +115,7 @@ export class AuthorServiceImpl implements AuthorService {
   }
 
   public async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
-    const { unitOfWork, authorId } = PayloadFactory.create(deleteAuthorPayloadSchema, input);
+    const { unitOfWork, authorId } = Validator.validate(deleteAuthorPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting author...', context: { authorId } });
 

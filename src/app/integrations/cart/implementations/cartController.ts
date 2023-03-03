@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { cartErrorMiddleware } from './cartErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { cartSymbols } from '../../../domain/cart/cartSymbols';
 import { Cart } from '../../../domain/cart/contracts/cart';
 import { CartService } from '../../../domain/cart/contracts/services/cartService/cartService';
@@ -14,6 +13,7 @@ import { UserRole } from '../../../domain/user/contracts/userRole';
 import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AccessTokenData } from '../../accessTokenData';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
@@ -188,7 +188,7 @@ export class CartController {
   }
 
   private async createCart(input: CreateCartPayload): Promise<Cart> {
-    const { customerId, accessTokenData } = PayloadFactory.create(createCartPayloadSchema, input);
+    const { customerId, accessTokenData } = Validator.validate(createCartPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -211,7 +211,7 @@ export class CartController {
   }
 
   private async findCart(input: FindCartPayload): Promise<Cart> {
-    const { id, accessTokenData } = PayloadFactory.create(findCartPayloadSchema, input);
+    const { id, accessTokenData } = Validator.validate(findCartPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -242,7 +242,7 @@ export class CartController {
   }
 
   private async updateCart(input: UpdateCartPayload): Promise<Cart> {
-    const { accessTokenData, id, billingAddressId, deliveryMethod, shippingAddressId } = PayloadFactory.create(
+    const { accessTokenData, id, billingAddressId, deliveryMethod, shippingAddressId } = Validator.validate(
       updateCartPayloadSchema,
       input,
     );
@@ -282,7 +282,7 @@ export class CartController {
   }
 
   private async addLineItem(input: AddLineItemPayload): Promise<Cart> {
-    const { accessTokenData, id, bookId, quantity } = PayloadFactory.create(addLineItemPayloadSchema, input);
+    const { accessTokenData, id, bookId, quantity } = Validator.validate(addLineItemPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -319,7 +319,7 @@ export class CartController {
   }
 
   private async removeLineItem(input: RemoveLineItemPayload): Promise<Cart> {
-    const { accessTokenData, id, lineItemId, quantity } = PayloadFactory.create(removeLineItemPayloadSchema, input);
+    const { accessTokenData, id, lineItemId, quantity } = Validator.validate(removeLineItemPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -356,7 +356,7 @@ export class CartController {
   }
 
   private async deleteCart(input: DeleteCartPayload): Promise<void> {
-    const { id, accessTokenData } = PayloadFactory.create(deleteCartPayloadSchema, input);
+    const { id, accessTokenData } = Validator.validate(deleteCartPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

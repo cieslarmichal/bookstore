@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Cart } from '../../../contracts/cart';
 import { CartEntity } from '../../../contracts/cartEntity';
 import { CartMapper } from '../../../contracts/mappers/cartMapper/cartMapper';
@@ -25,7 +25,7 @@ export class CartRepositoryImpl implements CartRepository {
 
   public async createOne(input: CreateOnePayload): Promise<Cart> {
     const { id, customerId, status, totalPrice, billingAddressId, deliveryMethod, shippingAddressId } =
-      PayloadFactory.create(createOnePayloadSchema, input);
+      Validator.validate(createOnePayloadSchema, input);
 
     let cartEntityInput: CartEntity = {
       id,
@@ -54,7 +54,7 @@ export class CartRepositoryImpl implements CartRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Cart | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const cartEntity = await this.entityManager.findOne(CartEntity, { where: { id } });
 
@@ -69,7 +69,7 @@ export class CartRepositoryImpl implements CartRepository {
     const {
       id,
       draft: { status, totalPrice, billingAddressId, deliveryMethod, shippingAddressId },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const cartEntity = await this.findOne({ id });
 
@@ -107,7 +107,7 @@ export class CartRepositoryImpl implements CartRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const cartEntity = await this.findOne({ id });
 

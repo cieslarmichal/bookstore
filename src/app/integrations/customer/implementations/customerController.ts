@@ -3,12 +3,12 @@ import asyncHandler from 'express-async-handler';
 
 import { customerErrorMiddleware } from './customerErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
@@ -88,7 +88,7 @@ export class CustomerController {
   }
 
   private async createCustomer(input: CreateCustomerPayload): Promise<ControllerResponse> {
-    const { userId } = PayloadFactory.create(createCustomerPayloadSchema, input);
+    const { userId } = Validator.validate(createCustomerPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -100,7 +100,7 @@ export class CustomerController {
   }
 
   private async findCustomer(input: FindCustomerPayload): Promise<ControllerResponse> {
-    const { id } = PayloadFactory.create(findCustomerPayloadSchema, input);
+    const { id } = Validator.validate(findCustomerPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -112,7 +112,7 @@ export class CustomerController {
   }
 
   private async deleteCustomer(input: DeleteCustomerPayload): Promise<ControllerResponse> {
-    const { id } = PayloadFactory.create(deleteCustomerPayloadSchema, input);
+    const { id } = Validator.validate(deleteCustomerPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

@@ -1,6 +1,6 @@
-import { SchemaType } from '../../../common/validator/contracts/schemaType';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
-import { Schema } from '../../../common/validator/implementations/schema';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 export const addressInputSchema = Schema.object({
   id: Schema.notEmptyString(),
@@ -44,7 +44,7 @@ export class Address {
       streetAddress,
       deliveryInstructions,
       customerId,
-    } = PayloadFactory.create(addressInputSchema, input);
+    } = Validator.validate(addressInputSchema, input);
 
     this.id = id;
     this.firstName = firstName;

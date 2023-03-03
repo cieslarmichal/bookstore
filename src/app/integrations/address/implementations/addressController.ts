@@ -5,7 +5,6 @@ import { addressErrorMiddleware } from './addressErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { Filter } from '../../../common/types/contracts/filter';
 import { FilterName } from '../../../common/types/contracts/filterName';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { addressSymbols } from '../../../domain/address/addressSymbols';
 import { Address } from '../../../domain/address/contracts/address';
 import { AddressService } from '../../../domain/address/contracts/services/addressService/addressService';
@@ -17,6 +16,7 @@ import { UserRole } from '../../../domain/user/contracts/userRole';
 import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AccessTokenData } from '../../accessTokenData';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
@@ -217,7 +217,7 @@ export class AddressController {
       deliveryInstructions,
       customerId,
       accessTokenData,
-    } = PayloadFactory.create(createAddressPayloadSchema, input);
+    } = Validator.validate(createAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -256,7 +256,7 @@ export class AddressController {
   }
 
   private async findAddress(input: FindAddressPayload): Promise<Address> {
-    const { id, accessTokenData } = PayloadFactory.create(findAddressPayloadSchema, input);
+    const { id, accessTokenData } = Validator.validate(findAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -287,7 +287,7 @@ export class AddressController {
   }
 
   private async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
-    const { filters, pagination, accessTokenData } = PayloadFactory.create(findAddressesPayloadSchema, input);
+    const { filters, pagination, accessTokenData } = Validator.validate(findAddressesPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -331,7 +331,7 @@ export class AddressController {
       streetAddress,
       zipCode,
       accessTokenData,
-    } = PayloadFactory.create(updateAddressPayloadSchema, input);
+    } = Validator.validate(updateAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -368,7 +368,7 @@ export class AddressController {
   }
 
   private async deleteAddress(input: DeleteAddressPayload): Promise<void> {
-    const { id, accessTokenData } = PayloadFactory.create(deleteAddressPayloadSchema, input);
+    const { id, accessTokenData } = Validator.validate(deleteAddressPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

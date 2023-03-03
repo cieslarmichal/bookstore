@@ -3,13 +3,13 @@ import asyncHandler from 'express-async-handler';
 
 import { categoryErrorMiddleware } from './categoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { categorySymbols } from '../../../domain/category/categorySymbols';
 import { Category } from '../../../domain/category/contracts/category';
 import { CategoryService } from '../../../domain/category/contracts/services/categoryService/categoryService';
 import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
@@ -127,7 +127,7 @@ export class CategoryController {
   }
 
   private async createCategory(input: CreateCategoryPayload): Promise<Category> {
-    const { name } = PayloadFactory.create(createCategoryPayloadSchema, input);
+    const { name } = Validator.validate(createCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -139,7 +139,7 @@ export class CategoryController {
   }
 
   private async findCategory(input: FindCategoryPayload): Promise<Category> {
-    const { id } = PayloadFactory.create(findCategoryPayloadSchema, input);
+    const { id } = Validator.validate(findCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -151,7 +151,7 @@ export class CategoryController {
   }
 
   private async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
-    const { filters, pagination } = PayloadFactory.create(findCategoriesPayloadSchema, input);
+    const { filters, pagination } = Validator.validate(findCategoriesPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -163,7 +163,7 @@ export class CategoryController {
   }
 
   private async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteCategoryPayloadSchema, input);
+    const { id } = Validator.validate(deleteCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

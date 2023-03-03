@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { ReviewMapper } from '../../../contracts/mappers/reviewMapper/reviewMapper';
 import {
   CreateOnePayload,
@@ -28,7 +28,7 @@ export class ReviewRepositoryImpl implements ReviewRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly reviewMapper: ReviewMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Review> {
-    const { id, isbn, rate, comment, customerId } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, isbn, rate, comment, customerId } = Validator.validate(createOnePayloadSchema, input);
 
     let reviewEntityInput: ReviewEntity = { id, isbn, rate, customerId };
 
@@ -44,7 +44,7 @@ export class ReviewRepositoryImpl implements ReviewRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Review | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const reviewEntity = await this.entityManager.findOne(ReviewEntity, { where: { id } });
 
@@ -56,7 +56,7 @@ export class ReviewRepositoryImpl implements ReviewRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Review[]> {
-    const { pagination, customerId } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -73,7 +73,7 @@ export class ReviewRepositoryImpl implements ReviewRepository {
     const {
       id,
       draft: { comment, rate },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const reviewEntity = await this.findOne({ id });
 
@@ -99,7 +99,7 @@ export class ReviewRepositoryImpl implements ReviewRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const reviewEntity = await this.findOne({ id });
 

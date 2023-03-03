@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { InventoryRepositoryFactory } from '../../../contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
 import { Inventory } from '../../../contracts/inventory';
 import {
@@ -43,7 +43,7 @@ export class InventoryServiceImpl implements InventoryService {
     const {
       unitOfWork,
       draft: { bookId, quantity },
-    } = PayloadFactory.create(createInventoryPayloadSchema, input);
+    } = Validator.validate(createInventoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating inventory...', context: { bookId, quantity } });
 
@@ -68,7 +68,7 @@ export class InventoryServiceImpl implements InventoryService {
   }
 
   public async findInventory(input: FindInventoryPayload): Promise<Inventory> {
-    const { unitOfWork, inventoryId, bookId } = PayloadFactory.create(findInventoryPayloadSchema, input);
+    const { unitOfWork, inventoryId, bookId } = Validator.validate(findInventoryPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -94,7 +94,7 @@ export class InventoryServiceImpl implements InventoryService {
   }
 
   public async findInventories(input: FindInventoriesPayload): Promise<Inventory[]> {
-    const { unitOfWork, pagination } = PayloadFactory.create(findInventoriesPayloadSchema, input);
+    const { unitOfWork, pagination } = Validator.validate(findInventoriesPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -110,7 +110,7 @@ export class InventoryServiceImpl implements InventoryService {
       unitOfWork,
       draft: { quantity },
       inventoryId,
-    } = PayloadFactory.create(updateInventoryPayloadSchema, input);
+    } = Validator.validate(updateInventoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating inventory...', context: { inventoryId, quantity } });
 
@@ -126,7 +126,7 @@ export class InventoryServiceImpl implements InventoryService {
   }
 
   public async deleteInventory(input: DeleteInventoryPayload): Promise<void> {
-    const { unitOfWork, inventoryId } = PayloadFactory.create(deleteInventoryPayloadSchema, input);
+    const { unitOfWork, inventoryId } = Validator.validate(deleteInventoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting inventory...', context: { inventoryId } });
 

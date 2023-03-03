@@ -3,8 +3,8 @@ import { ParsePayload, parsePayloadSchema } from './parsePayload';
 import { Filter } from '../../../common/types/contracts/filter';
 import { FilterName } from '../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../common/types/contracts/filterSymbol';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 @Injectable()
 export class FilterDataParser {
@@ -16,7 +16,7 @@ export class FilterDataParser {
   private readonly numberOfTokensInFilterElement = 3;
 
   public parse(input: ParsePayload): Filter[] {
-    const { jsonData, supportedFieldsFilters } = PayloadFactory.create(parsePayloadSchema, input);
+    const { jsonData, supportedFieldsFilters } = Validator.validate(parsePayloadSchema, input);
 
     if (!supportedFieldsFilters) {
       return [];

@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { categorySymbols } from '../../../categorySymbols';
 import { Category } from '../../../contracts/category';
 import { CategoryRepositoryFactory } from '../../../contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
@@ -43,7 +43,7 @@ export class CategoryServiceImpl implements CategoryService {
     const {
       unitOfWork,
       draft: { name },
-    } = PayloadFactory.create(createCategoryPayloadSchema, input);
+    } = Validator.validate(createCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating category...', context: { name } });
 
@@ -65,7 +65,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async findCategory(input: FindCategoryPayload): Promise<Category> {
-    const { unitOfWork, categoryId } = PayloadFactory.create(findCategoryPayloadSchema, input);
+    const { unitOfWork, categoryId } = Validator.validate(findCategoryPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -81,7 +81,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
-    const { unitOfWork, filters, pagination } = PayloadFactory.create(findCategoriesPayloadSchema, input);
+    const { unitOfWork, filters, pagination } = Validator.validate(findCategoriesPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -93,10 +93,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
-    const { unitOfWork, filters, pagination, bookId } = PayloadFactory.create(
-      findCategoriesByBookIdPayloadSchema,
-      input,
-    );
+    const { unitOfWork, filters, pagination, bookId } = Validator.validate(findCategoriesByBookIdPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -108,7 +105,7 @@ export class CategoryServiceImpl implements CategoryService {
   }
 
   public async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
-    const { unitOfWork, categoryId } = PayloadFactory.create(deleteCategoryPayloadSchema, input);
+    const { unitOfWork, categoryId } = Validator.validate(deleteCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting category...', context: { categoryId } });
 

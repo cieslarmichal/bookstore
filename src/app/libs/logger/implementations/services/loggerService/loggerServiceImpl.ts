@@ -1,4 +1,4 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Inject, Injectable } from '../../../../dependencyInjection/contracts/decorators';
 import { LoggerClient } from '../../../contracts/clients/loggerClient/loggerClient';
 import { DebugPayload, debugPayloadSchema } from '../../../contracts/services/loggerService/debugPayload';
@@ -18,37 +18,37 @@ export class LoggerServiceImpl implements LoggerService {
   ) {}
 
   public fatal(input: FatalPayload): void {
-    const { message, context } = PayloadFactory.create(fatalPayloadSchema, input);
+    const { message, context } = Validator.validate(fatalPayloadSchema, input);
 
     this.loggerClient.fatal({ context: context ?? {} }, message);
   }
 
   public error(input: ErrorPayload): void {
-    const { message, context } = PayloadFactory.create(errorPayloadSchema, input);
+    const { message, context } = Validator.validate(errorPayloadSchema, input);
 
     this.loggerClient.error({ context: context ?? {} }, message);
   }
 
   public warn(input: WarnPayload): void {
-    const { message, context } = PayloadFactory.create(warnPayloadSchema, input);
+    const { message, context } = Validator.validate(warnPayloadSchema, input);
 
     this.loggerClient.warn({ context: context ?? {} }, message);
   }
 
   public info(input: InfoPayload): void {
-    const { message, context } = PayloadFactory.create(infoPayloadSchema, input);
+    const { message, context } = Validator.validate(infoPayloadSchema, input);
 
     this.loggerClient.info({ context: context ?? {} }, message);
   }
 
   public debug(input: DebugPayload): void {
-    const { message, context } = PayloadFactory.create(debugPayloadSchema, input);
+    const { message, context } = Validator.validate(debugPayloadSchema, input);
 
     this.loggerClient.debug({ context: context ?? {} }, message);
   }
 
   public log(input: LogPayload): void {
-    const { message, context } = PayloadFactory.create(logPayloadSchema, input);
+    const { message, context } = Validator.validate(logPayloadSchema, input);
 
     this.loggerClient.info({ context: context ?? {} }, message);
   }

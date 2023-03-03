@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { AuthorQueryBuilder } from './authorQueryBuilder';
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Author } from '../../../contracts/author';
 import { AuthorEntity } from '../../../contracts/authorEntity';
 import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';
@@ -29,7 +29,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Author> {
-    const { id, firstName, lastName, about } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, firstName, lastName, about } = Validator.validate(createOnePayloadSchema, input);
 
     let authorEntityInput: AuthorEntity = { id, firstName, lastName };
 
@@ -45,7 +45,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Author | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const authorEntity = await this.entityManager.findOneBy(AuthorEntity, { id });
 
@@ -57,7 +57,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Author[]> {
-    const { bookId, filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { bookId, filters, pagination } = Validator.validate(findManyPayloadSchema, input);
 
     let authorQueryBuilder = new AuthorQueryBuilder(this.entityManager);
 
@@ -80,7 +80,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
     const {
       id,
       draft: { about },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const authorEntity = await this.findOne({ id });
 
@@ -96,7 +96,7 @@ export class AuthorRepositoryImpl implements AuthorRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const authorEntity = await this.findOne({ id });
 

@@ -1,6 +1,6 @@
-import { SchemaType } from '../../../common/validator/contracts/schemaType';
-import { Schema } from '../../../common/validator/implementations/schema';
 import { PaymentMethod } from '../../../domain/order/contracts/paymentMethod';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
 import { AccessTokenData } from '../../accessTokenData';
 
 export const createOrderPayloadSchema = Schema.object({

@@ -1,7 +1,7 @@
 import { BuildPayload, buildPayloadSchema } from './buildPayload';
 import { PaginationData } from '../../../common/types/contracts/paginationData';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 @Injectable()
 export class PaginationDataBuilder {
@@ -10,7 +10,7 @@ export class PaginationDataBuilder {
   private readonly maxLimit = 20;
 
   public build(input: BuildPayload): PaginationData {
-    const payload = PayloadFactory.create(buildPayloadSchema, input);
+    const payload = Validator.validate(buildPayloadSchema, input);
 
     let page = payload.page || this.defaultPage;
 

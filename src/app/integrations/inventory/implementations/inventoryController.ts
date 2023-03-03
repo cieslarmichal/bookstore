@@ -3,13 +3,13 @@ import asyncHandler from 'express-async-handler';
 
 import { inventoryErrorMiddleware } from './inventoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Inventory } from '../../../domain/inventory/contracts/inventory';
 import { InventoryService } from '../../../domain/inventory/contracts/services/inventoryService/inventoryService';
 import { inventorySymbols } from '../../../domain/inventory/inventorySymbols';
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
@@ -133,7 +133,7 @@ export class InventoryController {
   }
 
   private async createInventory(input: CreateInventoryPayload): Promise<Inventory> {
-    const { bookId, quantity } = PayloadFactory.create(createInventoryPayloadSchema, input);
+    const { bookId, quantity } = Validator.validate(createInventoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -145,7 +145,7 @@ export class InventoryController {
   }
 
   private async findInventory(input: FindInventoryPayload): Promise<Inventory> {
-    const { id } = PayloadFactory.create(findInventoryPayloadSchema, input);
+    const { id } = Validator.validate(findInventoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -157,7 +157,7 @@ export class InventoryController {
   }
 
   private async findInventories(input: FindInventoriesPayload): Promise<Inventory[]> {
-    const { pagination } = PayloadFactory.create(findInventoriesPayloadSchema, input);
+    const { pagination } = Validator.validate(findInventoriesPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -169,7 +169,7 @@ export class InventoryController {
   }
 
   private async updateInventory(input: UpdateInventoryPayload): Promise<Inventory> {
-    const { id, quantity } = PayloadFactory.create(updateInventoryPayloadSchema, input);
+    const { id, quantity } = Validator.validate(updateInventoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -181,7 +181,7 @@ export class InventoryController {
   }
 
   private async deleteInventory(input: DeleteInventoryPayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteInventoryPayloadSchema, input);
+    const { id } = Validator.validate(deleteInventoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

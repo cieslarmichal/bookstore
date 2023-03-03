@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';
@@ -26,7 +26,7 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   ) {}
 
   public async createOne(input: CreateOnePayload): Promise<BookCategory> {
-    const { id, bookId, categoryId } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, bookId, categoryId } = Validator.validate(createOnePayloadSchema, input);
 
     const bookCategoryEntity = this.entityManager.create(BookCategoryEntity, { id, bookId, categoryId });
 
@@ -36,7 +36,7 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<BookCategory | null> {
-    const { id, bookId, categoryId } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id, bookId, categoryId } = Validator.validate(findOnePayloadSchema, input);
 
     let findOneInput = {};
 
@@ -62,7 +62,7 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const bookCategoryEntity = await this.findOne({ id });
 

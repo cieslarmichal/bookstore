@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { AddressQueryBuilder } from './addressQueryBuilder';
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Address } from '../../../contracts/address';
 import { AddressEntity } from '../../../contracts/addressEntity';
 import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
@@ -41,7 +41,7 @@ export class AddressRepositoryImpl implements AddressRepository {
       streetAddress,
       deliveryInstructions,
       customerId,
-    } = PayloadFactory.create(createOnePayloadSchema, input);
+    } = Validator.validate(createOnePayloadSchema, input);
 
     let addressEntityInput: AddressEntity = {
       id,
@@ -68,7 +68,7 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Address | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const addressEntity = await this.entityManager.findOne(AddressEntity, { where: { id } });
 
@@ -80,7 +80,7 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Address[]> {
-    const { filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { filters, pagination } = Validator.validate(findManyPayloadSchema, input);
 
     const addressQueryBuilder = new AddressQueryBuilder(this.entityManager);
 
@@ -99,7 +99,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     const {
       id,
       draft: { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const addressEntity = await this.findOne({ id });
 
@@ -153,7 +153,7 @@ export class AddressRepositoryImpl implements AddressRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const addressEntity = await this.findOne({ id });
 

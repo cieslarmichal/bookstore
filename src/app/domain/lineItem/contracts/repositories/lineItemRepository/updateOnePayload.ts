@@ -1,6 +1,6 @@
 import { updateOneDraftSchema } from './updateOneDraft';
-import { SchemaType } from '../../../../../common/validator/contracts/schemaType';
-import { Schema } from '../../../../../common/validator/implementations/schema';
+import { SchemaType } from '../../../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../../../libs/validator/implementations/schema';
 
 export const updateOnePayloadSchema = Schema.object({
   id: Schema.notEmptyString(),

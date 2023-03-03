@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { authorErrorMiddleware } from './authorErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { authorSymbols } from '../../../domain/author/authorSymbols';
 import { Author } from '../../../domain/author/contracts/author';
 import { AuthorService } from '../../../domain/author/contracts/services/authorService/authorService';
@@ -11,6 +10,7 @@ import { CreateAuthorDraft } from '../../../domain/author/contracts/services/aut
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
@@ -146,7 +146,7 @@ export class AuthorController {
   }
 
   private async createAuthor(input: CreateAuthorPayload): Promise<Author> {
-    const { firstName, lastName, about } = PayloadFactory.create(createAuthorPayloadSchema, input);
+    const { firstName, lastName, about } = Validator.validate(createAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -167,7 +167,7 @@ export class AuthorController {
   }
 
   private async findAuthor(input: FindAuthorPayload): Promise<Author> {
-    const { id } = PayloadFactory.create(findAuthorPayloadSchema, input);
+    const { id } = Validator.validate(findAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -179,7 +179,7 @@ export class AuthorController {
   }
 
   private async findAuthors(input: FindAuthorsPayload): Promise<Author[]> {
-    const { filters, pagination } = PayloadFactory.create(findAuthorsPayloadSchema, input);
+    const { filters, pagination } = Validator.validate(findAuthorsPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -191,7 +191,7 @@ export class AuthorController {
   }
 
   private async updateAuthor(input: UpdateAuthorPayload): Promise<Author> {
-    const { id, about } = PayloadFactory.create(updateAuthorPayloadSchema, input);
+    const { id, about } = Validator.validate(updateAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -203,7 +203,7 @@ export class AuthorController {
   }
 
   private async deleteAuthor(input: DeleteAuthorPayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteAuthorPayloadSchema, input);
+    const { id } = Validator.validate(deleteAuthorPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

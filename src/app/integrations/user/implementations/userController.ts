@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { userErrorMiddleware } from './userErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { UserService } from '../../../domain/user/contracts/services/userService/userService';
 import { User } from '../../../domain/user/contracts/user';
 import { UserRole } from '../../../domain/user/contracts/userRole';
@@ -11,6 +10,7 @@ import { userSymbols } from '../../../domain/user/userSymbols';
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
@@ -190,7 +190,7 @@ export class UserController {
   }
 
   private async registerUser(input: RegisterUserPayload): Promise<User> {
-    const { email, password, phoneNumber } = PayloadFactory.create(registerUserPayloadSchema, input);
+    const { email, password, phoneNumber } = Validator.validate(registerUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -209,7 +209,7 @@ export class UserController {
   }
 
   private async loginUser(input: LoginUserPayload): Promise<string> {
-    const { email, password, phoneNumber } = PayloadFactory.create(loginUserPayloadSchema, input);
+    const { email, password, phoneNumber } = Validator.validate(loginUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -228,7 +228,7 @@ export class UserController {
   }
 
   private async setUserPassword(input: SetUserPasswordPayload): Promise<void> {
-    const { userId, password, accessTokenData } = PayloadFactory.create(setUserPasswordPayloadSchema, input);
+    const { userId, password, accessTokenData } = Validator.validate(setUserPasswordPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -242,7 +242,7 @@ export class UserController {
   }
 
   private async setUserPhoneNumber(input: SetUserPhoneNumberPayload): Promise<void> {
-    const { userId, phoneNumber, accessTokenData } = PayloadFactory.create(setUserPhoneNumberPayloadSchema, input);
+    const { userId, phoneNumber, accessTokenData } = Validator.validate(setUserPhoneNumberPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -256,7 +256,7 @@ export class UserController {
   }
 
   private async setUserEmail(input: SetUserEmailPayload): Promise<void> {
-    const { userId, email, accessTokenData } = PayloadFactory.create(setUserEmailPayloadSchema, input);
+    const { userId, email, accessTokenData } = Validator.validate(setUserEmailPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -270,7 +270,7 @@ export class UserController {
   }
 
   private async findUser(input: FindUserPayload): Promise<User> {
-    const { id: userId, accessTokenData } = PayloadFactory.create(findUserPayloadSchema, input);
+    const { id: userId, accessTokenData } = Validator.validate(findUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -286,7 +286,7 @@ export class UserController {
   }
 
   private async deleteUser(input: DeleteUserPayload): Promise<void> {
-    const { id: userId, accessTokenData } = PayloadFactory.create(deleteUserPayloadSchema, input);
+    const { id: userId, accessTokenData } = Validator.validate(deleteUserPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

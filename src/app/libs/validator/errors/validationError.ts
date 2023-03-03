@@ -1,6 +1,6 @@
 import { ZodIssue } from 'zod';
 
-import { ApplicationError } from '../../errors/contracts/applicationError';
+import { ApplicationError } from '../../../common/errors/contracts/applicationError';
 
 interface Context {
   readonly target: unknown;

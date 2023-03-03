@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { cartSymbols } from '../../../../cart/cartSymbols';
 import { CartStatus } from '../../../../cart/contracts/cartStatus';
 import { CartService } from '../../../../cart/contracts/services/cartService/cartService';
@@ -40,7 +40,7 @@ export class OrderServiceImpl implements OrderService {
     const {
       unitOfWork,
       draft: { cartId, paymentMethod, orderCreatorId },
-    } = PayloadFactory.create(createOrderPayloadSchema, input);
+    } = Validator.validate(createOrderPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -91,7 +91,7 @@ export class OrderServiceImpl implements OrderService {
   }
 
   public async findOrders(input: FindOrdersPayload): Promise<Order[]> {
-    const { unitOfWork, customerId, pagination } = PayloadFactory.create(findOrdersPayloadSchema, input);
+    const { unitOfWork, customerId, pagination } = Validator.validate(findOrdersPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 

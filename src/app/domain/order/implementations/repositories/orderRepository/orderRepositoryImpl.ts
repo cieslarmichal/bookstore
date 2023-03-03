@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { OrderMapper } from '../../../contracts/mappers/orderMapper/orderMapper';
 import { Order } from '../../../contracts/order';
 import { OrderEntity } from '../../../contracts/orderEntity';
@@ -19,7 +19,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly orderMapper: OrderMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Order> {
-    const { id, cartId, customerId, orderNumber, paymentMethod, status } = PayloadFactory.create(
+    const { id, cartId, customerId, orderNumber, paymentMethod, status } = Validator.validate(
       createOnePayloadSchema,
       input,
     );
@@ -39,7 +39,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Order | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const orderEntity = await this.entityManager.findOne(OrderEntity, { where: { id } });
 
@@ -51,7 +51,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Order[]> {
-    const { pagination, customerId } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 

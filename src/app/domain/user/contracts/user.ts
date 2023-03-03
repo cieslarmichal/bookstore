@@ -1,7 +1,7 @@
 import { UserRole } from './userRole';
-import { SchemaType } from '../../../common/validator/contracts/schemaType';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
-import { Schema } from '../../../common/validator/implementations/schema';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 export const userInputSchema = Schema.object({
   id: Schema.notEmptyString(),
@@ -21,7 +21,7 @@ export class User {
   public readonly role: UserRole;
 
   public constructor(input: UserInput) {
-    const { id, email, phoneNumber, password, role } = PayloadFactory.create(userInputSchema, input);
+    const { id, email, phoneNumber, password, role } = Validator.validate(userInputSchema, input);
 
     this.id = id;
     this.password = password;

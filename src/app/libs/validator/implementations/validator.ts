@@ -2,8 +2,8 @@ import { Schema } from 'zod';
 
 import { ValidationError } from '../errors/validationError';
 
-export class PayloadFactory {
-  public static create<T>(schema: Schema<T>, input: T): T {
+export class Validator {
+  public static validate<T>(schema: Schema<T>, input: T): T {
     const result = schema.safeParse(input);
 
     if (!result.success) {

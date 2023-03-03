@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { bookCategoryErrorMiddleware } from './bookCategoryErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Book } from '../../../domain/book/contracts/book';
 import { bookCategorySymbols } from '../../../domain/bookCategory/bookCategorySymbols';
 import { BookCategory } from '../../../domain/bookCategory/contracts/bookCategory';
@@ -12,6 +11,7 @@ import { Category } from '../../../domain/category/contracts/category';
 import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { findBooksFilters } from '../../book/contracts/findBooksFilters';
 import { findCategoriesFilters } from '../../category/contracts/findCategoriesFilters';
 import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
@@ -168,7 +168,7 @@ export class BookCategoryController {
   }
 
   private async createBookCategory(input: CreateBookCategoryPayload): Promise<BookCategory> {
-    const { bookId, categoryId } = PayloadFactory.create(createBookCategoryPayloadSchema, input);
+    const { bookId, categoryId } = Validator.validate(createBookCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -186,7 +186,7 @@ export class BookCategoryController {
   }
 
   private async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
-    const { bookId, filters, pagination } = PayloadFactory.create(findCategoriesByBookIdPayloadSchema, input);
+    const { bookId, filters, pagination } = Validator.validate(findCategoriesByBookIdPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -198,7 +198,7 @@ export class BookCategoryController {
   }
 
   private async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
-    const { categoryId, pagination, filters } = PayloadFactory.create(findBooksByCategoryIdPayloadSchema, input);
+    const { categoryId, pagination, filters } = Validator.validate(findBooksByCategoryIdPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -210,7 +210,7 @@ export class BookCategoryController {
   }
 
   private async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
-    const { bookId, categoryId } = PayloadFactory.create(deleteBookCategoryPayloadSchema, input);
+    const { bookId, categoryId } = Validator.validate(deleteBookCategoryPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

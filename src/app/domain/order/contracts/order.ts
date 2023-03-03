@@ -1,8 +1,8 @@
 import { OrderStatus } from './orderStatus';
 import { PaymentMethod } from './paymentMethod';
-import { SchemaType } from '../../../common/validator/contracts/schemaType';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
-import { Schema } from '../../../common/validator/implementations/schema';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 export const orderInputSchema = Schema.object({
   id: Schema.notEmptyString(),
@@ -24,10 +24,7 @@ export class Order {
   public readonly paymentMethod: PaymentMethod;
 
   public constructor(input: OrderInput) {
-    const { id, cartId, customerId, orderNumber, status, paymentMethod } = PayloadFactory.create(
-      orderInputSchema,
-      input,
-    );
+    const { id, cartId, customerId, orderNumber, status, paymentMethod } = Validator.validate(orderInputSchema, input);
 
     this.id = id;
     this.cartId = cartId;

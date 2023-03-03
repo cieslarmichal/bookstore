@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { bookSymbols } from '../../../../book/bookSymbols';
 import { Book } from '../../../../book/contracts/book';
 import { BookService } from '../../../../book/contracts/services/bookService/bookService';
@@ -51,7 +51,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     const {
       unitOfWork,
       draft: { bookId, categoryId },
-    } = PayloadFactory.create(createBookCategoryPayloadSchema, input);
+    } = Validator.validate(createBookCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating bookCategory...', context: { bookId, categoryId } });
 
@@ -89,10 +89,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   }
 
   public async findCategoriesByBookId(input: FindCategoriesByBookIdPayload): Promise<Category[]> {
-    const { unitOfWork, bookId, filters, pagination } = PayloadFactory.create(
-      findCategoriesByBookIdPayloadSchema,
-      input,
-    );
+    const { unitOfWork, bookId, filters, pagination } = Validator.validate(findCategoriesByBookIdPayloadSchema, input);
 
     const book = await this.bookService.findBook({ unitOfWork, bookId });
 
@@ -104,7 +101,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   }
 
   public async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
-    const { unitOfWork, categoryId, filters, pagination } = PayloadFactory.create(
+    const { unitOfWork, categoryId, filters, pagination } = Validator.validate(
       findBooksByCategoryIdPayloadSchema,
       input,
     );
@@ -119,7 +116,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   }
 
   public async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
-    const { unitOfWork, bookId, categoryId } = PayloadFactory.create(deleteBookCategoryPayloadSchema, input);
+    const { unitOfWork, bookId, categoryId } = Validator.validate(deleteBookCategoryPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting bookCategory...', context: { bookId, categoryId } });
 

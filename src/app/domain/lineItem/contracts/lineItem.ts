@@ -1,6 +1,6 @@
-import { SchemaType } from '../../../common/validator/contracts/schemaType';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
-import { Schema } from '../../../common/validator/implementations/schema';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 export const lineItemInputSchema = Schema.object({
   id: Schema.notEmptyString(),
@@ -22,7 +22,7 @@ export class LineItem {
   public readonly cartId: string;
 
   public constructor(input: LineItemInput) {
-    const { id, quantity, price, totalPrice, bookId, cartId } = PayloadFactory.create(lineItemInputSchema, input);
+    const { id, quantity, price, totalPrice, bookId, cartId } = Validator.validate(lineItemInputSchema, input);
 
     this.id = id;
     this.quantity = quantity;

@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerMapper } from '../../../contracts/mappers/customerMapper/customerMapper';
@@ -23,7 +23,7 @@ export class CustomerRepositoryImpl implements CustomerRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly customerMapper: CustomerMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Customer> {
-    const { id, userId } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, userId } = Validator.validate(createOnePayloadSchema, input);
 
     const customerEntity = this.entityManager.create(CustomerEntity, { id, userId });
 
@@ -33,7 +33,7 @@ export class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Customer | null> {
-    const { id, userId } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id, userId } = Validator.validate(findOnePayloadSchema, input);
 
     let findOneInput = {};
 
@@ -55,7 +55,7 @@ export class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const customerEntity = await this.findOne({ id });
 

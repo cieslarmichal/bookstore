@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 
 import { orderErrorMiddleware } from './orderErrorMiddleware';
 import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
 import { Customer } from '../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
@@ -13,6 +12,7 @@ import { orderSymbols } from '../../../domain/order/orderSymbols';
 import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../libs/validator/implementations/validator';
 import { AccessTokenData } from '../../accessTokenData';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
@@ -94,7 +94,7 @@ export class OrderController {
   }
 
   private async createOrder(input: CreateOrderPayload): Promise<Order> {
-    const { cartId, paymentMethod, accessTokenData } = PayloadFactory.create(createOrderPayloadSchema, input);
+    const { cartId, paymentMethod, accessTokenData } = Validator.validate(createOrderPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -119,7 +119,7 @@ export class OrderController {
   }
 
   private async findOrders(input: FindOrdersPayload): Promise<Order[]> {
-    const { accessTokenData, pagination } = PayloadFactory.create(findOrdersPayloadSchema, input);
+    const { accessTokenData, pagination } = Validator.validate(findOrdersPayloadSchema, input);
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

@@ -1,6 +1,6 @@
-import { SchemaType } from '../../../common/validator/contracts/schemaType';
-import { PayloadFactory } from '../../../common/validator/implementations/payloadFactory';
-import { Schema } from '../../../common/validator/implementations/schema';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 export const reviewInputSchema = Schema.object({
   id: Schema.notEmptyString(),
@@ -20,7 +20,7 @@ export class Review {
   public readonly customerId: string;
 
   public constructor(input: ReviewInput) {
-    const { id, isbn, rate, customerId, comment } = PayloadFactory.create(reviewInputSchema, input);
+    const { id, isbn, rate, customerId, comment } = Validator.validate(reviewInputSchema, input);
 
     this.id = id;
     this.isbn = isbn;

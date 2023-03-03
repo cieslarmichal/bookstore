@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Inventory } from '../../../contracts/inventory';
 import { InventoryEntity } from '../../../contracts/inventoryEntity';
 import { InventoryMapper } from '../../../contracts/mappers/inventoryMapper/inventoryMapper';
@@ -34,7 +34,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
   ) {}
 
   public async createOne(input: CreateOnePayload): Promise<Inventory> {
-    const { id, bookId, quantity } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, bookId, quantity } = Validator.validate(createOnePayloadSchema, input);
 
     const inventoryEntity = this.entityManager.create(InventoryEntity, { id, bookId, quantity });
 
@@ -44,7 +44,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Inventory | null> {
-    const { id, bookId } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id, bookId } = Validator.validate(findOnePayloadSchema, input);
 
     let findOneInput = {};
 
@@ -66,7 +66,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Inventory[]> {
-    const { pagination } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { pagination } = Validator.validate(findManyPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -82,7 +82,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
     const {
       id,
       draft: { quantity },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const inventoryEntity = await this.findOne({ id });
 
@@ -98,7 +98,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const inventoryEntity = await this.findOne({ id });
 

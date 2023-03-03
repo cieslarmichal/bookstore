@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import {
@@ -35,7 +35,7 @@ export class CustomerServiceImpl implements CustomerService {
     const {
       unitOfWork,
       draft: { userId },
-    } = PayloadFactory.create(createCustomerPayloadSchema, input);
+    } = Validator.validate(createCustomerPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating customer...', context: { userId } });
 
@@ -57,7 +57,7 @@ export class CustomerServiceImpl implements CustomerService {
   }
 
   public async findCustomer(input: FindCustomerPayload): Promise<Customer> {
-    const { unitOfWork, customerId, userId } = PayloadFactory.create(findCustomerPayloadSchema, input);
+    const { unitOfWork, customerId, userId } = Validator.validate(findCustomerPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -83,7 +83,7 @@ export class CustomerServiceImpl implements CustomerService {
   }
 
   public async deleteCustomer(input: DeleteCustomerPayload): Promise<void> {
-    const { unitOfWork, customerId } = PayloadFactory.create(deleteCustomerPayloadSchema, input);
+    const { unitOfWork, customerId } = Validator.validate(deleteCustomerPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting customer...', context: { customerId } });
 

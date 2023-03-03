@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { UserRepositoryFactory } from '../../../contracts/factories/userRepositoryFactory/userRepositoryFactory';
 import { HashService } from '../../../contracts/services/hashService/hashService';
 import { TokenService } from '../../../contracts/services/tokenService/tokenService';
@@ -62,7 +62,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { email, password },
-    } = PayloadFactory.create(registerUserByEmailPayloadSchema, input);
+    } = Validator.validate(registerUserByEmailPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Registering user...', context: { email } });
 
@@ -94,7 +94,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { phoneNumber, password },
-    } = PayloadFactory.create(registerUserByPhoneNumberPayloadSchema, input);
+    } = Validator.validate(registerUserByPhoneNumberPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Registering user...', context: { phoneNumber } });
 
@@ -126,7 +126,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { email, password },
-    } = PayloadFactory.create(loginUserByEmailPayloadSchema, input);
+    } = Validator.validate(loginUserByEmailPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Logging user in...', context: { email } });
 
@@ -157,7 +157,7 @@ export class UserServiceImpl implements UserService {
     const {
       unitOfWork,
       draft: { phoneNumber, password },
-    } = PayloadFactory.create(loginUserByPhoneNumberPayloadSchema, input);
+    } = Validator.validate(loginUserByPhoneNumberPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Logging user in...', context: { phoneNumber } });
 
@@ -185,7 +185,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async setUserPassword(input: SetUserPasswordPayload): Promise<User> {
-    const { unitOfWork, userId, password: newPassword } = PayloadFactory.create(setUserPasswordPayloadSchema, input);
+    const { unitOfWork, userId, password: newPassword } = Validator.validate(setUserPasswordPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Setting password...', context: { userId } });
 
@@ -209,7 +209,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async setUserEmail(input: SetUserEmailPayload): Promise<User> {
-    const { unitOfWork, userId, email } = PayloadFactory.create(setUserEmailPayloadSchema, input);
+    const { unitOfWork, userId, email } = Validator.validate(setUserEmailPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Setting email...', context: { userId, email } });
 
@@ -241,7 +241,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async setUserPhoneNumber(input: SetUserPhoneNumberPayload): Promise<User> {
-    const { unitOfWork, phoneNumber, userId } = PayloadFactory.create(setUserPhoneNumberPayloadSchema, input);
+    const { unitOfWork, phoneNumber, userId } = Validator.validate(setUserPhoneNumberPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Setting phone number...', context: { userId, phoneNumber } });
 
@@ -273,7 +273,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async findUser(input: FindUserPayload): Promise<User> {
-    const { unitOfWork, userId } = PayloadFactory.create(findUserPayloadSchema, input);
+    const { unitOfWork, userId } = Validator.validate(findUserPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -289,7 +289,7 @@ export class UserServiceImpl implements UserService {
   }
 
   public async deleteUser(input: DeleteUserPayload): Promise<void> {
-    const { unitOfWork, userId } = PayloadFactory.create(deleteUserPayloadSchema, input);
+    const { unitOfWork, userId } = Validator.validate(deleteUserPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting user...', context: { userId } });
 

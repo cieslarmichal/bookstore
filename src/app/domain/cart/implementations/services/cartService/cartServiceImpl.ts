@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { addressSymbols } from '../../../../address/addressSymbols';
 import { AddressService } from '../../../../address/contracts/services/addressService/addressService';
 import { bookSymbols } from '../../../../book/bookSymbols';
@@ -53,7 +53,7 @@ export class CartServiceImpl implements CartService {
     const {
       unitOfWork,
       draft: { customerId },
-    } = PayloadFactory.create(createCartPayloadSchema, input);
+    } = Validator.validate(createCartPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating cart...', context: { customerId } });
 
@@ -74,7 +74,7 @@ export class CartServiceImpl implements CartService {
   }
 
   public async findCart(input: FindCartPayload): Promise<Cart> {
-    const { unitOfWork, cartId } = PayloadFactory.create(findCartPayloadSchema, input);
+    const { unitOfWork, cartId } = Validator.validate(findCartPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -94,7 +94,7 @@ export class CartServiceImpl implements CartService {
       unitOfWork,
       cartId,
       draft: { billingAddressId, deliveryMethod, shippingAddressId, status },
-    } = PayloadFactory.create(updateCartPayloadSchema, input);
+    } = Validator.validate(updateCartPayloadSchema, input);
 
     this.loggerService.debug({
       message: 'Updating cart...',
@@ -128,7 +128,7 @@ export class CartServiceImpl implements CartService {
       unitOfWork,
       cartId,
       draft: { bookId, quantity },
-    } = PayloadFactory.create(addLineItemPayloadSchema, input);
+    } = Validator.validate(addLineItemPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Adding line item to a cart...', context: { cartId, bookId, quantity } });
 
@@ -176,7 +176,7 @@ export class CartServiceImpl implements CartService {
       unitOfWork,
       cartId,
       draft: { lineItemId, quantity },
-    } = PayloadFactory.create(removeLineItemPayloadSchema, input);
+    } = Validator.validate(removeLineItemPayloadSchema, input);
 
     this.loggerService.debug({
       message: 'Removing line item from a cart...',
@@ -227,7 +227,7 @@ export class CartServiceImpl implements CartService {
   }
 
   public async deleteCart(input: DeleteCartPayload): Promise<void> {
-    const { unitOfWork, cartId } = PayloadFactory.create(deleteCartPayloadSchema, input);
+    const { unitOfWork, cartId } = Validator.validate(deleteCartPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting cart...', context: { cartId } });
 

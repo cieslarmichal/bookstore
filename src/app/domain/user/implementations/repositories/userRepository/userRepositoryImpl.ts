@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { UserMapper } from '../../../contracts/mappers/userMapper/userMapper';
 import {
   CreateOnePayload,
@@ -24,7 +24,7 @@ export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<User> {
-    const { id, email, phoneNumber, password, role } = PayloadFactory.create(createOnePayloadSchema, input);
+    const { id, email, phoneNumber, password, role } = Validator.validate(createOnePayloadSchema, input);
 
     let userEntityInput: UserEntity = { id, password, role };
 
@@ -44,7 +44,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<User | null> {
-    const { id, email, phoneNumber } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id, email, phoneNumber } = Validator.validate(findOnePayloadSchema, input);
 
     let findOneInput = {};
 
@@ -73,7 +73,7 @@ export class UserRepositoryImpl implements UserRepository {
     const {
       id,
       draft: { email, password, phoneNumber },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const userEntity = await this.findOne({ id });
 
@@ -103,7 +103,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const userEntity = await this.findOne({ id });
 

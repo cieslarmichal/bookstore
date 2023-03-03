@@ -1,7 +1,7 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { CartStatus } from '../../../../cart/contracts/cartStatus';
 import { InventoryService } from '../../../../inventory/contracts/services/inventoryService/inventoryService';
 import { inventorySymbols } from '../../../../inventory/inventorySymbols';
@@ -29,7 +29,7 @@ export class CartValidatorServiceImpl implements CartValidatorService {
   ) {}
 
   public async validate(input: ValidatePayload): Promise<void> {
-    const { unitOfWork, cart, orderCreatorId } = PayloadFactory.create(validatePayloadSchema, input);
+    const { unitOfWork, cart, orderCreatorId } = Validator.validate(validatePayloadSchema, input);
 
     const {
       id: cartId,

@@ -1,8 +1,8 @@
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { bookSymbols } from '../../../bookSymbols';
 import { Book } from '../../../contracts/book';
 import { BookRepositoryFactory } from '../../../contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
@@ -32,7 +32,7 @@ export class BookServiceImpl implements BookService {
   ) {}
 
   public async createBook(input: CreateBookPayload): Promise<Book> {
-    const { unitOfWork, draft } = PayloadFactory.create(createBookPayloadSchema, input);
+    const { unitOfWork, draft } = Validator.validate(createBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating book...', context: { ...draft } });
 
@@ -48,7 +48,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBook(input: FindBookPayload): Promise<Book> {
-    const { unitOfWork, bookId } = PayloadFactory.create(findBookPayloadSchema, input);
+    const { unitOfWork, bookId } = Validator.validate(findBookPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -64,7 +64,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBooks(input: FindBooksPayload): Promise<Book[]> {
-    const { unitOfWork, filters, pagination } = PayloadFactory.create(findBooksPayloadSchema, input);
+    const { unitOfWork, filters, pagination } = Validator.validate(findBooksPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -76,10 +76,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBooksByAuthorId(input: FindBooksByAuthorIdPayload): Promise<Book[]> {
-    const { unitOfWork, authorId, filters, pagination } = PayloadFactory.create(
-      findBooksByAuthorIdPayloadSchema,
-      input,
-    );
+    const { unitOfWork, authorId, filters, pagination } = Validator.validate(findBooksByAuthorIdPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
@@ -91,7 +88,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async findBooksByCategoryId(input: FindBooksByCategoryIdPayload): Promise<Book[]> {
-    const { unitOfWork, categoryId, filters, pagination } = PayloadFactory.create(
+    const { unitOfWork, categoryId, filters, pagination } = Validator.validate(
       findBooksByCategoryIdPayloadSchema,
       input,
     );
@@ -106,7 +103,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async updateBook(input: UpdateBookPayload): Promise<Book> {
-    const { unitOfWork, bookId, draft } = PayloadFactory.create(updateBookPayloadSchema, input);
+    const { unitOfWork, bookId, draft } = Validator.validate(updateBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Updating book...', context: { bookId, ...draft } });
 
@@ -122,7 +119,7 @@ export class BookServiceImpl implements BookService {
   }
 
   public async deleteBook(input: DeleteBookPayload): Promise<void> {
-    const { unitOfWork, bookId } = PayloadFactory.create(deleteBookPayloadSchema, input);
+    const { unitOfWork, bookId } = Validator.validate(deleteBookPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Deleting book...', context: { bookId } });
 

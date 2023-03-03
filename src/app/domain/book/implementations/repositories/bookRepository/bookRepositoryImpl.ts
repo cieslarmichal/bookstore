@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { BookQueryBuilder } from './bookQueryBuilder';
-import { PayloadFactory } from '../../../../../common/validator/implementations/payloadFactory';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Book } from '../../../contracts/book';
 import { BookEntity } from '../../../contracts/bookEntity';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';
@@ -26,7 +26,7 @@ export class BookRepositoryImpl implements BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<Book> {
-    const { id, title, isbn, releaseYear, format, language, price, description } = PayloadFactory.create(
+    const { id, title, isbn, releaseYear, format, language, price, description } = Validator.validate(
       createOnePayloadSchema,
       input,
     );
@@ -45,7 +45,7 @@ export class BookRepositoryImpl implements BookRepository {
   }
 
   public async findOne(input: FindOnePayload): Promise<Book | null> {
-    const { id } = PayloadFactory.create(findOnePayloadSchema, input);
+    const { id } = Validator.validate(findOnePayloadSchema, input);
 
     const bookEntity = await this.entityManager.findOne(BookEntity, { where: { id } });
 
@@ -57,7 +57,7 @@ export class BookRepositoryImpl implements BookRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Book[]> {
-    const { authorId, categoryId, filters, pagination } = PayloadFactory.create(findManyPayloadSchema, input);
+    const { authorId, categoryId, filters, pagination } = Validator.validate(findManyPayloadSchema, input);
 
     let bookQueryBuilder = new BookQueryBuilder(this.entityManager);
 
@@ -84,7 +84,7 @@ export class BookRepositoryImpl implements BookRepository {
     const {
       id,
       draft: { description, price },
-    } = PayloadFactory.create(updateOnePayloadSchema, input);
+    } = Validator.validate(updateOnePayloadSchema, input);
 
     const bookEntity = await this.findOne({ id });
 
@@ -110,7 +110,7 @@ export class BookRepositoryImpl implements BookRepository {
   }
 
   public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = PayloadFactory.create(deleteOnePayloadSchema, input);
+    const { id } = Validator.validate(deleteOnePayloadSchema, input);
 
     const bookEntity = await this.findOne({ id });
 
