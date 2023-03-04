@@ -14,6 +14,7 @@ import { InventoryController } from './inventory/implementations/inventoryContro
 import { OrderController } from './order/implementations/orderController';
 import { ReviewController } from './review/implementations/reviewController';
 import { UserController } from './user/implementations/userController';
+import { WhishlistController } from './whishlist/implementations/whishlistController';
 import { DependencyInjectionModule } from '../libs/dependencyInjection/contracts/dependencyInjectionModule';
 import { DependencyInjectionContainer } from '../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
@@ -54,5 +55,7 @@ export class IntegrationsModule implements DependencyInjectionModule {
     container.bindToConstructor<InventoryController>(integrationsSymbols.inventoryController, InventoryController);
 
     container.bindToConstructor<ReviewController>(integrationsSymbols.reviewController, ReviewController);
+
+    container.bindToConstructor<WhishlistController>(integrationsSymbols.whishlistController, WhishlistController);
   }
 }

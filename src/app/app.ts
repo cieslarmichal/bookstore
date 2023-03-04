@@ -28,6 +28,8 @@ import { ReviewEntity } from './domain/review/contracts/reviewEntity';
 import { ReviewModule } from './domain/review/reviewModule';
 import { UserEntity } from './domain/user/contracts/userEntity';
 import { UserModule } from './domain/user/userModule';
+import { WhishlistEntryEntity } from './domain/whishlist/contracts/whishlistEntryEntity';
+import { WhishlistModule } from './domain/whishlist/whishlistModule';
 import { AddressController } from './integrations/address/implementations/addressController';
 import { AuthorController } from './integrations/author/implementations/authorController';
 import { AuthorBookController } from './integrations/authorBook/implementations/authorBookController';
@@ -44,6 +46,7 @@ import { InventoryController } from './integrations/inventory/implementations/in
 import { OrderController } from './integrations/order/implementations/orderController';
 import { ReviewController } from './integrations/review/implementations/reviewController';
 import { UserController } from './integrations/user/implementations/userController';
+import { WhishlistController } from './integrations/whishlist/implementations/whishlistController';
 import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from './libs/logger/loggerModule';
 import { PostgresModule } from './libs/postgres/postgresModule';
@@ -84,6 +87,7 @@ export class App {
       OrderEntity,
       InventoryEntity,
       ReviewEntity,
+      WhishlistEntryEntity,
     ];
 
     const container = await DependencyInjectionContainerFactory.create({
@@ -105,6 +109,7 @@ export class App {
         new OrderModule(),
         new InventoryModule(),
         new ReviewModule(),
+        new WhishlistModule(),
       ],
     });
 
@@ -124,6 +129,7 @@ export class App {
     const orderController = container.get<OrderController>(integrationsSymbols.orderController);
     const inventoryController = container.get<InventoryController>(integrationsSymbols.inventoryController);
     const reviewController = container.get<ReviewController>(integrationsSymbols.reviewController);
+    const whishlistController = container.get<WhishlistController>(integrationsSymbols.whishlistController);
 
     this.instance.use(json());
     this.instance.use(urlencoded({ extended: false }));
@@ -141,6 +147,7 @@ export class App {
     this.instance.use('/', orderController.router);
     this.instance.use('/', inventoryController.router);
     this.instance.use('/', reviewController.router);
+    this.instance.use('/', whishlistController.router);
 
     this.instance.use(errorMiddleware);
   }

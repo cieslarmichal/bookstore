@@ -47,6 +47,8 @@ import { UserEntityTestFactory } from '../../../domain/user/tests/factories/user
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
 import { userSymbols } from '../../../domain/user/userSymbols';
+import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
+import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -90,6 +92,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
       OrderEntity,
       InventoryEntity,
       ReviewEntity,
+      WhishlistEntryEntity,
     ],
   });
   const userModuleConfig = new UserModuleConfigTestFactory().create();
@@ -117,6 +120,7 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
         new OrderModule(),
         new InventoryModule(),
         new ReviewModule(),
+        new WhishlistModule(),
       ],
     });
 

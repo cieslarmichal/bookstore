@@ -14,4 +14,5 @@ export const integrationsSymbols = {
   orderController: Symbol('orderController'),
   inventoryController: Symbol('inventoryController'),
   reviewController: Symbol('reviewController'),
+  whishlistController: Symbol('whishlistController'),
 };
