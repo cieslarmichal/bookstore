@@ -1,4 +1,5 @@
-import { Schema, SchemaType } from '@libs/validator';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
 
 export const httpRequestSchema = Schema.object({
   body: Schema.any(),

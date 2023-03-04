@@ -1,4 +1,4 @@
-import { HttpRoute } from './httpRoute.js';
+import { HttpRoute } from './httpRoute';
 
 export abstract class HttpController {
   public abstract readonly basePath: string;

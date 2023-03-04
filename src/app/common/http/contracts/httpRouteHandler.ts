@@ -1,4 +1,4 @@
-import { HttpRequest } from './httpRequest.js';
-import { HttpResponse } from './httpResponse.js';
+import { HttpRequest } from './httpRequest';
+import { HttpResponse } from './httpResponse';
 
 export type HttpRouteHandler = (request: HttpRequest) => Promise<HttpResponse>;

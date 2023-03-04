@@ -104,4 +104,16 @@ export class Schema {
   public static unsafeType<T>(): ZodType<T> {
     return z.any();
   }
+
+  public static union<T extends [ZodTypeAny, ZodTypeAny, ...ZodTypeAny[]]>(types: T): z.ZodUnion<T> {
+    return z.union(types);
+  }
+
+  public static promise<T extends ZodTypeAny>(value: T): z.ZodPromise<T> {
+    return z.promise(value);
+  }
+
+  public static tuple<T extends [] | [ZodTypeAny, ...ZodTypeAny[]]>(types: T): ZodTuple<T> {
+    return z.tuple(types);
+  }
 }

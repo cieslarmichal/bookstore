@@ -1,11 +1,12 @@
-import { Schema, SchemaType, Validator } from '@libs/validator';
-
-import { HttpMethodName } from './httpMethodName.js';
-import { httpRequestSchema } from './httpRequest.js';
-import { HttpRequestSchema, httpRequestSchemaSchema } from './httpRequestSchema.js';
-import { httpResponseSchema } from './httpResponse.js';
-import { HttpResponseSchema, httpResponseSchemaSchema } from './httpResponseSchema.js';
-import { HttpRouteHandler } from './httpRouteHandler.js';
+import { HttpMethodName } from './httpMethodName';
+import { httpRequestSchema } from './httpRequest';
+import { HttpRequestSchema, httpRequestSchemaSchema } from './httpRequestSchema';
+import { httpResponseSchema } from './httpResponse';
+import { HttpResponseSchema, httpResponseSchemaSchema } from './httpResponseSchema';
+import { HttpRouteHandler } from './httpRouteHandler';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { Validator } from '../../../libs/validator/implementations/validator';
 
 const payloadSchema = Schema.object({
   method: Schema.enum(HttpMethodName),

@@ -1,4 +1,6 @@
-import { ZodSchema, Schema, SchemaType } from '@libs/validator';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { ZodSchema } from '../../../libs/validator/contracts/zodSchema';
+import { Schema } from '../../../libs/validator/implementations/schema';
 
 export const httpResponseSchemaSchema = Schema.object({
   bodySchema: Schema.unsafeType<ZodSchema>(),
