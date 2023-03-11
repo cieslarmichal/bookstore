@@ -38,7 +38,7 @@ import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/fact
 import { CustomerEntity } from '../../../../customerModule/contracts/customerEntity';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { LineItemEntity } from '../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { OrderEntity } from '../../../../order/contracts/orderEntity';
+import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
 import { UserEntity } from '../../../../user/contracts/userEntity';
 import { BookRepositoryFactory } from '../../../application/repositories/bookRepository/bookRepositoryFactory';
