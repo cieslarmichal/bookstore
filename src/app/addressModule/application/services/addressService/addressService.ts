@@ -3,7 +3,7 @@ import { DeleteAddressPayload } from './payloads/deleteAddressPayload';
 import { FindAddressesPayload } from './payloads/findAddressesPayload';
 import { FindAddressPayload } from './payloads/findAddressPayload';
 import { UpdateAddressPayload } from './payloads/updateAddressPayload';
-import { Address } from '../../../domain/entities/address';
+import { Address } from '../../../domain/entities/address/address';
 
 export interface AddressService {
   createAddress(input: CreateAddressPayload): Promise<Address>;

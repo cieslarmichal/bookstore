@@ -11,7 +11,7 @@ import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
 import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { authorModuleSymbols } from '../../../authorModuleSymbols';
-import { Author } from '../../../domain/entities/author';
+import { Author } from '../../../domain/entities/author/author';
 import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
 import { AuthorRepositoryFactory } from '../../repositories/authorRepository/authorRepositoryFactory';
 

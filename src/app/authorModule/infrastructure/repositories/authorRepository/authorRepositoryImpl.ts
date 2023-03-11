@@ -25,7 +25,7 @@ import {
   UpdateOnePayload,
   updateOnePayloadSchema,
 } from '../../../application/repositories/authorRepository/payloads/updateOnePayload';
-import { Author } from '../../../domain/entities/author';
+import { Author } from '../../../domain/entities/author/author';
 import { AuthorNotFoundError } from '../../errors/authorNotFoundError';
 
 export class AuthorRepositoryImpl implements AuthorRepository {

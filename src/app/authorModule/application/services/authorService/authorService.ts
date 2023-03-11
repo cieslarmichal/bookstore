@@ -4,7 +4,7 @@ import { FindAuthorPayload } from './payloads/findAuthorPayload';
 import { FindAuthorsByBookIdPayload } from './payloads/findAuthorsByBookIdPayload';
 import { FindAuthorsPayload } from './payloads/findAuthorsPayload';
 import { UpdateAuthorPayload } from './payloads/updateAuthorPayload';
-import { Author } from '../../../domain/entities/author';
+import { Author } from '../../../domain/entities/author/author';
 
 export interface AuthorService {
   createAuthor(input: CreateAuthorPayload): Promise<Author>;

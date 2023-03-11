@@ -1,18 +1,33 @@
-import { AddressService } from './addressService';
-import { CreateAddressPayload, createAddressPayloadSchema } from './payloads/createAddressPayload';
-import { DeleteAddressPayload, deleteAddressPayloadSchema } from './payloads/deleteAddressPayload';
-import { FindAddressesPayload, findAddressesPayloadSchema } from './payloads/findAddressesPayload';
-import { FindAddressPayload, findAddressPayloadSchema } from './payloads/findAddressPayload';
-import { UpdateAddressPayload, updateAddressPayloadSchema } from './payloads/updateAddressPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
+import { LoggerService } from '../../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../../libs/logger/loggerSymbols';
+import { UuidGenerator } from '../../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { addressModuleSymbols } from '../../../addressModuleSymbols';
+import { AddressRepositoryFactory } from '../../../application/repositories/addressRepository/addressRepositoryFactory';
+import { AddressService } from '../../../contracts/services/addressService/addressService';
+import {
+  CreateAddressPayload,
+  createAddressPayloadSchema,
+} from '../../../contracts/services/addressService/createAddressPayload';
+import {
+  DeleteAddressPayload,
+  deleteAddressPayloadSchema,
+} from '../../../contracts/services/addressService/deleteAddressPayload';
+import {
+  FindAddressesPayload,
+  findAddressesPayloadSchema,
+} from '../../../contracts/services/addressService/findAddressesPayload';
+import {
+  FindAddressPayload,
+  findAddressPayloadSchema,
+} from '../../../contracts/services/addressService/findAddressPayload';
+import {
+  UpdateAddressPayload,
+  updateAddressPayloadSchema,
+} from '../../../contracts/services/addressService/updateAddressPayload';
 import { Address } from '../../../domain/entities/address/address';
 import { AddressNotFoundError } from '../../../infrastructure/errors/addressNotFoundError';
-import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory';
 
 @Injectable()
 export class AddressServiceImpl implements AddressService {

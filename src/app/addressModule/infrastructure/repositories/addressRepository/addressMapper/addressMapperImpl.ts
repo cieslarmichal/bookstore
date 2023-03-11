@@ -1,6 +1,6 @@
 import { AddressMapper } from './addressMapper';
 import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
-import { Address } from '../../../../domain/entities/address';
+import { Address } from '../../../../domain/entities/address/address';
 import { AddressEntity } from '../addressEntity/addressEntity';
 
 @Injectable()
