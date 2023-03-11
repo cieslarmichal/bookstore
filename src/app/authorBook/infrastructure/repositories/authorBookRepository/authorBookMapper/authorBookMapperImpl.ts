@@ -1,0 +1,15 @@
+import { AuthorBookMapper } from './authorBookMapper';
+import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
+import { AuthorBook } from '../../../../domain/entities/authorBook';
+import { AuthorBookEntity } from '../authorBookEntity/authorBookEntity';
+
+@Injectable()
+export class AuthorBookMapperImpl implements AuthorBookMapper {
+  public map({ id, authorId, bookId }: AuthorBookEntity): AuthorBook {
+    return new AuthorBook({
+      id,
+      authorId,
+      bookId,
+    });
+  }
+}
