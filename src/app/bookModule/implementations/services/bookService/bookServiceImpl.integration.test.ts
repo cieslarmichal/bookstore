@@ -36,7 +36,7 @@ import { categoryModuleSymbols } from '../../../../categoryModule/categoryModule
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerEntity } from '../../../../customerModule/contracts/customerEntity';
-import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
+import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
 import { OrderEntity } from '../../../../order/contracts/orderEntity';
 import { ReviewEntity } from '../../../../review/contracts/reviewEntity';
