@@ -1,29 +1,32 @@
 import { EntityManager } from 'typeorm';
 
+import { AddressEntity } from './addressEntity/addressEntity';
+import { AddressMapper } from './addressMapper/addressMapper';
 import { AddressQueryBuilder } from './addressQueryBuilder';
-import { Validator } from '../../../../../../libs/validator/implementations/validator';
-import { Address } from '../../../contracts/address';
-import { AddressEntity } from '../../../contracts/addressEntity';
-import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
-import { AddressRepository } from '../../../contracts/repositories/addressRepository/addressRepository';
+import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { AddressRepository } from '../../../application/repositories/addressRepository/addressRepository';
 import {
   CreateOnePayload,
   createOnePayloadSchema,
-} from '../../../contracts/repositories/addressRepository/createOnePayload';
+} from '../../../application/repositories/addressRepository/payloads/createOnePayload';
 import {
   DeleteOnePayload,
   deleteOnePayloadSchema,
-} from '../../../contracts/repositories/addressRepository/deleteOnePayload';
+} from '../../../application/repositories/addressRepository/payloads/deleteOnePayload';
 import {
   FindManyPayload,
   findManyPayloadSchema,
-} from '../../../contracts/repositories/addressRepository/findManyPayload';
-import { FindOnePayload, findOnePayloadSchema } from '../../../contracts/repositories/addressRepository/findOnePayload';
+} from '../../../application/repositories/addressRepository/payloads/findManyPayload';
+import {
+  FindOnePayload,
+  findOnePayloadSchema,
+} from '../../../application/repositories/addressRepository/payloads/findOnePayload';
 import {
   UpdateOnePayload,
   updateOnePayloadSchema,
-} from '../../../contracts/repositories/addressRepository/updateOnePayload';
-import { AddressNotFoundError } from '../../../errors/addressNotFoundError';
+} from '../../../application/repositories/addressRepository/payloads/updateOnePayload';
+import { Address } from '../../../domain/entities/address';
+import { AddressNotFoundError } from '../../errors/addressNotFoundError';
 
 export class AddressRepositoryImpl implements AddressRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly addressMapper: AddressMapper) {}

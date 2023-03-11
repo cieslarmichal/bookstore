@@ -1,19 +1,19 @@
 import 'reflect-metadata';
 
 import { AddressModule } from './addressModule';
-import { addressSymbols } from './addressSymbols';
-import { AddressRepositoryFactory } from './contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
-import { AddressMapper } from './contracts/mappers/addressMapper/addressMapper';
-import { AddressService } from './contracts/services/addressService/addressService';
-import { AddressRepositoryFactoryImpl } from './implementations/factories/addressRepositoryFactory/addressRepositoryFactoryImpl';
-import { AddressMapperImpl } from './implementations/mappers/addressMapper/addressMapperImpl';
-import { AddressServiceImpl } from './implementations/services/addressService/addressServiceImpl';
-import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { addressModuleSymbols } from './addressModuleSymbols';
+import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
+import { AddressService } from './application/services/addressService/addressService';
+import { AddressServiceImpl } from './application/services/addressService/addressServiceImpl';
+import { AddressMapper } from './infrastructure/repositories/addressRepository/addressMapper/addressMapper';
+import { AddressMapperImpl } from './infrastructure/repositories/addressRepository/addressMapper/addressMapperImpl';
+import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 
 describe('AddressModule', () => {
   let container: DependencyInjectionContainer;
@@ -30,12 +30,12 @@ describe('AddressModule', () => {
   it('declares bindings', async () => {
     expect.assertions(3);
 
-    expect(container.get<AddressMapper>(addressSymbols.addressMapper)).toBeInstanceOf(AddressMapperImpl);
+    expect(container.get<AddressMapper>(addressModuleSymbols.addressMapper)).toBeInstanceOf(AddressMapperImpl);
 
-    expect(container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<AddressRepositoryFactory>(addressModuleSymbols.addressRepositoryFactory)).toBeInstanceOf(
       AddressRepositoryFactoryImpl,
     );
 
-    expect(container.get<AddressService>(addressSymbols.addressService)).toBeInstanceOf(AddressServiceImpl);
+    expect(container.get<AddressService>(addressModuleSymbols.addressService)).toBeInstanceOf(AddressServiceImpl);
   });
 });

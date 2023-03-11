@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { AddressEntity } from '../../../contracts/addressEntity';
+import { AddressEntity } from '../../../infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 
 export class AddressEntityTestFactory {
   public create(input: Partial<AddressEntity> = {}): AddressEntity {

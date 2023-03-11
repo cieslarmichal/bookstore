@@ -1,8 +1,8 @@
 import { EntityManager } from 'typeorm';
 
-import { Filter } from '../../../../../../common/types/contracts/filter';
-import { QueryBuilder } from '../../../../../../common/types/implementations/queryBuilder';
-import { AddressEntity } from '../../../contracts/addressEntity';
+import { AddressEntity } from './addressEntity/addressEntity';
+import { Filter } from '../../../../../common/types/contracts/filter';
+import { QueryBuilder } from '../../../../../common/types/implementations/queryBuilder';
 
 export class AddressQueryBuilder extends QueryBuilder<AddressEntity> {
   public constructor(entityManager: EntityManager) {

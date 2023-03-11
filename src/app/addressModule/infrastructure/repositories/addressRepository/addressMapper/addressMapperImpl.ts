@@ -1,7 +1,7 @@
+import { AddressMapper } from './addressMapper';
 import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
-import { Address } from '../../../contracts/address';
-import { AddressEntity } from '../../../contracts/addressEntity';
-import { AddressMapper } from '../../../contracts/mappers/addressMapper/addressMapper';
+import { Address } from '../../../../domain/entities/address';
+import { AddressEntity } from '../addressEntity/addressEntity';
 
 @Injectable()
 export class AddressMapperImpl implements AddressMapper {
