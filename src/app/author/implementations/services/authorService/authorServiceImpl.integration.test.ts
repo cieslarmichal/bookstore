@@ -32,7 +32,7 @@ import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repo
 import { LineItemEntity } from '../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-import { UserEntity } from '../../../../user/contracts/userEntity';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { AuthorModule } from '../../../authorModule';
 import { authorSymbols } from '../../../authorSymbols';
 import { AuthorEntity } from '../../../contracts/authorEntity';

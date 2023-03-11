@@ -25,7 +25,7 @@ import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { LineItemEntity } from '../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-import { UserEntity } from '../../../../user/contracts/userEntity';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { InventoryRepositoryFactory } from '../../../contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../contracts/inventoryEntity';
 import { InventoryService } from '../../../contracts/services/inventoryService/inventoryService';

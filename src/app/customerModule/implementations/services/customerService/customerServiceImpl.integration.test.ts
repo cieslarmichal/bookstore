@@ -21,12 +21,12 @@ import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repo
 import { LineItemEntity } from '../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-import { UserEntity } from '../../../../user/contracts/userEntity';
-import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { UserModuleConfigTestFactory } from '../../../../user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-import { UserModule } from '../../../../user/userModule';
-import { userSymbols } from '../../../../user/userSymbols';
+import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModuleConfigTestFactory } from '../../../../userModule/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
+import { UserModule } from '../../../../userModule/userModule';
+import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
 import { CustomerRepositoryFactory } from '../../../application/repositories/customerRepository/customerRepositoryFactory';
 import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
@@ -81,7 +81,7 @@ describe('CustomerServiceImpl', () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
       customerModuleSymbols.customerRepositoryFactory,
     );
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
 
     await dataSource.initialize();

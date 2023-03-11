@@ -4,8 +4,8 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { EmailAlreadySetError } from '../../../domain/user/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/user/errors/phoneNumberAlreadySetError';
-import { UserAlreadyExistsError } from '../../../domain/user/errors/userAlreadyExistsError';
 import { UserNotFoundError } from '../../../domain/user/errors/userNotFoundError';
+import { UserAlreadyExistsError } from '../../../userModule/infrastructure/errors/userAlreadyExistsError';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 
 export function userErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {

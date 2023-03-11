@@ -40,12 +40,12 @@ import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModule
 import { LineItemEntityTestFactory } from '../../../../lineItemModule/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-import { UserRepositoryFactory } from '../../../../user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-import { UserEntity } from '../../../../user/contracts/userEntity';
-import { UserEntityTestFactory } from '../../../../user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { UserModuleConfigTestFactory } from '../../../../user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-import { UserModule } from '../../../../user/userModule';
-import { userSymbols } from '../../../../user/userSymbols';
+import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModuleConfigTestFactory } from '../../../../userModule/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
+import { UserModule } from '../../../../userModule/userModule';
+import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
 import { CartModule } from '../../../cartModule';
 import { cartSymbols } from '../../../cartSymbols';
 import { CartEntity } from '../../../contracts/cartEntity';
@@ -115,7 +115,7 @@ describe('CartServiceImpl', () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
       customerModuleSymbols.customerRepositoryFactory,
     );
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
       inventoryModuleSymbols.inventoryRepositoryFactory,
