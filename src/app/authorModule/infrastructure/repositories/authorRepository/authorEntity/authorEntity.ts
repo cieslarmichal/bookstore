@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
-import { AuthorBookEntity } from '../../../../../authorBook/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
+import { AuthorBookEntity } from '../../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 
 export const authorTableName = 'authors';
 

@@ -2,6 +2,7 @@ import { AuthorRepositoryFactory } from './application/repositories/authorReposi
 import { AuthorService } from './application/services/authorService/authorService';
 import { AuthorServiceImpl } from './application/services/authorService/authorServiceImpl';
 import { authorModuleSymbols } from './authorModuleSymbols';
+import { AuthorController } from './infrastructure/httpControllers/authorController';
 import { AuthorMapper } from './infrastructure/repositories/authorRepository/authorMapper/authorMapper';
 import { AuthorMapperImpl } from './infrastructure/repositories/authorRepository/authorMapper/authorMapperImpl';
 import { AuthorRepositoryFactoryImpl } from './infrastructure/repositories/authorRepository/authorRepositoryFactoryImpl';
@@ -18,5 +19,7 @@ export class AuthorModule implements DependencyInjectionModule {
     );
 
     container.bindToConstructor<AuthorService>(authorModuleSymbols.authorService, AuthorServiceImpl);
+
+    container.bindToConstructor<AuthorController>(authorModuleSymbols.authorController, AuthorController);
   }
 }

@@ -5,6 +5,7 @@ import { AuthorService } from './application/services/authorService/authorServic
 import { AuthorServiceImpl } from './application/services/authorService/authorServiceImpl';
 import { AuthorModule } from './authorModule';
 import { authorModuleSymbols } from './authorModuleSymbols';
+import { AuthorController } from './infrastructure/httpControllers/authorController';
 import { AuthorMapper } from './infrastructure/repositories/authorRepository/authorMapper/authorMapper';
 import { AuthorMapperImpl } from './infrastructure/repositories/authorRepository/authorMapper/authorMapperImpl';
 import { AuthorRepositoryFactoryImpl } from './infrastructure/repositories/authorRepository/authorRepositoryFactoryImpl';
@@ -28,8 +29,6 @@ describe('AuthorModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<AuthorMapper>(authorModuleSymbols.authorMapper)).toBeInstanceOf(AuthorMapperImpl);
 
     expect(container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory)).toBeInstanceOf(
@@ -37,5 +36,7 @@ describe('AuthorModule', () => {
     );
 
     expect(container.get<AuthorService>(authorModuleSymbols.authorService)).toBeInstanceOf(AuthorServiceImpl);
+
+    expect(container.get<AuthorController>(authorModuleSymbols.authorController)).toBeInstanceOf(AuthorController);
   });
 });

@@ -2,29 +2,27 @@ import { NextFunction, Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { authorErrorMiddleware } from './authorErrorMiddleware';
+import { CreateAuthorPayload, createAuthorPayloadSchema } from './payloads/createAuthorPayload';
+import { DeleteAuthorPayload, deleteAuthorPayloadSchema } from './payloads/deleteAuthorPayload';
+import { FindAuthorPayload, findAuthorPayloadSchema } from './payloads/findAuthorPayload';
+import { findAuthorsFilters } from './payloads/findAuthorsFilters';
+import { FindAuthorsPayload, findAuthorsPayloadSchema } from './payloads/findAuthorsPayload';
+import { UpdateAuthorPayload, updateAuthorPayloadSchema } from './payloads/updateAuthorPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { authorSymbols } from '../../../domain/author/authorSymbols';
-import { Author } from '../../../domain/author/contracts/author';
-import { AuthorService } from '../../../domain/author/contracts/services/authorService/authorService';
-import { CreateAuthorDraft } from '../../../domain/author/contracts/services/authorService/createAuthorDraft';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateAuthorPayload, createAuthorPayloadSchema } from '../contracts/createAuthorPayload';
-import { DeleteAuthorPayload, deleteAuthorPayloadSchema } from '../contracts/deleteAuthorPayload';
-import { FindAuthorPayload, findAuthorPayloadSchema } from '../contracts/findAuthorPayload';
-import { findAuthorsFilters } from '../contracts/findAuthorsFilters';
-import { FindAuthorsPayload, findAuthorsPayloadSchema } from '../contracts/findAuthorsPayload';
-import { UpdateAuthorPayload, updateAuthorPayloadSchema } from '../contracts/updateAuthorPayload';
+import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { AuthorService } from '../../application/services/authorService/authorService';
+import { CreateAuthorDraft } from '../../application/services/authorService/payloads/createAuthorDraft';
+import { Author } from '../../domain/entities/author/author';
 
 @Injectable()
 export class AuthorController {

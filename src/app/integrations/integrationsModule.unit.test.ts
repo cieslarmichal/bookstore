@@ -70,8 +70,6 @@ describe('IntegrationsModule', () => {
   it('declares bindings', async () => {
     expect(container.get<BookController>(integrationsSymbols.bookController)).toBeInstanceOf(BookController);
 
-    expect(container.get<AuthorController>(integrationsSymbols.authorController)).toBeInstanceOf(AuthorController);
-
     expect(container.get<UserController>(integrationsSymbols.userController)).toBeInstanceOf(UserController);
 
     expect(container.get<CategoryController>(integrationsSymbols.categoryController)).toBeInstanceOf(

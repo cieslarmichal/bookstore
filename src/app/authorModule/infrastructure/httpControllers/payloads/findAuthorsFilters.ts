@@ -1,4 +1,4 @@
-import { FilterSymbol } from '../../../../common/types/contracts/filterSymbol';
+import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
 
 export const findAuthorsFilters: Record<string, FilterSymbol[]> = {
   firstName: [FilterSymbol.equal, FilterSymbol.like],
