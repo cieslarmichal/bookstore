@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Entity, PrimaryColumn, Column, ManyToOne, Unique } from 'typeorm';
 
-import { AuthorEntity } from '../../../../../author/contracts/authorEntity';
-import { BookEntity } from '../../../../../domain/book/contracts/bookEntity';
+import { AuthorEntity } from '../../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
+import { BookEntity } from '../../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
 
 export const authorBooksTableName = 'authorBooks';
 

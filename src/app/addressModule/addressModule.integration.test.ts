@@ -29,8 +29,6 @@ describe('AddressModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<AddressMapper>(addressModuleSymbols.addressMapper)).toBeInstanceOf(AddressMapperImpl);
 
     expect(container.get<AddressRepositoryFactory>(addressModuleSymbols.addressRepositoryFactory)).toBeInstanceOf(

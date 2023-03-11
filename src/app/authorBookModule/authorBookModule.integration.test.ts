@@ -5,6 +5,7 @@ import { AuthorBookService } from './application/services/authorBookService/auth
 import { AuthorBookServiceImpl } from './application/services/authorBookService/authorBookServiceImpl';
 import { AuthorBookModule } from './authorBookModule';
 import { authorBookModuleSymbols } from './authorBookModuleSymbols';
+import { AuthorBookController } from './infrastructure/httpControllers/authorBookController';
 import { AuthorBookMapper } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapper';
 import { AuthorBookMapperImpl } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapperImpl';
 import { AuthorBookRepositoryFactoryImpl } from './infrastructure/repositories/authorBookRepository/authorBookRepositoryFactoryImpl';
@@ -15,7 +16,7 @@ import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories
 import { PostgresModule } from '../../libs/postgres/postgresModule';
 import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { AuthorModule } from '../authorModule/authorModule';
-import { BookModule } from '../domain/book/bookModule';
+import { BookModule } from '../bookModule/bookModule';
 
 describe('AuthorBookModule', () => {
   let container: DependencyInjectionContainer;
@@ -36,8 +37,6 @@ describe('AuthorBookModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<AuthorBookMapper>(authorBookModuleSymbols.authorBookMapper)).toBeInstanceOf(
       AuthorBookMapperImpl,
     );
@@ -48,6 +47,10 @@ describe('AuthorBookModule', () => {
 
     expect(container.get<AuthorBookService>(authorBookModuleSymbols.authorBookService)).toBeInstanceOf(
       AuthorBookServiceImpl,
+    );
+
+    expect(container.get<AuthorBookController>(authorBookModuleSymbols.authorBookController)).toBeInstanceOf(
+      AuthorBookController,
     );
   });
 });

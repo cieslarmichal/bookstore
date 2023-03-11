@@ -78,10 +78,6 @@ describe('IntegrationsModule', () => {
       CategoryController,
     );
 
-    expect(container.get<AuthorBookController>(integrationsSymbols.authorBookController)).toBeInstanceOf(
-      AuthorBookController,
-    );
-
     expect(container.get<BookCategoryController>(integrationsSymbols.bookCategoryController)).toBeInstanceOf(
       BookCategoryController,
     );

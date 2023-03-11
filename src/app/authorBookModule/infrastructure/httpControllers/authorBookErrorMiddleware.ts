@@ -2,10 +2,10 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { AuthorNotFoundError } from '../../../domain/author/errors/authorNotFoundError';
-import { AuthorBookAlreadyExistsError } from '../../../domain/authorBook/errors/authorBookAlreadyExistsError';
-import { AuthorBookNotFoundError } from '../../../domain/authorBook/errors/authorBookNotFoundError';
-import { BookNotFoundError } from '../../../domain/book/errors/bookNotFoundError';
+import { AuthorNotFoundError } from '../../../authorModule/infrastructure/errors/authorNotFoundError';
+import { BookNotFoundError } from '../../../bookModule/infrastructure/errors/bookNotFoundError';
+import { AuthorBookAlreadyExistsError } from '../errors/authorBookAlreadyExistsError';
+import { AuthorBookNotFoundError } from '../errors/authorBookNotFoundError';
 
 export function authorBookErrorMiddleware(
   error: Error,

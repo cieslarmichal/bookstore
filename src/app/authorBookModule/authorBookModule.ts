@@ -2,6 +2,7 @@ import { AuthorBookRepositoryFactory } from './application/repositories/authorBo
 import { AuthorBookService } from './application/services/authorBookService/authorBookService';
 import { AuthorBookServiceImpl } from './application/services/authorBookService/authorBookServiceImpl';
 import { authorBookModuleSymbols } from './authorBookModuleSymbols';
+import { AuthorBookController } from './infrastructure/httpControllers/authorBookController';
 import { AuthorBookMapper } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapper';
 import { AuthorBookMapperImpl } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapperImpl';
 import { AuthorBookRepositoryFactoryImpl } from './infrastructure/repositories/authorBookRepository/authorBookRepositoryFactoryImpl';
@@ -18,5 +19,10 @@ export class AuthorBookModule implements DependencyInjectionModule {
     );
 
     container.bindToConstructor<AuthorBookService>(authorBookModuleSymbols.authorBookService, AuthorBookServiceImpl);
+
+    container.bindToConstructor<AuthorBookController>(
+      authorBookModuleSymbols.authorBookController,
+      AuthorBookController,
+    );
   }
 }

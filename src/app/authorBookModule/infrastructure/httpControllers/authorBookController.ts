@@ -2,30 +2,28 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { authorBookErrorMiddleware } from './authorBookErrorMiddleware';
+import { CreateAuthorBookPayload, createAuthorBookPayloadSchema } from './payloads/createAuthorBookPayload';
+import { DeleteAuthorBookPayload, deleteAuthorBookPayloadSchema } from './payloads/deleteAuthorBookPayload';
+import { FindAuthorsByBookIdPayload, findAuthorsByBookIdPayloadSchema } from './payloads/findAuthorsByBookIdPayload';
+import { FindBooksByAuthorIdPayload, findBooksByAuthorIdPayloadSchema } from './payloads/findBooksByAuthorIdPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { Author } from '../../../domain/author/contracts/author';
-import { authorBookSymbols } from '../../../domain/authorBook/authorBookSymbols';
-import { AuthorBook } from '../../../domain/authorBook/contracts/authorBook';
-import { AuthorBookService } from '../../../domain/authorBook/contracts/services/authorBookService/authorBookService';
-import { Book } from '../../../domain/book/contracts/book';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { findAuthorsFilters } from '../../author/contracts/findAuthorsFilters';
-import { findBooksFilters } from '../../book/contracts/findBooksFilters';
-import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateAuthorBookPayload, createAuthorBookPayloadSchema } from '../contracts/createAuthorBookPayload';
-import { DeleteAuthorBookPayload, deleteAuthorBookPayloadSchema } from '../contracts/deleteAuthorBookPayload';
-import { FindAuthorsByBookIdPayload, findAuthorsByBookIdPayloadSchema } from '../contracts/findAuthorsByBookIdPayload';
-import { FindBooksByAuthorIdPayload, findBooksByAuthorIdPayloadSchema } from '../contracts/findBooksByAuthorIdPayload';
+import { Author } from '../../../authorModule/domain/entities/author/author';
+import { Book } from '../../../bookModule/domain/entities/book/book';
+import { findAuthorsFilters } from '../../../integrations/author/contracts/findAuthorsFilters';
+import { findBooksFilters } from '../../../integrations/book/contracts/findBooksFilters';
+import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { AuthorBookService } from '../../application/services/authorBookService/authorBookService';
+import { AuthorBook } from '../../domain/entities/authorBook/authorBook';
 
 @Injectable()
 export class AuthorBookController {
