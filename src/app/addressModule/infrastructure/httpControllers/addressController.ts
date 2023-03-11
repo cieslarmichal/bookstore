@@ -2,36 +2,35 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { addressErrorMiddleware } from './addressErrorMiddleware';
+import { CreateAddressPayload, createAddressPayloadSchema } from './payloads/createAddressPayload';
+import { DeleteAddressPayload, deleteAddressPayloadSchema } from './payloads/deleteAddressPayload';
+import { findAddressesFilters } from './payloads/findAddressesFilters';
+import { FindAddressesPayload, findAddressesPayloadSchema } from './payloads/findAddressesPayload';
+import { FindAddressPayload, findAddressPayloadSchema } from './payloads/findAddressPayload';
+import { UpdateAddressPayload, updateAddressPayloadSchema } from './payloads/updateAddressPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { Filter } from '../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../common/types/contracts/filterName';
-import { addressSymbols } from '../../../domain/address/addressSymbols';
-import { Address } from '../../../domain/address/contracts/address';
-import { AddressService } from '../../../domain/address/contracts/services/addressService/addressService';
-import { CreateAddressDraft } from '../../../domain/address/contracts/services/addressService/createAddressDraft';
-import { Customer } from '../../../domain/customer/contracts/customer';
-import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
-import { customerSymbols } from '../../../domain/customer/customerSymbols';
-import { UserRole } from '../../../domain/user/contracts/userRole';
 import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AccessTokenData } from '../../accessTokenData';
-import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateAddressPayload, createAddressPayloadSchema } from '../contracts/createAddressPayload';
-import { DeleteAddressPayload, deleteAddressPayloadSchema } from '../contracts/deleteAddressPayload';
-import { findAddressesFilters } from '../contracts/findAddressesFilters';
-import { FindAddressesPayload, findAddressesPayloadSchema } from '../contracts/findAddressesPayload';
-import { FindAddressPayload, findAddressPayloadSchema } from '../contracts/findAddressPayload';
-import { UpdateAddressPayload, updateAddressPayloadSchema } from '../contracts/updateAddressPayload';
+import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
+import { Customer } from '../../../customerModule/domain/entities/customer/customer';
+import { AccessTokenData } from '../../../integrations/accessTokenData';
+import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { CustomerService } from '../../../tests/services/customerService';
+import { UserRole } from '../../../userModule/domain/entities/user/userRole';
+import { addressModuleSymbols } from '../../addressModuleSymbols';
+import { AddressService } from '../../application/services/addressService/addressService';
+import { CreateAddressDraft } from '../../application/services/addressService/payloads/createAddressDraft';
+import { Address } from '../../domain/entities/address/address';
 import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
 import { CustomerIdNotProvidedError } from '../errors/customerIdNotProvidedError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
@@ -45,9 +44,9 @@ export class AddressController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(addressSymbols.addressService)
+    @Inject(addressModuleSymbols.addressService)
     private readonly addressService: AddressService,
-    @Inject(customerSymbols.customerService)
+    @Inject(customerModuleSymbols.customerService)
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

@@ -2,6 +2,7 @@ import { addressModuleSymbols } from './addressModuleSymbols';
 import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
 import { AddressService } from './application/services/addressService/addressService';
 import { AddressServiceImpl } from './application/services/addressService/addressServiceImpl';
+import { AddressController } from './infrastructure/httpControllers/addressController';
 import { AddressMapper } from './infrastructure/repositories/addressRepository/addressMapper/addressMapper';
 import { AddressMapperImpl } from './infrastructure/repositories/addressRepository/addressMapper/addressMapperImpl';
 import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
@@ -18,5 +19,7 @@ export class AddressModule implements DependencyInjectionModule {
     );
 
     container.bindToConstructor<AddressService>(addressModuleSymbols.addressService, AddressServiceImpl);
+
+    container.bindToConstructor<AddressController>(addressModuleSymbols.addressController, AddressController);
   }
 }

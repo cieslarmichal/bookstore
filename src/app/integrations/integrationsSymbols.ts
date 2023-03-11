@@ -1,4 +1,3 @@
-export const integrationsSymbols = {
   authMiddleware: Symbol('authMiddleware'),
   filterDataParser: Symbol('filterDataParser'),
   paginationDataBuilder: Symbol('paginationDataBuilder'),
@@ -15,4 +14,3 @@ export const integrationsSymbols = {
   inventoryController: Symbol('inventoryController'),
   reviewController: Symbol('reviewController'),
   whishlistController: Symbol('whishlistController'),
-};

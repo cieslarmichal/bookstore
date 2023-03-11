@@ -14,6 +14,13 @@ import { InventoryController } from './inventory/implementations/inventoryContro
 import { OrderController } from './order/implementations/orderController';
 import { ReviewController } from './review/implementations/reviewController';
 import { UserController } from './user/implementations/userController';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../libs/unitOfWork/unitOfWorkModule';
 import { AddressModule } from '../domain/address/addressModule';
 import { AuthorModule } from '../domain/author/authorModule';
 import { AuthorBookModule } from '../domain/authorBook/authorBookModule';
@@ -28,13 +35,6 @@ import { OrderModule } from '../domain/order/orderModule';
 import { ReviewModule } from '../domain/review/reviewModule';
 import { UserModuleConfigTestFactory } from '../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../domain/user/userModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../libs/unitOfWork/unitOfWorkModule';
 
 describe('IntegrationsModule', () => {
   let container: DependencyInjectionContainer;
@@ -85,8 +85,6 @@ describe('IntegrationsModule', () => {
     expect(container.get<BookCategoryController>(integrationsSymbols.bookCategoryController)).toBeInstanceOf(
       BookCategoryController,
     );
-
-    expect(container.get<AddressController>(integrationsSymbols.addressController)).toBeInstanceOf(AddressController);
 
     expect(container.get<CustomerController>(integrationsSymbols.customerController)).toBeInstanceOf(
       CustomerController,

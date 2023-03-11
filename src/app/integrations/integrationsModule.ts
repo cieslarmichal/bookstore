@@ -44,8 +44,6 @@ export class IntegrationsModule implements DependencyInjectionModule {
       BookCategoryController,
     );
 
-    container.bindToConstructor<AddressController>(integrationsSymbols.addressController, AddressController);
-
     container.bindToConstructor<CustomerController>(integrationsSymbols.customerController, CustomerController);
 
     container.bindToConstructor<CartController>(integrationsSymbols.cartController, CartController);
