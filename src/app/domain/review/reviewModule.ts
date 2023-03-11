@@ -5,8 +5,8 @@ import { ReviewRepositoryFactoryImpl } from './implementations/factories/reviewR
 import { ReviewMapperImpl } from './implementations/mappers/reviewMapper/reviewMapperImpl';
 import { ReviewServiceImpl } from './implementations/services/reviewService/reviewServiceImpl';
 import { reviewSymbols } from './reviewSymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class ReviewModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

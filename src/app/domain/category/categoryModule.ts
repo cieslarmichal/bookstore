@@ -5,8 +5,8 @@ import { CategoryService } from './contracts/services/categoryService/categorySe
 import { CategoryRepositoryFactoryImpl } from './implementations/factories/categoryRepositoryFactory/categoryRepositoryFactoryImpl';
 import { CategoryMapperImpl } from './implementations/mappers/categoryMapper/categoryMapperImpl';
 import { CategoryServiceImpl } from './implementations/services/categoryService/categoryServiceImpl';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class CategoryModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

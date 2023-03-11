@@ -1,8 +1,8 @@
 import { CartStatus } from './cartStatus';
 import { DeliveryMethod } from './deliveryMethod';
-import { SchemaType } from '../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../libs/validator/implementations/schema';
-import { Validator } from '../../../libs/validator/implementations/validator';
+import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../../libs/validator/implementations/schema';
+import { Validator } from '../../../../libs/validator/implementations/validator';
 import { LineItem } from '../../lineItem/contracts/lineItem';
 
 export const cartInputSchema = Schema.object({

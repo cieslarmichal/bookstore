@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { OrderMapper } from '../../../contracts/mappers/orderMapper/orderMapper';
 import { Order } from '../../../contracts/order';
 import { OrderEntity } from '../../../contracts/orderEntity';

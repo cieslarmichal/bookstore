@@ -13,12 +13,12 @@ import { UserServiceImpl } from './implementations/services/userService/userServ
 import { UserModuleConfigTestFactory } from './tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from './userModule';
 import { userSymbols } from './userSymbols';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 
 describe('UserModule', () => {
   let container: DependencyInjectionContainer;

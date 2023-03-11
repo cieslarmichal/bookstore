@@ -10,8 +10,8 @@ import { TokenServiceImpl } from './implementations/services/tokenService/tokenS
 import { UserServiceImpl } from './implementations/services/userService/userServiceImpl';
 import { UserModuleConfig } from './userModuleConfig';
 import { userSymbols } from './userSymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class UserModule implements DependencyInjectionModule {
   public constructor(private readonly config: UserModuleConfig) {}

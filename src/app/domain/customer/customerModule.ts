@@ -5,8 +5,8 @@ import { customerSymbols } from './customerSymbols';
 import { CustomerRepositoryFactoryImpl } from './implementations/factories/customerRepositoryFactory/customerRepositoryFactoryImpl';
 import { CustomerMapperImpl } from './implementations/mappers/customerMapper/customerMapperImpl';
 import { CustomerServiceImpl } from './implementations/services/customerService/customerServiceImpl';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class CustomerModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

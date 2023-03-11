@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { ReviewMapper } from '../../../contracts/mappers/reviewMapper/reviewMapper';
 import {
   CreateOnePayload,

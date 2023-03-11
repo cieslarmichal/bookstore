@@ -5,8 +5,8 @@ import { InventoryRepositoryFactoryImpl } from './implementations/factories/inve
 import { InventoryMapperImpl } from './implementations/mappers/inventoryMapper/inventoryMapperImpl';
 import { InventoryServiceImpl } from './implementations/services/inventoryService/inventoryServiceImpl';
 import { inventorySymbols } from './inventorySymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class InventoryModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

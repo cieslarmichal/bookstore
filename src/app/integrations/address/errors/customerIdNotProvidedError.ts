@@ -1,4 +1,4 @@
-import { ApplicationError } from '../../../common/errors/contracts/applicationError';
+import { ApplicationError } from '../../../../common/errors/contracts/applicationError';
 
 export class CustomerIdNotProvidedError extends ApplicationError<void> {
   public constructor() {

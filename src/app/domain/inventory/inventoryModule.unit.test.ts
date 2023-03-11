@@ -8,12 +8,12 @@ import { InventoryMapperImpl } from './implementations/mappers/inventoryMapper/i
 import { InventoryServiceImpl } from './implementations/services/inventoryService/inventoryServiceImpl';
 import { InventoryModule } from './inventoryModule';
 import { inventorySymbols } from './inventorySymbols';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 
 describe('InventoryModule', () => {
   let container: DependencyInjectionContainer;

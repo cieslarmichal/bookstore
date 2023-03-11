@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { BookCategory } from '../../../contracts/bookCategory';
 import { BookCategoryEntity } from '../../../contracts/bookCategoryEntity';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';

@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { AuthorQueryBuilder } from './authorQueryBuilder';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { Author } from '../../../contracts/author';
 import { AuthorEntity } from '../../../contracts/authorEntity';
 import { AuthorMapper } from '../../../contracts/mappers/authorMapper/authorMapper';

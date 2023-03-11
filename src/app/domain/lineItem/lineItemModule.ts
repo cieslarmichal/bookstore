@@ -3,8 +3,8 @@ import { LineItemMapper } from './contracts/mappers/lineItemMapper/lineItemMappe
 import { LineItemRepositoryFactoryImpl } from './implementations/factories/lineItemRepositoryFactory/lineItemRepositoryFactoryImpl';
 import { LineItemMapperImpl } from './implementations/mappers/lineItemMapper/lineItemMapperImpl';
 import { lineItemSymbols } from './lineItemSymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class LineItemModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

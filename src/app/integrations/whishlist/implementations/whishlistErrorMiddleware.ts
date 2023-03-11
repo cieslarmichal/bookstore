@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { WhishlistEntryAlreadyExistsError } from '../../../domain/whishlist/errors/whishlistEntryAlreadyExistsError';
 import { WhishlistEntryNotFoundError } from '../../../domain/whishlist/errors/whishlistEntryNotFoundError';
 

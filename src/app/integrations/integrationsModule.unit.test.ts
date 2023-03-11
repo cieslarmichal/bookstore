@@ -28,13 +28,13 @@ import { OrderModule } from '../domain/order/orderModule';
 import { ReviewModule } from '../domain/review/reviewModule';
 import { UserModuleConfigTestFactory } from '../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../domain/user/userModule';
-import { DependencyInjectionContainer } from '../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../libs/unitOfWork/unitOfWorkModule';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../libs/postgres/postgresModule';
+import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../libs/unitOfWork/unitOfWorkModule';
 
 describe('IntegrationsModule', () => {
   let container: DependencyInjectionContainer;

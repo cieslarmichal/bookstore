@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { BookQueryBuilder } from './bookQueryBuilder';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { Book } from '../../../contracts/book';
 import { BookEntity } from '../../../contracts/bookEntity';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';

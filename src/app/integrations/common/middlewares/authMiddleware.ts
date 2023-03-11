@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { userSymbols } from '../../../domain/user/userSymbols';
-import { Inject, Injectable } from '../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { AccessTokenData } from '../../accessTokenData';
 import { LocalsName } from '../../localsName';
 

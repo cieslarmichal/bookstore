@@ -1,4 +1,4 @@
-import { Mapper } from '../../../../../common/types/contracts/mapper';
+import { Mapper } from '../../../../../../common/types/contracts/mapper';
 import { Inventory } from '../../inventory';
 import { InventoryEntity } from '../../inventoryEntity';
 

@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { WhishlistEntryMapper } from '../../../contracts/mappers/whishlistEntryMapper/whishlistEntryMapper';
 import {
   CreateOnePayload,

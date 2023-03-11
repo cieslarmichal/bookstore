@@ -2,13 +2,13 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { customerErrorMiddleware } from './customerErrorMiddleware';
-import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
-import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
-import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
-import { Validator } from '../../../libs/validator/implementations/validator';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';

@@ -7,8 +7,8 @@ import { OrderMapperImpl } from './implementations/mappers/orderMapper/orderMapp
 import { CartValidatorServiceImpl } from './implementations/services/cartValidatorService/cartValidatorServiceImpl';
 import { OrderServiceImpl } from './implementations/services/orderService/orderServiceImpl';
 import { orderSymbols } from './orderSymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class OrderModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

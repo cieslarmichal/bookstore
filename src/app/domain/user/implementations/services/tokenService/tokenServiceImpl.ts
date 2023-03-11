@@ -1,6 +1,6 @@
 import { sign, verify } from 'jsonwebtoken';
 
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { TokenService } from '../../../contracts/services/tokenService/tokenService';
 import { UserModuleConfig } from '../../../userModuleConfig';
 import { userSymbols } from '../../../userSymbols';

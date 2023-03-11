@@ -2,7 +2,7 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { reviewErrorMiddleware } from './reviewErrorMiddleware';
-import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { Customer } from '../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
@@ -11,10 +11,10 @@ import { CreateReviewDraft } from '../../../domain/review/contracts/services/rev
 import { ReviewService } from '../../../domain/review/contracts/services/reviewService/reviewService';
 import { UpdateReviewDraft } from '../../../domain/review/contracts/services/reviewService/updateReviewDraft';
 import { reviewSymbols } from '../../../domain/review/reviewSymbols';
-import { Injectable, Inject } from '../../../libs/dependencyInjection/contracts/decorators';
-import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
-import { Validator } from '../../../libs/validator/implementations/validator';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
+import { Validator } from '../../../../libs/validator/implementations/validator';
 import { AccessTokenData } from '../../accessTokenData';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';

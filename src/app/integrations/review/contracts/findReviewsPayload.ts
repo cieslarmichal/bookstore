@@ -1,6 +1,6 @@
-import { PaginationData } from '../../../common/types/contracts/paginationData';
-import { SchemaType } from '../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../libs/validator/implementations/schema';
+import { PaginationData } from '../../../../common/types/contracts/paginationData';
+import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../../libs/validator/implementations/schema';
 
 export const findReviewsPayloadSchema = Schema.object({
   pagination: Schema.unsafeType<PaginationData>(),

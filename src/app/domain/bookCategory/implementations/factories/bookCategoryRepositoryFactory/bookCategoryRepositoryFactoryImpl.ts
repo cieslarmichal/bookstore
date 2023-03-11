@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { bookCategorySymbols } from '../../../bookCategorySymbols';
 import { BookCategoryRepositoryFactory } from '../../../contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryMapper } from '../../../contracts/mappers/bookCategoryMapper/bookCategoryMapper';

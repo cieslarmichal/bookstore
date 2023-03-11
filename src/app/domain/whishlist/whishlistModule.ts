@@ -5,8 +5,8 @@ import { WhishlistEntryRepositoryFactoryImpl } from './implementations/factories
 import { WhishlistEntryMapperImpl } from './implementations/mappers/whishlistEntryMapper/whishlistEntryMapperImpl';
 import { WhishlistServiceImpl } from './implementations/services/whishlistService/whishlistServiceImpl';
 import { whishlistSymbols } from './whishlistSymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class WhishlistModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

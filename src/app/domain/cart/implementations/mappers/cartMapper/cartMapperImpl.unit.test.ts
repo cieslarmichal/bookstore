@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { CartMapperImpl } from './cartMapperImpl';
-import { DummyFactory } from '../../../../../common/tests/implementations/dummyFactory';
+import { DummyFactory } from '../../../../../../common/tests/implementations/dummyFactory';
 import { LineItemMapper } from '../../../../lineItem/contracts/mappers/lineItemMapper/lineItemMapper';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 

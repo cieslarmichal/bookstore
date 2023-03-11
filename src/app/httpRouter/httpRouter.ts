@@ -6,7 +6,7 @@ import {
   registerControllerRoutesPayloadSchema,
 } from './payloads/registerControllerRoutesPayload.js';
 import { RegisterRoutesPayload, registerRoutesPayloadSchema } from './payloads/registerRoutesPayload.js';
-import { LoggerService } from '../libs/logger/contracts/services/loggerService/loggerService.js';
+import { LoggerService } from '../../libs/logger/contracts/services/loggerService/loggerService.js';
 
 export class HttpRouter {
   private readonly rootPath = '';
@@ -16,8 +16,7 @@ export class HttpRouter {
     this.loggerService = this.container.get<LoggerService>(loggerSymbols.loggerService);
   }
 
-  public registerAllRoutes(): void {
-  }
+  public registerAllRoutes(): void {}
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {
     const { controller } = Validator.validate(registerControllerRoutesPayloadSchema, input);

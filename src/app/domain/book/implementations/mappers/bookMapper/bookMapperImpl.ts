@@ -1,4 +1,4 @@
-import { Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { Book } from '../../../contracts/book';
 import { BookEntity } from '../../../contracts/bookEntity';
 import { BookMapper } from '../../../contracts/mappers/bookMapper/bookMapper';

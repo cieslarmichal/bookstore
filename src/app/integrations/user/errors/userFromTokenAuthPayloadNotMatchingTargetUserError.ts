@@ -1,4 +1,4 @@
-import { ApplicationError } from '../../../common/errors/contracts/applicationError';
+import { ApplicationError } from '../../../../common/errors/contracts/applicationError';
 import { AccessTokenData } from '../../accessTokenData';
 
 interface Context {

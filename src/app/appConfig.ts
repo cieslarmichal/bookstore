@@ -1,4 +1,4 @@
-import { LogLevel } from './libs/logger/contracts/logLevel';
+import { LogLevel } from '../libs/logger/contracts/logLevel';
 
 export interface AppConfig {
   readonly jwtSecret: string;

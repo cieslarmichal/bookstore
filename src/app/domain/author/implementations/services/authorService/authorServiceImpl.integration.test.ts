@@ -2,17 +2,17 @@ import 'reflect-metadata';
 
 import { DataSource } from 'typeorm';
 
-import { EqualFilter } from '../../../../../common/types/contracts/filter';
-import { FilterName } from '../../../../../common/types/contracts/filterName';
-import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
+import { EqualFilter } from '../../../../../../common/types/contracts/filter';
+import { FilterName } from '../../../../../../common/types/contracts/filterName';
+import { FilterSymbol } from '../../../../../../common/types/contracts/filterSymbol';
 import { TestTransactionInternalRunner } from '../../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { DependencyInjectionContainerFactory } from '../../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../../../../libs/postgres/postgresModule';
+import { postgresSymbols } from '../../../../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressEntity } from '../../../../address/contracts/addressEntity';
 import { AuthorBookModule } from '../../../../authorBook/authorBookModule';
 import { authorBookSymbols } from '../../../../authorBook/authorBookSymbols';

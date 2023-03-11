@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { Customer } from '../../../contracts/customer';
 import { CustomerEntity } from '../../../contracts/customerEntity';
 import { CustomerMapper } from '../../../contracts/mappers/customerMapper/customerMapper';

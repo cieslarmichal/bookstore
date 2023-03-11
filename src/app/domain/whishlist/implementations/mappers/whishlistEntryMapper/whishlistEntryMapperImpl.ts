@@ -1,4 +1,4 @@
-import { Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { WhishlistEntryMapper } from '../../../contracts/mappers/whishlistEntryMapper/whishlistEntryMapper';
 import { WhishlistEntry } from '../../../contracts/whishlistEntry';
 import { WhishlistEntryEntity } from '../../../contracts/whishlistEntryEntity';

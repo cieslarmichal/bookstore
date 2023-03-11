@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
+import { LoggerService } from '../../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { loggerSymbols } from '../../../../../../libs/logger/loggerSymbols';
+import { UuidGenerator } from '../../../../../../libs/uuid/implementations/uuidGenerator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { authorSymbols } from '../../../authorSymbols';
 import { Author } from '../../../contracts/author';
 import { AuthorRepositoryFactory } from '../../../contracts/factories/authorRepositoryFactory/authorRepositoryFactory';

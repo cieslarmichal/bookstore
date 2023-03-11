@@ -1,6 +1,6 @@
 import { DeliveryMethod } from '../../../domain/cart/contracts/deliveryMethod';
-import { SchemaType } from '../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../libs/validator/implementations/schema';
+import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../../libs/validator/implementations/schema';
 import { AccessTokenData } from '../../accessTokenData';
 
 export const updateCartPayloadSchema = Schema.object({

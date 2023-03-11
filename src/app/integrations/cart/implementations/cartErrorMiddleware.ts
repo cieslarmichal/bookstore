@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { CartNotFoundError } from '../../../domain/cart/errors/cartNotFoundError';
 import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';

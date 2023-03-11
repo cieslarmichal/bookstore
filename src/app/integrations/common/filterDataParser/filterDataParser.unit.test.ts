@@ -10,9 +10,9 @@ import {
   GreaterThanOrEqualFilter,
   BetweenFilter,
   LikeFilter,
-} from '../../../common/types/contracts/filter';
-import { FilterName } from '../../../common/types/contracts/filterName';
-import { FilterSymbol } from '../../../common/types/contracts/filterSymbol';
+} from '../../../../common/types/contracts/filter';
+import { FilterName } from '../../../../common/types/contracts/filterName';
+import { FilterSymbol } from '../../../../common/types/contracts/filterSymbol';
 
 describe('FilterDataParser', () => {
   const filterFataParser = new FilterDataParser();

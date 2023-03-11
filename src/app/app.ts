@@ -47,11 +47,11 @@ import { OrderController } from './integrations/order/implementations/orderContr
 import { ReviewController } from './integrations/review/implementations/reviewController';
 import { UserController } from './integrations/user/implementations/userController';
 import { WhishlistController } from './integrations/whishlist/implementations/whishlistController';
-import { DependencyInjectionContainerFactory } from './libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from './libs/logger/loggerModule';
-import { PostgresModule } from './libs/postgres/postgresModule';
-import { postgresSymbols } from './libs/postgres/postgresSymbols';
-import { UnitOfWorkModule } from './libs/unitOfWork/unitOfWorkModule';
+import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../libs/logger/loggerModule';
+import { PostgresModule } from '../libs/postgres/postgresModule';
+import { postgresSymbols } from '../libs/postgres/postgresSymbols';
+import { UnitOfWorkModule } from '../libs/unitOfWork/unitOfWorkModule';
 
 export class App {
   public instance: express.Application;

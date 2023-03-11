@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { CategoryQueryBuilder } from './categoryQueryBuilder';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { Category } from '../../../contracts/category';
 import { CategoryEntity } from '../../../contracts/categoryEntity';
 import { CategoryMapper } from '../../../contracts/mappers/categoryMapper/categoryMapper';

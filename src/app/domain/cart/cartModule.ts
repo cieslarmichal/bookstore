@@ -5,8 +5,8 @@ import { CartService } from './contracts/services/cartService/cartService';
 import { CartRepositoryFactoryImpl } from './implementations/factories/cartRepositoryFactory/cartRepositoryFactoryImpl';
 import { CartMapperImpl } from './implementations/mappers/cartMapper/cartMapperImpl';
 import { CartServiceImpl } from './implementations/services/cartService/cartServiceImpl';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/contracts/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 
 export class CartModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

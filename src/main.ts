@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 
 import { App } from './app/app';
 import { AppConfig } from './app/appConfig';
-import { LogLevel } from './app/libs/logger/contracts/logLevel';
 import { EnvKey } from './envKey';
+import { LogLevel } from './libs/logger/contracts/logLevel';
 import { HttpServer } from './server/httpServer';
 
 async function main(): Promise<void> {

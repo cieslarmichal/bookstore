@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { CartValidatorServiceImpl } from './cartValidatorServiceImpl';
-import { DummyFactory } from '../../../../../common/tests/implementations/dummyFactory';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
+import { DummyFactory } from '../../../../../../common/tests/implementations/dummyFactory';
+import { LoggerService } from '../../../../../../libs/logger/contracts/services/loggerService/loggerService';
+import { UnitOfWork } from '../../../../../../libs/unitOfWork/contracts/unitOfWork';
 import { CartStatus } from '../../../../cart/contracts/cartStatus';
 import { CartTestFactory } from '../../../../cart/tests/factories/cartTestFactory/cartTestFactory';
 import { InventoryService } from '../../../../inventory/contracts/services/inventoryService/inventoryService';

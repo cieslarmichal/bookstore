@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { InventoryRepositoryFactory } from '../../../contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
 import { InventoryMapper } from '../../../contracts/mappers/inventoryMapper/inventoryMapper';
 import { InventoryRepository } from '../../../contracts/repositories/inventoryRepository/inventoryRepository';

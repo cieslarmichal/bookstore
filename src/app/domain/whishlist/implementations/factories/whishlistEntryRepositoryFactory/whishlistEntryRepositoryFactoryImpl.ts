@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { WhishlistEntryRepositoryFactory } from '../../../contracts/factories/whishlistEntryRepositoryFactory/whishlistEntryRepositoryFactory';
 import { WhishlistEntryMapper } from '../../../contracts/mappers/whishlistEntryMapper/whishlistEntryMapper';
 import { WhishlistEntryRepository } from '../../../contracts/repositories/whishlistEntryRepository/whishlistEntryRepository';

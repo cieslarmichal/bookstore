@@ -1,7 +1,7 @@
 import { UserRole } from './userRole';
-import { SchemaType } from '../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../libs/validator/implementations/schema';
-import { Validator } from '../../../libs/validator/implementations/validator';
+import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../../libs/validator/implementations/schema';
+import { Validator } from '../../../../libs/validator/implementations/validator';
 
 export const userInputSchema = Schema.object({
   id: Schema.notEmptyString(),

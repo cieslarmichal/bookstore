@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
 import { ReviewRepositoryFactory } from '../../../contracts/factories/reviewRepositoryFactory/reviewRepositoryFactory';
 import { ReviewMapper } from '../../../contracts/mappers/reviewMapper/reviewMapper';
 import { ReviewRepository } from '../../../contracts/repositories/reviewRepository/reviewRepository';

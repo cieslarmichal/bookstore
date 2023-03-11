@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../../libs/validator/implementations/validator';
 import { LineItem } from '../../../contracts/lineItem';
 import { LineItemEntity } from '../../../contracts/lineItemEntity';
 import { LineItemMapper } from '../../../contracts/mappers/lineItemMapper/lineItemMapper';
