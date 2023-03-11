@@ -12,8 +12,10 @@ import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryMod
 import { LineItemRepositoryFactory } from '../../../../lineItemModule/application/repositories/lineItemRepository/lineItemRepositoryFactory';
 import { LineItemNotFoundError } from '../../../../lineItemModule/infrastructure/errors/lineItemNotFoundError';
 import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModuleSymbols';
-import { CartRepositoryFactory } from '../../../application/repositories/cartRepository/cartRepositoryFactory';
 import { cartSymbols } from '../../../cartSymbols';
+import { Cart } from '../../../contracts/cart';
+import { CartStatus } from '../../../contracts/cartStatus';
+import { CartRepositoryFactory } from '../../../contracts/factories/cartRepositoryFactory/cartRepositoryFactory';
 import {
   AddLineItemPayload,
   addLineItemPayloadSchema,
@@ -27,10 +29,8 @@ import {
   removeLineItemPayloadSchema,
 } from '../../../contracts/services/cartService/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from '../../../contracts/services/cartService/updateCartPayload';
-import { Cart } from '../../../domain/entities/cart/cart';
-import { CartStatus } from '../../../domain/entities/cart/cartStatus';
-import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
-import { LineItemOutOfInventoryError } from '../../../infrastructure/errors/lineItemOutOfInventoryError';
+import { CartNotFoundError } from '../../../errors/cartNotFoundError';
+import { LineItemOutOfInventoryError } from '../../../errors/lineItemOutOfInventoryError';
 
 @Injectable()
 export class CartServiceImpl implements CartService {
