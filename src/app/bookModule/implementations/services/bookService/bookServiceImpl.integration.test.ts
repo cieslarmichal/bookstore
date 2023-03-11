@@ -29,7 +29,7 @@ import { bookCategoryModuleSymbols } from '../../../../bookCategoryModule/bookCa
 import { BookCategoryEntity } from '../../../../bookCategoryModule/contracts/bookCategoryEntity';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategoryModule/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
-import { CartEntity } from '../../../../cart/contracts/cartEntity';
+import { CartEntity } from '../../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
 import { CategoryModule } from '../../../../category/categoryModule';
 import { categorySymbols } from '../../../../category/categorySymbols';
 import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
