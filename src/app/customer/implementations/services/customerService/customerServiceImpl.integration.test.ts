@@ -27,13 +27,13 @@ import { UserEntityTestFactory } from '../../../../user/tests/factories/userEnti
 import { UserModuleConfigTestFactory } from '../../../../user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../user/userModule';
 import { userSymbols } from '../../../../user/userSymbols';
-import { CustomerRepositoryFactory } from '../../../application/repositories/customerRepository/customerRepositoryFactory';
 import { CustomerEntity } from '../../../contracts/customerEntity';
+import { CustomerRepositoryFactory } from '../../../contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
 import { CustomerService } from '../../../contracts/services/customerService/customerService';
 import { CustomerModule } from '../../../customerModule';
-import { customerModuleSymbols } from '../../../customerModuleSymbols';
-import { CustomerAlreadyExistsError } from '../../../infrastructure/errors/customerAlreadyExistsError';
-import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
+import { customerSymbols } from '../../../customerSymbols';
+import { CustomerAlreadyExistsError } from '../../../errors/customerAlreadyExistsError';
+import { CustomerNotFoundError } from '../../../errors/customerNotFoundError';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 
 describe('CustomerServiceImpl', () => {
@@ -77,10 +77,8 @@ describe('CustomerServiceImpl', () => {
       ],
     });
 
-    customerService = container.get<CustomerService>(customerModuleSymbols.customerService);
-    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
-      customerModuleSymbols.customerRepositoryFactory,
-    );
+    customerService = container.get<CustomerService>(customerSymbols.customerService);
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
 
