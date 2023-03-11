@@ -30,11 +30,11 @@ import { BookCategoryEntity } from '../../../../bookCategoryModule/contracts/boo
 import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategoryModule/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { CartEntity } from '../../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-import { CategoryModule } from '../../../../category/categoryModule';
-import { categorySymbols } from '../../../../category/categorySymbols';
-import { CategoryEntity } from '../../../../category/contracts/categoryEntity';
-import { CategoryRepositoryFactory } from '../../../../category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryEntityTestFactory } from '../../../../category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
+import { CategoryModule } from '../../../../categoryModule/categoryModule';
+import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
+import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerEntity } from '../../../../customer/contracts/customerEntity';
 import { InventoryEntity } from '../../../../inventory/contracts/inventoryEntity';
 import { LineItemEntity } from '../../../../lineItem/contracts/lineItemEntity';
@@ -109,7 +109,9 @@ describe('BookServiceImpl', () => {
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategoryModuleSymbols.bookCategoryRepositoryFactory,
     );
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
+      categoryModuleSymbols.categoryRepositoryFactory,
+    );
     dataSource = container.get<DataSource>(postgresSymbols.dataSource);
 
     await dataSource.initialize();
