@@ -1,21 +1,19 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
-import { ParsePayload, parsePayloadSchema } from './parsePayload';
-import { Injectable } from '../../libs/dependencyInjection/contracts/decorators';
+import { ParsePayload, parsePayloadSchema } from './payloads/parsePayload';
 import { Validator } from '../../libs/validator/implementations/validator';
 import { Filter } from '../types/contracts/filter';
 import { FilterName } from '../types/contracts/filterName';
 import { FilterSymbol } from '../types/contracts/filterSymbol';
 
-@Injectable()
-export class FilterDataParser {
-  private readonly tokensSeparator = '||';
-  private readonly valuesSeparator = ',';
-  private readonly fieldNameIndex = 0;
-  private readonly operationNameIndex = 1;
-  private readonly valuesIndex = 2;
-  private readonly numberOfTokensInFilterElement = 3;
+const tokensSeparator = '||';
+const valuesSeparator = ',';
+const fieldNameIndex = 0;
+const operationNameIndex = 1;
+const valuesIndex = 2;
+const numberOfTokensInFilterElement = 3;
 
-  public parse(input: ParsePayload): Filter[] {
+export class FilterDataParser {
+  public static parse(input: ParsePayload): Filter[] {
     const { jsonData, supportedFieldsFilters } = Validator.validate(parsePayloadSchema, input);
 
     if (!supportedFieldsFilters) {
@@ -33,15 +31,15 @@ export class FilterDataParser {
     const filters: Filter[] = [];
 
     for (const fieldData of filterData) {
-      const tokens = fieldData.split(this.tokensSeparator);
+      const tokens = fieldData.split(tokensSeparator);
 
-      if (tokens.length != this.numberOfTokensInFilterElement) {
+      if (tokens.length != numberOfTokensInFilterElement) {
         throw new InvalidFilterSyntaxError({ errorDetails: 'number of tokens in filter element is not equal 3' });
       }
 
-      const fieldName = tokens[this.fieldNameIndex];
+      const fieldName = tokens[fieldNameIndex];
 
-      const filterSymbol = tokens[this.operationNameIndex] as FilterSymbol;
+      const filterSymbol = tokens[operationNameIndex] as FilterSymbol;
 
       if (!fieldName) {
         throw new InvalidFilterSyntaxError({ errorDetails: 'field name not defined' });
@@ -59,13 +57,13 @@ export class FilterDataParser {
 
       switch (filterSymbol) {
         case FilterSymbol.equal: {
-          const tokenValues = tokens[this.valuesIndex];
+          const tokenValues = tokens[valuesIndex];
 
           if (!tokenValues) {
             throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
           }
 
-          const splitValues = tokenValues.split(this.valuesSeparator);
+          const splitValues = tokenValues.split(valuesSeparator);
 
           const equalFilter: Filter = { filterName: FilterName.equal, filterSymbol, fieldName, values: splitValues };
 
@@ -74,7 +72,7 @@ export class FilterDataParser {
           break;
         }
         case FilterSymbol.lessThan: {
-          const tokenValues = tokens[this.valuesIndex];
+          const tokenValues = tokens[valuesIndex];
 
           if (!tokenValues) {
             throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
@@ -93,7 +91,7 @@ export class FilterDataParser {
           break;
         }
         case FilterSymbol.lessThanOrEqual: {
-          const tokenValues = tokens[this.valuesIndex];
+          const tokenValues = tokens[valuesIndex];
 
           if (!tokenValues) {
             throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
@@ -117,7 +115,7 @@ export class FilterDataParser {
           break;
         }
         case FilterSymbol.greaterThan: {
-          const tokenValues = tokens[this.valuesIndex];
+          const tokenValues = tokens[valuesIndex];
 
           if (!tokenValues) {
             throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
@@ -141,7 +139,7 @@ export class FilterDataParser {
           break;
         }
         case FilterSymbol.greaterThanOrEqual: {
-          const tokenValues = tokens[this.valuesIndex];
+          const tokenValues = tokens[valuesIndex];
 
           if (!tokenValues) {
             throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
@@ -165,13 +163,13 @@ export class FilterDataParser {
           break;
         }
         case FilterSymbol.between: {
-          const tokenValues = tokens[this.valuesIndex];
+          const tokenValues = tokens[valuesIndex];
 
           if (!tokenValues) {
             throw new InvalidFilterSyntaxError({ errorDetails: 'values not defined' });
           }
 
-          const splitValues = tokenValues.split(this.valuesSeparator).map((tokenValue) => {
+          const splitValues = tokenValues.split(valuesSeparator).map((tokenValue) => {
             const numberValue = parseInt(tokenValue);
 
             if (!numberValue) {
@@ -198,7 +196,7 @@ export class FilterDataParser {
           break;
         }
         case FilterSymbol.like: {
-          const value = tokens[this.valuesIndex];
+          const value = tokens[valuesIndex];
 
           const likeFilter: Filter = {
             filterName: FilterName.like,

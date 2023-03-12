@@ -1,6 +1,6 @@
-import { SchemaType } from '../../libs/validator/contracts/schemaType';
-import { Schema } from '../../libs/validator/implementations/schema';
-import { FilterSymbol } from '../types/contracts/filterSymbol';
+import { SchemaType } from '../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../libs/validator/implementations/schema';
+import { FilterSymbol } from '../../types/contracts/filterSymbol';
 
 export const parsePayloadSchema = Schema.object({
   jsonData: Schema.notEmptyString(),

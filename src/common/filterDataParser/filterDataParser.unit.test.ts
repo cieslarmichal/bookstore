@@ -15,13 +15,11 @@ import { FilterName } from '../types/contracts/filterName';
 import { FilterSymbol } from '../types/contracts/filterSymbol';
 
 describe('FilterDataParser', () => {
-  const filterFataParser = new FilterDataParser();
-
   describe('Empty input', () => {
     it('should return empty array when filter data is empty array', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: '[]',
         supportedFieldsFilters: { title: [FilterSymbol.equal] },
       });
@@ -32,7 +30,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when supported field filters data is empty', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||eq||lotr,harry potter"]`,
         supportedFieldsFilters: {},
       });
@@ -46,7 +44,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["title|eq|lotr,harry potter"]`,
           supportedFieldsFilters: { title: [FilterSymbol.lessThan] },
         });
@@ -58,7 +56,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||eq||lotr,harry potter"]`,
         supportedFieldsFilters: { title: [FilterSymbol.lessThan] },
       });
@@ -69,7 +67,7 @@ describe('FilterDataParser', () => {
     it('should return EqualFilter when valid syntax with one entry is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||eq||lotr"]`,
         supportedFieldsFilters: { title: [FilterSymbol.equal] },
       });
@@ -83,7 +81,7 @@ describe('FilterDataParser', () => {
     it('should return EqualFilter when valid syntax with two entries is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["author||eq||J.R.R. Tolkien,J.K. Rowling"]`,
         supportedFieldsFilters: {
           author: [FilterSymbol.equal],
@@ -102,7 +100,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price|lt|10"]`,
           supportedFieldsFilters: { price: [FilterSymbol.lessThan] },
         });
@@ -115,7 +113,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price||lt||aaa"]`,
           supportedFieldsFilters: { price: [FilterSymbol.lessThan] },
         });
@@ -127,7 +125,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||lt||6"]`,
         supportedFieldsFilters: { price: [FilterSymbol.equal] },
       });
@@ -138,7 +136,7 @@ describe('FilterDataParser', () => {
     it('should return LessThanFilter when valid syntax is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||lt||10"]`,
         supportedFieldsFilters: { price: [FilterSymbol.lessThan] },
       });
@@ -155,7 +153,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price|lte|10"]`,
           supportedFieldsFilters: { price: [FilterSymbol.lessThanOrEqual] },
         });
@@ -168,7 +166,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price||lte||aaa"]`,
           supportedFieldsFilters: { price: [FilterSymbol.lessThanOrEqual] },
         });
@@ -180,7 +178,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||lte||6"]`,
         supportedFieldsFilters: { price: [FilterSymbol.equal] },
       });
@@ -191,7 +189,7 @@ describe('FilterDataParser', () => {
     it('should return LessThanOrEqualFilter when valid syntax is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||lte||10"]`,
         supportedFieldsFilters: { price: [FilterSymbol.lessThanOrEqual] },
       });
@@ -208,7 +206,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price|gt|10"]`,
           supportedFieldsFilters: { price: [FilterSymbol.greaterThan] },
         });
@@ -221,7 +219,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price||gt||aaa"]`,
           supportedFieldsFilters: { price: [FilterSymbol.greaterThan] },
         });
@@ -233,7 +231,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||gt||6"]`,
         supportedFieldsFilters: { price: [FilterSymbol.equal] },
       });
@@ -244,7 +242,7 @@ describe('FilterDataParser', () => {
     it('should return GreaterThanFilter when valid syntax is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||gt||10"]`,
         supportedFieldsFilters: { price: [FilterSymbol.greaterThan] },
       });
@@ -261,7 +259,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price|gte|10"]`,
           supportedFieldsFilters: { price: [FilterSymbol.greaterThanOrEqual] },
         });
@@ -274,7 +272,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price||gte||aaa"]`,
           supportedFieldsFilters: { price: [FilterSymbol.greaterThanOrEqual] },
         });
@@ -286,7 +284,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||gte||6"]`,
         supportedFieldsFilters: { price: [FilterSymbol.equal] },
       });
@@ -297,7 +295,7 @@ describe('FilterDataParser', () => {
     it('should return GreaterThanOrEqualFilter when valid syntax is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||gte||10"]`,
         supportedFieldsFilters: { price: [FilterSymbol.greaterThanOrEqual] },
       });
@@ -314,7 +312,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price|between|10,50"]`,
           supportedFieldsFilters: { price: [FilterSymbol.between] },
         });
@@ -327,7 +325,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price||between||aaa,b"]`,
           supportedFieldsFilters: { price: [FilterSymbol.between] },
         });
@@ -340,7 +338,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["price||between||10"]`,
           supportedFieldsFilters: { price: [FilterSymbol.between] },
         });
@@ -352,7 +350,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||between||6,10"]`,
         supportedFieldsFilters: { price: [FilterSymbol.equal] },
       });
@@ -363,7 +361,7 @@ describe('FilterDataParser', () => {
     it('should return GreaterThanOrEqualFilter when valid syntax is provided and filter is supported', () => {
       expect.assertions(5);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["price||between||10,20"]`,
         supportedFieldsFilters: { price: [FilterSymbol.between] },
       });
@@ -381,7 +379,7 @@ describe('FilterDataParser', () => {
       expect.assertions(1);
 
       try {
-        filterFataParser.parse({
+        FilterDataParser.parse({
           jsonData: `["title|like|harry"]`,
           supportedFieldsFilters: { title: [FilterSymbol.like] },
         });
@@ -393,7 +391,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when valid syntax is provided but filter is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||like||harry"]`,
         supportedFieldsFilters: { title: [FilterSymbol.lessThan] },
       });
@@ -404,7 +402,7 @@ describe('FilterDataParser', () => {
     it('should return LikeFilter when valid syntax is provided and filter is supported', () => {
       expect.assertions(4);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||like||harry"]`,
         supportedFieldsFilters: { title: [FilterSymbol.like] },
       });
@@ -420,7 +418,7 @@ describe('FilterDataParser', () => {
     it('should return empty array when given two filters and none of them is supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||like||harry", "price||lte||50"]`,
         supportedFieldsFilters: { title: [], price: [] },
       });
@@ -431,7 +429,7 @@ describe('FilterDataParser', () => {
     it('should return one filter when given two filters but one is not supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||like||harry", "price||lte||50"]`,
         supportedFieldsFilters: {
           title: [FilterSymbol.like],
@@ -445,7 +443,7 @@ describe('FilterDataParser', () => {
     it('should return both filters when they are supported', () => {
       expect.assertions(1);
 
-      const filterData = filterFataParser.parse({
+      const filterData = FilterDataParser.parse({
         jsonData: `["title||like||harry", "price||lte||50"]`,
         supportedFieldsFilters: {
           title: [FilterSymbol.like],
