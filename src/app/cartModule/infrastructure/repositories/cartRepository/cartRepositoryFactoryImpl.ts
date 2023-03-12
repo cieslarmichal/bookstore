@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { CartMapper } from './cartMapper/cartMapper';
 import { CartRepositoryImpl } from './cartRepositoryImpl';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { CartRepository } from '../../../application/repositories/cartRepository/cartRepository';
 import { CartRepositoryFactory } from '../../../application/repositories/cartRepository/cartRepositoryFactory';
 import { cartModuleSymbols } from '../../../cartModuleSymbols';

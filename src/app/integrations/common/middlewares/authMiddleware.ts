@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { AccessTokenData } from '../../../../common/types/accessTokenData';
 import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../libs/dependencyInjection/decorators';
 import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
 import { userSymbols } from '../../../domain/user/userSymbols';
 

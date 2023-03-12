@@ -4,10 +4,10 @@ import { DeleteInventoryPayload, deleteInventoryPayloadSchema } from './payloads
 import { FindInventoriesPayload, findInventoriesPayloadSchema } from './payloads/findInventoriesPayload';
 import { FindInventoryPayload, findInventoryPayloadSchema } from './payloads/findInventoryPayload';
 import { UpdateInventoryPayload, updateInventoryPayloadSchema } from './payloads/updateInventoryPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Inventory } from '../../../domain/entities/inventory/inventory';
 import { InventoryAlreadyExistsError } from '../../../infrastructure/errors/inventoryAlreadyExistsError';
@@ -20,7 +20,7 @@ export class InventoryServiceImpl implements InventoryService {
   public constructor(
     @Inject(inventoryModuleSymbols.inventoryRepositoryFactory)
     private readonly inventoryRepositoryFactory: InventoryRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

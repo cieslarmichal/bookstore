@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { InventoryMapper } from './inventoryMapper/inventoryMapper';
 import { InventoryRepositoryImpl } from './inventoryRepositoryImpl';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { InventoryRepository } from '../../../application/repositories/inventoryRepository/inventoryRepository';
 import { InventoryRepositoryFactory } from '../../../application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { inventoryModuleSymbols } from '../../../inventoryModuleSymbols';

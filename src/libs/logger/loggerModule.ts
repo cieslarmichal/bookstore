@@ -1,20 +1,20 @@
-import { LoggerClient } from './contracts/clients/loggerClient/loggerClient';
-import { LoggerService } from './contracts/services/loggerService/loggerService';
-import { LoggerClientFactoryImpl } from './implementations/factories/loggerClientFactory/loggerClientFactoryImpl';
-import { LoggerServiceImpl } from './implementations/services/loggerService/loggerServiceImpl';
+import { LoggerClient } from './clients/loggerClient/loggerClient';
+import { LoggerClientFactoryImpl } from './factories/loggerClientFactory/loggerClientFactoryImpl';
 import { LoggerModuleConfig } from './loggerModuleConfig';
-import { loggerSymbols } from './loggerSymbols';
-import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../dependencyInjection/implementations/dependencyInjectionContainer';
+import { loggerModuleSymbols } from './loggerModuleSymbols';
+import { LoggerService } from './services/loggerService/loggerService';
+import { LoggerServiceImpl } from './services/loggerService/loggerServiceImpl';
+import { DependencyInjectionContainer } from '../dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../dependencyInjection/dependencyInjectionModule';
 
 export class LoggerModule implements DependencyInjectionModule {
   public constructor(private readonly config: LoggerModuleConfig) {}
 
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
-    container.bindToValue<LoggerModuleConfig>(loggerSymbols.loggerModuleConfig, this.config);
+    container.bindToValue<LoggerModuleConfig>(loggerModuleSymbols.loggerModuleConfig, this.config);
 
-    container.bindToFactory<LoggerClient>(loggerSymbols.loggerClient, LoggerClientFactoryImpl);
+    container.bindToFactory<LoggerClient>(loggerModuleSymbols.loggerClient, LoggerClientFactoryImpl);
 
-    container.bindToConstructor<LoggerService>(loggerSymbols.loggerService, LoggerServiceImpl);
+    container.bindToConstructor<LoggerService>(loggerModuleSymbols.loggerService, LoggerServiceImpl);
   }
 }

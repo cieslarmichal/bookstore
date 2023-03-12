@@ -2,10 +2,10 @@ import { CustomerService } from './customerService';
 import { CreateCustomerPayload, createCustomerPayloadSchema } from './payloads/createCustomerPayload';
 import { DeleteCustomerPayload, deleteCustomerPayloadSchema } from './payloads/deleteCustomerPayload';
 import { FindCustomerPayload, findCustomerPayloadSchema } from './payloads/findCustomerPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { customerModuleSymbols } from '../../../customerModuleSymbols';
 import { Customer } from '../../../domain/entities/customer/customer';
@@ -18,7 +18,7 @@ export class CustomerServiceImpl implements CustomerService {
   public constructor(
     @Inject(customerModuleSymbols.customerRepositoryFactory)
     private readonly customerRepositoryFactory: CustomerRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

@@ -9,8 +9,8 @@ import { OrderMapperImpl } from './infrastructure/repositories/orderRepository/o
 import { OrderRepositoryFactoryImpl } from './infrastructure/repositories/orderRepository/orderRepositoryFactoryImpl';
 import { OrderModule } from './orderModule';
 import { orderModuleSymbols } from './orderModuleSymbols';
+import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../libs/postgres/postgresModule';

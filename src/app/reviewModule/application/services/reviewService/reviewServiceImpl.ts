@@ -4,10 +4,10 @@ import { FindReviewPayload, findReviewPayloadSchema } from './payloads/findRevie
 import { FindReviewsPayload, findReviewsPayloadSchema } from './payloads/findReviewsPayload';
 import { UpdateReviewPayload, updateReviewPayloadSchema } from './payloads/updateReviewPayload';
 import { ReviewService } from './reviewService';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { Review } from '../../../domain/entities/review/review';
 import { ReviewNotFoundError } from '../../../infrastructure/errors/reviewNotFoundError';
@@ -19,7 +19,7 @@ export class ReviewServiceImpl implements ReviewService {
   public constructor(
     @Inject(reviewModuleSymbols.reviewRepositoryFactory)
     private readonly reviewRepositoryFactory: ReviewRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

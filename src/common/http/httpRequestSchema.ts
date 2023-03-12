@@ -1,4 +1,4 @@
-import { SchemaType } from '../../libs/validator/contracts/schemaType';
+import { SchemaType } from '../../libs/validator/schemaType';
 import { ZodSchema } from '../../libs/validator/contracts/zodSchema';
 import { Schema } from '../../libs/validator/implementations/schema';
 

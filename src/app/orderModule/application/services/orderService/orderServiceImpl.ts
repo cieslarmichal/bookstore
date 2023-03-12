@@ -1,10 +1,10 @@
 import { OrderService } from './orderService';
 import { CreateOrderPayload, createOrderPayloadSchema } from './payloads/createOrderPayload';
 import { FindOrdersPayload, findOrdersPayloadSchema } from './payloads/findOrdersPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { CartService } from '../../../../cartModule/application/services/cartService/cartService';
 import { cartModuleSymbols } from '../../../../cartModule/cartModuleSymbols';
@@ -23,7 +23,7 @@ export class OrderServiceImpl implements OrderService {
   public constructor(
     @Inject(orderModuleSymbols.orderRepositoryFactory)
     private readonly orderRepositoryFactory: OrderRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
     @Inject(cartModuleSymbols.cartService)
     private readonly cartService: CartService,

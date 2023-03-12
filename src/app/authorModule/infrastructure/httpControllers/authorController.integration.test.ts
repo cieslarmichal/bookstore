@@ -5,11 +5,11 @@ import { DataSource } from 'typeorm';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../../libs/postgres/postgresSymbols';
+import { postgresModuleSymbols } from '../../../../libs/postgres/postgresModuleSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../../server/httpServer';
@@ -115,7 +115,7 @@ describe(`AuthorController (${baseUrl})`, () => {
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
-    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
     tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);

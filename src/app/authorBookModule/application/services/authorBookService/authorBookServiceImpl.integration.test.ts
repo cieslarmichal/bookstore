@@ -4,11 +4,11 @@ import { DataSource } from 'typeorm';
 
 import { AuthorBookService } from './authorBookService';
 import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModuleSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
@@ -90,7 +90,7 @@ describe('AuthorBookServiceImpl', () => {
     );
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
-    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
 

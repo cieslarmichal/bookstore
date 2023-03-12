@@ -1,8 +1,8 @@
 import { CartValidatorService } from './cartValidatorService';
 import { ValidatePayload, validatePayloadSchema } from './payloads/validatePayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { CartStatus } from '../../../../cartModule/domain/entities/cart/cartStatus';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
@@ -21,7 +21,7 @@ export class CartValidatorServiceImpl implements CartValidatorService {
   public constructor(
     @Inject(inventoryModuleSymbols.inventoryService)
     private readonly inventoryService: InventoryService,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

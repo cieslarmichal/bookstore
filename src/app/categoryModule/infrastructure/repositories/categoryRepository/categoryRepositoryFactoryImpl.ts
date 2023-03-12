@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { CategoryMapper } from './categoryMapper/categoryMapper';
 import { CategoryRepositoryImpl } from './categoryRepositoryImpl';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { CategoryRepository } from '../../../application/repositories/categoryRepository/categoryRepository';
 import { CategoryRepositoryFactory } from '../../../application/repositories/categoryRepository/categoryRepositoryFactory';
 import { categoryModuleSymbols } from '../../../categoryModuleSymbols';

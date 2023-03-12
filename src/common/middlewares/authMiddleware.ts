@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { TokenService } from '../../app/userModule/application/services/tokenService/tokenService';
-import { Injectable, Inject } from '../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../libs/dependencyInjection/decorators';
 import { HttpStatusCode } from '../http/httpStatusCode';
 import { AccessTokenData } from '../types/accessTokenData';
 import { LocalsName } from '../types/localsName';

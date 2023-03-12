@@ -1,8 +1,8 @@
 import { BookFormat } from './bookFormat';
 import { BookLanguage } from './bookLanguage';
-import { SchemaType } from '../../../../../libs/validator/contracts/schemaType';
 import { Schema } from '../../../../../libs/validator/implementations/schema';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { SchemaType } from '../../../../../libs/validator/schemaType';
 
 export const bookInputSchema = Schema.object({
   id: Schema.notEmptyString(),

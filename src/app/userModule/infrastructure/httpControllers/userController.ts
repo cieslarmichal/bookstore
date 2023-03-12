@@ -12,9 +12,9 @@ import { userErrorMiddleware } from './userErrorMiddleware';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
 import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
+import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
@@ -36,7 +36,7 @@ export class UserController {
   private readonly setUserEmailEndpoint = `${this.usersEndpoint}/set-email`;
 
   public constructor(
-    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
+    @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(userModuleSymbols.userService)
     private readonly userService: UserService,

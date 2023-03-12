@@ -5,10 +5,10 @@ import { DeleteCartPayload, deleteCartPayloadSchema } from './payloads/deleteCar
 import { FindCartPayload, findCartPayloadSchema } from './payloads/findCartPayload';
 import { RemoveLineItemPayload, removeLineItemPayloadSchema } from './payloads/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from './payloads/updateCartPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { addressModuleSymbols } from '../../../../addressModule/addressModuleSymbols';
 import { AddressService } from '../../../../addressModule/application/services/addressService/addressService';
@@ -39,7 +39,7 @@ export class CartServiceImpl implements CartService {
     private readonly addressService: AddressService,
     @Inject(inventorySymbols.inventoryService)
     private readonly inventoryService: InventoryService,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

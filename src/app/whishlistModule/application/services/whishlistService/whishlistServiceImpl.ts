@@ -3,10 +3,10 @@ import { DeleteWhishlistEntryPayload, deleteWhishlistEntryPayloadSchema } from '
 import { FindWhishlistEntriesPayload, findWhishlistEntriesPayloadSchema } from './payloads/findWhishlistEntriesPayload';
 import { FindWhishlistEntryPayload, findWhishlistEntryPayloadSchema } from './payloads/findWhishlistEntryPayload';
 import { WhishlistService } from './whishlistService';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
 import { WhishlistEntryAlreadyExistsError } from '../../../infrastructure/errors/whishlistEntryAlreadyExistsError';
@@ -19,7 +19,7 @@ export class WhishlistServiceImpl implements WhishlistService {
   public constructor(
     @Inject(whishlistModuleSymbols.whishlistEntryRepositoryFactory)
     private readonly whishlistEntryRepositoryFactory: WhishlistEntryRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

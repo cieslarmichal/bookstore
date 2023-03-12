@@ -1,14 +1,14 @@
 import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { UnitOfWorkFactory } from '../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { TransactionCallback } from '../../libs/unitOfWork/contracts/transactionCallback';
 import { UnitOfWork } from '../../libs/unitOfWork/contracts/unitOfWork';
-import { unitOfWorkSymbols } from '../../libs/unitOfWork/unitOfWorkSymbols';
+import { TransactionCallback } from '../../libs/unitOfWork/transactionCallback';
+import { unitOfWorkModuleSymbols } from '../../libs/unitOfWork/unitOfWorkModuleSymbols';
 
 export class TestTransactionInternalRunner {
   public constructor(private readonly container: DependencyInjectionContainer) {}
 
   public async runInTestTransaction<Result>(callback: TransactionCallback<Result, UnitOfWork>): Promise<void> {
-    const unitOfWorkFactory = this.container.get<UnitOfWorkFactory>(unitOfWorkSymbols.unitOfWorkFactory);
+    const unitOfWorkFactory = this.container.get<UnitOfWorkFactory>(unitOfWorkModuleSymbols.unitOfWorkFactory);
 
     const unitOfWork = await unitOfWorkFactory.create();
 

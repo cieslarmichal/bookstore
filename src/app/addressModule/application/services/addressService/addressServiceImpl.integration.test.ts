@@ -7,11 +7,11 @@ import { TestTransactionInternalRunner } from '../../../../../common/tests/unitO
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModuleSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AuthorEntity } from '../../../../domain/author/contracts/authorEntity';
@@ -91,7 +91,7 @@ describe('AddressServiceImpl', () => {
     addressRepositoryFactory = container.get<AddressRepositoryFactory>(addressModuleSymbols.addressRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
-    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
 

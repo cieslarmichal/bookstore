@@ -4,11 +4,11 @@ import { DataSource } from 'typeorm';
 
 import { CartService } from './cartService';
 import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../../../libs/postgres/postgresSymbols';
+import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModuleSymbols';
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressModule } from '../../../../addressModule/addressModule';
@@ -117,7 +117,7 @@ describe('CartServiceImpl', () => {
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(lineItemSymbols.lineItemRepositoryFactory);
-    dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
 

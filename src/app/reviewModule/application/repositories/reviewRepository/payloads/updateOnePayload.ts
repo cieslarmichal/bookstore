@@ -1,5 +1,5 @@
 import { updateOneDraftSchema } from './updateOneDraft';
-import { SchemaType } from '../../../../../../libs/validator/contracts/schemaType';
+import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Schema } from '../../../../../../libs/validator/implementations/schema';
 
 export const updateOnePayloadSchema = Schema.object({

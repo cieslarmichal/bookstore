@@ -16,9 +16,9 @@ import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/
 import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
 import { LocalsName } from '../../../../common/types/contracts/localsName';
 import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
-import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
+import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
 import { BookService } from '../../application/services/bookService/bookService';
 import { CreateBookDraft } from '../../application/services/bookService/payloads/createBookDraft';
@@ -33,7 +33,7 @@ export class BookController {
   private readonly bookEndpoint = `${this.booksEndpoint}/:id`;
 
   public constructor(
-    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
+    @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(bookModuleSymbols.bookService)
     private readonly bookService: BookService,

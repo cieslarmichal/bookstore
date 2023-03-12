@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { BookCategoryMapper } from './bookCategoryMapper/bookCategoryMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { BookCategoryRepository } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepository';
 import { BookCategoryRepositoryFactory } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 import { bookCategoryModuleSymbols } from '../../../bookCategoryModuleSymbols';

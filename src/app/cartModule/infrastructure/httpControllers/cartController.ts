@@ -3,6 +3,15 @@ import asyncHandler from 'express-async-handler';
 
 import { cartErrorMiddleware } from './cartErrorMiddleware';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { Inject, Injectable } from '../../../../libs/dependencyInjection/decorators';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
+import { Validator } from '../../../../libs/validator/implementations/validator';
+import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../cartModule/infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
+import {
+  AddLineItemPayload,
+  addLineItemPayloadSchema,
+} from '../../../cartModule/infrastructure/httpControllers/payloads/addLineItemPayload';
 import { cartSymbols } from '../../../domain/cart/cartSymbols';
 import { Cart } from '../../../domain/cart/contracts/cart';
 import { CartService } from '../../../domain/cart/contracts/services/cartService/cartService';
@@ -10,26 +19,17 @@ import { Customer } from '../../../domain/customer/contracts/customer';
 import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
 import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { UserRole } from '../../../domain/user/contracts/userRole';
-import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
 import { AccessTokenData } from '../../accessTokenData';
 import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
 import { ControllerResponse } from '../../controllerResponse';
 import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
-import {
-  AddLineItemPayload,
-  addLineItemPayloadSchema,
-} from '../../../cartModule/infrastructure/httpControllers/payloads/addLineItemPayload';
 import { CreateCartPayload, createCartPayloadSchema } from '../contracts/createCartPayload';
 import { DeleteCartPayload, deleteCartPayloadSchema } from '../contracts/deleteCartPayload';
 import { FindCartPayload, findCartPayloadSchema } from '../contracts/findCartPayload';
 import { RemoveLineItemPayload, removeLineItemPayloadSchema } from '../contracts/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from '../contracts/updateCartPayload';
-import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../cartModule/infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class CartController {
   private readonly removeLineItemEnpoint = `${this.cartEndpoint}/remove-line-item`;
 
   public constructor(
-    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
+    @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(cartSymbols.cartService)
     private readonly cartService: CartService,

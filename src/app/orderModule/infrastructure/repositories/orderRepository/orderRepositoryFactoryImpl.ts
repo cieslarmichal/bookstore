@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { OrderMapper } from './orderMapper/orderMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { OrderRepository } from '../../../application/repositories/orderRepository/orderRepository';
 import { OrderRepositoryFactory } from '../../../application/repositories/orderRepository/orderRepositoryFactory';
 import { OrderRepositoryImpl } from '../../../infrastructure/repositories/orderRepository/orderRepositoryImpl';

@@ -1,11 +1,11 @@
-import { UnitOfWorkFactory } from './contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { UnitOfWorkFactoryImpl } from './implementations/factories/unitOfWorkFactory/unitOfWorkFactoryImpl';
-import { unitOfWorkSymbols } from './unitOfWorkSymbols';
-import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../dependencyInjection/implementations/dependencyInjectionContainer';
+import { UnitOfWorkFactory } from './factories/unitOfWorkFactory/unitOfWorkFactory';
+import { UnitOfWorkFactoryImpl } from './factories/unitOfWorkFactory/unitOfWorkFactoryImpl';
+import { unitOfWorkModuleSymbols } from './unitOfWorkModuleSymbols';
+import { DependencyInjectionContainer } from '../dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../dependencyInjection/dependencyInjectionModule';
 
 export class UnitOfWorkModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
-    container.bindToConstructor<UnitOfWorkFactory>(unitOfWorkSymbols.unitOfWorkFactory, UnitOfWorkFactoryImpl);
+    container.bindToConstructor<UnitOfWorkFactory>(unitOfWorkModuleSymbols.unitOfWorkFactory, UnitOfWorkFactoryImpl);
   }
 }

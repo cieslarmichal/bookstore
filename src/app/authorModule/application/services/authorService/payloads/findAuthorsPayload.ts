@@ -1,8 +1,8 @@
 import { Filter } from '../../../../../../common/types/contracts/filter';
 import { PaginationData } from '../../../../../../common/types/contracts/paginationData';
 import { UnitOfWork } from '../../../../../../libs/unitOfWork/contracts/unitOfWork';
-import { SchemaType } from '../../../../../../libs/validator/contracts/schemaType';
 import { Schema } from '../../../../../../libs/validator/implementations/schema';
+import { SchemaType } from '../../../../../../libs/validator/schemaType';
 
 export const findAuthorsPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),

@@ -47,10 +47,10 @@ import { UserEntity } from './userModule/infrastructure/repositories/userReposit
 import { UserModule } from './userModule/userModule';
 import { WhishlistEntryEntity } from './whishlistModule/infrastructure/repositories/whishlistEntryRepository/whishlistEntryEntity/whishlistEntryEntity';
 import { WhishlistModule } from './whishlistModule/whishlistModule';
-import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../libs/logger/loggerModule';
 import { PostgresModule } from '../libs/postgres/postgresModule';
-import { postgresSymbols } from '../libs/postgres/postgresSymbols';
+import { postgresModuleSymbols } from '../libs/postgres/postgresModuleSymbols';
 import { UnitOfWorkModule } from '../libs/unitOfWork/unitOfWorkModule';
 
 export class App {
@@ -113,7 +113,7 @@ export class App {
       ],
     });
 
-    const dataSource = container.get<DataSource>(postgresSymbols.dataSource);
+    const dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
 

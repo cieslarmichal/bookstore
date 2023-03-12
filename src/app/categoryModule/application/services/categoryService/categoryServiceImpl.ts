@@ -7,10 +7,10 @@ import {
 } from './payloads/findCategoriesByBookIdPayload';
 import { FindCategoriesPayload, findCategoriesPayloadSchema } from './payloads/findCategoriesPayload';
 import { FindCategoryPayload, findCategoryPayloadSchema } from './payloads/findCategoryPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { categoryModuleSymbols } from '../../../categoryModuleSymbols';
 import { Category } from '../../../domain/entities/category/category';
@@ -23,7 +23,7 @@ export class CategoryServiceImpl implements CategoryService {
   public constructor(
     @Inject(categoryModuleSymbols.categoryRepositoryFactory)
     private readonly categoryRepositoryFactory: CategoryRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

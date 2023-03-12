@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { AuthorMapper } from './authorMapper/authorMapper';
 import { AuthorRepositoryImpl } from './authorRepositoryImpl';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { AuthorRepository } from '../../../application/repositories/authorRepository/authorRepository';
 import { AuthorRepositoryFactory } from '../../../application/repositories/authorRepository/authorRepositoryFactory';
 import { authorModuleSymbols } from '../../../authorModuleSymbols';

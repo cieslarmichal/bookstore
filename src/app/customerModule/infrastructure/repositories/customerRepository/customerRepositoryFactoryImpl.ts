@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { CustomerMapper } from './customerMapper/customerMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { CustomerRepository } from '../../../application/repositories/customerRepository/customerRepository';
 import { CustomerRepositoryFactory } from '../../../application/repositories/customerRepository/customerRepositoryFactory';
 import { customerModuleSymbols } from '../../../customerModuleSymbols';

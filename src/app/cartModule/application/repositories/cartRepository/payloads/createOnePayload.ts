@@ -1,4 +1,4 @@
-import { SchemaType } from '../../../../../../libs/validator/contracts/schemaType';
+import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Schema } from '../../../../../../libs/validator/implementations/schema';
 import { CartStatus } from '../../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../../domain/entities/cart/deliveryMethod';

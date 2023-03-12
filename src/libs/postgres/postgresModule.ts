@@ -1,21 +1,21 @@
 import { DataSource, EntityManager } from 'typeorm';
 
-import { DataSourceFactoryImpl } from './implementations/factories/dataSourceFactoryImpl';
+import { DataSourceFactoryImpl } from './factories/dataSourceFactory/dataSourceFactoryImpl';
 import { PostgresModuleConfig } from './postgresModuleConfig';
-import { postgresSymbols } from './postgresSymbols';
-import { DependencyInjectionModule } from '../dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../dependencyInjection/implementations/dependencyInjectionContainer';
+import { postgresModuleSymbols } from './postgresModuleSymbols';
+import { DependencyInjectionContainer } from '../dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../dependencyInjection/dependencyInjectionModule';
 
 export class PostgresModule implements DependencyInjectionModule {
   public constructor(private readonly config: PostgresModuleConfig) {}
 
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
-    container.bindToValue<PostgresModuleConfig>(postgresSymbols.postgresModuleConfig, this.config);
+    container.bindToValue<PostgresModuleConfig>(postgresModuleSymbols.postgresModuleConfig, this.config);
 
-    container.bindToFactory<DataSource>(postgresSymbols.dataSource, DataSourceFactoryImpl);
+    container.bindToFactory<DataSource>(postgresModuleSymbols.dataSource, DataSourceFactoryImpl);
 
-    container.bindToDynamicValue<EntityManager>(postgresSymbols.entityManager, ({ container }) => {
-      const dataSource: DataSource = container.get(postgresSymbols.dataSource);
+    container.bindToDynamicValue<EntityManager>(postgresModuleSymbols.entityManager, ({ container }) => {
+      const dataSource: DataSource = container.get(postgresModuleSymbols.dataSource);
 
       return dataSource.manager;
     });

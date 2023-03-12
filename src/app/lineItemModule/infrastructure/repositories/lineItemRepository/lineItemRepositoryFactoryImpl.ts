@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { LineItemMapper } from './lineItemMapper/lineItemMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LineItemRepository } from '../../../application/repositories/lineItemRepository/lineItemRepository';
 import { LineItemRepositoryFactory } from '../../../application/repositories/lineItemRepository/lineItemRepositoryFactory';
 import { lineItemModuleSymbols } from '../../../lineItemModuleSymbols';

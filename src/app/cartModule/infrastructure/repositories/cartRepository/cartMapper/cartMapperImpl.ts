@@ -1,5 +1,5 @@
 import { CartMapper } from './cartMapper';
-import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { LineItemMapper } from '../../../../../domain/lineItem/contracts/mappers/lineItemMapper/lineItemMapper';
 import { lineItemSymbols } from '../../../../../domain/lineItem/lineItemSymbols';
 import { Cart } from '../../../../domain/entities/cart/cart';

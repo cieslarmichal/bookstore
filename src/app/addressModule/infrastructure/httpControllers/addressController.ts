@@ -17,9 +17,9 @@ import { Filter } from '../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../common/types/contracts/filterName';
 import { LocalsName } from '../../../../common/types/contracts/localsName';
 import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
-import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
+import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
 import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../customerModule/domain/entities/customer/customer';
@@ -42,7 +42,7 @@ export class AddressController {
   private readonly addressEndpoint = `${this.addressesEndpoint}/:id`;
 
   public constructor(
-    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
+    @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(addressModuleSymbols.addressService)
     private readonly addressService: AddressService,

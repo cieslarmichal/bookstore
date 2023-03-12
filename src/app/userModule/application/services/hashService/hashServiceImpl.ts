@@ -1,7 +1,7 @@
 import { hash, compare, genSalt } from 'bcrypt';
 
 import { HashService } from './hashService';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { UserModuleConfig } from '../../../userModuleConfig';
 import { userModuleSymbols } from '../../../userModuleSymbols';
 

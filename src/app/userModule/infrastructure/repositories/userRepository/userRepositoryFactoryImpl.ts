@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { UserMapper } from './userMapper/userMapper';
 import { UserRepositoryImpl } from './userRepositoryImpl';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { UserRepository } from '../../../application/repositories/userRepository/userRepository';
 import { UserRepositoryFactory } from '../../../application/repositories/userRepository/userRepositoryFactory';
 import { userModuleSymbols } from '../../../userModuleSymbols';

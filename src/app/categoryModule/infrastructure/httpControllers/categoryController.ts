@@ -13,9 +13,9 @@ import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/
 import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
 import { LocalsName } from '../../../../common/types/contracts/localsName';
 import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
-import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
+import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
@@ -30,7 +30,7 @@ export class CategoryController {
   private readonly categoryEndpoint = `${this.categoriesEndpoint}/:id`;
 
   public constructor(
-    @Inject(unitOfWorkSymbols.unitOfWorkFactory)
+    @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(categoryModuleSymbols.categoryService)
     private readonly categoryService: CategoryService,

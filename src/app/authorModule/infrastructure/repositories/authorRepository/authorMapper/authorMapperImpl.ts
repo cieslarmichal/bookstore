@@ -1,5 +1,5 @@
 import { AuthorMapper } from './authorMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { Author } from '../../../../domain/entities/author/author';
 import { AuthorEntity } from '../authorEntity/authorEntity';
 

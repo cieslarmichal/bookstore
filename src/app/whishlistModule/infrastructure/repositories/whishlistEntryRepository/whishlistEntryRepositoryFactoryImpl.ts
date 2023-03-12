@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { WhishlistEntryMapper } from './whishlistEntryMapper/whishlistEntryMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { WhishlistEntryRepository } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepository';
 import { WhishlistEntryRepositoryFactory } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 import { whishlistModuleSymbols } from '../../../whishlistModuleSymbols';

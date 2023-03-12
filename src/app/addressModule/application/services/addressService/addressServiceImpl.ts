@@ -4,10 +4,10 @@ import { DeleteAddressPayload, deleteAddressPayloadSchema } from './payloads/del
 import { FindAddressesPayload, findAddressesPayloadSchema } from './payloads/findAddressesPayload';
 import { FindAddressPayload, findAddressPayloadSchema } from './payloads/findAddressPayload';
 import { UpdateAddressPayload, updateAddressPayloadSchema } from './payloads/updateAddressPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { addressModuleSymbols } from '../../../addressModuleSymbols';
 import { Address } from '../../../domain/entities/address/address';
@@ -19,7 +19,7 @@ export class AddressServiceImpl implements AddressService {
   public constructor(
     @Inject(addressModuleSymbols.addressRepositoryFactory)
     private readonly addressRepositoryFactory: AddressRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

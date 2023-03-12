@@ -9,10 +9,10 @@ import {
   FindCategoriesByBookIdPayload,
   findCategoriesByBookIdPayloadSchema,
 } from './payloads/findCategoriesByBookIdPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
@@ -37,7 +37,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     private readonly categoryService: CategoryService,
     @Inject(bookModuleSymbols.bookService)
     private readonly bookService: BookService,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

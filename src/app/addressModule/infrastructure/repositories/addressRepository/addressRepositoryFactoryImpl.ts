@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { AddressMapper } from './addressMapper/addressMapper';
-import { Inject, Injectable } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Inject, Injectable } from '../../../../../libs/dependencyInjection/decorators';
 import { addressModuleSymbols } from '../../../addressModuleSymbols';
 import { AddressRepository } from '../../../application/repositories/addressRepository/addressRepository';
 import { AddressRepositoryFactory } from '../../../application/repositories/addressRepository/addressRepositoryFactory';

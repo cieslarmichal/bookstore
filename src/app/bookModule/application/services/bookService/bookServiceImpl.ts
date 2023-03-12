@@ -9,10 +9,10 @@ import {
 } from './payloads/findBooksByCategoryIdPayload';
 import { FindBooksPayload, findBooksPayloadSchema } from './payloads/findBooksPayload';
 import { UpdateBookPayload, updateBookPayloadSchema } from './payloads/updateBookPayload';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { bookModuleSymbols } from '../../../bookModuleSymbols';
 import { Book } from '../../../domain/entities/book/book';
@@ -24,7 +24,7 @@ export class BookServiceImpl implements BookService {
   public constructor(
     @Inject(bookModuleSymbols.bookRepositoryFactory)
     private readonly bookRepositoryFactory: BookRepositoryFactory,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 

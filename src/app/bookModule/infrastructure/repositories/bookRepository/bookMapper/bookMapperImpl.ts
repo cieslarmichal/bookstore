@@ -1,5 +1,5 @@
 import { BookMapper } from './bookMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { Book } from '../../../../domain/entities/book/book';
 import { BookEntity } from '../bookEntity/bookEntity';
 

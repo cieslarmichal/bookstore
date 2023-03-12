@@ -14,10 +14,10 @@ import { SetUserEmailPayload, setUserEmailPayloadSchema } from './payloads/setUs
 import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from './payloads/setUserPasswordPayload';
 import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from './payloads/setUserPhoneNumberPayload';
 import { UserService } from './userService';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { loggerSymbols } from '../../../../../libs/logger/loggerSymbols';
-import { UuidGenerator } from '../../../../../libs/uuid/implementations/uuidGenerator';
+import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../libs/validator/implementations/validator';
 import { User } from '../../../domain/entities/user/user';
 import { UserRole } from '../../../domain/entities/user/userRole';
@@ -39,7 +39,7 @@ export class UserServiceImpl implements UserService {
     private readonly hashService: HashService,
     @Inject(userModuleSymbols.tokenService)
     private readonly tokenService: TokenService,
-    @Inject(loggerSymbols.loggerService)
+    @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
 
