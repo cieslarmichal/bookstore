@@ -4,6 +4,7 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { TestTransactionExternalRunner } from '../../../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -52,7 +53,6 @@ import { UserModule } from '../../../domain/user/userModule';
 import { userSymbols } from '../../../domain/user/userSymbols';
 import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
 import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
-import { TestTransactionExternalRunner } from '../../../integrations/common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../../integrations/integrationsModule';
 
 const baseUrl = '/inventories';

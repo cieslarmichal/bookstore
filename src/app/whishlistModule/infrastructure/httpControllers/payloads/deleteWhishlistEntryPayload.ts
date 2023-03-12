@@ -1,6 +1,6 @@
+import { AccessTokenData } from '../../../../../common/types/contracts/accessTokenData';
 import { SchemaType } from '../../../../../libs/validator/contracts/schemaType';
 import { Schema } from '../../../../../libs/validator/implementations/schema';
-import { AccessTokenData } from '../../../../integrations/accessTokenData';
 
 export const deleteWhishlistEntryPayloadSchema = Schema.object({
   id: Schema.notEmptyString(),

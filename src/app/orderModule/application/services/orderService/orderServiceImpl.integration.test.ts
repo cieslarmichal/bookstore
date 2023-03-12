@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { OrderService } from './orderService';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -40,7 +41,6 @@ import { UserEntityTestFactory } from '../../../../domain/user/tests/factories/u
 import { UserModuleConfigTestFactory } from '../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../domain/user/userModule';
 import { userSymbols } from '../../../../domain/user/userSymbols';
-import { TestTransactionInternalRunner } from '../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../../inventoryModule/inventoryModule';

@@ -1,10 +1,10 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import { ParsePayload, parsePayloadSchema } from './parsePayload';
-import { Filter } from '../../../../common/types/contracts/filter';
-import { FilterName } from '../../../../common/types/contracts/filterName';
-import { FilterSymbol } from '../../../../common/types/contracts/filterSymbol';
-import { Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
-import { Validator } from '../../../../libs/validator/implementations/validator';
+import { Injectable } from '../../libs/dependencyInjection/contracts/decorators';
+import { Validator } from '../../libs/validator/implementations/validator';
+import { Filter } from '../types/contracts/filter';
+import { FilterName } from '../types/contracts/filterName';
+import { FilterSymbol } from '../types/contracts/filterSymbol';
 
 @Injectable()
 export class FilterDataParser {

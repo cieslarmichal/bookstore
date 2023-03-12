@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { BookService } from './bookService';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
 import { EqualFilter, LessThanOrEqualFilter, BetweenFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
@@ -41,7 +42,6 @@ import { LineItemEntity } from '../../../../domain/lineItem/contracts/lineItemEn
 import { OrderEntity } from '../../../../domain/order/contracts/orderEntity';
 import { ReviewEntity } from '../../../../domain/review/contracts/reviewEntity';
 import { UserEntity } from '../../../../domain/user/contracts/userEntity';
-import { TestTransactionInternalRunner } from '../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { BookModule } from '../../../bookModule';
 import { bookModuleSymbols } from '../../../bookModuleSymbols';
 import { BookFormat } from '../../../domain/entities/book/bookFormat';

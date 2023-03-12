@@ -6,7 +6,12 @@ import { CreateAuthorBookPayload, createAuthorBookPayloadSchema } from './payloa
 import { DeleteAuthorBookPayload, deleteAuthorBookPayloadSchema } from './payloads/deleteAuthorBookPayload';
 import { FindAuthorsByBookIdPayload, findAuthorsByBookIdPayloadSchema } from './payloads/findAuthorsByBookIdPayload';
 import { FindBooksByAuthorIdPayload, findBooksByAuthorIdPayloadSchema } from './payloads/findBooksByAuthorIdPayload';
+import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
+import { LocalsName } from '../../../../common/types/contracts/localsName';
+import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
@@ -15,13 +20,8 @@ import { Author } from '../../../authorModule/domain/entities/author/author';
 import { Book } from '../../../bookModule/domain/entities/book/book';
 import { findAuthorsFilters } from '../../../integrations/author/contracts/findAuthorsFilters';
 import { findBooksFilters } from '../../../integrations/book/contracts/findBooksFilters';
-import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../../integrations/controllerResponse';
-import { LocalsName } from '../../../integrations/localsName';
-import { QueryParameterName } from '../../../integrations/queryParameterName';
 import { AuthorBookService } from '../../application/services/authorBookService/authorBookService';
 import { AuthorBook } from '../../domain/entities/authorBook/authorBook';
 

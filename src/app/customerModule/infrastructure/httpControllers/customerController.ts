@@ -6,14 +6,14 @@ import { CreateCustomerPayload, createCustomerPayloadSchema } from './payloads/c
 import { DeleteCustomerPayload, deleteCustomerPayloadSchema } from './payloads/deleteCustomerPayload';
 import { FindCustomerPayload, findCustomerPayloadSchema } from './payloads/findCustomerPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
+import { LocalsName } from '../../../../common/types/contracts/localsName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
 import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
-import { ControllerResponse } from '../../../integrations/controllerResponse';
-import { LocalsName } from '../../../integrations/localsName';
 import { CustomerService } from '../../../tests/services/customerService';
 import { customerModuleSymbols } from '../../customerModuleSymbols';
 

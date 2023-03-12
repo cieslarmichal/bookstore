@@ -12,7 +12,12 @@ import {
   FindCategoriesByBookIdPayload,
   findCategoriesByBookIdPayloadSchema,
 } from './payloads/findCategoriesByBookIdPayload';
+import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
+import { LocalsName } from '../../../../common/types/contracts/localsName';
+import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
@@ -20,14 +25,9 @@ import { Validator } from '../../../../libs/validator/implementations/validator'
 import { Book } from '../../../bookModule/domain/entities/book/book';
 import { findBooksFilters } from '../../../bookModule/infrastructure/httpControllers/payloads/findBooksFilters';
 import { Category } from '../../../categoryModule/domain/entities/category/category';
-import { findCategoriesFilters } from '../../../integrations/category/contracts/findCategoriesFilters';
-import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { findCategoriesFilters } from '../../../categoryModule/infrastructure/httpControllers/payloads/findCategoriesFilters';
 import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../../integrations/controllerResponse';
-import { LocalsName } from '../../../integrations/localsName';
-import { QueryParameterName } from '../../../integrations/queryParameterName';
 import { BookCategoryService } from '../../application/services/bookCategoryService/bookCategoryService';
 import { bookCategoryModuleSymbols } from '../../bookCategoryModuleSymbols';
 import { BookCategory } from '../../domain/entities/bookCategory/bookCategory';

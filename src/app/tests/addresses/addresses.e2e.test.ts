@@ -3,10 +3,18 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
+import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
+import { TestTransactionExternalRunner } from '../../../common/tests/unitOfWork/testTransactionExternalRunner';
+import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../libs/postgres/postgresModule';
+import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../app';
-import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
 import { AddressModule } from '../../domain/address/addressModule';
 import { addressSymbols } from '../../domain/address/addressSymbols';
 import { AddressEntity } from '../../domain/address/contracts/addressEntity';
@@ -46,15 +54,7 @@ import { UserModule } from '../../domain/user/userModule';
 import { userSymbols } from '../../domain/user/userSymbols';
 import { WhishlistEntryEntity } from '../../domain/whishlist/contracts/whishlistEntryEntity';
 import { WhishlistModule } from '../../domain/whishlist/whishlistModule';
-import { TestTransactionExternalRunner } from '../../integrations/common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../integrations/integrationsModule';
-import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../libs/postgres/postgresSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
 
 const baseUrl = '/addresses';
 

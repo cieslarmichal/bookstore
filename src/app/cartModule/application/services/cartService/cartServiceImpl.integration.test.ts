@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { CartService } from './cartService';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -46,7 +47,6 @@ import { UserEntityTestFactory } from '../../../../domain/user/tests/factories/u
 import { UserModuleConfigTestFactory } from '../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../domain/user/userModule';
 import { userSymbols } from '../../../../domain/user/userSymbols';
-import { TestTransactionInternalRunner } from '../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { CartModule } from '../../../cartModule';
 import { cartModuleSymbols } from '../../../cartModuleSymbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';

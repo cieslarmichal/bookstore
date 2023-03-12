@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { AuthorBookService } from './authorBookService';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -31,7 +32,6 @@ import { LineItemEntity } from '../../../../domain/lineItem/contracts/lineItemEn
 import { OrderEntity } from '../../../../domain/order/contracts/orderEntity';
 import { ReviewEntity } from '../../../../domain/review/contracts/reviewEntity';
 import { UserEntity } from '../../../../domain/user/contracts/userEntity';
-import { TestTransactionInternalRunner } from '../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { AuthorBookModule } from '../../../authorBookModule';
 import { authorBookModuleSymbols } from '../../../authorBookModuleSymbols';
 import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';

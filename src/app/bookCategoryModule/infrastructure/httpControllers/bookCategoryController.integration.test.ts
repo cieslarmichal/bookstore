@@ -5,6 +5,7 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { TestTransactionExternalRunner } from '../../../../common/tests/unitOfWork/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -33,7 +34,6 @@ import { CategoryEntity } from '../../../categoryModule/infrastructure/repositor
 import { CategoryEntityTestFactory } from '../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerModule } from '../../../customerModule/customerModule';
 import { CustomerEntity } from '../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { TestTransactionExternalRunner } from '../../../integrations/common/tests/unitOfWork/testTransactionExternalRunner';
 import { IntegrationsModule } from '../../../integrations/integrationsModule';
 import { InventoryEntity } from '../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../inventoryModule/inventoryModule';

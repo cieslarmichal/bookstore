@@ -1,7 +1,7 @@
 import { BuildPayload, buildPayloadSchema } from './buildPayload';
-import { PaginationData } from '../../../../common/types/contracts/paginationData';
-import { Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
-import { Validator } from '../../../../libs/validator/implementations/validator';
+import { Injectable } from '../../libs/dependencyInjection/contracts/decorators';
+import { Validator } from '../../libs/validator/implementations/validator';
+import { PaginationData } from '../types/contracts/paginationData';
 
 @Injectable()
 export class PaginationDataBuilder {

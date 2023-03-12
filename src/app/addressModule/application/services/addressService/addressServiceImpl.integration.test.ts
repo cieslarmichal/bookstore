@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { AddressService } from './addressService';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
@@ -34,7 +35,6 @@ import { UserEntityTestFactory } from '../../../../domain/user/tests/factories/u
 import { UserModuleConfigTestFactory } from '../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../../domain/user/userModule';
 import { userSymbols } from '../../../../domain/user/userSymbols';
-import { TestTransactionInternalRunner } from '../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { AddressModule } from '../../../addressModule';
 import { addressModuleSymbols } from '../../../addressModuleSymbols';
 import { AddressNotFoundError } from '../../../infrastructure/errors/addressNotFoundError';

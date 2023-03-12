@@ -3,10 +3,18 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { TestTransactionExternalRunner } from '../../../../common/tests/unitOfWork/testTransactionExternalRunner';
+import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../../libs/postgres/postgresModule';
+import { postgresSymbols } from '../../../../libs/postgres/postgresSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { App } from '../../../app';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { AddressModule } from '../../../domain/address/addressModule';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
 import { AuthorModule } from '../../../domain/author/authorModule';
@@ -49,15 +57,7 @@ import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishl
 import { WhishlistEntryEntityTestFactory } from '../../../domain/whishlist/tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
 import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
 import { whishlistSymbols } from '../../../domain/whishlist/whishlistSymbols';
-import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-import { postgresSymbols } from '../../../../libs/postgres/postgresSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
-import { TestTransactionExternalRunner } from '../../common/tests/unitOfWork/testTransactionExternalRunner';
-import { IntegrationsModule } from '../../integrationsModule';
+import { IntegrationsModule } from '../../../integrations/integrationsModule';
 
 const baseUrl = '/whishlist-entries';
 
