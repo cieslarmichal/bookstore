@@ -2,27 +2,26 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { orderErrorMiddleware } from './orderErrorMiddleware';
+import { CreateOrderPayload, createOrderPayloadSchema } from './payloads/createOrderPayload';
+import { FindOrdersPayload, findOrdersPayloadSchema } from './payloads/findOrdersPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { Customer } from '../../../domain/customer/contracts/customer';
-import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
-import { customerSymbols } from '../../../domain/customer/customerSymbols';
-import { Order } from '../../../domain/order/contracts/order';
-import { OrderService } from '../../../domain/order/contracts/services/orderService/orderService';
-import { orderSymbols } from '../../../domain/order/orderSymbols';
-import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AccessTokenData } from '../../accessTokenData';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateOrderPayload, createOrderPayloadSchema } from '../contracts/createOrderPayload';
-import { FindOrdersPayload, findOrdersPayloadSchema } from '../contracts/findOrdersPayload';
+import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
+import { Customer } from '../../../customerModule/domain/entities/customer/customer';
+import { AccessTokenData } from '../../../integrations/accessTokenData';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { CustomerService } from '../../../tests/services/customerService';
+import { OrderService } from '../../application/services/orderService/orderService';
+import { Order } from '../../domain/entities/order/order';
+import { orderModuleSymbols } from '../../orderModuleSymbols';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
 @Injectable()
@@ -33,9 +32,9 @@ export class OrderController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(orderSymbols.orderService)
+    @Inject(orderModuleSymbols.orderService)
     private readonly orderService: OrderService,
-    @Inject(customerSymbols.customerService)
+    @Inject(customerModuleSymbols.customerService)
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

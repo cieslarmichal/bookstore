@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { OrderRepositoryFactory } from './application/repositories/orderRepository/orderRepositoryFactory';
 import { OrderService } from './application/services/orderService/orderService';
 import { OrderServiceImpl } from './application/services/orderService/orderServiceImpl';
+import { OrderController } from './infrastructure/httpControllers/orderController';
 import { OrderMapper } from './infrastructure/repositories/orderRepository/orderMapper/orderMapper';
 import { OrderMapperImpl } from './infrastructure/repositories/orderRepository/orderMapper/orderMapperImpl';
 import { OrderRepositoryFactoryImpl } from './infrastructure/repositories/orderRepository/orderRepositoryFactoryImpl';
@@ -42,8 +43,6 @@ describe('OrderModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<OrderMapper>(orderModuleSymbols.orderMapper)).toBeInstanceOf(OrderMapperImpl);
 
     expect(container.get<OrderRepositoryFactory>(orderModuleSymbols.orderRepositoryFactory)).toBeInstanceOf(
@@ -51,5 +50,7 @@ describe('OrderModule', () => {
     );
 
     expect(container.get<OrderService>(orderModuleSymbols.orderService)).toBeInstanceOf(OrderServiceImpl);
+
+    expect(container.get<OrderController>(orderModuleSymbols.orderController)).toBeInstanceOf(OrderController);
   });
 });

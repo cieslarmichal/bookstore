@@ -70,8 +70,6 @@ describe('IntegrationsModule', () => {
   it('declares bindings', async () => {
     expect(container.get<UserController>(integrationsSymbols.userController)).toBeInstanceOf(UserController);
 
-    expect(container.get<OrderController>(integrationsSymbols.orderController)).toBeInstanceOf(OrderController);
-
     expect(container.get<ReviewController>(integrationsSymbols.reviewController)).toBeInstanceOf(ReviewController);
   });
 });

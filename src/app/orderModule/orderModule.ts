@@ -3,6 +3,7 @@ import { CartValidatorService } from './application/services/cartValidatorServic
 import { CartValidatorServiceImpl } from './application/services/cartValidatorService/cartValidatorServiceImpl';
 import { OrderService } from './application/services/orderService/orderService';
 import { OrderServiceImpl } from './application/services/orderService/orderServiceImpl';
+import { OrderController } from './infrastructure/httpControllers/orderController';
 import { OrderMapper } from './infrastructure/repositories/orderRepository/orderMapper/orderMapper';
 import { OrderMapperImpl } from './infrastructure/repositories/orderRepository/orderMapper/orderMapperImpl';
 import { OrderRepositoryFactoryImpl } from './infrastructure/repositories/orderRepository/orderRepositoryFactoryImpl';
@@ -25,5 +26,7 @@ export class OrderModule implements DependencyInjectionModule {
       orderModuleSymbols.cartValidatorService,
       CartValidatorServiceImpl,
     );
+
+    container.bindToConstructor<OrderController>(orderModuleSymbols.orderController, OrderController);
   }
 }
