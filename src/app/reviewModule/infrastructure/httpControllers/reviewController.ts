@@ -1,33 +1,32 @@
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
+import { CreateReviewPayload, createReviewPayloadSchema } from './payloads/createReviewPayload';
+import { DeleteReviewPayload, deleteReviewPayloadSchema } from './payloads/deleteReviewPayload';
+import { FindReviewPayload, findReviewPayloadSchema } from './payloads/findReviewPayload';
+import { FindReviewsPayload, findReviewsPayloadSchema } from './payloads/findReviewsPayload';
+import { UpdateReviewPayload, updateReviewPayloadSchema } from './payloads/updateReviewPayload';
 import { reviewErrorMiddleware } from './reviewErrorMiddleware';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { Customer } from '../../../domain/customer/contracts/customer';
-import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
-import { customerSymbols } from '../../../domain/customer/customerSymbols';
-import { Review } from '../../../domain/review/contracts/review';
-import { CreateReviewDraft } from '../../../domain/review/contracts/services/reviewService/createReviewDraft';
-import { ReviewService } from '../../../domain/review/contracts/services/reviewService/reviewService';
-import { UpdateReviewDraft } from '../../../domain/review/contracts/services/reviewService/updateReviewDraft';
-import { reviewSymbols } from '../../../domain/review/reviewSymbols';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AccessTokenData } from '../../accessTokenData';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateReviewPayload, createReviewPayloadSchema } from '../contracts/createReviewPayload';
-import { DeleteReviewPayload, deleteReviewPayloadSchema } from '../contracts/deleteReviewPayload';
-import { FindReviewPayload, findReviewPayloadSchema } from '../contracts/findReviewPayload';
-import { FindReviewsPayload, findReviewsPayloadSchema } from '../contracts/findReviewsPayload';
-import { UpdateReviewPayload, updateReviewPayloadSchema } from '../contracts/updateReviewPayload';
+import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
+import { Customer } from '../../../customerModule/domain/entities/customer/customer';
+import { AccessTokenData } from '../../../integrations/accessTokenData';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { CustomerService } from '../../../tests/services/customerService';
+import { CreateReviewDraft } from '../../application/services/reviewService/payloads/createReviewDraft';
+import { UpdateReviewDraft } from '../../application/services/reviewService/payloads/updateReviewDraft';
+import { ReviewService } from '../../application/services/reviewService/reviewService';
+import { Review } from '../../domain/entities/review/review';
+import { reviewModuleSymbols } from '../../reviewModuleSymbols';
 import { CustomerFromAccessTokenNotMatchingCustomerFromReviewError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
@@ -40,9 +39,9 @@ export class ReviewController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(reviewSymbols.reviewService)
+    @Inject(reviewModuleSymbols.reviewService)
     private readonly reviewService: ReviewService,
-    @Inject(customerSymbols.customerService)
+    @Inject(customerModuleSymbols.customerService)
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
