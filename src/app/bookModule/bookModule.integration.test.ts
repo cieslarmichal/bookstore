@@ -5,6 +5,7 @@ import { BookService } from './application/services/bookService/bookService';
 import { BookServiceImpl } from './application/services/bookService/bookServiceImpl';
 import { BookModule } from './bookModule';
 import { bookModuleSymbols } from './bookModuleSymbols';
+import { BookController } from './infrastructure/httpControllers/bookController';
 import { BookMapper } from './infrastructure/repositories/bookRepository/bookMapper/bookMapper';
 import { BookMapperImpl } from './infrastructure/repositories/bookRepository/bookMapper/bookMapperImpl';
 import { BookRepositoryFactoryImpl } from './infrastructure/repositories/bookRepository/bookRepositoryFactoryImpl';
@@ -28,8 +29,6 @@ describe('BookModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<BookMapper>(bookModuleSymbols.bookMapper)).toBeInstanceOf(BookMapperImpl);
 
     expect(container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory)).toBeInstanceOf(
@@ -37,5 +36,7 @@ describe('BookModule', () => {
     );
 
     expect(container.get<BookService>(bookModuleSymbols.bookService)).toBeInstanceOf(BookServiceImpl);
+
+    expect(container.get<BookController>(bookModuleSymbols.bookController)).toBeInstanceOf(BookController);
   });
 });

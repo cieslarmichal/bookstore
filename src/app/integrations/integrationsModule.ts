@@ -29,8 +29,6 @@ export class IntegrationsModule implements DependencyInjectionModule {
       PaginationDataBuilder,
     );
 
-    container.bindToConstructor<BookController>(integrationsSymbols.bookController, BookController);
-
     container.bindToConstructor<UserController>(integrationsSymbols.userController, UserController);
 
     container.bindToConstructor<CategoryController>(integrationsSymbols.categoryController, CategoryController);

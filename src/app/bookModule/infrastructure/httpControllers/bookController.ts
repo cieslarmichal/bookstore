@@ -20,7 +20,10 @@ import { ControllerResponse } from '../../controllerResponse';
 import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
 import { QueryParameterName } from '../../queryParameterName';
-import { CreateBookPayload, createBookPayloadSchema } from '../contracts/createBookPayload';
+import {
+  CreateBookPayload,
+  createBookPayloadSchema,
+} from '../../../bookModule/infrastructure/httpControllers/payloads/createBookPayload';
 import { DeleteBookPayload, deleteBookPayloadSchema } from '../contracts/deleteBookPayload';
 import { FindBookPayload, findBookPayloadSchema } from '../contracts/findBookPayload';
 import { findBooksFilters } from '../contracts/findBooksFilters';
