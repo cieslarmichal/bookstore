@@ -72,10 +72,6 @@ describe('IntegrationsModule', () => {
 
     expect(container.get<OrderController>(integrationsSymbols.orderController)).toBeInstanceOf(OrderController);
 
-    expect(container.get<InventoryController>(integrationsSymbols.inventoryController)).toBeInstanceOf(
-      InventoryController,
-    );
-
     expect(container.get<ReviewController>(integrationsSymbols.reviewController)).toBeInstanceOf(ReviewController);
   });
 });

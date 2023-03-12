@@ -2,8 +2,8 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { InventoryAlreadyExistsError } from '../../../domain/inventory/errors/inventoryAlreadyExistsError';
-import { InventoryNotFoundError } from '../../../domain/inventory/errors/inventoryNotFoundError';
+import { InventoryAlreadyExistsError } from '../errors/inventoryAlreadyExistsError';
+import { InventoryNotFoundError } from '../errors/inventoryNotFoundError';
 
 export function inventoryErrorMiddleware(
   error: Error,

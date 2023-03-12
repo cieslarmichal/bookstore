@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { InventoryRepositoryFactory } from './application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryService } from './application/services/inventoryService/inventoryService';
 import { InventoryServiceImpl } from './application/services/inventoryService/inventoryServiceImpl';
+import { InventoryController } from './infrastructure/httpControllers/inventoryController';
 import { InventoryMapper } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapper';
 import { InventoryMapperImpl } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapperImpl';
 import { InventoryRepositoryFactoryImpl } from './infrastructure/repositories/inventoryRepository/inventoryRepositoryFactoryImpl';
@@ -28,8 +29,6 @@ describe('InventoryModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<InventoryMapper>(inventoryModuleSymbols.inventoryMapper)).toBeInstanceOf(InventoryMapperImpl);
 
     expect(container.get<InventoryRepositoryFactory>(inventoryModuleSymbols.inventoryRepositoryFactory)).toBeInstanceOf(
@@ -38,6 +37,10 @@ describe('InventoryModule', () => {
 
     expect(container.get<InventoryService>(inventoryModuleSymbols.inventoryService)).toBeInstanceOf(
       InventoryServiceImpl,
+    );
+
+    expect(container.get<InventoryController>(inventoryModuleSymbols.inventoryController)).toBeInstanceOf(
+      InventoryController,
     );
   });
 });
