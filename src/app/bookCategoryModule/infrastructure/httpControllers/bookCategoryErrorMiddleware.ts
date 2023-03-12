@@ -2,10 +2,10 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { BookNotFoundError } from '../../../domain/book/errors/bookNotFoundError';
-import { BookCategoryAlreadyExistsError } from '../../../domain/bookCategory/errors/bookCategoryAlreadyExistsError';
-import { BookCategoryNotFoundError } from '../../../domain/bookCategory/errors/bookCategoryNotFoundError';
-import { CategoryNotFoundError } from '../../../domain/category/errors/categoryNotFoundError';
+import { BookNotFoundError } from '../../../bookModule/infrastructure/errors/bookNotFoundError';
+import { CategoryNotFoundError } from '../../../categoryModule/infrastructure/errors/categoryNotFoundError';
+import { BookCategoryAlreadyExistsError } from '../errors/bookCategoryAlreadyExistsError';
+import { BookCategoryNotFoundError } from '../errors/bookCategoryNotFoundError';
 
 export function bookCategoryErrorMiddleware(
   error: Error,

@@ -76,10 +76,6 @@ describe('IntegrationsModule', () => {
       CategoryController,
     );
 
-    expect(container.get<BookCategoryController>(integrationsSymbols.bookCategoryController)).toBeInstanceOf(
-      BookCategoryController,
-    );
-
     expect(container.get<CustomerController>(integrationsSymbols.customerController)).toBeInstanceOf(
       CustomerController,
     );

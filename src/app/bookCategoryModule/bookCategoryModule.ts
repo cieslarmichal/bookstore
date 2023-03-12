@@ -2,6 +2,7 @@ import { BookCategoryRepositoryFactory } from './application/repositories/bookCa
 import { BookCategoryService } from './application/services/bookCategoryService/bookCategoryService';
 import { BookCategoryServiceImpl } from './application/services/bookCategoryService/bookCategoryServiceImpl';
 import { bookCategoryModuleSymbols } from './bookCategoryModuleSymbols';
+import { BookCategoryController } from './infrastructure/httpControllers/bookCategoryController';
 import { BookCategoryMapper } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryMapperImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapperImpl';
 import { BookCategoryRepositoryFactoryImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryRepositoryFactoryImpl';
@@ -23,6 +24,11 @@ export class BookCategoryModule implements DependencyInjectionModule {
     container.bindToConstructor<BookCategoryService>(
       bookCategoryModuleSymbols.bookCategoryService,
       BookCategoryServiceImpl,
+    );
+
+    container.bindToConstructor<BookCategoryController>(
+      bookCategoryModuleSymbols.bookCategoryController,
+      BookCategoryController,
     );
   }
 }

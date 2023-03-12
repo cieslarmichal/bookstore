@@ -5,6 +5,7 @@ import { BookCategoryService } from './application/services/bookCategoryService/
 import { BookCategoryServiceImpl } from './application/services/bookCategoryService/bookCategoryServiceImpl';
 import { BookCategoryModule } from './bookCategoryModule';
 import { bookCategoryModuleSymbols } from './bookCategoryModuleSymbols';
+import { BookCategoryController } from './infrastructure/httpControllers/bookCategoryController';
 import { BookCategoryMapper } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryMapperImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapperImpl';
 import { BookCategoryRepositoryFactoryImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryRepositoryFactoryImpl';
@@ -36,8 +37,6 @@ describe('BookCategoryModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<BookCategoryMapper>(bookCategoryModuleSymbols.bookCategoryMapper)).toBeInstanceOf(
       BookCategoryMapperImpl,
     );
@@ -48,6 +47,10 @@ describe('BookCategoryModule', () => {
 
     expect(container.get<BookCategoryService>(bookCategoryModuleSymbols.bookCategoryService)).toBeInstanceOf(
       BookCategoryServiceImpl,
+    );
+
+    expect(container.get<BookCategoryController>(bookCategoryModuleSymbols.bookCategoryController)).toBeInstanceOf(
+      BookCategoryController,
     );
   });
 });

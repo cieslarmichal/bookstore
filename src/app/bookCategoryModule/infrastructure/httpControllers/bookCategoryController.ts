@@ -2,36 +2,34 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { bookCategoryErrorMiddleware } from './bookCategoryErrorMiddleware';
+import { CreateBookCategoryPayload, createBookCategoryPayloadSchema } from './payloads/createBookCategoryPayload';
+import { DeleteBookCategoryPayload, deleteBookCategoryPayloadSchema } from './payloads/deleteBookCategoryPayload';
+import {
+  FindBooksByCategoryIdPayload,
+  findBooksByCategoryIdPayloadSchema,
+} from './payloads/findBooksByCategoryIdPayload';
+import {
+  FindCategoriesByBookIdPayload,
+  findCategoriesByBookIdPayloadSchema,
+} from './payloads/findCategoriesByBookIdPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { Book } from '../../../domain/book/contracts/book';
-import { bookCategorySymbols } from '../../../domain/bookCategory/bookCategorySymbols';
-import { BookCategory } from '../../../domain/bookCategory/contracts/bookCategory';
-import { BookCategoryService } from '../../../domain/bookCategory/contracts/services/bookCategoryService/bookCategoryService';
-import { Category } from '../../../domain/category/contracts/category';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { findBooksFilters } from '../../book/contracts/findBooksFilters';
-import { findCategoriesFilters } from '../../category/contracts/findCategoriesFilters';
-import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateBookCategoryPayload, createBookCategoryPayloadSchema } from '../contracts/createBookCategoryPayload';
-import { DeleteBookCategoryPayload, deleteBookCategoryPayloadSchema } from '../contracts/deleteBookCategoryPayload';
-import {
-  FindBooksByCategoryIdPayload,
-  findBooksByCategoryIdPayloadSchema,
-} from '../contracts/findBooksByCategoryIdPayload';
-import {
-  FindCategoriesByBookIdPayload,
-  findCategoriesByBookIdPayloadSchema,
-} from '../contracts/findCategoriesByBookIdPayload';
+import { Book } from '../../../bookModule/domain/entities/book/book';
+import { Category } from '../../../categoryModule/domain/entities/category/category';
+import { findBooksFilters } from '../../../integrations/book/contracts/findBooksFilters';
+import { findCategoriesFilters } from '../../../integrations/category/contracts/findCategoriesFilters';
+import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { BookCategoryService } from '../../application/services/bookCategoryService/bookCategoryService';
+import { BookCategory } from '../../domain/entities/bookCategory/bookCategory';
 
 @Injectable()
 export class BookCategoryController {
