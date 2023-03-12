@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { CartNotFoundError } from '../../../domain/cart/errors/cartNotFoundError';
-import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../cartModule/infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
 export function cartErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {

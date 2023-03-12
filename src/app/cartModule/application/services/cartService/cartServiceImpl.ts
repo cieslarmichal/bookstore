@@ -19,7 +19,7 @@ import { inventorySymbols } from '../../../../domain/inventory/inventorySymbols'
 import { LineItemRepositoryFactory } from '../../../../domain/lineItem/contracts/factories/lineItemRepositoryFactory/lineItemRepositoryFactory';
 import { LineItemNotFoundError } from '../../../../domain/lineItem/errors/lineItemNotFoundError';
 import { lineItemSymbols } from '../../../../domain/lineItem/lineItemSymbols';
-import { cartSymbols } from '../../../cartSymbols';
+import { cartModuleSymbols } from '../../../cartModuleSymbols';
 import { Cart } from '../../../domain/entities/cart/cart';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
@@ -29,7 +29,7 @@ import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRep
 @Injectable()
 export class CartServiceImpl implements CartService {
   public constructor(
-    @Inject(cartSymbols.cartRepositoryFactory)
+    @Inject(cartModuleSymbols.cartRepositoryFactory)
     private readonly cartRepositoryFactory: CartRepositoryFactory,
     @Inject(lineItemSymbols.lineItemRepositoryFactory)
     private readonly lineItemRepositoryFactory: LineItemRepositoryFactory,

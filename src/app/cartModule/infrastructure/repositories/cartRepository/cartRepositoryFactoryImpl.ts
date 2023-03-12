@@ -5,12 +5,12 @@ import { CartRepositoryImpl } from './cartRepositoryImpl';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/contracts/decorators';
 import { CartRepository } from '../../../application/repositories/cartRepository/cartRepository';
 import { CartRepositoryFactory } from '../../../application/repositories/cartRepository/cartRepositoryFactory';
-import { cartSymbols } from '../../../cartSymbols';
+import { cartModuleSymbols } from '../../../cartModuleSymbols';
 
 @Injectable()
 export class CartRepositoryFactoryImpl implements CartRepositoryFactory {
   public constructor(
-    @Inject(cartSymbols.cartMapper)
+    @Inject(cartModuleSymbols.cartMapper)
     private readonly cartMapper: CartMapper,
   ) {}
 

@@ -22,7 +22,7 @@ import { BookEntity } from '../../../../bookModule/infrastructure/repositories/b
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CartRepositoryFactory } from '../../../../cartModule/application/repositories/cartRepository/cartRepositoryFactory';
 import { CartModule } from '../../../../cartModule/cartModule';
-import { cartSymbols } from '../../../../cartModule/cartSymbols';
+import { cartModuleSymbols } from '../../../../cartModule/cartModuleSymbols';
 import { CartStatus } from '../../../../cartModule/domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../../cartModule/domain/entities/cart/deliveryMethod';
 import { CartNotFoundError } from '../../../../cartModule/infrastructure/errors/cartNotFoundError';
@@ -117,7 +117,7 @@ describe('OrderServiceImpl', () => {
 
     orderService = container.get<OrderService>(orderModuleSymbols.orderService);
     orderRepositoryFactory = container.get<OrderRepositoryFactory>(orderModuleSymbols.orderRepositoryFactory);
-    cartRepositoryFactory = container.get<CartRepositoryFactory>(cartSymbols.cartRepositoryFactory);
+    cartRepositoryFactory = container.get<CartRepositoryFactory>(cartModuleSymbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
       customerModuleSymbols.customerRepositoryFactory,
     );

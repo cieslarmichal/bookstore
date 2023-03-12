@@ -2,33 +2,29 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { bookErrorMiddleware } from './bookErrorMiddleware';
+import { CreateBookPayload, createBookPayloadSchema } from './payloads/createBookPayload';
+import { DeleteBookPayload, deleteBookPayloadSchema } from './payloads/deleteBookPayload';
+import { FindBookPayload, findBookPayloadSchema } from './payloads/findBookPayload';
+import { findBooksFilters } from './payloads/findBooksFilters';
+import { FindBooksPayload, findBooksPayloadSchema } from './payloads/findBooksPayload';
+import { UpdateBookPayload, updateBookPayloadSchema } from './payloads/updateBookPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { bookSymbols } from '../../../domain/book/bookSymbols';
-import { Book } from '../../../domain/book/contracts/book';
-import { BookService } from '../../../domain/book/contracts/services/bookService/bookService';
-import { CreateBookDraft } from '../../../domain/book/contracts/services/bookService/createBookDraft';
-import { UpdateBookDraft } from '../../../domain/book/contracts/services/bookService/updateBookDraft';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import {
-  CreateBookPayload,
-  createBookPayloadSchema,
-} from '../../../bookModule/infrastructure/httpControllers/payloads/createBookPayload';
-import { DeleteBookPayload, deleteBookPayloadSchema } from '../contracts/deleteBookPayload';
-import { FindBookPayload, findBookPayloadSchema } from '../contracts/findBookPayload';
-import { findBooksFilters } from '../contracts/findBooksFilters';
-import { FindBooksPayload, findBooksPayloadSchema } from '../contracts/findBooksPayload';
-import { UpdateBookPayload, updateBookPayloadSchema } from '../contracts/updateBookPayload';
+import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { BookService } from '../../application/services/bookService/bookService';
+import { CreateBookDraft } from '../../application/services/bookService/payloads/createBookDraft';
+import { UpdateBookDraft } from '../../application/services/bookService/payloads/updateBookDraft';
+import { bookModuleSymbols } from '../../bookModuleSymbols';
+import { Book } from '../../domain/entities/book/book';
 
 @Injectable()
 export class BookController {
@@ -39,7 +35,7 @@ export class BookController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(bookSymbols.bookService)
+    @Inject(bookModuleSymbols.bookService)
     private readonly bookService: BookService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

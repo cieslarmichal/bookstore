@@ -18,8 +18,8 @@ import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factori
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
 import { Book } from '../../../bookModule/domain/entities/book/book';
+import { findBooksFilters } from '../../../bookModule/infrastructure/httpControllers/payloads/findBooksFilters';
 import { Category } from '../../../categoryModule/domain/entities/category/category';
-import { findBooksFilters } from '../../../integrations/book/contracts/findBooksFilters';
 import { findCategoriesFilters } from '../../../integrations/category/contracts/findCategoriesFilters';
 import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
 import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
@@ -29,6 +29,7 @@ import { ControllerResponse } from '../../../integrations/controllerResponse';
 import { LocalsName } from '../../../integrations/localsName';
 import { QueryParameterName } from '../../../integrations/queryParameterName';
 import { BookCategoryService } from '../../application/services/bookCategoryService/bookCategoryService';
+import { bookCategoryModuleSymbols } from '../../bookCategoryModuleSymbols';
 import { BookCategory } from '../../domain/entities/bookCategory/bookCategory';
 
 @Injectable()
@@ -41,7 +42,7 @@ export class BookCategoryController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(bookCategorySymbols.bookCategoryService)
+    @Inject(bookCategoryModuleSymbols.bookCategoryService)
     private readonly bookCategoryService: BookCategoryService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

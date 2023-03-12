@@ -48,7 +48,7 @@ import { UserModule } from '../../../../domain/user/userModule';
 import { userSymbols } from '../../../../domain/user/userSymbols';
 import { TestTransactionInternalRunner } from '../../../../integrations/common/tests/unitOfWork/testTransactionInternalRunner';
 import { CartModule } from '../../../cartModule';
-import { cartSymbols } from '../../../cartSymbols';
+import { cartModuleSymbols } from '../../../cartModuleSymbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
@@ -110,8 +110,8 @@ describe('CartServiceImpl', () => {
       ],
     });
 
-    cartService = container.get<CartService>(cartSymbols.cartService);
-    cartRepositoryFactory = container.get<CartRepositoryFactory>(cartSymbols.cartRepositoryFactory);
+    cartService = container.get<CartService>(cartModuleSymbols.cartService);
+    cartRepositoryFactory = container.get<CartRepositoryFactory>(cartModuleSymbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);

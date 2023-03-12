@@ -1,7 +1,8 @@
 import { CartRepositoryFactory } from './application/repositories/cartRepository/cartRepositoryFactory';
 import { CartService } from './application/services/cartService/cartService';
 import { CartServiceImpl } from './application/services/cartService/cartServiceImpl';
-import { cartSymbols } from './cartSymbols';
+import { cartModuleSymbols } from './cartModuleSymbols';
+import { CartController } from './infrastructure/httpControllers/cartController';
 import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
 import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
 import { CartRepositoryFactoryImpl } from './infrastructure/repositories/cartRepository/cartRepositoryFactoryImpl';
@@ -10,10 +11,15 @@ import { DependencyInjectionContainer } from '../../libs/dependencyInjection/imp
 
 export class CartModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
-    container.bindToConstructor<CartMapper>(cartSymbols.cartMapper, CartMapperImpl);
+    container.bindToConstructor<CartMapper>(cartModuleSymbols.cartMapper, CartMapperImpl);
 
-    container.bindToConstructor<CartRepositoryFactory>(cartSymbols.cartRepositoryFactory, CartRepositoryFactoryImpl);
+    container.bindToConstructor<CartRepositoryFactory>(
+      cartModuleSymbols.cartRepositoryFactory,
+      CartRepositoryFactoryImpl,
+    );
 
-    container.bindToConstructor<CartService>(cartSymbols.cartService, CartServiceImpl);
+    container.bindToConstructor<CartService>(cartModuleSymbols.cartService, CartServiceImpl);
+
+    container.bindToConstructor<CartController>(cartModuleSymbols.cartController, CartController);
   }
 }

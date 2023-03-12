@@ -13,7 +13,7 @@ import { LineItemRepositoryFactory } from '../../../../lineItemModule/applicatio
 import { LineItemNotFoundError } from '../../../../lineItemModule/infrastructure/errors/lineItemNotFoundError';
 import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModuleSymbols';
 import { CartRepositoryFactory } from '../../../application/repositories/cartRepository/cartRepositoryFactory';
-import { cartSymbols } from '../../../cartSymbols';
+import { cartModuleSymbols } from '../../../cartModuleSymbols';
 import {
   AddLineItemPayload,
   addLineItemPayloadSchema,
@@ -35,7 +35,7 @@ import { LineItemOutOfInventoryError } from '../../../infrastructure/errors/line
 @Injectable()
 export class CartServiceImpl implements CartService {
   public constructor(
-    @Inject(cartSymbols.cartRepositoryFactory)
+    @Inject(cartModuleSymbols.cartRepositoryFactory)
     private readonly cartRepositoryFactory: CartRepositoryFactory,
     @Inject(lineItemModuleSymbols.lineItemRepositoryFactory)
     private readonly lineItemRepositoryFactory: LineItemRepositoryFactory,

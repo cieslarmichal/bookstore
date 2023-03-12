@@ -1,7 +1,7 @@
 import { SchemaType } from '../../../../../libs/validator/contracts/schemaType';
 import { Schema } from '../../../../../libs/validator/implementations/schema';
-import { BookFormat } from '../../../domain/book/contracts/bookFormat';
-import { BookLanguage } from '../../../domain/book/contracts/bookLanguage';
+import { BookFormat } from '../../../domain/entities/book/bookFormat';
+import { BookLanguage } from '../../../domain/entities/book/bookLanguage';
 
 export const createBookPayloadSchema = Schema.object({
   title: Schema.notEmptyString(),

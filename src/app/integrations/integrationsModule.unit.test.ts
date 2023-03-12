@@ -78,8 +78,6 @@ describe('IntegrationsModule', () => {
       CustomerController,
     );
 
-    expect(container.get<CartController>(integrationsSymbols.cartController)).toBeInstanceOf(CartController);
-
     expect(container.get<OrderController>(integrationsSymbols.orderController)).toBeInstanceOf(OrderController);
 
     expect(container.get<InventoryController>(integrationsSymbols.inventoryController)).toBeInstanceOf(

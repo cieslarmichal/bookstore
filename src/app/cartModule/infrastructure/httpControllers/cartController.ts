@@ -20,13 +20,16 @@ import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMid
 import { ControllerResponse } from '../../controllerResponse';
 import { integrationsSymbols } from '../../integrationsSymbols';
 import { LocalsName } from '../../localsName';
-import { AddLineItemPayload, addLineItemPayloadSchema } from '../contracts/addLineItemPayload';
+import {
+  AddLineItemPayload,
+  addLineItemPayloadSchema,
+} from '../../../cartModule/infrastructure/httpControllers/payloads/addLineItemPayload';
 import { CreateCartPayload, createCartPayloadSchema } from '../contracts/createCartPayload';
 import { DeleteCartPayload, deleteCartPayloadSchema } from '../contracts/deleteCartPayload';
 import { FindCartPayload, findCartPayloadSchema } from '../contracts/findCartPayload';
 import { RemoveLineItemPayload, removeLineItemPayloadSchema } from '../contracts/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from '../contracts/updateCartPayload';
-import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../cartModule/infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
 @Injectable()

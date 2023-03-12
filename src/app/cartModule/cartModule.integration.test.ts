@@ -4,7 +4,8 @@ import { CartRepositoryFactory } from './application/repositories/cartRepository
 import { CartService } from './application/services/cartService/cartService';
 import { CartServiceImpl } from './application/services/cartService/cartServiceImpl';
 import { CartModule } from './cartModule';
-import { cartSymbols } from './cartSymbols';
+import { cartModuleSymbols } from './cartModuleSymbols';
+import { CartController } from './infrastructure/httpControllers/cartController';
 import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
 import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
 import { CartRepositoryFactoryImpl } from './infrastructure/repositories/cartRepository/cartRepositoryFactoryImpl';
@@ -16,8 +17,8 @@ import { PostgresModule } from '../../libs/postgres/postgresModule';
 import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { AddressModule } from '../addressModule/addressModule';
 import { BookModule } from '../bookModule/bookModule';
-import { InventoryModule } from '../domain/inventory/inventoryModule';
-import { LineItemModule } from '../domain/lineItem/lineItemModule';
+import { InventoryModule } from '../inventoryModule/inventoryModule';
+import { LineItemModule } from '../lineItemModule/lineItemModule';
 
 describe('CartModule', () => {
   let container: DependencyInjectionContainer;
@@ -40,14 +41,14 @@ describe('CartModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
+    expect(container.get<CartMapper>(cartModuleSymbols.cartMapper)).toBeInstanceOf(CartMapperImpl);
 
-    expect(container.get<CartMapper>(cartSymbols.cartMapper)).toBeInstanceOf(CartMapperImpl);
-
-    expect(container.get<CartRepositoryFactory>(cartSymbols.cartRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<CartRepositoryFactory>(cartModuleSymbols.cartRepositoryFactory)).toBeInstanceOf(
       CartRepositoryFactoryImpl,
     );
 
-    expect(container.get<CartService>(cartSymbols.cartService)).toBeInstanceOf(CartServiceImpl);
+    expect(container.get<CartService>(cartModuleSymbols.cartService)).toBeInstanceOf(CartServiceImpl);
+
+    expect(container.get<CartController>(cartModuleSymbols.cartController)).toBeInstanceOf(CartController);
   });
 });
