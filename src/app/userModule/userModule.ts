@@ -11,8 +11,8 @@ import { UserMapperImpl } from './infrastructure/repositories/userRepository/use
 import { UserRepositoryFactoryImpl } from './infrastructure/repositories/userRepository/userRepositoryFactoryImpl';
 import { UserModuleConfig } from './userModuleConfig';
 import { userModuleSymbols } from './userModuleSymbols';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class UserModule implements DependencyInjectionModule {
   public constructor(private readonly config: UserModuleConfig) {}

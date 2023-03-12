@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
+
 import { UnitOfWorkFactory } from '../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { UnitOfWork } from '../../libs/unitOfWork/contracts/unitOfWork';
 import { TransactionCallback } from '../../libs/unitOfWork/transactionCallback';

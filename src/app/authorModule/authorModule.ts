@@ -6,8 +6,8 @@ import { AuthorController } from './infrastructure/httpControllers/authorControl
 import { AuthorMapper } from './infrastructure/repositories/authorRepository/authorMapper/authorMapper';
 import { AuthorMapperImpl } from './infrastructure/repositories/authorRepository/authorMapper/authorMapperImpl';
 import { AuthorRepositoryFactoryImpl } from './infrastructure/repositories/authorRepository/authorRepositoryFactoryImpl';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class AuthorModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

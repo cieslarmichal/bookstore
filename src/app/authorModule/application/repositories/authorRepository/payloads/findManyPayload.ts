@@ -1,6 +1,6 @@
 import { Filter } from '../../../../../../common/types/contracts/filter';
-import { PaginationData } from '../../../../../../common/types/contracts/paginationData';
-import { Schema } from '../../../../../../libs/validator/implementations/schema';
+import { PaginationData } from '../../../../../../common/types/paginationData';
+import { Schema } from '../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../libs/validator/schemaType';
 
 export const findManyPayloadSchema = Schema.object({

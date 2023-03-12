@@ -1,7 +1,8 @@
 import { createCategoryDraftSchema } from './createCategoryDraft';
-import { UnitOfWork } from '../../../../../../libs/unitOfWork/contracts/unitOfWork';
+import { UnitOfWork } from '../../../../../../libs/unitOfWork/unitOfWork';
+
 import { SchemaType } from '../../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../../libs/validator/implementations/schema';
+import { Schema } from '../../../../../../libs/validator/schema';
 
 export const createCategoryPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),

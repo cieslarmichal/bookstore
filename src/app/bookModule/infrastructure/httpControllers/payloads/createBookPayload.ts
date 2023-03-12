@@ -1,5 +1,5 @@
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../libs/validator/implementations/schema';
+import { Schema } from '../../../../../libs/validator/schema';
 import { BookFormat } from '../../../domain/entities/book/bookFormat';
 import { BookLanguage } from '../../../domain/entities/book/bookLanguage';
 

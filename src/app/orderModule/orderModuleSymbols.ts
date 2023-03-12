@@ -4,4 +4,9 @@ export const orderModuleSymbols = {
   orderService: Symbol('orderService'),
   cartValidatorService: Symbol('cartValidatorService'),
   orderController: Symbol('orderController'),
+
+  cartMapper: Symbol('cartMapper'),
+  cartRepositoryFactory: Symbol('cartRepositoryFactory'),
+  cartService: Symbol('cartService'),
+  cartController: Symbol('cartController'),
 };

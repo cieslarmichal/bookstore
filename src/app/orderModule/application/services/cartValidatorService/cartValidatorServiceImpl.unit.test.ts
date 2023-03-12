@@ -2,13 +2,12 @@ import 'reflect-metadata';
 
 import { CartValidatorServiceImpl } from './cartValidatorServiceImpl';
 import { DummyFactory } from '../../../../../common/tests/dummyFactory';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
-import { UnitOfWork } from '../../../../../libs/unitOfWork/contracts/unitOfWork';
-import { CartStatus } from '../../../../cartModule/domain/entities/cart/cartStatus';
-import { CartTestFactory } from '../../../../cartModule/tests/factories/cartTestFactory/cartTestFactory';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
+import { UnitOfWork } from '../../../../../libs/unitOfWork/unitOfWork';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
 import { InventoryTestFactory } from '../../../../inventoryModule/tests/factories/inventoryTestFactory/inventoryTestFactory';
 import { LineItemTestFactory } from '../../../../lineItemModule/tests/factories/lineItemTestFactory/lineItemTestFactory';
+import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { BillingAddressNotProvidedError } from '../../../domain/errors/billingAddressNotProvidedError';
 import { CartNotActiveError } from '../../../domain/errors/cartNotActiveError';
 import { DeliveryMethodNotProvidedError } from '../../../domain/errors/deliveryMethodNotProvidedError';
@@ -17,6 +16,7 @@ import { LineItemOutOfInventoryError } from '../../../domain/errors/lineItemOutO
 import { LineItemsNotProvidedError } from '../../../domain/errors/lineItemsNotProvidedError';
 import { OrderCreatorNotMatchingCustomerIdFromCart } from '../../../domain/errors/orderCreatorNotMatchingCustomerIdFromCart';
 import { ShippingAddressNotProvidedError } from '../../../domain/errors/shippingAddressNotProvidedError';
+import { CartTestFactory } from '../../../tests/factories/cartTestFactory/cartTestFactory';
 
 describe('CartValidatorServiceImpl', () => {
   let inventoryService: InventoryService;

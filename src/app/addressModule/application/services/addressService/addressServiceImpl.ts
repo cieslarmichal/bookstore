@@ -5,10 +5,10 @@ import { FindAddressesPayload, findAddressesPayloadSchema } from './payloads/fin
 import { FindAddressPayload, findAddressPayloadSchema } from './payloads/findAddressPayload';
 import { UpdateAddressPayload, updateAddressPayloadSchema } from './payloads/updateAddressPayload';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { addressModuleSymbols } from '../../../addressModuleSymbols';
 import { Address } from '../../../domain/entities/address/address';
 import { AddressNotFoundError } from '../../../infrastructure/errors/addressNotFoundError';

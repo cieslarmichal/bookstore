@@ -4,10 +4,10 @@ import { FindWhishlistEntriesPayload, findWhishlistEntriesPayloadSchema } from '
 import { FindWhishlistEntryPayload, findWhishlistEntryPayloadSchema } from './payloads/findWhishlistEntryPayload';
 import { WhishlistService } from './whishlistService';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
 import { WhishlistEntryAlreadyExistsError } from '../../../infrastructure/errors/whishlistEntryAlreadyExistsError';
 import { WhishlistEntryNotFoundError } from '../../../infrastructure/errors/whishlistEntryNotFoundError';

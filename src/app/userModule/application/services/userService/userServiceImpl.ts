@@ -15,10 +15,10 @@ import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from './payloads
 import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from './payloads/setUserPhoneNumberPayload';
 import { UserService } from './userService';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { User } from '../../../domain/entities/user/user';
 import { UserRole } from '../../../domain/entities/user/userRole';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';

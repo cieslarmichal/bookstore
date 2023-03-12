@@ -1,5 +1,5 @@
+import { Schema } from '../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../../libs/validator/implementations/schema';
 
 export const createOnePayloadSchema = Schema.object({
   id: Schema.notEmptyString(),

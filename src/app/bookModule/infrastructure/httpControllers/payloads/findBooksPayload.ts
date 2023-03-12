@@ -1,7 +1,7 @@
 import { Filter } from '../../../../../common/types/contracts/filter';
 import { PaginationData } from '../../../../../common/types/contracts/paginationData';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../libs/validator/implementations/schema';
+import { Schema } from '../../../../../libs/validator/schema';
 
 export const findBooksPayloadSchema = Schema.object({
   filters: Schema.array(Schema.unsafeType<Filter>()),

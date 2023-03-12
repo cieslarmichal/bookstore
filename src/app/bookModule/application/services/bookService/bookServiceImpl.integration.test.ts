@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { BookService } from './bookService';
-import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
 import { EqualFilter, LessThanOrEqualFilter, BetweenFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
 import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';

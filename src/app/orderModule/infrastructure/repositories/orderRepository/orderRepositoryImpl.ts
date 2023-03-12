@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { OrderEntity } from './orderEntity/orderEntity';
 import { OrderMapper } from './orderMapper/orderMapper';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { OrderRepository } from '../../../application/repositories/orderRepository/orderRepository';
 import {
   CreateOnePayload,

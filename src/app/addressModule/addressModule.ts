@@ -6,8 +6,8 @@ import { AddressController } from './infrastructure/httpControllers/addressContr
 import { AddressMapper } from './infrastructure/repositories/addressRepository/addressMapper/addressMapper';
 import { AddressMapperImpl } from './infrastructure/repositories/addressRepository/addressMapper/addressMapperImpl';
 import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/contracts/dependencyInjectionModule';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class AddressModule implements DependencyInjectionModule {
   public async declareBindings(container: DependencyInjectionContainer): Promise<void> {

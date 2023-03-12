@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 
-import { CartEntity } from '../../../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
 import { OrderStatus } from '../../../../domain/entities/order/orderStatus';
 import { PaymentMethod } from '../../../../domain/entities/order/paymentMethod';
+import { CartEntity } from '../../cartRepository/cartEntity/cartEntity';
 
 export const ordersTableName = 'orders';
 

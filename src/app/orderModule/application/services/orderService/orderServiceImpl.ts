@@ -2,20 +2,19 @@ import { OrderService } from './orderService';
 import { CreateOrderPayload, createOrderPayloadSchema } from './payloads/createOrderPayload';
 import { FindOrdersPayload, findOrdersPayloadSchema } from './payloads/findOrdersPayload';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
-import { CartService } from '../../../../cartModule/application/services/cartService/cartService';
-import { cartModuleSymbols } from '../../../../cartModule/cartModuleSymbols';
-import { CartStatus } from '../../../../cartModule/domain/entities/cart/cartStatus';
+import { Validator } from '../../../../../libs/validator/validator';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
 import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
 import { LineItem } from '../../../../lineItemModule/domain/entities/lineItem/lineItem';
+import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { Order } from '../../../domain/entities/order/order';
 import { OrderStatus } from '../../../domain/entities/order/orderStatus';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';
 import { OrderRepositoryFactory } from '../../repositories/orderRepository/orderRepositoryFactory';
+import { CartService } from '../cartService/cartService';
 import { CartValidatorService } from '../cartValidatorService/cartValidatorService';
 
 @Injectable()
@@ -25,7 +24,7 @@ export class OrderServiceImpl implements OrderService {
     private readonly orderRepositoryFactory: OrderRepositoryFactory,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
-    @Inject(cartModuleSymbols.cartService)
+    @Inject(orderModuleSymbols.cartService)
     private readonly cartService: CartService,
     @Inject(inventoryModuleSymbols.inventoryService)
     private readonly inventoryService: InventoryService,

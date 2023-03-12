@@ -3,7 +3,7 @@ import { EntityManager } from 'typeorm';
 import { CategoryEntity } from './categoryEntity/categoryEntity';
 import { CategoryMapper } from './categoryMapper/categoryMapper';
 import { CategoryQueryBuilder } from './categoryQueryBuilder';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { CategoryRepository } from '../../../application/repositories/categoryRepository/categoryRepository';
 import {
   CreateOnePayload,

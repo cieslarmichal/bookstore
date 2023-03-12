@@ -1,6 +1,6 @@
-import { Schema } from '../../../../../libs/validator/implementations/schema';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
+import { Validator } from '../../../../../libs/validator/validator';
 
 export const addressInputSchema = Schema.object({
   id: Schema.notEmptyString(),

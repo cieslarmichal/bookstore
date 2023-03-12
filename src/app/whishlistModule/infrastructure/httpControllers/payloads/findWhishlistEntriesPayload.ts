@@ -1,6 +1,6 @@
 import { PaginationData } from '../../../../../common/types/contracts/paginationData';
+import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../libs/validator/implementations/schema';
 
 export const findWhishlistEntriesPayloadSchema = Schema.object({
   pagination: Schema.unsafeType<PaginationData>(),

@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { OrderService } from './orderService';
-import { TestTransactionInternalRunner } from '../../../../../common/tests/unitOfWork/testTransactionInternalRunner';
+import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -21,26 +21,12 @@ import { BookModule } from '../../../../bookModule/bookModule';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { CartRepositoryFactory } from '../../../../cartModule/application/repositories/cartRepository/cartRepositoryFactory';
-import { CartModule } from '../../../../cartModule/cartModule';
-import { cartModuleSymbols } from '../../../../cartModule/cartModuleSymbols';
-import { CartStatus } from '../../../../cartModule/domain/entities/cart/cartStatus';
-import { DeliveryMethod } from '../../../../cartModule/domain/entities/cart/deliveryMethod';
-import { CartNotFoundError } from '../../../../cartModule/infrastructure/errors/cartNotFoundError';
-import { CartEntity } from '../../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-import { CartEntityTestFactory } from '../../../../cartModule/tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
 import { CustomerModule } from '../../../../customerModule/customerModule';
 import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
-import { UserRepositoryFactory } from '../../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-import { UserEntity } from '../../../../domain/user/contracts/userEntity';
-import { UserEntityTestFactory } from '../../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { UserModuleConfigTestFactory } from '../../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-import { UserModule } from '../../../../domain/user/userModule';
-import { userSymbols } from '../../../../domain/user/userSymbols';
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../../inventoryModule/inventoryModule';
@@ -51,11 +37,23 @@ import { LineItemEntity } from '../../../../lineItemModule/infrastructure/reposi
 import { LineItemModule } from '../../../../lineItemModule/lineItemModule';
 import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModuleSymbols';
 import { LineItemEntityTestFactory } from '../../../../lineItemModule/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
+import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserModuleConfigTestFactory } from '../../../../userModule/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
+import { UserModule } from '../../../../userModule/userModule';
+import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
+import { CartStatus } from '../../../domain/entities/cart/cartStatus';
+import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { PaymentMethod } from '../../../domain/entities/order/paymentMethod';
+import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { CartEntity } from '../../../infrastructure/repositories/cartRepository/cartEntity/cartEntity';
 import { OrderEntity } from '../../../infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { OrderModule } from '../../../orderModule';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';
+import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { OrderEntityTestFactory } from '../../../tests/factories/orderEntityTestFactory/orderEntityTestFactory';
+import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
 import { OrderRepositoryFactory } from '../../repositories/orderRepository/orderRepositoryFactory';
 
 describe('OrderServiceImpl', () => {
@@ -102,7 +100,6 @@ describe('OrderServiceImpl', () => {
     const container = await DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
-        new CartModule(),
         new LoggerModule(loggerModuleConfig),
         new UserModule(userModuleConfig),
         new CustomerModule(),
@@ -117,11 +114,11 @@ describe('OrderServiceImpl', () => {
 
     orderService = container.get<OrderService>(orderModuleSymbols.orderService);
     orderRepositoryFactory = container.get<OrderRepositoryFactory>(orderModuleSymbols.orderRepositoryFactory);
-    cartRepositoryFactory = container.get<CartRepositoryFactory>(cartModuleSymbols.cartRepositoryFactory);
+    cartRepositoryFactory = container.get<CartRepositoryFactory>(orderModuleSymbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
       customerModuleSymbols.customerRepositoryFactory,
     );
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(
       lineItemModuleSymbols.lineItemRepositoryFactory,

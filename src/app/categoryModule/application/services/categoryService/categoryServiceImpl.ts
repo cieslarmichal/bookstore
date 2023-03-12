@@ -8,10 +8,10 @@ import {
 import { FindCategoriesPayload, findCategoriesPayloadSchema } from './payloads/findCategoriesPayload';
 import { FindCategoryPayload, findCategoryPayloadSchema } from './payloads/findCategoryPayload';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { LoggerService } from '../../../../../libs/logger/contracts/services/loggerService/loggerService';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { categoryModuleSymbols } from '../../../categoryModuleSymbols';
 import { Category } from '../../../domain/entities/category/category';
 import { CategoryAlreadyExistsError } from '../../../infrastructure/errors/categoryAlreadyExistsError';

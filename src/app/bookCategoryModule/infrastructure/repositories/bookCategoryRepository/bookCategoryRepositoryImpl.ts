@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { BookCategoryEntity } from './bookCategoryEntity/bookCategoryEntity';
 import { BookCategoryMapper } from './bookCategoryMapper/bookCategoryMapper';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { BookCategoryRepository } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepository';
 import {
   CreateOnePayload,

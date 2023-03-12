@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { ReviewEntity } from './reviewEntity/reviewEntity';
 import { ReviewMapper } from './reviewMapper/reviewMapper';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import {
   CreateOnePayload,
   createOnePayloadSchema,

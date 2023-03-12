@@ -1,5 +1,5 @@
-import { Schema } from '../../../../../libs/validator/implementations/schema';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Schema } from '../../../../../libs/validator/schema';
+import { Validator } from '../../../../../libs/validator/validator';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
 
 export const customerInputSchema = Schema.object({

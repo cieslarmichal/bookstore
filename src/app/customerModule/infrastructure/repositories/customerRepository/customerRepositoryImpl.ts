@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { CustomerEntity } from './customerEntity/customerEntity';
 import { CustomerMapper } from './customerMapper/customerMapper';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { CustomerRepository } from '../../../application/repositories/customerRepository/customerRepository';
 import {
   CreateOnePayload,

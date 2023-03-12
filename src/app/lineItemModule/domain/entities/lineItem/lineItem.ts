@@ -1,6 +1,6 @@
+import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../libs/validator/implementations/schema';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 
 export const lineItemInputSchema = Schema.object({
   id: Schema.notEmptyString(),

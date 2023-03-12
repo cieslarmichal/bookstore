@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { LineItemEntity } from './lineItemEntity/lineItemEntity';
 import { LineItemMapper } from './lineItemMapper/lineItemMapper';
-import { Validator } from '../../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../../libs/validator/validator';
 import { LineItemRepository } from '../../../application/repositories/lineItemRepository/lineItemRepository';
 import {
   CreateOnePayload,

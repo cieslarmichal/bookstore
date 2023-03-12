@@ -1,6 +1,7 @@
 import { createAuthorDraftSchema } from './createAuthorDraft';
-import { UnitOfWork } from '../../../../../../libs/unitOfWork/contracts/unitOfWork';
-import { Schema } from '../../../../../../libs/validator/implementations/schema';
+import { UnitOfWork } from '../../../../../../libs/unitOfWork/unitOfWork';
+
+import { Schema } from '../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../libs/validator/schemaType';
 
 export const createAuthorPayloadSchema = Schema.object({
