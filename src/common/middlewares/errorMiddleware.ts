@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { ValidationError } from '../../../../libs/validator/errors/validationError';
+import { ValidationError } from '../../libs/validator/errors/validationError';
+import { HttpStatusCode } from '../http/httpStatusCode';
 
 export function errorMiddleware(error: Error, _request: Request, response: Response, _next: NextFunction): void {
   let statusCode = HttpStatusCode.internalServerErrror;

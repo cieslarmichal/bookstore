@@ -1,4 +1,4 @@
-import { ApplicationError } from '../../errors/contracts/applicationError';
+import { ApplicationError } from '../../errors/applicationError';
 
 interface Context {
   readonly errorDetails: string;

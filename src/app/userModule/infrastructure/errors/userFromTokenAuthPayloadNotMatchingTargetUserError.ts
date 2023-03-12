@@ -1,5 +1,5 @@
-import { ApplicationError } from '../../../../common/errors/contracts/applicationError';
-import { AccessTokenData } from '../../../../common/types/contracts/accessTokenData';
+import { ApplicationError } from '../../../../common/errors/applicationError';
+import { AccessTokenData } from '../../../../common/types/accessTokenData';
 
 interface Context {
   readonly userId: string;

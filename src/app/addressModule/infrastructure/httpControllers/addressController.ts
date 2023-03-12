@@ -11,7 +11,7 @@ import { UpdateAddressPayload, updateAddressPayloadSchema } from './payloads/upd
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { AccessTokenData } from '../../../../common/types/contracts/accessTokenData';
+import { AccessTokenData } from '../../../../common/types/accessTokenData';
 import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
 import { Filter } from '../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../common/types/contracts/filterName';

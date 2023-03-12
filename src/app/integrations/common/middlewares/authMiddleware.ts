@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { TokenService } from '../../app/userModule/application/services/tokenService/tokenService';
-import { Injectable, Inject } from '../../libs/dependencyInjection/contracts/decorators';
-import { HttpStatusCode } from '../http/httpStatusCode';
-import { AccessTokenData } from '../types/accessTokenData';
-import { LocalsName } from '../types/localsName';
+import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { AccessTokenData } from '../../../../common/types/accessTokenData';
+import { LocalsName } from '../../../../common/types/contracts/localsName';
+import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
+import { userSymbols } from '../../../domain/user/userSymbols';
 
 @Injectable()
 export class AuthMiddleware {

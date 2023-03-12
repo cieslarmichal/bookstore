@@ -5,7 +5,7 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { TestTransactionExternalRunner } from '../../../../common/tests/unitOfWork/testTransactionExternalRunner';
+import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/implementations/factories/dependencyInjectionContainerFactory/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';

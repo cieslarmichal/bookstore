@@ -1,9 +1,9 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import { ParsePayload, parsePayloadSchema } from './payloads/parsePayload';
 import { Validator } from '../../libs/validator/implementations/validator';
-import { Filter } from '../types/contracts/filter';
-import { FilterName } from '../types/contracts/filterName';
-import { FilterSymbol } from '../types/contracts/filterSymbol';
+import { Filter } from '../types/filter';
+import { FilterName } from '../types/filterName';
+import { FilterSymbol } from '../types/filterSymbol';
 
 const tokensSeparator = '||';
 const valuesSeparator = ',';

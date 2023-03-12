@@ -1,4 +1,4 @@
-import { UserRole } from '../domain/user/contracts/userRole';
+import { UserRole } from '../../app/userModule/domain/entities/user/userRole';
 
 export interface AccessTokenData {
   readonly userId: string;

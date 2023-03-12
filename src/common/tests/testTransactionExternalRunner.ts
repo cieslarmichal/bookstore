@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
-import { UnitOfWorkFactory } from '../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
-import { TransactionCallback } from '../../../libs/unitOfWork/contracts/transactionCallback';
-import { UnitOfWork } from '../../../libs/unitOfWork/contracts/unitOfWork';
-import { unitOfWorkSymbols } from '../../../libs/unitOfWork/unitOfWorkSymbols';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
+import { UnitOfWorkFactory } from '../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { TransactionCallback } from '../../libs/unitOfWork/contracts/transactionCallback';
+import { UnitOfWork } from '../../libs/unitOfWork/contracts/unitOfWork';
+import { unitOfWorkSymbols } from '../../libs/unitOfWork/unitOfWorkSymbols';
 
 export class TestTransactionExternalRunner {
   public constructor(private readonly container: DependencyInjectionContainer) {}

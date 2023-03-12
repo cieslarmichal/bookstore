@@ -1,6 +1,6 @@
 import { SchemaType } from '../../../../../libs/validator/contracts/schemaType';
 import { Schema } from '../../../../../libs/validator/implementations/schema';
-import { AccessTokenData } from '../../../../../common/types/contracts/accessTokenData';
+import { AccessTokenData } from '../../../../../common/types/accessTokenData';
 
 export const updateReviewPayloadSchema = Schema.object({
   id: Schema.notEmptyString(),

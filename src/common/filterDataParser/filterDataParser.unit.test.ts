@@ -10,9 +10,9 @@ import {
   GreaterThanOrEqualFilter,
   BetweenFilter,
   LikeFilter,
-} from '../types/contracts/filter';
-import { FilterName } from '../types/contracts/filterName';
-import { FilterSymbol } from '../types/contracts/filterSymbol';
+} from '../types/filter';
+import { FilterName } from '../types/filterName';
+import { FilterSymbol } from '../types/filterSymbol';
 
 describe('FilterDataParser', () => {
   describe('Empty input', () => {

@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { BookEntity } from './bookEntity/bookEntity';
 import { Filter } from '../../../../../common/types/contracts/filter';
-import { QueryBuilder } from '../../../../../common/types/implementations/queryBuilder';
+import { QueryBuilder } from '../../../../../common/types/queryBuilder';
 
 export class BookQueryBuilder extends QueryBuilder<BookEntity> {
   public constructor(entityManager: EntityManager) {
