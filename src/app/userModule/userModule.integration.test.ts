@@ -7,6 +7,7 @@ import { TokenService } from './application/services/tokenService/tokenService';
 import { TokenServiceImpl } from './application/services/tokenService/tokenServiceImpl';
 import { UserService } from './application/services/userService/userService';
 import { UserServiceImpl } from './application/services/userService/userServiceImpl';
+import { UserController } from './infrastructure/httpControllers/userController';
 import { UserMapper } from './infrastructure/repositories/userRepository/userMapper/userMapper';
 import { UserMapperImpl } from './infrastructure/repositories/userRepository/userMapper/userMapperImpl';
 import { UserRepositoryFactoryImpl } from './infrastructure/repositories/userRepository/userRepositoryFactoryImpl';
@@ -38,8 +39,6 @@ describe('UserModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(5);
-
     expect(container.get<UserMapper>(userModuleSymbols.userMapper)).toBeInstanceOf(UserMapperImpl);
 
     expect(container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory)).toBeInstanceOf(
@@ -51,5 +50,7 @@ describe('UserModule', () => {
     expect(container.get<HashService>(userModuleSymbols.hashService)).toBeInstanceOf(HashServiceImpl);
 
     expect(container.get<TokenService>(userModuleSymbols.tokenService)).toBeInstanceOf(TokenServiceImpl);
+
+    expect(container.get<UserController>(userModuleSymbols.userController)).toBeInstanceOf(UserController);
   });
 });

@@ -1,28 +1,27 @@
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
+import { DeleteUserPayload, deleteUserPayloadSchema } from './payloads/deleteUserPayload';
+import { FindUserPayload, findUserPayloadSchema } from './payloads/findUserPayload';
+import { LoginUserPayload, loginUserPayloadSchema } from './payloads/loginUserPayload';
+import { RegisterUserPayload, registerUserPayloadSchema } from './payloads/registerUserPayload';
+import { SetUserEmailPayload, setUserEmailPayloadSchema } from './payloads/setUserEmailPayload';
+import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from './payloads/setUserPasswordPayload';
+import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from './payloads/setUserPhoneNumberPayload';
 import { userErrorMiddleware } from './userErrorMiddleware';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { UserService } from '../../../domain/user/contracts/services/userService/userService';
-import { User } from '../../../domain/user/contracts/user';
-import { UserRole } from '../../../domain/user/contracts/userRole';
-import { userSymbols } from '../../../domain/user/userSymbols';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { DeleteUserPayload, deleteUserPayloadSchema } from '../contracts/deleteUserPayload';
-import { FindUserPayload, findUserPayloadSchema } from '../contracts/findUserPayload';
-import { LoginUserPayload, loginUserPayloadSchema } from '../contracts/loginUserPayload';
-import { RegisterUserPayload, registerUserPayloadSchema } from '../contracts/registerUserPayload';
-import { SetUserEmailPayload, setUserEmailPayloadSchema } from '../contracts/setUserEmailPayload';
-import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from '../contracts/setUserPasswordPayload';
-import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from '../contracts/setUserPhoneNumberPayload';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { UserService } from '../../application/services/userService/userService';
+import { User } from '../../domain/entities/user/user';
+import { UserRole } from '../../domain/entities/user/userRole';
+import { userModuleSymbols } from '../../userModuleSymbols';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 
 @Injectable()
@@ -39,7 +38,7 @@ export class UserController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(userSymbols.userService)
+    @Inject(userModuleSymbols.userService)
     private readonly userService: UserService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

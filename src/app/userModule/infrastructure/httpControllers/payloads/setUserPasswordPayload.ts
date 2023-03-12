@@ -1,6 +1,6 @@
-import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../../libs/validator/implementations/schema';
-import { AccessTokenData } from '../../accessTokenData';
+import { SchemaType } from '../../../../../libs/validator/contracts/schemaType';
+import { Schema } from '../../../../../libs/validator/implementations/schema';
+import { AccessTokenData } from '../../../../integrations/accessTokenData';
 
 export const setUserPasswordPayloadSchema = Schema.object({
   userId: Schema.notEmptyString(),

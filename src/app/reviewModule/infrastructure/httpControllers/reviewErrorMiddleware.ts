@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { ReviewNotFoundError } from '../../../domain/review/errors/reviewNotFoundError';
+import { ReviewNotFoundError } from '../errors/reviewNotFoundError';
 
 export function reviewErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof ReviewNotFoundError) {

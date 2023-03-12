@@ -29,10 +29,6 @@ export class IntegrationsModule implements DependencyInjectionModule {
       PaginationDataBuilder,
     );
 
-    container.bindToConstructor<UserController>(integrationsSymbols.userController, UserController);
-
-    container.bindToConstructor<ReviewController>(integrationsSymbols.reviewController, ReviewController);
-
     container.bindToConstructor<WhishlistController>(integrationsSymbols.whishlistController, WhishlistController);
   }
 }

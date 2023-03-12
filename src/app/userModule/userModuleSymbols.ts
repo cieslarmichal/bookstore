@@ -5,4 +5,5 @@ export const userModuleSymbols = {
   userService: Symbol('userService'),
   hashService: Symbol('hashService'),
   tokenService: Symbol('tokenService'),
+  userController: Symbol('userController'),
 };
