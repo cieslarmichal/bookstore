@@ -5,6 +5,7 @@ import { CustomerService } from './application/services/customerService/customer
 import { CustomerServiceImpl } from './application/services/customerService/customerServiceImpl';
 import { CustomerModule } from './customerModule';
 import { customerModuleSymbols } from './customerModuleSymbols';
+import { CustomerController } from './infrastructure/httpControllers/customerController';
 import { CustomerMapper } from './infrastructure/repositories/customerRepository/customerMapper/customerMapper';
 import { CustomerMapperImpl } from './infrastructure/repositories/customerRepository/customerMapper/customerMapperImpl';
 import { CustomerRepositoryFactoryImpl } from './infrastructure/repositories/customerRepository/customerRepositoryFactoryImpl';
@@ -28,8 +29,6 @@ describe('CustomerModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<CustomerMapper>(customerModuleSymbols.customerMapper)).toBeInstanceOf(CustomerMapperImpl);
 
     expect(container.get<CustomerRepositoryFactory>(customerModuleSymbols.customerRepositoryFactory)).toBeInstanceOf(
@@ -37,5 +36,9 @@ describe('CustomerModule', () => {
     );
 
     expect(container.get<CustomerService>(customerModuleSymbols.customerService)).toBeInstanceOf(CustomerServiceImpl);
+
+    expect(container.get<CustomerController>(customerModuleSymbols.customerController)).toBeInstanceOf(
+      CustomerController,
+    );
   });
 });

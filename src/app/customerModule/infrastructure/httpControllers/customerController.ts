@@ -2,21 +2,20 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { customerErrorMiddleware } from './customerErrorMiddleware';
+import { CreateCustomerPayload, createCustomerPayloadSchema } from './payloads/createCustomerPayload';
+import { DeleteCustomerPayload, deleteCustomerPayloadSchema } from './payloads/deleteCustomerPayload';
+import { FindCustomerPayload, findCustomerPayloadSchema } from './payloads/findCustomerPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
-import { customerSymbols } from '../../../domain/customer/customerSymbols';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { CreateCustomerPayload, createCustomerPayloadSchema } from '../contracts/createCustomerPayload';
-import { DeleteCustomerPayload, deleteCustomerPayloadSchema } from '../contracts/deleteCustomerPayload';
-import { FindCustomerPayload, findCustomerPayloadSchema } from '../contracts/findCustomerPayload';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { CustomerService } from '../../../tests/services/customerService';
+import { customerModuleSymbols } from '../../customerModuleSymbols';
 
 @Injectable()
 export class CustomerController {
@@ -27,7 +26,7 @@ export class CustomerController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(customerSymbols.customerService)
+    @Inject(customerModuleSymbols.customerService)
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
