@@ -2,8 +2,8 @@ import 'reflect-metadata';
 
 import { CartMapperImpl } from './cartMapperImpl';
 import { DummyFactory } from '../../../../../../common/tests/dummyFactory';
-import { LineItemMapper } from '../../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemMapper/lineItemMapper';
 import { CartEntityTestFactory } from '../../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
+import { LineItemMapper } from '../../lineItemRepository/lineItemMapper/lineItemMapper';
 
 describe('CartMapperImpl', () => {
   let lineItemMapper: LineItemMapper;

@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 
-import { LineItemTestFactory } from '../../../../lineItemModule/tests/factories/lineItemTestFactory/lineItemTestFactory';
 import { Cart, CartInput } from '../../../../orderModule/domain/entities/cart/cart';
 import { CartStatus } from '../../../../orderModule/domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../../orderModule/domain/entities/cart/deliveryMethod';
+import { LineItemTestFactory } from '../lineItemTestFactory/lineItemTestFactory';
 
 export class CartTestFactory {
   public constructor(private readonly lineItemTestFactory: LineItemTestFactory) {}

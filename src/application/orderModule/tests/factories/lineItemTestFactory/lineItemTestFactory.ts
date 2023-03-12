@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { LineItem } from '../../../domain/entities/lineItem/lineItem';
+import { LineItem } from '../../../../orderModule/domain/entities/lineItem/lineItem';
 
 export class LineItemTestFactory {
   public create(input: Partial<LineItem> = {}): LineItem {

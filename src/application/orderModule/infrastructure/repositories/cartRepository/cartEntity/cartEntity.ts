@@ -2,9 +2,9 @@
 import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { CustomerEntity } from '../../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { LineItemEntity } from '../../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { CartStatus } from '../../../../../orderModule/domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../../../orderModule/domain/entities/cart/deliveryMethod';
+import { LineItemEntity } from '../../lineItemRepository/lineItemEntity/lineItemEntity';
 
 export const cartsTableName = 'carts';
 

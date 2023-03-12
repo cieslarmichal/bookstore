@@ -3,6 +3,8 @@ import { EntityManager } from 'typeorm';
 import { LineItemEntity } from './lineItemEntity/lineItemEntity';
 import { LineItemMapper } from './lineItemMapper/lineItemMapper';
 import { Validator } from '../../../../../libs/validator/validator';
+import { LineItem } from '../../../../orderModule/domain/entities/lineItem/lineItem';
+import { LineItemNotFoundError } from '../../../../orderModule/infrastructure/errors/lineItemNotFoundError';
 import { LineItemRepository } from '../../../application/repositories/lineItemRepository/lineItemRepository';
 import {
   CreateOnePayload,
@@ -24,8 +26,6 @@ import {
   UpdateOnePayload,
   updateOnePayloadSchema,
 } from '../../../application/repositories/lineItemRepository/payloads/updateOnePayload';
-import { LineItem } from '../../../domain/entities/lineItem/lineItem';
-import { LineItemNotFoundError } from '../../../infrastructure/errors/lineItemNotFoundError';
 
 export class LineItemRepositoryImpl implements LineItemRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly lineItemMapper: LineItemMapper) {}

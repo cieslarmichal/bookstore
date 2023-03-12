@@ -32,11 +32,6 @@ import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repo
 import { InventoryModule } from '../../../../inventoryModule/inventoryModule';
 import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
-import { LineItemRepositoryFactory } from '../../../../lineItemModule/application/repositories/lineItemRepository/lineItemRepositoryFactory';
-import { LineItemEntity } from '../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { LineItemModule } from '../../../../lineItemModule/lineItemModule';
-import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModuleSymbols';
-import { LineItemEntityTestFactory } from '../../../../lineItemModule/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
@@ -48,12 +43,15 @@ import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { PaymentMethod } from '../../../domain/entities/order/paymentMethod';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
 import { CartEntity } from '../../../infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { OrderModule } from '../../../orderModule';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
+import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { OrderEntityTestFactory } from '../../../tests/factories/orderEntityTestFactory/orderEntityTestFactory';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
+import { LineItemRepositoryFactory } from '../../repositories/lineItemRepository/lineItemRepositoryFactory';
 import { OrderRepositoryFactory } from '../../repositories/orderRepository/orderRepositoryFactory';
 
 describe('OrderServiceImpl', () => {
@@ -104,7 +102,6 @@ describe('OrderServiceImpl', () => {
         new UserModule(userModuleConfig),
         new CustomerModule(),
         new UnitOfWorkModule(),
-        new LineItemModule(),
         new BookModule(),
         new OrderModule(),
         new AddressModule(),
@@ -120,9 +117,7 @@ describe('OrderServiceImpl', () => {
     );
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
-    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(
-      lineItemModuleSymbols.lineItemRepositoryFactory,
-    );
+    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
       inventoryModuleSymbols.inventoryRepositoryFactory,
     );

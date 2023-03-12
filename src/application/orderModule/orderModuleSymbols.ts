@@ -9,4 +9,7 @@ export const orderModuleSymbols = {
   cartRepositoryFactory: Symbol('cartRepositoryFactory'),
   cartService: Symbol('cartService'),
   cartController: Symbol('cartController'),
+
+  lineItemMapper: Symbol('lineItemMapper'),
+  lineItemRepositoryFactory: Symbol('lineItemRepositoryFactory'),
 };

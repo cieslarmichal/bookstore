@@ -16,22 +16,21 @@ import { BookService } from '../../../../bookModule/application/services/bookSer
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
 import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
-import { LineItemRepositoryFactory } from '../../../../lineItemModule/application/repositories/lineItemRepository/lineItemRepositoryFactory';
-import { LineItemNotFoundError } from '../../../../lineItemModule/infrastructure/errors/lineItemNotFoundError';
-import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModuleSymbols';
 import { Cart } from '../../../domain/entities/cart/cart';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItemOutOfInventoryError } from '../../../domain/errors/lineItemOutOfInventoryError';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { LineItemNotFoundError } from '../../../infrastructure/errors/lineItemNotFoundError';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
+import { LineItemRepositoryFactory } from '../../repositories/lineItemRepository/lineItemRepositoryFactory';
 
 @Injectable()
 export class CartServiceImpl implements CartService {
   public constructor(
     @Inject(orderModuleSymbols.cartRepositoryFactory)
     private readonly cartRepositoryFactory: CartRepositoryFactory,
-    @Inject(lineItemModuleSymbols.lineItemRepositoryFactory)
+    @Inject(orderModuleSymbols.lineItemRepositoryFactory)
     private readonly lineItemRepositoryFactory: LineItemRepositoryFactory,
     @Inject(bookModuleSymbols.bookService)
     private readonly bookService: BookService,

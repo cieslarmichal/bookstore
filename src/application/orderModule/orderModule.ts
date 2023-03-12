@@ -1,4 +1,5 @@
 import { CartRepositoryFactory } from './application/repositories/cartRepository/cartRepositoryFactory';
+import { LineItemRepositoryFactory } from './application/repositories/lineItemRepository/lineItemRepositoryFactory';
 import { OrderRepositoryFactory } from './application/repositories/orderRepository/orderRepositoryFactory';
 import { CartService } from './application/services/cartService/cartService';
 import { CartServiceImpl } from './application/services/cartService/cartServiceImpl';
@@ -11,6 +12,9 @@ import { OrderController } from './infrastructure/httpControllers/orderControlle
 import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
 import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
 import { CartRepositoryFactoryImpl } from './infrastructure/repositories/cartRepository/cartRepositoryFactoryImpl';
+import { LineItemMapper } from './infrastructure/repositories/lineItemRepository/lineItemMapper/lineItemMapper';
+import { LineItemMapperImpl } from './infrastructure/repositories/lineItemRepository/lineItemMapper/lineItemMapperImpl';
+import { LineItemRepositoryFactoryImpl } from './infrastructure/repositories/lineItemRepository/lineItemRepositoryFactoryImpl';
 import { OrderMapper } from './infrastructure/repositories/orderRepository/orderMapper/orderMapper';
 import { OrderMapperImpl } from './infrastructure/repositories/orderRepository/orderMapper/orderMapperImpl';
 import { OrderRepositoryFactoryImpl } from './infrastructure/repositories/orderRepository/orderRepositoryFactoryImpl';
@@ -46,5 +50,12 @@ export class OrderModule implements DependencyInjectionModule {
     container.bindToConstructor<CartService>(orderModuleSymbols.cartService, CartServiceImpl);
 
     container.bindToConstructor<CartController>(orderModuleSymbols.cartController, CartController);
+
+    container.bindToConstructor<LineItemMapper>(orderModuleSymbols.lineItemMapper, LineItemMapperImpl);
+
+    container.bindToConstructor<LineItemRepositoryFactory>(
+      orderModuleSymbols.lineItemRepositoryFactory,
+      LineItemRepositoryFactoryImpl,
+    );
   }
 }

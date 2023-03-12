@@ -32,13 +32,6 @@ import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repo
 import { InventoryModule } from '../../../../inventoryModule/inventoryModule';
 import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
-import { LineItemRepositoryFactory } from '../../../../lineItemModule/application/repositories/lineItemRepository/lineItemRepositoryFactory';
-import { LineItem } from '../../../../lineItemModule/domain/entities/lineItem/lineItem';
-import { LineItemNotFoundError } from '../../../../lineItemModule/infrastructure/errors/lineItemNotFoundError';
-import { LineItemEntity } from '../../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { LineItemModule } from '../../../../lineItemModule/lineItemModule';
-import { lineItemModuleSymbols } from '../../../../lineItemModule/lineItemModuleSymbols';
-import { LineItemEntityTestFactory } from '../../../../lineItemModule/tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
@@ -48,12 +41,17 @@ import { UserModule } from '../../../../userModule/userModule';
 import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
+import { LineItem } from '../../../domain/entities/lineItem/lineItem';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { LineItemNotFoundError } from '../../../infrastructure/errors/lineItemNotFoundError';
 import { CartEntity } from '../../../infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
+import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
+import { LineItemRepositoryFactory } from '../../repositories/lineItemRepository/lineItemRepositoryFactory';
 
 describe('CartServiceImpl', () => {
   let cartService: CartService;
@@ -101,7 +99,6 @@ describe('CartServiceImpl', () => {
         new UserModule(userModuleConfig),
         new CustomerModule(),
         new UnitOfWorkModule(),
-        new LineItemModule(),
         new BookModule(),
         new AddressModule(),
         new InventoryModule(),
@@ -118,9 +115,7 @@ describe('CartServiceImpl', () => {
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
       inventoryModuleSymbols.inventoryRepositoryFactory,
     );
-    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(
-      lineItemModuleSymbols.lineItemRepositoryFactory,
-    );
+    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
