@@ -1,38 +1,28 @@
 import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
+import { CreateWhishlistEntryPayload, createWhishlistEntryPayloadSchema } from './payloads/createWhishlistEntryPayload';
+import { DeleteWhishlistEntryPayload, deleteWhishlistEntryPayloadSchema } from './payloads/deleteWhishlistEntryPayload';
+import { FindWhishlistEntriesPayload, findWhishlistEntriesPayloadSchema } from './payloads/findWhishlistEntriesPayload';
 import { whishlistErrorMiddleware } from './whishlistErrorMiddleware';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { Customer } from '../../../domain/customer/contracts/customer';
-import { CustomerService } from '../../../domain/customer/contracts/services/customerService/customerService';
-import { customerSymbols } from '../../../domain/customer/customerSymbols';
-import { WhishlistService } from '../../../domain/whishlist/contracts/services/whishlistService/whishlistService';
-import { WhishlistEntry } from '../../../domain/whishlist/contracts/whishlistEntry';
-import { whishlistSymbols } from '../../../domain/whishlist/whishlistSymbols';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AccessTokenData } from '../../accessTokenData';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import {
-  CreateWhishlistEntryPayload,
-  createWhishlistEntryPayloadSchema,
-} from '../contracts/createWhishlistEntryPayload';
-import {
-  DeleteWhishlistEntryPayload,
-  deleteWhishlistEntryPayloadSchema,
-} from '../contracts/deleteWhishlistEntryPayload';
-import {
-  FindWhishlistEntriesPayload,
-  findWhishlistEntriesPayloadSchema,
-} from '../contracts/findWhishlistEntriesPayload';
+import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
+import { Customer } from '../../../customerModule/domain/entities/customer/customer';
+import { AccessTokenData } from '../../../integrations/accessTokenData';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { CustomerService } from '../../../tests/services/customerService';
+import { WhishlistService } from '../../application/services/whishlistService/whishlistService';
+import { WhishlistEntry } from '../../domain/entities/whishlistEntry/whishlistEntry';
+import { whishlistModuleSymbols } from '../../whishlistModuleSymbols';
 import { CustomerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError } from '../errors/customerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError';
 import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
 
@@ -45,9 +35,9 @@ export class WhishlistController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(whishlistSymbols.whishlistService)
+    @Inject(whishlistModuleSymbols.whishlistService)
     private readonly whishlistService: WhishlistService,
-    @Inject(customerSymbols.customerService)
+    @Inject(customerModuleSymbols.customerService)
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

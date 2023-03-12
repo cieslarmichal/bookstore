@@ -28,7 +28,5 @@ export class IntegrationsModule implements DependencyInjectionModule {
       integrationsSymbols.paginationDataBuilder,
       PaginationDataBuilder,
     );
-
-    container.bindToConstructor<WhishlistController>(integrationsSymbols.whishlistController, WhishlistController);
   }
 }

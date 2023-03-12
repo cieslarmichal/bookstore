@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { WhishlistEntryRepositoryFactory } from './application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 import { WhishlistService } from './application/services/whishlistService/whishlistService';
 import { WhishlistServiceImpl } from './application/services/whishlistService/whishlistServiceImpl';
+import { WhishlistController } from './infrastructure/httpControllers/whishlistController';
 import { WhishlistEntryMapper } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapper';
 import { WhishlistEntryMapperImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapperImpl';
 import { WhishlistEntryRepositoryFactoryImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactoryImpl';
@@ -28,8 +29,6 @@ describe('WhishlistModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(3);
-
     expect(container.get<WhishlistEntryMapper>(whishlistModuleSymbols.whishlistEntryMapper)).toBeInstanceOf(
       WhishlistEntryMapperImpl,
     );
@@ -40,6 +39,10 @@ describe('WhishlistModule', () => {
 
     expect(container.get<WhishlistService>(whishlistModuleSymbols.whishlistService)).toBeInstanceOf(
       WhishlistServiceImpl,
+    );
+
+    expect(container.get<WhishlistController>(whishlistModuleSymbols.whishlistController)).toBeInstanceOf(
+      WhishlistController,
     );
   });
 });
