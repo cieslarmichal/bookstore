@@ -14,7 +14,7 @@ import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests
 import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-import { App } from '../../../app';
+import { Application } from '../../../application';
 import { AddressModule } from '../../../domain/address/addressModule';
 import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
 import { AuthorModule } from '../../../domain/author/authorModule';
@@ -137,7 +137,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+    const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
     await app.initialize();
 

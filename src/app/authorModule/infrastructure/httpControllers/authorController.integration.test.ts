@@ -16,7 +16,7 @@ import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { AddressModule } from '../../../addressModule/addressModule';
 import { AddressEntity } from '../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-import { App } from '../../../app';
+import { Application } from '../../../application';
 import { AuthorBookModule } from '../../../authorBookModule/authorBookModule';
 import { AuthorBookEntity } from '../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 import { BookCategoryModule } from '../../../bookCategoryModule/bookCategoryModule';
@@ -120,7 +120,7 @@ describe(`AuthorController (${baseUrl})`, () => {
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 
-    const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+    const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
     await app.initialize();
 

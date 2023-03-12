@@ -2,8 +2,8 @@ import 'reflect-metadata';
 
 import dotenv from 'dotenv';
 
-import { App } from './app/app';
-import { AppConfig } from './app/appConfig';
+import { ApplicationConfig } from './app/applicationConfig';
+import { Application } from './app/application';
 import { EnvKey } from './envKey';
 import { LogLevel } from './libs/logger/contracts/logLevel';
 import { HttpServer } from './server/httpServer';
@@ -53,7 +53,7 @@ async function main(): Promise<void> {
     throw new Error('Missing environment variables');
   }
 
-  const appConfig: AppConfig = {
+  const appConfig: ApplicationConfig = {
     jwtSecret,
     jwtExpiresIn,
     hashSaltRounds,
@@ -65,7 +65,7 @@ async function main(): Promise<void> {
     logLevel,
   };
 
-  const app = new App(appConfig);
+  const app = new Application(appConfig);
 
   await app.initialize();
 

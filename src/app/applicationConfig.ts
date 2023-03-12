@@ -1,6 +1,6 @@
-import { LogLevel } from '../libs/logger/contracts/logLevel';
+import { LogLevel } from '../libs/logger/logLevel';
 
-export interface AppConfig {
+export interface ApplicationConfig {
   readonly jwtSecret: string;
   readonly jwtExpiresIn: string;
   readonly hashSaltRounds: number;

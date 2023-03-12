@@ -6,8 +6,8 @@ import { LineItemMapperImpl } from './infrastructure/repositories/lineItemReposi
 import { LineItemRepositoryFactoryImpl } from './infrastructure/repositories/lineItemRepository/lineItemRepositoryFactoryImpl';
 import { LineItemModule } from './lineItemModule';
 import { lineItemModuleSymbols } from './lineItemModuleSymbols';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/implementations/dependencyInjectionContainer';
 import { LoggerModule } from '../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
 import { PostgresModule } from '../../libs/postgres/postgresModule';
@@ -26,8 +26,6 @@ describe('LineItemModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect.assertions(2);
-
     expect(container.get<LineItemMapper>(lineItemModuleSymbols.lineItemMapper)).toBeInstanceOf(LineItemMapperImpl);
 
     expect(container.get<LineItemRepositoryFactory>(lineItemModuleSymbols.lineItemRepositoryFactory)).toBeInstanceOf(

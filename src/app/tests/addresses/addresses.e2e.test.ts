@@ -14,7 +14,7 @@ import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/fa
 import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-import { App } from '../../app';
+import { Application } from '../../application';
 import { AddressModule } from '../../domain/address/addressModule';
 import { addressSymbols } from '../../domain/address/addressSymbols';
 import { AddressEntity } from '../../domain/address/contracts/addressEntity';

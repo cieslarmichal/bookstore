@@ -18,7 +18,7 @@ import { AddressModule } from '../../../addressModule/addressModule';
 import { AddressRepositoryFactory } from '../../../addressModule/application/repositories/addressRepository/addressRepositoryFactory';
 import { AddressEntity } from '../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { AddressEntityTestFactory } from '../../../addressModule/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
-import { App } from '../../../app';
+import { Application } from '../../../application';
 import { AuthorBookModule } from '../../../authorBookModule/authorBookModule';
 import { AuthorBookEntity } from '../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 import { AuthorModule } from '../../../authorModule/authorModule';
@@ -136,7 +136,7 @@ describe(`CartController (${baseUrl})`, () => {
 
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
-    const app = new App({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+    const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
 
     await app.initialize();
 

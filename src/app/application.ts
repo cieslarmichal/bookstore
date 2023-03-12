@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 
 import { AddressModule } from './addressModule/addressModule';
 import { AddressEntity } from './addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-import { AppConfig } from './appConfig';
+import { ApplicationConfig } from './applicationConfig';
 import { AuthorBookModule } from './authorBookModule/authorBookModule';
 import { AuthorBookEntity } from './authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 import { AuthorModule } from './authorModule/authorModule';
@@ -53,10 +53,10 @@ import { PostgresModule } from '../libs/postgres/postgresModule';
 import { postgresModuleSymbols } from '../libs/postgres/postgresModuleSymbols';
 import { UnitOfWorkModule } from '../libs/unitOfWork/unitOfWorkModule';
 
-export class App {
+export class Application {
   public instance: express.Application;
 
-  public constructor(private readonly config: AppConfig) {
+  public constructor(private readonly config: ApplicationConfig) {
     this.instance = express();
   }
 
