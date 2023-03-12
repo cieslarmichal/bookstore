@@ -1,27 +1,25 @@
-import { BuildPayload, buildPayloadSchema } from './buildPayload';
-import { Injectable } from '../../libs/dependencyInjection/contracts/decorators';
+import { BuildPayload, buildPayloadSchema } from './payloads/buildPayload';
 import { Validator } from '../../libs/validator/implementations/validator';
 import { PaginationData } from '../types/contracts/paginationData';
 
-@Injectable()
-export class PaginationDataBuilder {
-  private readonly defaultPage = 1;
-  private readonly defaultLimit = 5;
-  private readonly maxLimit = 20;
+const defaultPage = 1;
+const defaultLimit = 5;
+const maxLimit = 20;
 
-  public build(input: BuildPayload): PaginationData {
+export class PaginationDataBuilder {
+  public static build(input: BuildPayload): PaginationData {
     const payload = Validator.validate(buildPayloadSchema, input);
 
-    let page = payload.page || this.defaultPage;
+    let page = payload.page || defaultPage;
 
-    if (page < this.defaultPage) {
-      page = this.defaultPage;
+    if (page < defaultPage) {
+      page = defaultPage;
     }
 
-    let limit = payload.limit || this.defaultLimit;
+    let limit = payload.limit || defaultLimit;
 
-    if (limit > this.maxLimit) {
-      limit = this.maxLimit;
+    if (limit > maxLimit) {
+      limit = maxLimit;
     }
 
     return { page, limit };
