@@ -31,8 +31,6 @@ export class IntegrationsModule implements DependencyInjectionModule {
 
     container.bindToConstructor<UserController>(integrationsSymbols.userController, UserController);
 
-    container.bindToConstructor<CategoryController>(integrationsSymbols.categoryController, CategoryController);
-
     container.bindToConstructor<CustomerController>(integrationsSymbols.customerController, CustomerController);
 
     container.bindToConstructor<OrderController>(integrationsSymbols.orderController, OrderController);

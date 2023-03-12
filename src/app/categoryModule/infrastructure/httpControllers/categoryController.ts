@@ -2,27 +2,26 @@ import { Router, NextFunction, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { categoryErrorMiddleware } from './categoryErrorMiddleware';
+import { CreateCategoryPayload, createCategoryPayloadSchema } from './payloads/createCategoryPayload';
+import { DeleteCategoryPayload, deleteCategoryPayloadSchema } from './payloads/deleteCategoryPayload';
+import { findCategoriesFilters } from './payloads/findCategoriesFilters';
+import { FindCategoriesPayload, findCategoriesPayloadSchema } from './payloads/findCategoriesPayload';
+import { FindCategoryPayload, findCategoryPayloadSchema } from './payloads/findCategoryPayload';
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { categorySymbols } from '../../../domain/category/categorySymbols';
-import { Category } from '../../../domain/category/contracts/category';
-import { CategoryService } from '../../../domain/category/contracts/services/categoryService/categoryService';
-import { Inject, Injectable } from '../../../../libs/dependencyInjection/contracts/decorators';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/contracts/decorators';
 import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkSymbols } from '../../../../libs/unitOfWork/unitOfWorkSymbols';
 import { Validator } from '../../../../libs/validator/implementations/validator';
-import { FilterDataParser } from '../../common/filterDataParser/filterDataParser';
-import { AuthMiddleware } from '../../common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../common/middlewares/sendResponseMiddleware';
-import { PaginationDataBuilder } from '../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../controllerResponse';
-import { integrationsSymbols } from '../../integrationsSymbols';
-import { LocalsName } from '../../localsName';
-import { QueryParameterName } from '../../queryParameterName';
-import { CreateCategoryPayload, createCategoryPayloadSchema } from '../contracts/createCategoryPayload';
-import { DeleteCategoryPayload, deleteCategoryPayloadSchema } from '../contracts/deleteCategoryPayload';
-import { findCategoriesFilters } from '../contracts/findCategoriesFilters';
-import { FindCategoriesPayload, findCategoriesPayloadSchema } from '../contracts/findCategoriesPayload';
-import { FindCategoryPayload, findCategoryPayloadSchema } from '../contracts/findCategoryPayload';
+import { FilterDataParser } from '../../../integrations/common/filterDataParser/filterDataParser';
+import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { PaginationDataBuilder } from '../../../integrations/common/paginationDataBuilder/paginationDataBuilder';
+import { ControllerResponse } from '../../../integrations/controllerResponse';
+import { LocalsName } from '../../../integrations/localsName';
+import { QueryParameterName } from '../../../integrations/queryParameterName';
+import { CategoryService } from '../../application/services/categoryService/categoryService';
+import { categoryModuleSymbols } from '../../categoryModuleSymbols';
+import { Category } from '../../domain/entities/category/category';
 
 @Injectable()
 export class CategoryController {
@@ -33,7 +32,7 @@ export class CategoryController {
   public constructor(
     @Inject(unitOfWorkSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(categorySymbols.categoryService)
+    @Inject(categoryModuleSymbols.categoryService)
     private readonly categoryService: CategoryService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,

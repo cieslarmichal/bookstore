@@ -2,8 +2,8 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { CategoryAlreadyExistsError } from '../../../domain/category/errors/categoryAlreadyExistsError';
-import { CategoryNotFoundError } from '../../../domain/category/errors/categoryNotFoundError';
+import { CategoryAlreadyExistsError } from '../errors/categoryAlreadyExistsError';
+import { CategoryNotFoundError } from '../errors/categoryNotFoundError';
 
 export function categoryErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof CategoryAlreadyExistsError) {
