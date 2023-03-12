@@ -7,20 +7,20 @@ import { FindReviewPayload, findReviewPayloadSchema } from './payloads/findRevie
 import { FindReviewsPayload, findReviewsPayloadSchema } from './payloads/findReviewsPayload';
 import { UpdateReviewPayload, updateReviewPayloadSchema } from './payloads/updateReviewPayload';
 import { reviewErrorMiddleware } from './reviewErrorMiddleware';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { AccessTokenData } from '../../../../common/types/accessTokenData';
-import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
-import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
+import { ControllerResponse } from '../../../../common/types/controllerResponse';
+import { LocalsName } from '../../../../common/types/localsName';
+import { QueryParameterName } from '../../../../common/types/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../libs/validator/validator';
 import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../customerModule/domain/entities/customer/customer';
-import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
 import { CustomerService } from '../../../tests/services/customerService';
 import { CreateReviewDraft } from '../../application/services/reviewService/payloads/createReviewDraft';
 import { UpdateReviewDraft } from '../../application/services/reviewService/payloads/updateReviewDraft';
@@ -45,8 +45,6 @@ export class ReviewController {
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
-    @Inject(integrationsSymbols.paginationDataBuilder)
-    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -92,7 +90,7 @@ export class ReviewController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const customerId = request.query[QueryParameterName.customerId] as string;
 

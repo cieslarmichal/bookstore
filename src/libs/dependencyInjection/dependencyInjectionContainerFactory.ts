@@ -1,6 +1,6 @@
 import { DependencyInjectionContainer } from './dependencyInjectionContainer';
 import { CreatePayload, createPayloadSchema } from './payloads/createPayload';
-import { Validator } from '../validator/implementations/validator';
+import { Validator } from '../validator/validator';
 
 export class DependencyInjectionContainerFactory {
   public static async create(input: CreatePayload): Promise<DependencyInjectionContainer> {

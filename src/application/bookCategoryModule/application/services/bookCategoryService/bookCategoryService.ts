@@ -3,7 +3,7 @@ import { DeleteBookCategoryPayload } from './payloads/deleteBookCategoryPayload'
 import { FindBooksByCategoryIdPayload } from './payloads/findBooksByCategoryIdPayload';
 import { FindCategoriesByBookIdPayload } from './payloads/findCategoriesByBookIdPayload';
 import { Book } from '../../../../bookModule/domain/entities/book/book';
-import { Category } from '../../../../domain/category/contracts/category';
+import { Category } from '../../../../categoryModule/domain/entities/category/category';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
 
 export interface BookCategoryService {

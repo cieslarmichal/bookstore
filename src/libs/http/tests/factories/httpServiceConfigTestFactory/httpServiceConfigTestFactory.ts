@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 
 import { HttpHeader } from '../../../../../common/http/httpHeader';
 import { HttpMediaType } from '../../../../../common/http/httpMediaType';
-import { Validator } from '../../../../validator/implementations/validator';
+import { Validator } from '../../../../validator/validator';
 import { HttpServiceConfig, httpServiceConfigSchema } from '../../../services/httpService/httpServiceConfig';
 
 export class HttpServiceConfigTestFactory {

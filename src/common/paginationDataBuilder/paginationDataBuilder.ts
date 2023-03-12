@@ -1,5 +1,5 @@
 import { BuildPayload, buildPayloadSchema } from './payloads/buildPayload';
-import { Validator } from '../../libs/validator/implementations/validator';
+import { Validator } from '../../libs/validator/validator';
 import { PaginationData } from '../types/paginationData';
 
 const defaultPage = 1;

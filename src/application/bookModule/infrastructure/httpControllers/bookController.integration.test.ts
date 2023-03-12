@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';

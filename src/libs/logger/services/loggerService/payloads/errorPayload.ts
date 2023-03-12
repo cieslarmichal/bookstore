@@ -1,6 +1,6 @@
+import { Schema } from '../../../../validator/schema';
 import { SchemaType } from '../../../../validator/schemaType';
-import { Schema } from '../../../../validator/implementations/schema';
-import { LogContext } from '../../logContext';
+import { LogContext } from '../../../logContext';
 
 export const errorPayloadSchema = Schema.object({
   message: Schema.string(),

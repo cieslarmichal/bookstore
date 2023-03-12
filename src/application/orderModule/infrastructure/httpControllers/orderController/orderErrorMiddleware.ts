@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
-import { UserIsNotCustomerError } from '../errors/userIsNotCustomerError';
+import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
+import { UserIsNotCustomerError } from '../../errors/userIsNotCustomerError';
 
 export function orderErrorMiddleware(error: Error, _request: Request, response: Response, next: NextFunction): void {
   if (error instanceof UserIsNotCustomerError) {

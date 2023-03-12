@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { CustomerEntity } from '../../../../../domain/customer/contracts/customerEntity';
+import { CustomerEntity } from '../../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
 
 export const addressesTableName = 'addresses';
 

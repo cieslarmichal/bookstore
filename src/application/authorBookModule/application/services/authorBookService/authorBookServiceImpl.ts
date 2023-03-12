@@ -12,10 +12,10 @@ import { AuthorService } from '../../../../authorModule/application/services/aut
 import { authorModuleSymbols } from '../../../../authorModule/authorModuleSymbols';
 import { Author } from '../../../../authorModule/domain/entities/author/author';
 import { AuthorNotFoundError } from '../../../../authorModule/infrastructure/errors/authorNotFoundError';
-import { bookSymbols } from '../../../../domain/book/bookSymbols';
-import { Book } from '../../../../domain/book/contracts/book';
-import { BookService } from '../../../../domain/book/contracts/services/bookService/bookService';
-import { BookNotFoundError } from '../../../../domain/book/errors/bookNotFoundError';
+import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
+import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { Book } from '../../../../bookModule/domain/entities/book/book';
+import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
 import { AuthorBookRepositoryFactory } from '../../../application/repositories/authorBookRepository/authorBookRepositoryFactory';
 import { authorBookModuleSymbols } from '../../../authorBookModuleSymbols';
 import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
@@ -29,7 +29,7 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     private readonly authorBookRepositoryFactory: AuthorBookRepositoryFactory,
     @Inject(authorModuleSymbols.authorService)
     private readonly authorService: AuthorService,
-    @Inject(bookSymbols.bookService)
+    @Inject(bookModuleSymbols.bookService)
     private readonly bookService: BookService,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,

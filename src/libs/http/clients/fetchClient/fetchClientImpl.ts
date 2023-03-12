@@ -3,7 +3,7 @@ import fetch, { Response } from 'node-fetch';
 import { FetchClient } from './fetchClient';
 import { FetchPayload, fetchPayloadSchema } from './payloads/fetchPayload';
 import { Injectable } from '../../../dependencyInjection/decorators';
-import { Validator } from '../../../validator/implementations/validator';
+import { Validator } from '../../../validator/validator';
 
 @Injectable()
 export class FetchClientImpl implements FetchClient {

@@ -13,21 +13,21 @@ import {
   findCategoriesByBookIdPayloadSchema,
 } from './payloads/findCategoriesByBookIdPayload';
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
-import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
+import { ControllerResponse } from '../../../../common/types/controllerResponse';
+import { LocalsName } from '../../../../common/types/localsName';
+import { QueryParameterName } from '../../../../common/types/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../libs/validator/validator';
 import { Book } from '../../../bookModule/domain/entities/book/book';
 import { findBooksFilters } from '../../../bookModule/infrastructure/httpControllers/payloads/findBooksFilters';
 import { Category } from '../../../categoryModule/domain/entities/category/category';
 import { findCategoriesFilters } from '../../../categoryModule/infrastructure/httpControllers/payloads/findCategoriesFilters';
-import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
 import { BookCategoryService } from '../../application/services/bookCategoryService/bookCategoryService';
 import { bookCategoryModuleSymbols } from '../../bookCategoryModuleSymbols';
 import { BookCategory } from '../../domain/entities/bookCategory/bookCategory';
@@ -46,10 +46,6 @@ export class BookCategoryController {
     private readonly bookCategoryService: BookCategoryService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
-    @Inject(integrationsSymbols.filterDataParser)
-    private filterDataParser: FilterDataParser,
-    @Inject(integrationsSymbols.paginationDataBuilder)
-    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -81,7 +77,7 @@ export class BookCategoryController {
         const filtersInput = request.query[QueryParameterName.filter] as string;
 
         const filters = filtersInput
-          ? this.filterDataParser.parse({
+          ? FilterDataParser.parse({
               jsonData: filtersInput,
               supportedFieldsFilters: findCategoriesFilters,
             })
@@ -91,7 +87,7 @@ export class BookCategoryController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const categories = await this.findCategoriesByBookId({
           bookId: bookId as string,
@@ -116,7 +112,7 @@ export class BookCategoryController {
         const filtersInput = request.query[QueryParameterName.filter] as string;
 
         const filters = filtersInput
-          ? this.filterDataParser.parse({
+          ? FilterDataParser.parse({
               jsonData: filtersInput,
               supportedFieldsFilters: findBooksFilters,
             })
@@ -126,7 +122,7 @@ export class BookCategoryController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const books = await this.findBooksByCategoryId({
           categoryId: categoryId as string,

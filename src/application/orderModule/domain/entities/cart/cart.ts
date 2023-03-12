@@ -3,7 +3,7 @@ import { DeliveryMethod } from './deliveryMethod';
 import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../libs/validator/validator';
-import { LineItem } from '../../../../domain/lineItem/contracts/lineItem';
+import { LineItem } from '../lineItem/lineItem';
 
 export const cartInputSchema = Schema.object({
   id: Schema.notEmptyString(),

@@ -1,5 +1,5 @@
+import { Schema } from '../../../../validator/schema';
 import { SchemaType } from '../../../../validator/schemaType';
-import { Schema } from '../../../../validator/implementations/schema';
 import { LogContext } from '../../../logContext';
 
 export const warnPayloadSchema = Schema.object({

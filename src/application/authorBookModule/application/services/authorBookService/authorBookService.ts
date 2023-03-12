@@ -3,7 +3,7 @@ import { DeleteAuthorBookPayload } from './payloads/deleteAuthorBookPayload';
 import { FindAuthorsByBookIdPayload } from './payloads/findAuthorsByBookIdPayload';
 import { FindBooksByAuthorIdPayload } from './payloads/findBooksByAuthorIdPayload';
 import { Author } from '../../../../authorModule/domain/entities/author/author';
-import { Book } from '../../../../domain/book/contracts/book';
+import { Book } from '../../../../bookModule/domain/entities/book/book';
 import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
 
 export interface AuthorBookService {

@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
@@ -23,17 +23,14 @@ import { BookCategoryModule } from '../../../bookCategoryModule/bookCategoryModu
 import { BookCategoryEntity } from '../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookModule } from '../../../bookModule/bookModule';
 import { BookEntity } from '../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-import { CartModule } from '../../../cartModule/cartModule';
-import { CartEntity } from '../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
 import { CategoryModule } from '../../../categoryModule/categoryModule';
 import { CategoryEntity } from '../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerModule } from '../../../customerModule/customerModule';
 import { CustomerEntity } from '../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { IntegrationsModule } from '../../../integrations/integrationsModule';
 import { InventoryEntity } from '../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../inventoryModule/inventoryModule';
-import { LineItemEntity } from '../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { LineItemModule } from '../../../lineItemModule/lineItemModule';
+import { CartEntity } from '../../../orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { OrderModule } from '../../../orderModule/orderModule';
 import { ReviewEntity } from '../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
@@ -96,15 +93,12 @@ describe(`AuthorController (${baseUrl})`, () => {
         new BookModule(),
         new AuthorModule(),
         new UserModule(userModuleConfig),
-        new IntegrationsModule(),
         new AuthorBookModule(),
         new LoggerModule(loggerModuleConfig),
         new BookCategoryModule(),
         new AddressModule(),
         new CustomerModule(),
         new UnitOfWorkModule(),
-        new CartModule(),
-        new LineItemModule(),
         new OrderModule(),
         new InventoryModule(),
         new ReviewModule(),

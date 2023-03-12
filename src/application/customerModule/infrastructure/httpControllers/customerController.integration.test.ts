@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
@@ -48,7 +48,7 @@ import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
-import { userSymbols } from '../../../domain/user/userSymbols';
+import { userModuleSymbols } from '../../../domain/user/userModuleSymbols';
 import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
 import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
 import { IntegrationsModule } from '../../../integrations/integrationsModule';
@@ -117,9 +117,9 @@ describe(`CustomerController (${baseUrl})`, () => {
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-    tokenService = container.get<TokenService>(userSymbols.tokenService);
+    tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

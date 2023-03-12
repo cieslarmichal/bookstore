@@ -9,19 +9,20 @@ import { findAuthorsFilters } from './payloads/findAuthorsFilters';
 import { FindAuthorsPayload, findAuthorsPayloadSchema } from './payloads/findAuthorsPayload';
 import { UpdateAuthorPayload, updateAuthorPayloadSchema } from './payloads/updateAuthorPayload';
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
-import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
+import { ControllerResponse } from '../../../../common/types/controllerResponse';
+import { LocalsName } from '../../../../common/types/localsName';
+import { QueryParameterName } from '../../../../common/types/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { Validator } from '../../../../libs/validator/validator';
 import { AuthorService } from '../../application/services/authorService/authorService';
 import { CreateAuthorDraft } from '../../application/services/authorService/payloads/createAuthorDraft';
+import { authorModuleSymbols } from '../../authorModuleSymbols';
 import { Author } from '../../domain/entities/author/author';
 
 @Injectable()
@@ -33,14 +34,10 @@ export class AuthorController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(authorSymbols.authorService)
+    @Inject(authorModuleSymbols.authorService)
     private readonly authorService: AuthorService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
-    @Inject(integrationsSymbols.filterDataParser)
-    private filterDataParser: FilterDataParser,
-    @Inject(integrationsSymbols.paginationDataBuilder)
-    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -83,7 +80,7 @@ export class AuthorController {
         const filtersInput = request.query[QueryParameterName.filter] as string;
 
         const filters = filtersInput
-          ? this.filterDataParser.parse({
+          ? FilterDataParser.parse({
               jsonData: filtersInput,
               supportedFieldsFilters: findAuthorsFilters,
             })
@@ -93,7 +90,7 @@ export class AuthorController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const authors = await this.findAuthors({ filters, pagination });
 

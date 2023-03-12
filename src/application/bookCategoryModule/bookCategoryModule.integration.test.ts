@@ -16,7 +16,7 @@ import { LoggerModuleConfigTestFactory } from '../../libs/logger/tests/factories
 import { PostgresModule } from '../../libs/postgres/postgresModule';
 import { PostgresModuleConfigTestFactory } from '../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { BookModule } from '../bookModule/bookModule';
-import { CategoryModule } from '../domain/category/categoryModule';
+import { CategoryModule } from '../categoryModule/categoryModule';
 
 describe('BookCategoryModule', () => {
   let container: DependencyInjectionContainer;

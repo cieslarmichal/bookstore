@@ -4,9 +4,9 @@ import { DataSource } from 'typeorm';
 
 import { BookService } from './bookService';
 import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
-import { EqualFilter, LessThanOrEqualFilter, BetweenFilter } from '../../../../../common/types/contracts/filter';
-import { FilterName } from '../../../../../common/types/contracts/filterName';
-import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
+import { EqualFilter, LessThanOrEqualFilter, BetweenFilter } from '../../../../../common/types/filter';
+import { FilterName } from '../../../../../common/types/filterName';
+import { FilterSymbol } from '../../../../../common/types/filterSymbol';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -25,23 +25,23 @@ import { AuthorModule } from '../../../../authorModule/authorModule';
 import { authorModuleSymbols } from '../../../../authorModule/authorModuleSymbols';
 import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
 import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
-import { BookCategoryModule } from '../../../../domain/bookCategory/bookCategoryModule';
-import { bookCategorySymbols } from '../../../../domain/bookCategory/bookCategorySymbols';
-import { BookCategoryEntity } from '../../../../domain/bookCategory/contracts/bookCategoryEntity';
-import { BookCategoryRepositoryFactory } from '../../../../domain/bookCategory/contracts/factories/bookCategoryRepositoryFactory/bookCategoryRepositoryFactory';
-import { BookCategoryEntityTestFactory } from '../../../../domain/bookCategory/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
-import { CartEntity } from '../../../../domain/cart/contracts/cartEntity';
-import { CategoryModule } from '../../../../domain/category/categoryModule';
-import { categorySymbols } from '../../../../domain/category/categorySymbols';
-import { CategoryEntity } from '../../../../domain/category/contracts/categoryEntity';
-import { CategoryRepositoryFactory } from '../../../../domain/category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryEntityTestFactory } from '../../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
-import { CustomerEntity } from '../../../../domain/customer/contracts/customerEntity';
-import { InventoryEntity } from '../../../../domain/inventory/contracts/inventoryEntity';
-import { LineItemEntity } from '../../../../domain/lineItem/contracts/lineItemEntity';
-import { OrderEntity } from '../../../../domain/order/contracts/orderEntity';
-import { ReviewEntity } from '../../../../domain/review/contracts/reviewEntity';
-import { UserEntity } from '../../../../domain/user/contracts/userEntity';
+import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
+import { BookCategoryModule } from '../../../../bookCategoryModule/bookCategoryModule';
+import { bookCategoryModuleSymbols } from '../../../../bookCategoryModule/bookCategoryModuleSymbols';
+import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
+import { BookCategoryEntityTestFactory } from '../../../../bookCategoryModule/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
+import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
+import { CategoryModule } from '../../../../categoryModule/categoryModule';
+import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
+import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
+import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
+import { CartEntity } from '../../../../orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../../orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
+import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
+import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { BookModule } from '../../../bookModule';
 import { bookModuleSymbols } from '../../../bookModuleSymbols';
 import { BookFormat } from '../../../domain/entities/book/bookFormat';
@@ -107,9 +107,11 @@ describe('BookServiceImpl', () => {
       authorBookModuleSymbols.authorBookRepositoryFactory,
     );
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
-      bookCategorySymbols.bookCategoryRepositoryFactory,
+      bookCategoryModuleSymbols.bookCategoryRepositoryFactory,
     );
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
+      categoryModuleSymbols.categoryRepositoryFactory,
+    );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();

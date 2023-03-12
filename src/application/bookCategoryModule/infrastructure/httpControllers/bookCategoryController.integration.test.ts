@@ -1,10 +1,9 @@
-import { AddressModule } from '@faker-js/faker';
 import 'reflect-metadata';
 
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
@@ -15,6 +14,7 @@ import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests
 import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
+import { AddressModule } from '../../../addressModule/addressModule';
 import { AddressEntity } from '../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { Application } from '../../../application';
 import { AuthorBookModule } from '../../../authorBookModule/authorBookModule';
@@ -23,22 +23,21 @@ import { AuthorModule } from '../../../authorModule/authorModule';
 import { AuthorEntity } from '../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
 import { BookRepositoryFactory } from '../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { BookModule } from '../../../bookModule/bookModule';
+import { bookModuleSymbols } from '../../../bookModule/bookModuleSymbols';
 import { BookFormat } from '../../../bookModule/domain/entities/book/bookFormat';
 import { BookEntity } from '../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
 import { BookEntityTestFactory } from '../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { CartModule } from '../../../cartModule/cartModule';
-import { CartEntity } from '../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
 import { CategoryRepositoryFactory } from '../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
 import { CategoryModule } from '../../../categoryModule/categoryModule';
+import { categoryModuleSymbols } from '../../../categoryModule/categoryModuleSymbols';
 import { CategoryEntity } from '../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CategoryEntityTestFactory } from '../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CustomerModule } from '../../../customerModule/customerModule';
 import { CustomerEntity } from '../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { IntegrationsModule } from '../../../integrations/integrationsModule';
 import { InventoryEntity } from '../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../inventoryModule/inventoryModule';
-import { LineItemEntity } from '../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { LineItemModule } from '../../../lineItemModule/lineItemModule';
+import { CartEntity } from '../../../orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from '../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { OrderModule } from '../../../orderModule/orderModule';
 import { ReviewEntity } from '../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
@@ -122,13 +121,15 @@ describe(`BookCategoryController ${categoriesUrl}, ${booksUrl}`, () => {
 
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
+      categoryModuleSymbols.categoryRepositoryFactory,
+    );
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategorySymbols.bookCategoryRepositoryFactory,
     );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-    tokenService = container.get<TokenService>(userSymbols.tokenService);
+    tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

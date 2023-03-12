@@ -9,17 +9,17 @@ import { findBooksFilters } from './payloads/findBooksFilters';
 import { FindBooksPayload, findBooksPayloadSchema } from './payloads/findBooksPayload';
 import { UpdateBookPayload, updateBookPayloadSchema } from './payloads/updateBookPayload';
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
-import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
+import { ControllerResponse } from '../../../../common/types/controllerResponse';
+import { LocalsName } from '../../../../common/types/localsName';
+import { QueryParameterName } from '../../../../common/types/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../libs/validator/validator';
 import { BookService } from '../../application/services/bookService/bookService';
 import { CreateBookDraft } from '../../application/services/bookService/payloads/createBookDraft';
 import { UpdateBookDraft } from '../../application/services/bookService/payloads/updateBookDraft';
@@ -39,10 +39,6 @@ export class BookController {
     private readonly bookService: BookService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
-    @Inject(integrationsSymbols.filterDataParser)
-    private filterDataParser: FilterDataParser,
-    @Inject(integrationsSymbols.paginationDataBuilder)
-    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -85,7 +81,7 @@ export class BookController {
         const filtersInput = request.query[QueryParameterName.filter] as string;
 
         const filters = filtersInput
-          ? this.filterDataParser.parse({
+          ? FilterDataParser.parse({
               jsonData: filtersInput,
               supportedFieldsFilters: findBooksFilters,
             })
@@ -95,7 +91,7 @@ export class BookController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const books = await this.findBooks({ filters, pagination });
 

@@ -2,7 +2,7 @@
 import { Entity, Column, ManyToOne, PrimaryColumn, JoinColumn } from 'typeorm';
 
 import { BookEntity } from '../../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-import { CartEntity } from '../../../../../cart/contracts/cartEntity';
+import { CartEntity } from '../../cartRepository/cartEntity/cartEntity';
 
 export const lineItemsTableName = 'lineItems';
 

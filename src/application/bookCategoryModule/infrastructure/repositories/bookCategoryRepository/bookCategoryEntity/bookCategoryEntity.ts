@@ -2,7 +2,7 @@
 import { Entity, Column, ManyToOne, Unique, PrimaryColumn } from 'typeorm';
 
 import { BookEntity } from '../../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-import { CategoryEntity } from '../../../../../domain/category/contracts/categoryEntity';
+import { CategoryEntity } from '../../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 
 export const bookCategoriesTableName = 'bookCategories';
 

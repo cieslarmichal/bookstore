@@ -1,6 +1,6 @@
-import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../../libs/validator/implementations/schema';
-import { AccessTokenData } from '../../accessTokenData';
+import { AccessTokenData } from '../../../../../common/types/accessTokenData';
+import { Schema } from '../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../libs/validator/schemaType';
 
 export const deleteAddressPayloadSchema = Schema.object({
   id: Schema.notEmptyString(),

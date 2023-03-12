@@ -1,8 +1,7 @@
 import { updateReviewDraftSchema } from './updateReviewDraft';
 import { UnitOfWork } from '../../../../../../libs/unitOfWork/unitOfWork';
-
-import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Schema } from '../../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../../libs/validator/schemaType';
 
 export const updateReviewPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),

@@ -4,9 +4,9 @@ import { HttpRequestSchema, httpRequestSchemaSchema } from './httpRequestSchema'
 import { httpResponseSchema } from './httpResponse';
 import { HttpResponseSchema, httpResponseSchemaSchema } from './httpResponseSchema';
 import { HttpRouteHandler } from './httpRouteHandler';
+import { Schema } from '../../libs/validator/schema';
 import { SchemaType } from '../../libs/validator/schemaType';
-import { Schema } from '../../libs/validator/implementations/schema';
-import { Validator } from '../../libs/validator/implementations/validator';
+import { Validator } from '../../libs/validator/validator';
 
 const payloadSchema = Schema.object({
   method: Schema.enum(HttpMethodName),

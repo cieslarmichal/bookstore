@@ -9,22 +9,22 @@ import { FindAddressesPayload, findAddressesPayloadSchema } from './payloads/fin
 import { FindAddressPayload, findAddressPayloadSchema } from './payloads/findAddressPayload';
 import { UpdateAddressPayload, updateAddressPayloadSchema } from './payloads/updateAddressPayload';
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { AccessTokenData } from '../../../../common/types/accessTokenData';
-import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
-import { Filter } from '../../../../common/types/contracts/filter';
-import { FilterName } from '../../../../common/types/contracts/filterName';
-import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
-import { Inject, Injectable } from '../../../../libs/dependencyInjection/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { ControllerResponse } from '../../../../common/types/controllerResponse';
+import { Filter } from '../../../../common/types/filter';
+import { FilterName } from '../../../../common/types/filterName';
+import { LocalsName } from '../../../../common/types/localsName';
+import { QueryParameterName } from '../../../../common/types/queryParameterName';
+import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
+import { Validator } from '../../../../libs/validator/validator';
 import { customerModuleSymbols } from '../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../customerModule/domain/entities/customer/customer';
-import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
 import { CustomerService } from '../../../tests/services/customerService';
 import { UserRole } from '../../../userModule/domain/entities/user/userRole';
 import { addressModuleSymbols } from '../../addressModuleSymbols';
@@ -50,10 +50,6 @@ export class AddressController {
     private readonly customerService: CustomerService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
-    @Inject(integrationsSymbols.filterDataParser)
-    private filterDataParser: FilterDataParser,
-    @Inject(integrationsSymbols.paginationDataBuilder)
-    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -123,7 +119,7 @@ export class AddressController {
         const filtersInput = request.query[QueryParameterName.filter] as string;
 
         const filters = filtersInput
-          ? this.filterDataParser.parse({
+          ? FilterDataParser.parse({
               jsonData: filtersInput,
               supportedFieldsFilters: findAddressesFilters,
             })
@@ -133,7 +129,7 @@ export class AddressController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const accessTokenData: AccessTokenData = response.locals[LocalsName.accessTokenData];
 

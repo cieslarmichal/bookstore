@@ -1,5 +1,5 @@
-import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Schema } from '../../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { UserRole } from '../../../../domain/entities/user/userRole';
 
 export const createOnePayloadSchema = Schema.object({

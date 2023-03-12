@@ -6,7 +6,7 @@ import { CategoryService } from './categoryService';
 import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
 import { EqualFilter } from '../../../../../common/types/contracts/filter';
 import { FilterName } from '../../../../../common/types/contracts/filterName';
-import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
+import { FilterSymbol } from '../../../../../common/types/filterSymbol';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';

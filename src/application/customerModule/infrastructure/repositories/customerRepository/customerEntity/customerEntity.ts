@@ -2,8 +2,8 @@
 import { Entity, OneToMany, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 
 import { AddressEntity } from '../../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-import { CartEntity } from '../../../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-import { UserEntity } from '../../../../../domain/user/contracts/userEntity';
+import { CartEntity } from '../../../../../orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { UserEntity } from '../../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 
 export const customersTableName = 'customers';
 

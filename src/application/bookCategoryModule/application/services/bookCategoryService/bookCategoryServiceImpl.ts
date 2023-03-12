@@ -18,10 +18,10 @@ import { BookService } from '../../../../bookModule/application/services/bookSer
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { Book } from '../../../../bookModule/domain/entities/book/book';
 import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
-import { categorySymbols } from '../../../../domain/category/categorySymbols';
-import { Category } from '../../../../domain/category/contracts/category';
-import { CategoryService } from '../../../../domain/category/contracts/services/categoryService/categoryService';
-import { CategoryNotFoundError } from '../../../../domain/category/errors/categoryNotFoundError';
+import { CategoryService } from '../../../../categoryModule/application/services/categoryService/categoryService';
+import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { Category } from '../../../../categoryModule/domain/entities/category/category';
+import { CategoryNotFoundError } from '../../../../categoryModule/infrastructure/errors/categoryNotFoundError';
 import { bookCategoryModuleSymbols } from '../../../bookCategoryModuleSymbols';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
 import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
@@ -33,7 +33,7 @@ export class BookCategoryServiceImpl implements BookCategoryService {
   public constructor(
     @Inject(bookCategoryModuleSymbols.bookCategoryRepositoryFactory)
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
-    @Inject(categorySymbols.categoryService)
+    @Inject(categoryModuleSymbols.categoryService)
     private readonly categoryService: CategoryService,
     @Inject(bookModuleSymbols.bookService)
     private readonly bookService: BookService,

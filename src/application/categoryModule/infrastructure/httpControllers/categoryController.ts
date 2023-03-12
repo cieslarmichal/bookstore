@@ -8,17 +8,17 @@ import { findCategoriesFilters } from './payloads/findCategoriesFilters';
 import { FindCategoriesPayload, findCategoriesPayloadSchema } from './payloads/findCategoriesPayload';
 import { FindCategoryPayload, findCategoryPayloadSchema } from './payloads/findCategoryPayload';
 import { FilterDataParser } from '../../../../common/filterDataParser/filterDataParser';
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
+import { AuthMiddleware } from '../../../../common/middlewares/authMiddleware';
+import { sendResponseMiddleware } from '../../../../common/middlewares/sendResponseMiddleware';
 import { PaginationDataBuilder } from '../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { ControllerResponse } from '../../../../common/types/contracts/controllerResponse';
-import { LocalsName } from '../../../../common/types/contracts/localsName';
-import { QueryParameterName } from '../../../../common/types/contracts/queryParameterName';
+import { ControllerResponse } from '../../../../common/types/controllerResponse';
+import { LocalsName } from '../../../../common/types/localsName';
+import { QueryParameterName } from '../../../../common/types/queryParameterName';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
-import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/contracts/factories/unitOfWorkFactory/unitOfWorkFactory';
+import { UnitOfWorkFactory } from '../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../libs/validator/implementations/validator';
-import { AuthMiddleware } from '../../../integrations/common/middlewares/authMiddleware';
-import { sendResponseMiddleware } from '../../../integrations/common/middlewares/sendResponseMiddleware';
+import { Validator } from '../../../../libs/validator/validator';
 import { CategoryService } from '../../application/services/categoryService/categoryService';
 import { categoryModuleSymbols } from '../../categoryModuleSymbols';
 import { Category } from '../../domain/entities/category/category';
@@ -36,10 +36,6 @@ export class CategoryController {
     private readonly categoryService: CategoryService,
     @Inject(integrationsSymbols.authMiddleware)
     authMiddleware: AuthMiddleware,
-    @Inject(integrationsSymbols.filterDataParser)
-    private filterDataParser: FilterDataParser,
-    @Inject(integrationsSymbols.paginationDataBuilder)
-    private paginationDataBuilder: PaginationDataBuilder,
   ) {
     const verifyAccessToken = authMiddleware.verifyToken.bind(authMiddleware);
 
@@ -82,7 +78,7 @@ export class CategoryController {
         const filtersInput = request.query[QueryParameterName.filter] as string;
 
         const filters = filtersInput
-          ? this.filterDataParser.parse({
+          ? FilterDataParser.parse({
               jsonData: filtersInput,
               supportedFieldsFilters: findCategoriesFilters,
             })
@@ -92,7 +88,7 @@ export class CategoryController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const categories = await this.findCategories({ filters, pagination });
 

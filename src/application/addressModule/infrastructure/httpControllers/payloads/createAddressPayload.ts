@@ -1,6 +1,6 @@
+import { AccessTokenData } from '../../../../../common/types/accessTokenData';
 import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { AccessTokenData } from '../../accessTokenData';
 
 export const createAddressPayloadSchema = Schema.object({
   firstName: Schema.notEmptyString(),

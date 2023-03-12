@@ -1,7 +1,6 @@
 import { HttpMethodName } from '../../../../../common/http/httpMethodName';
+import { Schema } from '../../../../validator/schema';
 import { SchemaType } from '../../../../validator/schemaType';
-import { Schema } from '../../../../validator/implementations/schema';
-
 export const sendRequestPayloadSchema = Schema.object({
   endpoint: Schema.notEmptyString().optional(),
   headers: Schema.record(Schema.string(), Schema.string()).optional(),

@@ -1,8 +1,8 @@
-import { Filter } from '../../../../common/types/contracts/filter';
-import { PaginationData } from '../../../../common/types/contracts/paginationData';
-import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../../libs/validator/implementations/schema';
-import { AccessTokenData } from '../../accessTokenData';
+import { AccessTokenData } from '../../../../../common/types/accessTokenData';
+import { Filter } from '../../../../../common/types/filter';
+import { PaginationData } from '../../../../../common/types/paginationData';
+import { Schema } from '../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../libs/validator/schemaType';
 
 export const findAddressesPayloadSchema = Schema.object({
   filters: Schema.array(Schema.unsafeType<Filter>()),

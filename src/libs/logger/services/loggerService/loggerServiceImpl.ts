@@ -6,7 +6,7 @@ import { InfoPayload, infoPayloadSchema } from './payloads/infoPayload';
 import { LogPayload, logPayloadSchema } from './payloads/logPayload';
 import { WarnPayload, warnPayloadSchema } from './payloads/warnPayload';
 import { Inject, Injectable } from '../../../dependencyInjection/decorators';
-import { Validator } from '../../../validator/implementations/validator';
+import { Validator } from '../../../validator/validator';
 import { LoggerClient } from '../../clients/loggerClient/loggerClient';
 import { loggerModuleSymbols } from '../../loggerModuleSymbols';
 

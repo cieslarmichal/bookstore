@@ -1,8 +1,8 @@
 import { HttpServiceFactory } from './httpServiceFactory';
 import { Injectable, Inject } from '../../../dependencyInjection/decorators';
-import { LoggerService } from '../../../logger/contracts/services/loggerService/loggerService';
 import { loggerModuleSymbols } from '../../../logger/loggerModuleSymbols';
-import { Validator } from '../../../validator/implementations/validator';
+import { LoggerService } from '../../../logger/services/loggerService/loggerService';
+import { Validator } from '../../../validator/validator';
 import { FetchClient } from '../../clients/fetchClient/fetchClient';
 import { httpModuleSymbols } from '../../httpModuleSymbols';
 import { HttpService } from '../../services/httpService/httpService';

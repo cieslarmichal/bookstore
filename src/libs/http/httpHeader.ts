@@ -1,6 +1,6 @@
 import { HttpHeader } from '../../common/http/httpHeader';
+import { Schema } from '../validator/schema';
 import { SchemaType } from '../validator/schemaType';
-import { Schema } from '../validator/implementations/schema';
 
 export const headersSchema = Schema.object({
   [HttpHeader.contentType]: Schema.string().optional(),

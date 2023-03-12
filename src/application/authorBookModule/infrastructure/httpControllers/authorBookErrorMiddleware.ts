@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { AuthorNotFoundError } from '../../../authorModule/infrastructure/errors/authorNotFoundError';
 import { BookNotFoundError } from '../../../bookModule/infrastructure/errors/bookNotFoundError';
 import { AuthorBookAlreadyExistsError } from '../errors/authorBookAlreadyExistsError';

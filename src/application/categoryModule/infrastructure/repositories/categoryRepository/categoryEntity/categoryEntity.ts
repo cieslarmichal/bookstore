@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
-import { BookCategoryEntity } from '../../../../../bookCategory/contracts/bookCategoryEntity';
+import { BookCategoryEntity } from '../../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 
 export const categoriesTableName = 'categories';
 

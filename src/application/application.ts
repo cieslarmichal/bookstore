@@ -2,51 +2,47 @@ import express, { json, urlencoded } from 'express';
 import { DataSource } from 'typeorm';
 
 import { AddressModule } from './addressModule/addressModule';
+import { AddressController } from './addressModule/infrastructure/httpControllers/addressController';
 import { AddressEntity } from './addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { ApplicationConfig } from './applicationConfig';
 import { AuthorBookModule } from './authorBookModule/authorBookModule';
+import { AuthorBookController } from './authorBookModule/infrastructure/httpControllers/authorBookController';
 import { AuthorBookEntity } from './authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 import { AuthorModule } from './authorModule/authorModule';
+import { AuthorController } from './authorModule/infrastructure/httpControllers/authorController';
 import { AuthorEntity } from './authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
 import { BookCategoryModule } from './bookCategoryModule/bookCategoryModule';
+import { BookCategoryController } from './bookCategoryModule/infrastructure/httpControllers/bookCategoryController';
 import { BookCategoryEntity } from './bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookModule } from './bookModule/bookModule';
+import { BookController } from './bookModule/infrastructure/httpControllers/bookController';
 import { BookEntity } from './bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-import { CartModule } from './cartModule/cartModule';
-import { CartEntity } from './cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
 import { CategoryModule } from './categoryModule/categoryModule';
+import { CategoryController } from './categoryModule/infrastructure/httpControllers/categoryController';
 import { CategoryEntity } from './categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerModule } from './customerModule/customerModule';
+import { CustomerController } from './customerModule/infrastructure/httpControllers/customerController';
 import { CustomerEntity } from './customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { AddressController } from './integrations/address/implementations/addressController';
-import { AuthorController } from './integrations/author/implementations/authorController';
-import { AuthorBookController } from './integrations/authorBook/implementations/authorBookController';
-import { BookController } from './integrations/book/implementations/bookController';
-import { BookCategoryController } from './integrations/bookCategory/implementations/bookCategoryController';
-import { CartController } from './integrations/cart/implementations/cartController';
-import { CategoryController } from './integrations/category/implementations/categoryController';
-import { errorMiddleware } from './integrations/common/middlewares/errorMiddleware';
-import { jsonMiddleware } from './integrations/common/middlewares/jsonMiddleware';
-import { CustomerController } from './integrations/customer/implementations/customerController';
-import { IntegrationsModule } from './integrations/integrationsModule';
-import { integrationsSymbols } from './integrations/integrationsSymbols';
-import { InventoryController } from './integrations/inventory/implementations/inventoryController';
-import { OrderController } from './integrations/order/implementations/orderController';
-import { ReviewController } from './integrations/review/implementations/reviewController';
-import { UserController } from './integrations/user/implementations/userController';
-import { WhishlistController } from './integrations/whishlist/implementations/whishlistController';
+import { InventoryController } from './inventoryModule/infrastructure/httpControllers/inventoryController';
 import { InventoryEntity } from './inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from './inventoryModule/inventoryModule';
-import { LineItemEntity } from './lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { LineItemModule } from './lineItemModule/lineItemModule';
+import { CartController } from './orderModule/infrastructure/httpControllers/cartController/cartController';
+import { OrderController } from './orderModule/infrastructure/httpControllers/orderController/orderController';
+import { CartEntity } from './orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from './orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
 import { OrderEntity } from './orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { OrderModule } from './orderModule/orderModule';
+import { ReviewController } from './reviewModule/infrastructure/httpControllers/reviewController';
 import { ReviewEntity } from './reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
 import { ReviewModule } from './reviewModule/reviewModule';
+import { UserController } from './userModule/infrastructure/httpControllers/userController';
 import { UserEntity } from './userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { UserModule } from './userModule/userModule';
+import { WhishlistController } from './whishlistModule/infrastructure/httpControllers/whishlistController';
 import { WhishlistEntryEntity } from './whishlistModule/infrastructure/repositories/whishlistEntryRepository/whishlistEntryEntity/whishlistEntryEntity';
 import { WhishlistModule } from './whishlistModule/whishlistModule';
+import { errorMiddleware } from '../common/middlewares/errorMiddleware';
+import { jsonMiddleware } from '../common/middlewares/jsonMiddleware';
 import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../libs/logger/loggerModule';
 import { PostgresModule } from '../libs/postgres/postgresModule';
@@ -95,7 +91,6 @@ export class Application {
         new LoggerModule({ logLevel }),
         new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword, entities }),
         new UnitOfWorkModule(),
-        new IntegrationsModule(),
         new CategoryModule(),
         new BookModule(),
         new AuthorModule(),
@@ -104,8 +99,6 @@ export class Application {
         new BookCategoryModule(),
         new AddressModule(),
         new CustomerModule(),
-        new CartModule(),
-        new LineItemModule(),
         new OrderModule(),
         new InventoryModule(),
         new ReviewModule(),

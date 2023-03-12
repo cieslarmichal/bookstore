@@ -1,5 +1,5 @@
-import { SchemaType } from '../../../../libs/validator/contracts/schemaType';
-import { Schema } from '../../../../libs/validator/implementations/schema';
+import { Schema } from '../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../libs/validator/schemaType';
 
 export const deleteAuthorPayloadSchema = Schema.object({
   id: Schema.notEmptyString(),

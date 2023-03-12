@@ -17,7 +17,6 @@ import { unitOfWorkModuleSymbols } from '../../../../../libs/unitOfWork/unitOfWo
 import { Validator } from '../../../../../libs/validator/validator';
 import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
-import { AuthMiddleware } from '../../../../integrations/common/middlewares/authMiddleware';
 import { CustomerService } from '../../../../tests/services/customerService';
 import { OrderService } from '../../../application/services/orderService/orderService';
 import { Order } from '../../../domain/entities/order/order';
@@ -71,7 +70,7 @@ export class OrderController {
 
         const limit = Number(request.query[QueryParameterName.limit] ?? 0);
 
-        const pagination = this.paginationDataBuilder.build({ page, limit });
+        const pagination = PaginationDataBuilder.build({ page, limit });
 
         const orders = await this.findOrders({ accessTokenData, pagination });
 

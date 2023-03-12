@@ -4,9 +4,9 @@ import { DataSource } from 'typeorm';
 
 import { AuthorService } from './authorService';
 import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
-import { EqualFilter } from '../../../../../common/types/contracts/filter';
-import { FilterName } from '../../../../../common/types/contracts/filterName';
-import { FilterSymbol } from '../../../../../common/types/contracts/filterSymbol';
+import { EqualFilter } from '../../../../../common/types/filter';
+import { FilterName } from '../../../../../common/types/filterName';
+import { FilterSymbol } from '../../../../../common/types/filterSymbol';
 import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../../libs/logger/loggerModule';
 import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
@@ -15,25 +15,25 @@ import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModu
 import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
 import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-import { AuthorBookModule } from '../../../../domain/authorBook/authorBookModule';
-import { authorBookSymbols } from '../../../../domain/authorBook/authorBookSymbols';
-import { AuthorBookEntity } from '../../../../domain/authorBook/contracts/authorBookEntity';
-import { AuthorBookRepositoryFactory } from '../../../../domain/authorBook/contracts/factories/authorBookRepositoryFactory/authorBookRepositoryFactory';
-import { AuthorBookEntityTestFactory } from '../../../../domain/authorBook/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
-import { BookModule } from '../../../../domain/book/bookModule';
-import { bookSymbols } from '../../../../domain/book/bookSymbols';
-import { BookEntity } from '../../../../domain/book/contracts/bookEntity';
-import { BookRepositoryFactory } from '../../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { BookEntityTestFactory } from '../../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { BookCategoryEntity } from '../../../../domain/bookCategory/contracts/bookCategoryEntity';
-import { CartEntity } from '../../../../domain/cart/contracts/cartEntity';
-import { CategoryEntity } from '../../../../domain/category/contracts/categoryEntity';
-import { CustomerEntity } from '../../../../domain/customer/contracts/customerEntity';
-import { InventoryEntity } from '../../../../domain/inventory/contracts/inventoryEntity';
-import { LineItemEntity } from '../../../../domain/lineItem/contracts/lineItemEntity';
-import { OrderEntity } from '../../../../domain/order/contracts/orderEntity';
-import { ReviewEntity } from '../../../../domain/review/contracts/reviewEntity';
-import { UserEntity } from '../../../../domain/user/contracts/userEntity';
+import { AuthorBookRepositoryFactory } from '../../../../authorBookModule/application/repositories/authorBookRepository/authorBookRepositoryFactory';
+import { AuthorBookModule } from '../../../../authorBookModule/authorBookModule';
+import { authorBookModuleSymbols } from '../../../../authorBookModule/authorBookModuleSymbols';
+import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
+import { AuthorBookEntityTestFactory } from '../../../../authorBookModule/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
+import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
+import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
+import { BookModule } from '../../../../bookModule/bookModule';
+import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
+import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
+import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
+import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
+import { CartEntity } from '../../../../orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../../orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
+import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
+import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { AuthorModule } from '../../../authorModule';
 import { authorModuleSymbols } from '../../../authorModuleSymbols';
 import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
@@ -86,9 +86,9 @@ describe('AuthorServiceImpl', () => {
 
     authorService = container.get<AuthorService>(authorModuleSymbols.authorService);
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
-      authorBookSymbols.authorBookRepositoryFactory,
+      authorBookModuleSymbols.authorBookRepositoryFactory,
     );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 

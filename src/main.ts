@@ -2,8 +2,8 @@ import 'reflect-metadata';
 
 import dotenv from 'dotenv';
 
-import { ApplicationConfig } from './app/applicationConfig';
 import { Application } from './app/application';
+import { ApplicationConfig } from './app/applicationConfig';
 import { EnvKey } from './envKey';
 import { LogLevel } from './libs/logger/contracts/logLevel';
 import { HttpServer } from './server/httpServer';

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { NextFunction, Request, Response } from 'express';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { InventoryAlreadyExistsError } from '../errors/inventoryAlreadyExistsError';
 import { InventoryNotFoundError } from '../errors/inventoryNotFoundError';
 

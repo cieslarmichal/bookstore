@@ -2,7 +2,7 @@
 import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { AuthorBookEntity } from '../../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
-import { BookCategoryEntity } from '../../../../../domain/bookCategory/contracts/bookCategoryEntity';
+import { BookCategoryEntity } from '../../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookFormat } from '../../../../domain/entities/book/bookFormat';
 import { BookLanguage } from '../../../../domain/entities/book/bookLanguage';
 

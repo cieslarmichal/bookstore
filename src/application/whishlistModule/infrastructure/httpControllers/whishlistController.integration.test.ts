@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
@@ -15,32 +15,6 @@ import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
 import { HttpServer } from '../../../../server/httpServer';
 import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
 import { Application } from '../../../application';
-import { AddressModule } from '../../../domain/address/addressModule';
-import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
-import { AuthorModule } from '../../../domain/author/authorModule';
-import { AuthorEntity } from '../../../domain/author/contracts/authorEntity';
-import { AuthorBookModule } from '../../../domain/authorBook/authorBookModule';
-import { AuthorBookEntity } from '../../../domain/authorBook/contracts/authorBookEntity';
-import { BookModule } from '../../../domain/book/bookModule';
-import { bookSymbols } from '../../../domain/book/bookSymbols';
-import { BookEntity } from '../../../domain/book/contracts/bookEntity';
-import { BookRepositoryFactory } from '../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-import { BookEntityTestFactory } from '../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { BookCategoryModule } from '../../../domain/bookCategory/bookCategoryModule';
-import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookCategoryEntity';
-import { CartModule } from '../../../domain/cart/cartModule';
-import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
-import { CategoryModule } from '../../../domain/category/categoryModule';
-import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
-import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
-import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
-import { CustomerModule } from '../../../domain/customer/customerModule';
-import { customerSymbols } from '../../../domain/customer/customerSymbols';
-import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
-import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
-import { InventoryModule } from '../../../domain/inventory/inventoryModule';
-import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
-import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
 import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
 import { OrderModule } from '../../../domain/order/orderModule';
 import { ReviewEntity } from '../../../domain/review/contracts/reviewEntity';
@@ -51,7 +25,7 @@ import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
-import { userSymbols } from '../../../domain/user/userSymbols';
+import { userModuleSymbols } from '../../../domain/user/userModuleSymbols';
 import { WhishlistEntryRepositoryFactory } from '../../../domain/whishlist/contracts/factories/whishlistEntryRepositoryFactory/whishlistEntryRepositoryFactory';
 import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
 import { WhishlistEntryEntityTestFactory } from '../../../domain/whishlist/tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
@@ -129,11 +103,11 @@ describe(`WhishlistController (${baseUrl})`, () => {
     whishlistEntryRepositoryFactory = container.get<WhishlistEntryRepositoryFactory>(
       whishlistSymbols.whishlistEntryRepositoryFactory,
     );
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-    tokenService = container.get<TokenService>(userSymbols.tokenService);
+    tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

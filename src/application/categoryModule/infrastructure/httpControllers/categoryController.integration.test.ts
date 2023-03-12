@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import { HttpStatusCode } from '../../../../common/http/contracts/httpStatusCode';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
 import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../../libs/logger/loggerModule';
@@ -28,7 +28,7 @@ import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookC
 import { CartModule } from '../../../domain/cart/cartModule';
 import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
 import { CategoryModule } from '../../../domain/category/categoryModule';
-import { categorySymbols } from '../../../domain/category/categorySymbols';
+import { categoryModuleSymbols } from '../../../domain/category/categoryModuleSymbols';
 import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
 import { CategoryRepositoryFactory } from '../../../domain/category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
 import { CategoryEntityTestFactory } from '../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
@@ -47,7 +47,7 @@ import { UserEntity } from '../../../domain/user/contracts/userEntity';
 import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from '../../../domain/user/userModule';
-import { userSymbols } from '../../../domain/user/userSymbols';
+import { userModuleSymbols } from '../../../domain/user/userModuleSymbols';
 import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
 import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
 import { IntegrationsModule } from '../../../integrations/integrationsModule';
@@ -114,9 +114,11 @@ describe(`CategoryController (${baseUrl})`, () => {
 
     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
 
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
+      categoryModuleSymbols.categoryRepositoryFactory,
+    );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-    tokenService = container.get<TokenService>(userSymbols.tokenService);
+    tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
 
     testTransactionRunner = new TestTransactionExternalRunner(container);
 

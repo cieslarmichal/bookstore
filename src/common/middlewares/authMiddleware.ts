@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { TokenService } from '../../app/userModule/application/services/tokenService/tokenService';
+import { TokenService } from '../../application/userModule/application/services/tokenService/tokenService';
+import { userModuleSymbols } from '../../application/userModule/userModuleSymbols';
 import { Injectable, Inject } from '../../libs/dependencyInjection/decorators';
 import { HttpStatusCode } from '../http/httpStatusCode';
 import { AccessTokenData } from '../types/accessTokenData';
@@ -9,7 +10,7 @@ import { LocalsName } from '../types/localsName';
 @Injectable()
 export class AuthMiddleware {
   public constructor(
-    @Inject(userSymbols.tokenService)
+    @Inject(userModuleSymbols.tokenService)
     private readonly tokenService: TokenService,
   ) {}
 

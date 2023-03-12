@@ -1,7 +1,7 @@
-import { CreateWhishlistEntryPayload } from './createWhishlistEntryPayload';
-import { DeleteWhishlistEntryPayload } from './deleteWhishlistEntryPayload';
-import { FindWhishlistEntriesPayload } from './findWhishlistEntriesPayload';
-import { FindWhishlistEntryPayload } from './findWhishlistEntryPayload';
+import { CreateWhishlistEntryPayload } from './payloads/createWhishlistEntryPayload';
+import { DeleteWhishlistEntryPayload } from './payloads/deleteWhishlistEntryPayload';
+import { FindWhishlistEntriesPayload } from './payloads/findWhishlistEntriesPayload';
+import { FindWhishlistEntryPayload } from './payloads/findWhishlistEntryPayload';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
 
 export interface WhishlistService {

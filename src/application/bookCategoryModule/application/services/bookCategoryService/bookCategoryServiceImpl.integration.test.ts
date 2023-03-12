@@ -19,18 +19,18 @@ import { BookModule } from '../../../../bookModule/bookModule';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { CartEntity } from '../../../../domain/cart/contracts/cartEntity';
-import { CategoryModule } from '../../../../domain/category/categoryModule';
-import { categorySymbols } from '../../../../domain/category/categorySymbols';
-import { CategoryEntity } from '../../../../domain/category/contracts/categoryEntity';
-import { CategoryRepositoryFactory } from '../../../../domain/category/contracts/factories/categoryRepositoryFactory/categoryRepositoryFactory';
-import { CategoryEntityTestFactory } from '../../../../domain/category/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
-import { CustomerEntity } from '../../../../domain/customer/contracts/customerEntity';
-import { InventoryEntity } from '../../../../domain/inventory/contracts/inventoryEntity';
-import { LineItemEntity } from '../../../../domain/lineItem/contracts/lineItemEntity';
-import { OrderEntity } from '../../../../domain/order/contracts/orderEntity';
-import { ReviewEntity } from '../../../../domain/review/contracts/reviewEntity';
-import { UserEntity } from '../../../../domain/user/contracts/userEntity';
+import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
+import { CategoryModule } from '../../../../categoryModule/categoryModule';
+import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
+import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
+import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
+import { CartEntity } from '../../../../orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
+import { LineItemEntity } from '../../../../orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
+import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
+import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
+import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { BookCategoryModule } from '../../../bookCategoryModule';
 import { bookCategoryModuleSymbols } from '../../../bookCategoryModuleSymbols';
 import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
@@ -86,7 +86,9 @@ describe('BookCategoryService', () => {
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategoryModuleSymbols.bookCategoryRepositoryFactory,
     );
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
+      categoryModuleSymbols.categoryRepositoryFactory,
+    );
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 

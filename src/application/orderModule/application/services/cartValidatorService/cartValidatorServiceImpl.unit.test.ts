@@ -6,7 +6,6 @@ import { LoggerService } from '../../../../../libs/logger/services/loggerService
 import { UnitOfWork } from '../../../../../libs/unitOfWork/unitOfWork';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
 import { InventoryTestFactory } from '../../../../inventoryModule/tests/factories/inventoryTestFactory/inventoryTestFactory';
-import { LineItemTestFactory } from '../../../../lineItemModule/tests/factories/lineItemTestFactory/lineItemTestFactory';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { BillingAddressNotProvidedError } from '../../../domain/errors/billingAddressNotProvidedError';
 import { CartNotActiveError } from '../../../domain/errors/cartNotActiveError';
@@ -17,6 +16,7 @@ import { LineItemsNotProvidedError } from '../../../domain/errors/lineItemsNotPr
 import { OrderCreatorNotMatchingCustomerIdFromCart } from '../../../domain/errors/orderCreatorNotMatchingCustomerIdFromCart';
 import { ShippingAddressNotProvidedError } from '../../../domain/errors/shippingAddressNotProvidedError';
 import { CartTestFactory } from '../../../tests/factories/cartTestFactory/cartTestFactory';
+import { LineItemTestFactory } from '../../../tests/factories/lineItemTestFactory/lineItemTestFactory';
 
 describe('CartValidatorServiceImpl', () => {
   let inventoryService: InventoryService;

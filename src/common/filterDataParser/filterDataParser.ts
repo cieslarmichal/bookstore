@@ -1,6 +1,6 @@
 import { InvalidFilterSyntaxError } from './errors/invalidFilterSyntaxError';
 import { ParsePayload, parsePayloadSchema } from './payloads/parsePayload';
-import { Validator } from '../../libs/validator/implementations/validator';
+import { Validator } from '../../libs/validator/validator';
 import { Filter } from '../types/filter';
 import { FilterName } from '../types/filterName';
 import { FilterSymbol } from '../types/filterSymbol';

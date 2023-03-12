@@ -1,7 +1,7 @@
 import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../libs/validator/validator';
-import { Book } from '../../../domain/book/contracts/book';
+import { Book } from '../../../../bookModule/domain/entities/book/book';
 
 export const authorInputSchema = Schema.object({
   id: Schema.notEmptyString(),
