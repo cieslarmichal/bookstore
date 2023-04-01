@@ -9,11 +9,11 @@ import {
 } from './payloads/findBooksByCategoryIdPayload';
 import { FindBooksPayload, findBooksPayloadSchema } from './payloads/findBooksPayload';
 import { UpdateBookPayload, updateBookPayloadSchema } from './payloads/updateBookPayload';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/validator';
 import { bookModuleSymbols } from '../../../bookModuleSymbols';
 import { Book } from '../../../domain/entities/book/book';
 import { BookNotFoundError } from '../../../infrastructure/errors/bookNotFoundError';

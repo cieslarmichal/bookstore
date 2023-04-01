@@ -1,5 +1,5 @@
 import { CustomerMapper } from './customerMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { Customer } from '../../../../domain/entities/customer/customer';
 import { CustomerEntity } from '../customerEntity/customerEntity';
 

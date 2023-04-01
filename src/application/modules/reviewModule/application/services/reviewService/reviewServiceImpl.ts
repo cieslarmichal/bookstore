@@ -8,7 +8,7 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { Review } from '../../../domain/entities/review/review';
 import { ReviewNotFoundError } from '../../../infrastructure/errors/reviewNotFoundError';
 import { reviewModuleSymbols } from '../../../reviewModuleSymbols';

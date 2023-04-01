@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { WhishlistEntryEntity } from './whishlistEntryEntity/whishlistEntryEntity';
 import { WhishlistEntryMapper } from './whishlistEntryMapper/whishlistEntryMapper';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import {
   CreateOnePayload,
   createOnePayloadSchema,

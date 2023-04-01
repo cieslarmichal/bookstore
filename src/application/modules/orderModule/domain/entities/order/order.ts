@@ -1,8 +1,8 @@
 import { OrderStatus } from './orderStatus';
 import { PaymentMethod } from './paymentMethod';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Validator } from '../../../../../libs/validator/validator';
 
 export const orderInputSchema = Schema.object({
   id: Schema.notEmptyString(),

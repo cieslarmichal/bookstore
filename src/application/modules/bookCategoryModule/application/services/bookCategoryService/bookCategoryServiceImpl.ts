@@ -13,7 +13,7 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { Book } from '../../../../bookModule/domain/entities/book/book';

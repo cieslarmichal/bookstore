@@ -11,7 +11,7 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { categoryModuleSymbols } from '../../../categoryModuleSymbols';
 import { Category } from '../../../domain/entities/category/category';
 import { CategoryAlreadyExistsError } from '../../../infrastructure/errors/categoryAlreadyExistsError';

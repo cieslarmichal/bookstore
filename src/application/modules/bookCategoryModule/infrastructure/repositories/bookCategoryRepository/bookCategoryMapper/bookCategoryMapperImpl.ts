@@ -1,5 +1,5 @@
 import { BookCategoryMapper } from './bookCategoryMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { BookCategory } from '../../../../domain/entities/bookCategory/bookCategory';
 import { BookCategoryEntity } from '../bookCategoryEntity/bookCategoryEntity';
 

@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { CartEntity } from './cartEntity/cartEntity';
 import { CartMapper } from './cartMapper/cartMapper';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { Cart } from '../../../../orderModule/domain/entities/cart/cart';
 import { CartNotFoundError } from '../../../../orderModule/infrastructure/errors/cartNotFoundError';
 import { CartRepository } from '../../../application/repositories/cartRepository/cartRepository';

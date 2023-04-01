@@ -1,6 +1,6 @@
 import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 
 export const whishlistEntryInputSchema = Schema.object({
   id: Schema.notEmptyString(),

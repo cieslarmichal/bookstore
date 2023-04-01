@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { AuthorBookEntity } from './authorBookEntity/authorBookEntity';
 import { AuthorBookMapper } from './authorBookMapper/authorBookMapper';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { AuthorBookRepository } from '../../../application/repositories/authorBookRepository/authorBookRepository';
 import {
   CreateOnePayload,

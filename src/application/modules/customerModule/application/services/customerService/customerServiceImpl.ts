@@ -6,7 +6,7 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { customerModuleSymbols } from '../../../customerModuleSymbols';
 import { Customer } from '../../../domain/entities/customer/customer';
 import { CustomerAlreadyExistsError } from '../../../infrastructure/errors/customerAlreadyExistsError';

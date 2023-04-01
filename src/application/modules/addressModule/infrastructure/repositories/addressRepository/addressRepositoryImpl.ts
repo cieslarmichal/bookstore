@@ -3,7 +3,7 @@ import { EntityManager } from 'typeorm';
 import { AddressEntity } from './addressEntity/addressEntity';
 import { AddressMapper } from './addressMapper/addressMapper';
 import { AddressQueryBuilder } from './addressQueryBuilder';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { AddressRepository } from '../../../application/repositories/addressRepository/addressRepository';
 import {
   CreateOnePayload,

@@ -1,5 +1,5 @@
 import { WhishlistEntryMapper } from './whishlistEntryMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { WhishlistEntry } from '../../../../domain/entities/whishlistEntry/whishlistEntry';
 import { WhishlistEntryEntity } from '../whishlistEntryEntity/whishlistEntryEntity';
 

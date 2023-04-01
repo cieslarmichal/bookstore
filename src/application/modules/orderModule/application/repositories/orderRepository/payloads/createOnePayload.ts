@@ -1,5 +1,5 @@
-import { Schema } from '../../../../../../libs/validator/schema';
-import { SchemaType } from '../../../../../../libs/validator/schemaType';
+import { Schema } from '../../../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 import { OrderStatus } from '../../../../domain/entities/order/orderStatus';
 import { PaymentMethod } from '../../../../domain/entities/order/paymentMethod';
 

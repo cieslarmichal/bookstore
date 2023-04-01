@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { UserEntity } from './userEntity/userEntity';
 import { UserMapper } from './userMapper/userMapper';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import {
   CreateOnePayload,
   createOnePayloadSchema,

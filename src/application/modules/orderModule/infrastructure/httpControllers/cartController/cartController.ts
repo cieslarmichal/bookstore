@@ -8,6 +8,7 @@ import { DeleteCartPayload, deleteCartPayloadSchema } from './payloads/deleteCar
 import { FindCartPayload, findCartPayloadSchema } from './payloads/findCartPayload';
 import { RemoveLineItemPayload, removeLineItemPayloadSchema } from './payloads/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from './payloads/updateCartPayload';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AuthMiddleware } from '../../../../../common/middlewares/authMiddleware';
 import { sendResponseMiddleware } from '../../../../../common/middlewares/sendResponseMiddleware';
@@ -17,7 +18,6 @@ import { LocalsName } from '../../../../../common/types/localsName';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../../libs/validator/validator';
 import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { CustomerService } from '../../../../tests/services/customerService';

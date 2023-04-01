@@ -1,7 +1,7 @@
 import { UserRole } from './userRole';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { Schema } from '../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Validator } from '../../../../../libs/validator/validator';
 
 export const userInputSchema = Schema.object({
   id: Schema.notEmptyString(),

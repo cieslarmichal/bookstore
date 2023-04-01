@@ -1,5 +1,5 @@
 import { InventoryMapper } from './inventoryMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { Inventory } from '../../../../domain/entities/inventory/inventory';
 import { InventoryEntity } from '../inventoryEntity/inventoryEntity';
 

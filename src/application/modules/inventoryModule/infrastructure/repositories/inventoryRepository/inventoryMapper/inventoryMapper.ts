@@ -1,4 +1,4 @@
-import { Mapper } from '../../../../../../common/types/mapper';
+import { Mapper } from '../../../../../../../common/types/mapper';
 import { Inventory } from '../../../../domain/entities/inventory/inventory';
 import { InventoryEntity } from '../inventoryEntity/inventoryEntity';
 

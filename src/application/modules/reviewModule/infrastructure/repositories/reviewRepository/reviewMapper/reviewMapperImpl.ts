@@ -1,5 +1,5 @@
 import { ReviewMapper } from './reviewMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { Review } from '../../../../domain/entities/review/review';
 import { ReviewEntity } from '../reviewEntity/reviewEntity';
 

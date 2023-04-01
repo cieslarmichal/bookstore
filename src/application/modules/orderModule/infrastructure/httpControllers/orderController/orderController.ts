@@ -14,7 +14,7 @@ import { QueryParameterName } from '../../../../../common/types/queryParameterNa
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { CustomerService } from '../../../../tests/services/customerService';

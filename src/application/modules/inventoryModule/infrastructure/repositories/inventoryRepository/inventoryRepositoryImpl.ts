@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { InventoryEntity } from './inventoryEntity/inventoryEntity';
 import { InventoryMapper } from './inventoryMapper/inventoryMapper';
-import { Validator } from '../../../../../libs/validator/validator';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { InventoryRepository } from '../../../application/repositories/inventoryRepository/inventoryRepository';
 import {
   CreateOnePayload,

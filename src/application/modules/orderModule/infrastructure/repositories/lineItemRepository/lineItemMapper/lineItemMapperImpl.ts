@@ -1,5 +1,5 @@
 import { LineItemMapper } from './lineItemMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { LineItem } from '../../../../../orderModule/domain/entities/lineItem/lineItem';
 import { LineItemEntity } from '../lineItemEntity/lineItemEntity';
 

@@ -1,5 +1,5 @@
 import { UserMapper } from './userMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { User } from '../../../../domain/entities/user/user';
 import { UserEntity } from '../userEntity/userEntity';
 

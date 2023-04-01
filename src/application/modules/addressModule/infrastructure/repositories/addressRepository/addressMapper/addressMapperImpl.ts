@@ -1,5 +1,5 @@
 import { AddressMapper } from './addressMapper';
-import { Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { Address } from '../../../../domain/entities/address/address';
 import { AddressEntity } from '../addressEntity/addressEntity';
 

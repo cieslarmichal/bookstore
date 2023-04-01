@@ -1,9 +1,9 @@
 import { CartValidatorService } from './cartValidatorService';
 import { ValidatePayload, validatePayloadSchema } from './payloads/validatePayload';
+import { Validator } from '../../../../../../libs/validator/validator';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
-import { Validator } from '../../../../../libs/validator/validator';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
 import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';

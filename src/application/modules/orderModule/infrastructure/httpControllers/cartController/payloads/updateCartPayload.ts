@@ -1,6 +1,6 @@
-import { AccessTokenData } from '../../../../../../common/types/accessTokenData';
-import { Schema } from '../../../../../../libs/validator/schema';
-import { SchemaType } from '../../../../../../libs/validator/schemaType';
+import { AccessTokenData } from '../../../../../../../common/types/accessTokenData';
+import { Schema } from '../../../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 import { DeliveryMethod } from '../../../../domain/entities/cart/deliveryMethod';
 
 export const updateCartPayloadSchema = Schema.object({
