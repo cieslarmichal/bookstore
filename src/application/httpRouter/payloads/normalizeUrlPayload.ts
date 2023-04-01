@@ -1,4 +1,5 @@
-import { Schema, SchemaType } from '@libs/validator';
+import { Schema } from '../../libs/validator/schema.js';
+import { SchemaType } from '../../libs/validator/schemaType.js';
 
 export const normalizeUrlPayloadSchema = Schema.object({
   url: Schema.string(),

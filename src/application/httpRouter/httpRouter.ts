@@ -6,17 +6,35 @@ import {
   registerControllerRoutesPayloadSchema,
 } from './payloads/registerControllerRoutesPayload.js';
 import { RegisterRoutesPayload, registerRoutesPayloadSchema } from './payloads/registerRoutesPayload.js';
-import { LoggerService } from '../../libs/logger/contracts/services/loggerService/loggerService.js';
+import { blockchainModuleSymbols } from '../blockchainModule/blockchainModuleSymbols.js';
+import { BlockchainHttpController } from '../blockchainModule/infrastructure/httpControllers/blockchainHttpController/blockchainHttpController.js';
+import { ApplicationError } from '../common/errors/applicationError.js';
+import { BaseError } from '../common/errors/baseError.js';
+import { DomainError } from '../common/errors/domainError.js';
+import { HttpStatusCode } from '../common/http/httpStatusCode.js';
+import { DependencyInjectionContainer } from '../libs/dependencyInjection/dependencyInjectionContainer.js';
+import { loggerModuleSymbols } from '../libs/logger/loggerModuleSymbols.js';
+import { LoggerService } from '../libs/logger/services/loggerService/loggerService.js';
+import { Validator } from '../libs/validator/validator.js';
 
 export class HttpRouter {
   private readonly rootPath = '';
   private readonly loggerService: LoggerService;
 
-  public constructor(private readonly server: FastifyInstance, private readonly container: Container) {
-    this.loggerService = this.container.get<LoggerService>(loggerSymbols.loggerService);
+  public constructor(
+    private readonly server: FastifyInstance,
+    private readonly container: DependencyInjectionContainer,
+  ) {
+    this.loggerService = this.container.get<LoggerService>(loggerModuleSymbols.loggerService);
   }
 
-  public registerAllRoutes(): void {}
+  public registerAllRoutes(): void {
+    const blockchainHttpController = this.container.get<BlockchainHttpController>(
+      blockchainModuleSymbols.blockchainHttpController,
+    );
+
+    this.registerControllerRoutes({ controller: blockchainHttpController });
+  }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {
     const { controller } = Validator.validate(registerControllerRoutesPayloadSchema, input);
@@ -31,7 +49,7 @@ export class HttpRouter {
   private registerRoutes(input: RegisterRoutesPayload): void {
     const { routes, basePath } = Validator.validate(registerRoutesPayloadSchema, input);
 
-    routes.map(({ path, method, handler, requestSchema, responseSchema }) => {
+    routes.map(({ path, method, handler, schema }) => {
       const fastifyHandler = async (fastifyRequest: FastifyRequest, fastifyReply: FastifyReply): Promise<void> => {
         try {
           const requestBody = fastifyRequest.body || {};
@@ -40,37 +58,36 @@ export class HttpRouter {
 
           const queryParams = (fastifyRequest.query || {}) as Record<string, string>;
 
-          const queryParamsKeys = Object.keys(queryParams);
-
-          const normalizedQueryParams: Record<string, string | number> = {};
-
-          queryParamsKeys.map((queryParamKey) => {
-            const queryParamValue = queryParams[queryParamKey] as string;
-
-            if (isNaN(Number(queryParamValue))) {
-              normalizedQueryParams[queryParamKey] = queryParamValue;
-            } else {
-              normalizedQueryParams[queryParamKey] = Number(queryParamValue);
-            }
+          this.loggerService.debug({
+            message: 'Received an HTTP request.',
+            context: {
+              path,
+              method,
+              body: requestBody,
+              pathParams,
+              queryParams,
+            },
           });
 
-          if (requestSchema) {
-            const { bodySchema, queryParamsSchema } = requestSchema;
-
-            if (bodySchema) {
-              Validator.validate(bodySchema, requestBody);
-            }
-
-            if (queryParamsSchema) {
-              Validator.validate(queryParamsSchema, normalizedQueryParams);
-            }
+          if (schema.request.body) {
+            Validator.validate(schema.request.body, requestBody);
           }
 
-          const { statusCode, body: responseBody } = await handler({
-            body: requestBody,
-            pathParams,
-            queryParams: normalizedQueryParams,
-          });
+          if (schema.request.pathParams) {
+            Validator.validate(schema.request.pathParams, pathParams);
+          }
+
+          if (schema.request.queryParams) {
+            Validator.validate(schema.request.queryParams, queryParams);
+          }
+
+          const { statusCode, body: responseBody } = await handler({ body: requestBody, pathParams, queryParams });
+
+          const responseSchema = schema.response[String(statusCode)]?.schema;
+
+          if (responseSchema) {
+            Validator.validate(responseSchema, queryParams);
+          }
 
           fastifyReply.status(statusCode);
 
@@ -80,42 +97,73 @@ export class HttpRouter {
             return;
           }
 
-          if (responseSchema) {
-            Validator.validate(responseSchema.bodySchema, responseBody);
+          fastifyReply.send({ ...responseBody });
+
+          this.loggerService.debug({
+            message: 'Send an HTTP response.',
+            context: {
+              path,
+              method,
+              statusCode,
+              body: responseBody,
+            },
+          });
+        } catch (error) {
+          if (error instanceof BaseError) {
+            const formattedError: Record<string, unknown> = {
+              name: error.name,
+              message: error.message,
+              context: error.context,
+            };
+
+            this.loggerService.error({
+              message: 'Caught an error in the HTTP router.',
+              context: {
+                error: formattedError,
+              },
+            });
+
+            if (error instanceof ApplicationError) {
+              fastifyReply.status(HttpStatusCode.badRequest).send({
+                error: formattedError,
+              });
+
+              return;
+            }
+
+            if (error instanceof DomainError) {
+              fastifyReply.status(HttpStatusCode.badRequest).send({
+                error: formattedError,
+              });
+
+              return;
+            }
+
+            fastifyReply.status(HttpStatusCode.internalServerError).send({
+              error: {
+                name: 'InternalServerError',
+                message: 'Internal server error',
+              },
+            });
+
+            return;
           }
 
-          fastifyReply.send({ ...responseBody });
-        } catch (error) {
-          const errorName = error instanceof Error ? error.name : undefined;
-          const errorMessage = error instanceof Error ? error.message : undefined;
-          const errorStack = error instanceof Error ? error.stack : undefined;
-          const errorCause = error instanceof Error ? error.cause : undefined;
-          const errorContext = error instanceof BaseError ? error.context : undefined;
-
           this.loggerService.error({
-            message: 'Caught error in HTTP router.',
+            message: 'Caught an unknown error in the HTTP router.',
             context: {
-              errorName,
-              errorMessage,
-              errorStack,
-              errorCause,
-              errorContext,
+              error,
             },
           });
 
-          if (error instanceof ApplicationError) {
-            fastifyReply.status(HttpStatusCode.badRequest).send({ errorMessage, errorContext, errorName });
+          fastifyReply.status(HttpStatusCode.internalServerError).send({
+            error: {
+              name: 'InternalServerError',
+              message: 'Internal server error',
+            },
+          });
 
-            return;
-          }
-
-          if (error instanceof DomainError) {
-            fastifyReply.status(HttpStatusCode.badRequest).send({ errorMessage, errorContext, errorName });
-
-            return;
-          }
-
-          fastifyReply.status(HttpStatusCode.internalServerError).send();
+          return;
         }
       };
 
@@ -123,7 +171,7 @@ export class HttpRouter {
 
       const normalizedUrl = this.normalizeUrl({ url });
 
-      this.server.route({ method, url: normalizedUrl, handler: fastifyHandler, schema: {} });
+      this.server.route({ method, url: normalizedUrl, handler: fastifyHandler });
     });
   }
 
