@@ -5,7 +5,7 @@ import { DependencyInjectionContainer } from '../dependencyInjection/dependencyI
 import { DependencyInjectionModule } from '../dependencyInjection/dependencyInjectionModule';
 
 export class UnitOfWorkModule implements DependencyInjectionModule {
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToConstructor<UnitOfWorkFactory>(unitOfWorkModuleSymbols.unitOfWorkFactory, UnitOfWorkFactoryImpl);
   }
 }

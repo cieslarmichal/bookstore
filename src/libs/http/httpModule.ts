@@ -7,7 +7,7 @@ import { DependencyInjectionContainer } from '../dependencyInjection/dependencyI
 import { DependencyInjectionModule } from '../dependencyInjection/dependencyInjectionModule';
 
 export class HttpModule implements DependencyInjectionModule {
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToConstructor<FetchClient>(httpModuleSymbols.fetchClient, FetchClientImpl);
 
     container.bindToConstructor<HttpServiceFactory>(httpModuleSymbols.httpServiceFactory, HttpServiceFactoryImpl);

@@ -1,5 +1,5 @@
 import { DependencyInjectionContainer } from './dependencyInjectionContainer';
 
 export interface DependencyInjectionModule {
-  declareBindings(container: DependencyInjectionContainer): Promise<void>;
+  declareBindings(container: DependencyInjectionContainer): void;
 }

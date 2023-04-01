@@ -6,11 +6,11 @@ import { InventoryMapper } from './infrastructure/repositories/inventoryReposito
 import { InventoryMapperImpl } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapperImpl';
 import { InventoryRepositoryFactoryImpl } from './infrastructure/repositories/inventoryRepository/inventoryRepositoryFactoryImpl';
 import { inventoryModuleSymbols } from './inventoryModuleSymbols';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class InventoryModule implements DependencyInjectionModule {
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToConstructor<InventoryMapper>(inventoryModuleSymbols.inventoryMapper, InventoryMapperImpl);
 
     container.bindToConstructor<InventoryRepositoryFactory>(

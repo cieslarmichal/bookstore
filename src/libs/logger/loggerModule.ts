@@ -10,7 +10,7 @@ import { DependencyInjectionModule } from '../dependencyInjection/dependencyInje
 export class LoggerModule implements DependencyInjectionModule {
   public constructor(private readonly config: LoggerModuleConfig) {}
 
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToValue<LoggerModuleConfig>(loggerModuleSymbols.loggerModuleConfig, this.config);
 
     container.bindToFactory<LoggerClient>(loggerModuleSymbols.loggerClient, LoggerClientFactoryImpl);

@@ -11,13 +11,13 @@ import { UserMapperImpl } from './infrastructure/repositories/userRepository/use
 import { UserRepositoryFactoryImpl } from './infrastructure/repositories/userRepository/userRepositoryFactoryImpl';
 import { UserModuleConfig } from './userModuleConfig';
 import { userModuleSymbols } from './userModuleSymbols';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class UserModule implements DependencyInjectionModule {
   public constructor(private readonly config: UserModuleConfig) {}
 
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToValue<UserModuleConfig>(userModuleSymbols.userModuleConfig, this.config);
 
     container.bindToConstructor<UserMapper>(userModuleSymbols.userMapper, UserMapperImpl);

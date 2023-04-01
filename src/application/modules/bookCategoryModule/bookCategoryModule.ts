@@ -6,11 +6,11 @@ import { BookCategoryController } from './infrastructure/httpControllers/bookCat
 import { BookCategoryMapper } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryMapperImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapperImpl';
 import { BookCategoryRepositoryFactoryImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryRepositoryFactoryImpl';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class BookCategoryModule implements DependencyInjectionModule {
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToConstructor<BookCategoryMapper>(
       bookCategoryModuleSymbols.bookCategoryMapper,
       BookCategoryMapperImpl,

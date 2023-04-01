@@ -9,7 +9,7 @@ import { DependencyInjectionModule } from '../dependencyInjection/dependencyInje
 export class PostgresModule implements DependencyInjectionModule {
   public constructor(private readonly config: PostgresModuleConfig) {}
 
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToValue<PostgresModuleConfig>(postgresModuleSymbols.postgresModuleConfig, this.config);
 
     container.bindToFactory<DataSource>(postgresModuleSymbols.dataSource, DataSourceFactoryImpl);

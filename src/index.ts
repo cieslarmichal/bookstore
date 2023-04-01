@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import { Application } from './app/application';
 import { ApplicationConfig } from './app/applicationConfig';
-import { EnvKey } from './envKey';
+import { EnvKey } from './application/envKey';
 import { LogLevel } from './libs/logger/contracts/logLevel';
 import { HttpServer } from './server/httpServer';
 

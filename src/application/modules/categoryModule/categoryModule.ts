@@ -6,11 +6,11 @@ import { CategoryController } from './infrastructure/httpControllers/categoryCon
 import { CategoryMapper } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapper';
 import { CategoryMapperImpl } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapperImpl';
 import { CategoryRepositoryFactoryImpl } from './infrastructure/repositories/categoryRepository/categoryRepositoryFactoryImpl';
-import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionModule } from '../../libs/dependencyInjection/dependencyInjectionModule';
+import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
+import { DependencyInjectionModule } from '../../../libs/dependencyInjection/dependencyInjectionModule';
 
 export class CategoryModule implements DependencyInjectionModule {
-  public async declareBindings(container: DependencyInjectionContainer): Promise<void> {
+  public declareBindings(container: DependencyInjectionContainer): void {
     container.bindToConstructor<CategoryMapper>(categoryModuleSymbols.categoryMapper, CategoryMapperImpl);
 
     container.bindToConstructor<CategoryRepositoryFactory>(

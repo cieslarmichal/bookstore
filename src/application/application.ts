@@ -1,73 +1,57 @@
-import express, { json, urlencoded } from 'express';
+import 'reflect-metadata';
+
+import { fastify } from 'fastify';
 import { DataSource } from 'typeorm';
 
-import { AddressModule } from './addressModule/addressModule';
-import { AddressController } from './addressModule/infrastructure/httpControllers/addressController';
-import { AddressEntity } from './addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-import { ApplicationConfig } from './applicationConfig';
-import { AuthorBookModule } from './authorBookModule/authorBookModule';
-import { AuthorBookController } from './authorBookModule/infrastructure/httpControllers/authorBookController';
-import { AuthorBookEntity } from './authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
-import { AuthorModule } from './authorModule/authorModule';
-import { AuthorController } from './authorModule/infrastructure/httpControllers/authorController';
-import { AuthorEntity } from './authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
-import { BookCategoryModule } from './bookCategoryModule/bookCategoryModule';
-import { BookCategoryController } from './bookCategoryModule/infrastructure/httpControllers/bookCategoryController';
-import { BookCategoryEntity } from './bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
-import { BookModule } from './bookModule/bookModule';
-import { BookController } from './bookModule/infrastructure/httpControllers/bookController';
-import { BookEntity } from './bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-import { CategoryModule } from './categoryModule/categoryModule';
-import { CategoryController } from './categoryModule/infrastructure/httpControllers/categoryController';
-import { CategoryEntity } from './categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
-import { CustomerModule } from './customerModule/customerModule';
-import { CustomerController } from './customerModule/infrastructure/httpControllers/customerController';
-import { CustomerEntity } from './customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { InventoryController } from './inventoryModule/infrastructure/httpControllers/inventoryController';
-import { InventoryEntity } from './inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
-import { InventoryModule } from './inventoryModule/inventoryModule';
-import { CartController } from './orderModule/infrastructure/httpControllers/cartController/cartController';
-import { OrderController } from './orderModule/infrastructure/httpControllers/orderController/orderController';
-import { CartEntity } from './orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-import { LineItemEntity } from './orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { OrderEntity } from './orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
-import { OrderModule } from './orderModule/orderModule';
-import { ReviewController } from './reviewModule/infrastructure/httpControllers/reviewController';
-import { ReviewEntity } from './reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-import { ReviewModule } from './reviewModule/reviewModule';
-import { UserController } from './userModule/infrastructure/httpControllers/userController';
-import { UserEntity } from './userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
-import { UserModule } from './userModule/userModule';
-import { WhishlistController } from './whishlistModule/infrastructure/httpControllers/whishlistController';
-import { WhishlistEntryEntity } from './whishlistModule/infrastructure/repositories/whishlistEntryRepository/whishlistEntryEntity/whishlistEntryEntity';
-import { WhishlistModule } from './whishlistModule/whishlistModule';
-import { errorMiddleware } from '../common/middlewares/errorMiddleware';
-import { jsonMiddleware } from '../common/middlewares/jsonMiddleware';
-import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../libs/logger/loggerModule';
-import { PostgresModule } from '../libs/postgres/postgresModule';
-import { postgresModuleSymbols } from '../libs/postgres/postgresModuleSymbols';
-import { UnitOfWorkModule } from '../libs/unitOfWork/unitOfWorkModule';
+import { EnvKey } from './envKey.js';
+import { HttpRouter } from './httpRouter/httpRouter.js';
+import { AddressModule } from './modules/addressModule/addressModule.js';
+import { AddressEntity } from './modules/addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity.js';
+import { AuthorBookModule } from './modules/authorBookModule/authorBookModule.js';
+import { AuthorBookEntity } from './modules/authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity.js';
+import { AuthorModule } from './modules/authorModule/authorModule.js';
+import { AuthorEntity } from './modules/authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity.js';
+import { BookCategoryModule } from './modules/bookCategoryModule/bookCategoryModule.js';
+import { BookCategoryEntity } from './modules/bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity.js';
+import { BookModule } from './modules/bookModule/bookModule.js';
+import { BookEntity } from './modules/bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity.js';
+import { CategoryModule } from './modules/categoryModule/categoryModule.js';
+import { CategoryEntity } from './modules/categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity.js';
+import { CustomerModule } from './modules/customerModule/customerModule.js';
+import { CustomerEntity } from './modules/customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity.js';
+import { InventoryEntity } from './modules/inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity.js';
+import { InventoryModule } from './modules/inventoryModule/inventoryModule.js';
+import { CartEntity } from './modules/orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity.js';
+import { LineItemEntity } from './modules/orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity.js';
+import { OrderEntity } from './modules/orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity.js';
+import { OrderModule } from './modules/orderModule/orderModule.js';
+import { ReviewEntity } from './modules/reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity.js';
+import { ReviewModule } from './modules/reviewModule/reviewModule.js';
+import { UserEntity } from './modules/userModule/infrastructure/repositories/userRepository/userEntity/userEntity.js';
+import { UserModule } from './modules/userModule/userModule.js';
+import { WhishlistEntryEntity } from './modules/whishlistModule/infrastructure/repositories/whishlistEntryRepository/whishlistEntryEntity/whishlistEntryEntity.js';
+import { WhishlistModule } from './modules/whishlistModule/whishlistModule.js';
+import { DependencyInjectionContainer } from '../libs/dependencyInjection/dependencyInjectionContainer.js';
+import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/dependencyInjectionContainerFactory.js';
+import { LoggerModule } from '../libs/logger/loggerModule.js';
+import { loggerModuleSymbols } from '../libs/logger/loggerModuleSymbols.js';
+import { LogLevel } from '../libs/logger/logLevel.js';
+import { LoggerService } from '../libs/logger/services/loggerService/loggerService.js';
+import { PostgresModule } from '../libs/postgres/postgresModule.js';
+import { postgresModuleSymbols } from '../libs/postgres/postgresModuleSymbols.js';
+import { UnitOfWorkModule } from '../libs/unitOfWork/unitOfWorkModule.js';
 
 export class Application {
-  public instance: express.Application;
-
-  public constructor(private readonly config: ApplicationConfig) {
-    this.instance = express();
-  }
-
-  public async initialize(): Promise<void> {
-    const {
-      databaseHost,
-      databasePort,
-      databaseName,
-      databaseUser,
-      databasePassword,
-      jwtSecret,
-      jwtExpiresIn,
-      hashSaltRounds,
-      logLevel,
-    } = this.config;
+  public static createContainer(): DependencyInjectionContainer {
+    const databaseHost = String(process.env[EnvKey.databaseHost]);
+    const databasePort = Number(process.env[EnvKey.databasePort]);
+    const databaseName = String(process.env[EnvKey.databaseName]);
+    const databaseUser = String(process.env[EnvKey.databaseUser]);
+    const databasePassword = String(process.env[EnvKey.databasePassword]);
+    const jwtSecret = String(process.env[EnvKey.jwtSecret]);
+    const jwtExpiresIn = String(process.env[EnvKey.jwtExpiresIn]);
+    const hashSaltRounds = Number(process.env[EnvKey.hashSaltRounds]);
+    const logLevel = process.env[EnvKey.logLevel] as LogLevel;
 
     const entities = [
       BookEntity,
@@ -86,7 +70,7 @@ export class Application {
       WhishlistEntryEntity,
     ];
 
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new LoggerModule({ logLevel }),
         new PostgresModule({ databaseHost, databasePort, databaseName, databaseUser, databasePassword, entities }),
@@ -106,42 +90,30 @@ export class Application {
       ],
     });
 
+    return container;
+  }
+
+  public static async init(): Promise<void> {
+    const container = Application.createContainer();
+
     const dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
 
-    const bookController = container.get<BookController>(integrationsSymbols.bookController);
-    const authorController = container.get<AuthorController>(integrationsSymbols.authorController);
-    const userController = container.get<UserController>(integrationsSymbols.userController);
-    const categoryController = container.get<CategoryController>(integrationsSymbols.categoryController);
-    const authorBookController = container.get<AuthorBookController>(integrationsSymbols.authorBookController);
-    const bookCategoryController = container.get<BookCategoryController>(integrationsSymbols.bookCategoryController);
-    const addressController = container.get<AddressController>(integrationsSymbols.addressController);
-    const customerController = container.get<CustomerController>(integrationsSymbols.customerController);
-    const cartController = container.get<CartController>(integrationsSymbols.cartController);
-    const orderController = container.get<OrderController>(integrationsSymbols.orderController);
-    const inventoryController = container.get<InventoryController>(integrationsSymbols.inventoryController);
-    const reviewController = container.get<ReviewController>(integrationsSymbols.reviewController);
-    const whishlistController = container.get<WhishlistController>(integrationsSymbols.whishlistController);
+    const server = fastify();
 
-    this.instance.use(json());
-    this.instance.use(urlencoded({ extended: false }));
-    this.instance.use(jsonMiddleware);
+    const httpServerHost = String(process.env[EnvKey.httpServerHost]);
 
-    this.instance.use('/', bookController.router);
-    this.instance.use('/', authorController.router);
-    this.instance.use('/', userController.router);
-    this.instance.use('/', categoryController.router);
-    this.instance.use('/', authorBookController.router);
-    this.instance.use('/', bookCategoryController.router);
-    this.instance.use('/', addressController.router);
-    this.instance.use('/', customerController.router);
-    this.instance.use('/', cartController.router);
-    this.instance.use('/', orderController.router);
-    this.instance.use('/', inventoryController.router);
-    this.instance.use('/', reviewController.router);
-    this.instance.use('/', whishlistController.router);
+    const httpServerPort = Number(process.env[EnvKey.httpServerPort]);
 
-    this.instance.use(errorMiddleware);
+    const httpRouter = new HttpRouter(server, container);
+
+    httpRouter.registerAllRoutes();
+
+    await server.listen({ host: httpServerHost, port: httpServerPort });
+
+    const loggerService = container.get<LoggerService>(loggerModuleSymbols.loggerService);
+
+    loggerService.log({ message: `Server started.`, context: { httpServerHost, httpServerPort } });
   }
 }
