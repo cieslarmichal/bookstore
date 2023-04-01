@@ -1,43 +1,52 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { HttpMethodName } from './httpMethodName';
-import { httpRequestSchema } from './httpRequest';
-import { HttpRequestSchema, httpRequestSchemaSchema } from './httpRequestSchema';
+import { HttpRequest } from './httpRequest';
 import { httpResponseSchema } from './httpResponse';
-import { HttpResponseSchema, httpResponseSchemaSchema } from './httpResponseSchema';
 import { HttpRouteHandler } from './httpRouteHandler';
 import { Schema } from '../../libs/validator/schema';
+import { SchemaObject } from '../../libs/validator/schemaObject';
 import { SchemaType } from '../../libs/validator/schemaType';
 import { Validator } from '../../libs/validator/validator';
 
-const payloadSchema = Schema.object({
-  method: Schema.enum(HttpMethodName),
-  path: Schema.string().optional(),
-  handler: Schema.function(Schema.tuple([httpRequestSchema]), Schema.promise(httpResponseSchema)),
-  requestSchema: httpRequestSchemaSchema.optional(),
-  responseSchema: httpResponseSchemaSchema.optional(),
+const httpRouteSchemaSchema = Schema.object({
+  request: Schema.object({
+    body: Schema.unsafeType<SchemaObject>().optional(),
+    queryParams: Schema.unsafeType<SchemaObject>().optional(),
+    pathParams: Schema.unsafeType<SchemaObject>().optional(),
+  }),
+  response: Schema.record(
+    Schema.string(),
+    Schema.object({
+      schema: Schema.union([Schema.unsafeType<SchemaObject>(), Schema.null()]),
+    }),
+  ),
 });
 
-export type HttpRouteInput = SchemaType<typeof payloadSchema>;
+const httpRouteInputSchema = Schema.object({
+  method: Schema.enum(HttpMethodName),
+  path: Schema.string().optional(),
+  handler: Schema.function(
+    Schema.tuple([Schema.unsafeType<HttpRequest<any, any, any>>()]),
+    Schema.promise(httpResponseSchema),
+  ),
+  schema: httpRouteSchemaSchema,
+});
+
+export type HttpRouteInput = SchemaType<typeof httpRouteInputSchema>;
 
 export class HttpRoute {
   public readonly method: HttpMethodName;
   public readonly path: string;
   public readonly handler: HttpRouteHandler;
-  public readonly requestSchema?: HttpRequestSchema;
-  public readonly responseSchema?: HttpResponseSchema;
+  public readonly schema: SchemaType<typeof httpRouteSchemaSchema>;
 
   public constructor(input: HttpRouteInput) {
-    const { method, path, handler, requestSchema, responseSchema } = Validator.validate(payloadSchema, input);
+    const { method, path, handler, schema } = Validator.validate(httpRouteInputSchema, input);
 
     this.method = method;
     this.path = path ?? '';
     this.handler = handler;
-
-    if (requestSchema) {
-      this.requestSchema = requestSchema;
-    }
-
-    if (responseSchema) {
-      this.responseSchema = responseSchema;
-    }
+    this.schema = schema;
   }
 }
