@@ -1,11 +1,19 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
-import { NormalizeUrlPayload, normalizeUrlPayloadSchema } from './payloads/normalizeUrlPayload.js';
+import { NormalizeUrlPayload, normalizeUrlPayloadSchema } from './payloads/normalizeUrlPayload';
 import {
   RegisterControllerRoutesPayload,
   registerControllerRoutesPayloadSchema,
-} from './payloads/registerControllerRoutesPayload.js';
-import { RegisterRoutesPayload, registerRoutesPayloadSchema } from './payloads/registerRoutesPayload.js';
+} from './payloads/registerControllerRoutesPayload';
+import { RegisterRoutesPayload, registerRoutesPayloadSchema } from './payloads/registerRoutesPayload';
+import { ApplicationError } from '../../common/errors/applicationError';
+import { BaseError } from '../../common/errors/baseError';
+import { DomainError } from '../../common/errors/domainError';
+import { HttpStatusCode } from '../../common/http/httpStatusCode';
+import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dependencyInjectionContainer';
+import { loggerModuleSymbols } from '../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../libs/logger/services/loggerService/loggerService';
+import { Validator } from '../../libs/validator/validator';
 
 export class HttpRouter {
   private readonly rootPath = '';

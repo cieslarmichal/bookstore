@@ -11,5 +11,5 @@ export enum HttpStatusCode {
   notFound = StatusCodes.NOT_FOUND,
   conflict = StatusCodes.CONFLICT,
   unprocessableEntity = StatusCodes.UNPROCESSABLE_ENTITY,
-  internalServerErrror = StatusCodes.INTERNAL_SERVER_ERROR,
+  internalServerError = StatusCodes.INTERNAL_SERVER_ERROR,
 }

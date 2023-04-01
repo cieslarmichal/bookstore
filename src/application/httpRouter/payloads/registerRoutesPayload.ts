@@ -1,6 +1,6 @@
-import { HttpRoute } from '../../common/http/httpRoute.js';
-import { Schema } from '../../libs/validator/schema.js';
-import { SchemaType } from '../../libs/validator/schemaType.js';
+import { HttpRoute } from '../../../common/http/httpRoute';
+import { Schema } from '../../../libs/validator/schema';
+import { SchemaType } from '../../../libs/validator/schemaType';
 
 export const registerRoutesPayloadSchema = Schema.object({
   routes: Schema.array(Schema.instanceof(HttpRoute)),

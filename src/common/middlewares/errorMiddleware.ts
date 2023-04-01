@@ -5,7 +5,7 @@ import { ValidationError } from '../../libs/validator/errors/validationError';
 import { HttpStatusCode } from '../http/httpStatusCode';
 
 export function errorMiddleware(error: Error, _request: Request, response: Response, _next: NextFunction): void {
-  let statusCode = HttpStatusCode.internalServerErrror;
+  let statusCode = HttpStatusCode.internalServerError;
 
   let errorContext: unknown | undefined = undefined;
 
