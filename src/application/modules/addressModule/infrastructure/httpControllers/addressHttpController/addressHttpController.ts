@@ -276,6 +276,8 @@ export class AddressHttpController implements HttpController {
       ) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
       }
+
+      throw error;
     }
 
     return { statusCode: HttpStatusCode.ok, body: { address: address as Address } };
@@ -338,6 +340,8 @@ export class AddressHttpController implements HttpController {
       if (error instanceof AddressNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
       }
+
+      throw error;
     }
 
     return { statusCode: HttpStatusCode.ok, body: { data: addresses } };
@@ -409,6 +413,8 @@ export class AddressHttpController implements HttpController {
       if (error instanceof AddressNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
       }
+
+      throw error;
     }
 
     return { statusCode: HttpStatusCode.ok, body: { address: address as Address } };
@@ -459,6 +465,8 @@ export class AddressHttpController implements HttpController {
       if (error instanceof AddressNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
       }
+
+      throw error;
     }
 
     return { statusCode: HttpStatusCode.noContent, body: null };

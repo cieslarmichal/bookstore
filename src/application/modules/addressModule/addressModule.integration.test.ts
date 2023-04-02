@@ -5,7 +5,7 @@ import { addressModuleSymbols } from './addressModuleSymbols';
 import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
 import { AddressService } from './application/services/addressService/addressService';
 import { AddressServiceImpl } from './application/services/addressService/addressServiceImpl';
-import { AddressController } from './infrastructure/httpControllers/addressHttpController';
+import { AddressHttpController } from './infrastructure/httpControllers/addressHttpController/addressHttpController';
 import { AddressMapper } from './infrastructure/repositories/addressRepository/addressMapper/addressMapper';
 import { AddressMapperImpl } from './infrastructure/repositories/addressRepository/addressMapper/addressMapperImpl';
 import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
@@ -37,8 +37,8 @@ describe('AddressModule', () => {
 
     expect(container.get<AddressService>(addressModuleSymbols.addressService)).toBeInstanceOf(AddressServiceImpl);
 
-    expect(container.get<AddressController>(addressModuleSymbols.addressHttpController)).toBeInstanceOf(
-      AddressController,
+    expect(container.get<AddressHttpController>(addressModuleSymbols.addressHttpController)).toBeInstanceOf(
+      AddressHttpController,
     );
   });
 });

@@ -5,7 +5,7 @@ import { AuthorBookService } from './application/services/authorBookService/auth
 import { AuthorBookServiceImpl } from './application/services/authorBookService/authorBookServiceImpl';
 import { AuthorBookModule } from './authorBookModule';
 import { authorBookModuleSymbols } from './authorBookModuleSymbols';
-import { AuthorBookController } from './infrastructure/httpControllers/authorBookController';
+import { AuthorBookHttpController } from './infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
 import { AuthorBookMapper } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapper';
 import { AuthorBookMapperImpl } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapperImpl';
 import { AuthorBookRepositoryFactoryImpl } from './infrastructure/repositories/authorBookRepository/authorBookRepositoryFactoryImpl';
@@ -49,8 +49,8 @@ describe('AuthorBookModule', () => {
       AuthorBookServiceImpl,
     );
 
-    expect(container.get<AuthorBookController>(authorBookModuleSymbols.authorBookController)).toBeInstanceOf(
-      AuthorBookController,
+    expect(container.get<AuthorBookHttpController>(authorBookModuleSymbols.authorBookHttpController)).toBeInstanceOf(
+      AuthorBookHttpController,
     );
   });
 });

@@ -31,6 +31,10 @@ export interface HttpNotFoundResponse<Body = unknown> extends HttpResponse<Body>
   readonly statusCode: typeof HttpStatusCode.notFound;
 }
 
+export interface HttpUnprocessableEntityResponse<Body = unknown> extends HttpResponse<Body> {
+  readonly statusCode: typeof HttpStatusCode.unprocessableEntity;
+}
+
 export interface HttpBadRequestResponse<Body = unknown> extends HttpResponse<Body> {
   readonly statusCode: typeof HttpStatusCode.badRequest;
 }
