@@ -3,11 +3,11 @@ import { CreateAuthorBookPayload, createAuthorBookPayloadSchema } from './payloa
 import { DeleteAuthorBookPayload, deleteAuthorBookPayloadSchema } from './payloads/deleteAuthorBookPayload';
 import { FindAuthorsByBookIdPayload, findAuthorsByBookIdPayloadSchema } from './payloads/findAuthorsByBookIdPayload';
 import { FindBooksByAuthorIdPayload, findBooksByAuthorIdPayloadSchema } from './payloads/findBooksByAuthorIdPayload';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
+import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
-import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
-import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { AuthorService } from '../../../../authorModule/application/services/authorService/authorService';
 import { authorModuleSymbols } from '../../../../authorModule/authorModuleSymbols';
 import { Author } from '../../../../authorModule/domain/entities/author/author';

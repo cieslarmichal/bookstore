@@ -1,8 +1,8 @@
-import { AccessTokenData } from '../../../../../../../common/types/accessTokenData';
+import { addressSchema } from './addressSchema';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const createAddressPayloadSchema = Schema.object({
+export const createAddressBodySchema = Schema.object({
   firstName: Schema.notEmptyString(),
   lastName: Schema.notEmptyString(),
   phoneNumber: Schema.notEmptyString(),
@@ -13,7 +13,12 @@ export const createAddressPayloadSchema = Schema.object({
   streetAddress: Schema.notEmptyString(),
   customerId: Schema.notEmptyString(),
   deliveryInstructions: Schema.notEmptyString().optional(),
-  accessTokenData: Schema.unsafeType<AccessTokenData>(),
 });
 
-export type CreateAddressPayload = SchemaType<typeof createAddressPayloadSchema>;
+export type CreateAddressBody = SchemaType<typeof createAddressBodySchema>;
+
+export const createAddressResponseCreatedBodySchema = Schema.object({
+  address: addressSchema,
+});
+
+export type CreateAddressResponseCreatedBody = SchemaType<typeof createAddressResponseCreatedBodySchema>;

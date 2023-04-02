@@ -8,6 +8,7 @@ import { DeleteCartPayload, deleteCartPayloadSchema } from './payloads/deleteCar
 import { FindCartPayload, findCartPayloadSchema } from './payloads/findCartPayload';
 import { RemoveLineItemPayload, removeLineItemPayloadSchema } from './payloads/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from './payloads/updateCartPayload';
+import { UserRole } from '../../../../../../common/types/userRole';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { HttpStatusCode } from '../../../../../common/http/httpStatusCode';
 import { AuthMiddleware } from '../../../../../common/middlewares/authMiddleware';
@@ -21,7 +22,6 @@ import { unitOfWorkModuleSymbols } from '../../../../../libs/unitOfWork/unitOfWo
 import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { CustomerService } from '../../../../tests/services/customerService';
-import { UserRole } from '../../../../userModule/domain/entities/user/userRole';
 import { CartService } from '../../../application/services/cartService/cartService';
 import { Cart } from '../../../domain/entities/cart/cart';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';

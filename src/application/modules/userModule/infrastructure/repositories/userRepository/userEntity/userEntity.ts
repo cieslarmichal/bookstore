@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Entity, Column, OneToOne, PrimaryColumn } from 'typeorm';
 
+import { UserRole } from '../../../../../../../common/types/userRole';
 import { CustomerEntity } from '../../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-import { UserRole } from '../../../../domain/entities/user/userRole';
 
 export const usersTableName = 'users';
 

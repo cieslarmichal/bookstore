@@ -24,7 +24,7 @@ import { LineItemEntity } from '../../../../orderModule/infrastructure/repositor
 import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
 import { User } from '../../../domain/entities/user/user';
-import { UserRole } from '../../../domain/entities/user/userRole';
+import { UserRole } from '../../../../../../common/types/userRole';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';

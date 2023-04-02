@@ -1,9 +1,14 @@
-import { AccessTokenData } from '../../../../../../../common/types/accessTokenData';
+import { addressSchema } from './addressSchema';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const updateAddressPayloadSchema = Schema.object({
-  id: Schema.notEmptyString(),
+export const updateAddressPathParametersSchema = Schema.object({
+  id: Schema.string(),
+});
+
+export type UpdateAddressPathParameters = SchemaType<typeof updateAddressPathParametersSchema>;
+
+export const updateAddressBodySchema = Schema.object({
   firstName: Schema.notEmptyString().optional(),
   lastName: Schema.notEmptyString().optional(),
   phoneNumber: Schema.notEmptyString().optional(),
@@ -13,7 +18,12 @@ export const updateAddressPayloadSchema = Schema.object({
   zipCode: Schema.notEmptyString().optional(),
   streetAddress: Schema.notEmptyString().optional(),
   deliveryInstructions: Schema.notEmptyString().optional(),
-  accessTokenData: Schema.unsafeType<AccessTokenData>(),
 });
 
-export type UpdateAddressPayload = SchemaType<typeof updateAddressPayloadSchema>;
+export type UpdateAddressBody = SchemaType<typeof updateAddressBodySchema>;
+
+export const updateAddressResponseOkBodySchema = Schema.object({
+  address: addressSchema,
+});
+
+export type UpdateAddressResponseOkBody = SchemaType<typeof updateAddressResponseOkBodySchema>;

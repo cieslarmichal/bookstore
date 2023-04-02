@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { AuthorizationType } from './authorizationType';
 import { HttpMethodName } from './httpMethodName';
 import { HttpRequest } from './httpRequest';
 import { httpResponseSchema } from './httpResponse';
@@ -31,6 +32,7 @@ const httpRouteInputSchema = Schema.object({
     Schema.promise(httpResponseSchema),
   ),
   schema: httpRouteSchemaSchema,
+  authorizationType: Schema.enum(AuthorizationType).optional(),
 });
 
 export type HttpRouteInput = SchemaType<typeof httpRouteInputSchema>;
@@ -40,13 +42,18 @@ export class HttpRoute {
   public readonly path: string;
   public readonly handler: HttpRouteHandler;
   public readonly schema: SchemaType<typeof httpRouteSchemaSchema>;
+  public readonly authorizationType?: AuthorizationType;
 
   public constructor(input: HttpRouteInput) {
-    const { method, path, handler, schema } = Validator.validate(httpRouteInputSchema, input);
+    const { method, path, handler, schema, authorizationType } = Validator.validate(httpRouteInputSchema, input);
 
     this.method = method;
     this.path = path ?? '';
     this.handler = handler;
     this.schema = schema;
+
+    if (authorizationType) {
+      this.authorizationType = authorizationType;
+    }
   }
 }

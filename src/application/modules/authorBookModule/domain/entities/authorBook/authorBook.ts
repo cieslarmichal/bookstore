@@ -1,6 +1,6 @@
 import { Validator } from '../../../../../../libs/validator/validator';
-import { Schema } from '../../../../../libs/validator/schema';
-import { SchemaType } from '../../../../../libs/validator/schemaType';
+import { Schema } from '../../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../../libs/validator/schemaType';
 
 export const authorBookInputSchema = Schema.object({
   id: Schema.notEmptyString(),

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { UserRole } from '../../../domain/entities/user/userRole';
+import { UserRole } from '../../../../../../common/types/userRole';
 import { UserEntity } from '../../../infrastructure/repositories/userRepository/userEntity/userEntity';
 
 export class UserEntityTestFactory {

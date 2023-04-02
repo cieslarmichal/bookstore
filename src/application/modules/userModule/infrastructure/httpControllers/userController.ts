@@ -20,7 +20,7 @@ import { unitOfWorkModuleSymbols } from '../../../../libs/unitOfWork/unitOfWorkM
 import { Validator } from '../../../../libs/validator/validator';
 import { UserService } from '../../application/services/userService/userService';
 import { User } from '../../domain/entities/user/user';
-import { UserRole } from '../../domain/entities/user/userRole';
+import { UserRole } from '../../../../../common/types/userRole';
 import { userModuleSymbols } from '../../userModuleSymbols';
 import { UserFromAccessTokenNotMatchingTargetUserError } from '../errors/userFromTokenAuthPayloadNotMatchingTargetUserError';
 

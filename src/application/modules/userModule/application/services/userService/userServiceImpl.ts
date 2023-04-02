@@ -14,13 +14,13 @@ import { SetUserEmailPayload, setUserEmailPayloadSchema } from './payloads/setUs
 import { SetUserPasswordPayload, setUserPasswordPayloadSchema } from './payloads/setUserPasswordPayload';
 import { SetUserPhoneNumberPayload, setUserPhoneNumberPayloadSchema } from './payloads/setUserPhoneNumberPayload';
 import { UserService } from './userService';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
+import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
-import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
-import { UuidGenerator } from '../../../../../libs/uuid/uuidGenerator';
 import { User } from '../../../domain/entities/user/user';
-import { UserRole } from '../../../domain/entities/user/userRole';
+import { UserRole } from '../../../../../../common/types/userRole';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
