@@ -5,7 +5,7 @@ import { CategoryService } from './application/services/categoryService/category
 import { CategoryServiceImpl } from './application/services/categoryService/categoryServiceImpl';
 import { CategoryModule } from './categoryModule';
 import { categoryModuleSymbols } from './categoryModuleSymbols';
-import { CategoryController } from './infrastructure/httpControllers/categoryController';
+import { CategoryHttpController } from './infrastructure/httpControllers/categoryHttpController/categoryHttpController';
 import { CategoryMapper } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapper';
 import { CategoryMapperImpl } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapperImpl';
 import { CategoryRepositoryFactoryImpl } from './infrastructure/repositories/categoryRepository/categoryRepositoryFactoryImpl';
@@ -37,8 +37,8 @@ describe('CategoryModule', () => {
 
     expect(container.get<CategoryService>(categoryModuleSymbols.categoryService)).toBeInstanceOf(CategoryServiceImpl);
 
-    expect(container.get<CategoryController>(categoryModuleSymbols.categoryController)).toBeInstanceOf(
-      CategoryController,
+    expect(container.get<CategoryHttpController>(categoryModuleSymbols.categoryHttpController)).toBeInstanceOf(
+      CategoryHttpController,
     );
   });
 });

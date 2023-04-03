@@ -28,6 +28,8 @@ import { bookCategoryModuleSymbols } from '../modules/bookCategoryModule/bookCat
 import { BookCategoryHttpController } from '../modules/bookCategoryModule/infrastructure/httpControllers/bookCategoryHttpController/bookCategoryHttpController';
 import { bookModuleSymbols } from '../modules/bookModule/bookModuleSymbols';
 import { BookHttpController } from '../modules/bookModule/infrastructure/httpControllers/bookHttpController/bookHttpController';
+import { categoryModuleSymbols } from '../modules/categoryModule/categoryModuleSymbols';
+import { CategoryHttpController } from '../modules/categoryModule/infrastructure/httpControllers/categoryHttpController/categoryHttpController';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
 
@@ -71,6 +73,12 @@ export class HttpRouter {
     const bookHttpController = this.container.get<BookHttpController>(bookModuleSymbols.bookHttpController);
 
     this.registerControllerRoutes({ controller: bookHttpController });
+
+    const categoryHttpController = this.container.get<CategoryHttpController>(
+      categoryModuleSymbols.categoryHttpController,
+    );
+
+    this.registerControllerRoutes({ controller: categoryHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {

@@ -2,7 +2,7 @@ import { CategoryRepositoryFactory } from './application/repositories/categoryRe
 import { CategoryService } from './application/services/categoryService/categoryService';
 import { CategoryServiceImpl } from './application/services/categoryService/categoryServiceImpl';
 import { categoryModuleSymbols } from './categoryModuleSymbols';
-import { CategoryController } from './infrastructure/httpControllers/categoryController';
+import { CategoryHttpController } from './infrastructure/httpControllers/categoryHttpController/categoryHttpController';
 import { CategoryMapper } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapper';
 import { CategoryMapperImpl } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapperImpl';
 import { CategoryRepositoryFactoryImpl } from './infrastructure/repositories/categoryRepository/categoryRepositoryFactoryImpl';
@@ -20,6 +20,9 @@ export class CategoryModule implements DependencyInjectionModule {
 
     container.bindToConstructor<CategoryService>(categoryModuleSymbols.categoryService, CategoryServiceImpl);
 
-    container.bindToConstructor<CategoryController>(categoryModuleSymbols.categoryController, CategoryController);
+    container.bindToConstructor<CategoryHttpController>(
+      categoryModuleSymbols.categoryHttpController,
+      CategoryHttpController,
+    );
   }
 }
