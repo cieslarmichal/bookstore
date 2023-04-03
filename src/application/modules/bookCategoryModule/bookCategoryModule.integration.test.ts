@@ -5,7 +5,7 @@ import { BookCategoryService } from './application/services/bookCategoryService/
 import { BookCategoryServiceImpl } from './application/services/bookCategoryService/bookCategoryServiceImpl';
 import { BookCategoryModule } from './bookCategoryModule';
 import { bookCategoryModuleSymbols } from './bookCategoryModuleSymbols';
-import { BookCategoryController } from './infrastructure/httpControllers/bookCategoryController';
+import { BookCategoryHttpController } from './infrastructure/httpControllers/bookCategoryHttpController/authorBookHttpController';
 import { BookCategoryMapper } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapper';
 import { BookCategoryMapperImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryMapper/bookCategoryMapperImpl';
 import { BookCategoryRepositoryFactoryImpl } from './infrastructure/repositories/bookCategoryRepository/bookCategoryRepositoryFactoryImpl';
@@ -49,8 +49,8 @@ describe('BookCategoryModule', () => {
       BookCategoryServiceImpl,
     );
 
-    expect(container.get<BookCategoryController>(bookCategoryModuleSymbols.bookCategoryController)).toBeInstanceOf(
-      BookCategoryController,
-    );
+    expect(
+      container.get<BookCategoryHttpController>(bookCategoryModuleSymbols.bookCategoryHttpController),
+    ).toBeInstanceOf(BookCategoryHttpController);
   });
 });

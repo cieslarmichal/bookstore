@@ -20,6 +20,10 @@ import { LoggerService } from '../../libs/logger/services/loggerService/loggerSe
 import { Validator } from '../../libs/validator/validator';
 import { addressModuleSymbols } from '../modules/addressModule/addressModuleSymbols';
 import { AddressHttpController } from '../modules/addressModule/infrastructure/httpControllers/addressHttpController/addressHttpController';
+import { authorBookModuleSymbols } from '../modules/authorBookModule/authorBookModuleSymbols';
+import { AuthorBookHttpController } from '../modules/authorBookModule/infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
+import { bookCategoryModuleSymbols } from '../modules/bookCategoryModule/bookCategoryModuleSymbols';
+import { BookCategoryHttpController } from '../modules/bookCategoryModule/infrastructure/httpControllers/bookCategoryHttpController/authorBookHttpController';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
 
@@ -40,11 +44,21 @@ export class HttpRouter {
   }
 
   public registerAllRoutes(): void {
-    const blockchainHttpController = this.container.get<AddressHttpController>(
-      addressModuleSymbols.addressHttpController,
+    const addressHttpController = this.container.get<AddressHttpController>(addressModuleSymbols.addressHttpController);
+
+    this.registerControllerRoutes({ controller: addressHttpController });
+
+    const authorBookHttpController = this.container.get<AuthorBookHttpController>(
+      authorBookModuleSymbols.authorBookHttpController,
     );
 
-    this.registerControllerRoutes({ controller: blockchainHttpController });
+    this.registerControllerRoutes({ controller: authorBookHttpController });
+
+    const bookCategoryHttpController = this.container.get<BookCategoryHttpController>(
+      bookCategoryModuleSymbols.bookCategoryHttpController,
+    );
+
+    this.registerControllerRoutes({ controller: bookCategoryHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {
