@@ -239,7 +239,11 @@ export class AddressHttpController implements HttpController {
 
   private async findAddress(
     request: HttpRequest<undefined, undefined, FindAddressPathParameters>,
-  ): Promise<HttpOkResponse<FindAddressResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
+  ): Promise<
+    | HttpOkResponse<FindAddressResponseOkBody>
+    | HttpForbiddenResponse<ResponseErrorBody>
+    | HttpNotFoundResponse<ResponseErrorBody>
+  > {
     const { id } = request.pathParams;
 
     const { userId, role } = request.context;
@@ -277,6 +281,10 @@ export class AddressHttpController implements HttpController {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
       }
 
+      if (error instanceof AddressNotFoundError) {
+        return { statusCode: HttpStatusCode.notFound, body: { error } };
+      }
+
       throw error;
     }
 
@@ -285,11 +293,7 @@ export class AddressHttpController implements HttpController {
 
   private async findAddresses(
     request: HttpRequest<undefined, FindAddressesQueryParameters>,
-  ): Promise<
-    | HttpOkResponse<FindAddressesResponseOkBody>
-    | HttpForbiddenResponse<ResponseErrorBody>
-    | HttpNotFoundResponse<ResponseErrorBody>
-  > {
+  ): Promise<HttpOkResponse<FindAddressesResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
     const { filter, limit, page } = request.queryParams;
 
     const { userId } = request.context;
@@ -335,10 +339,6 @@ export class AddressHttpController implements HttpController {
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
-      }
-
-      if (error instanceof AddressNotFoundError) {
-        return { statusCode: HttpStatusCode.notFound, body: { error } };
       }
 
       throw error;

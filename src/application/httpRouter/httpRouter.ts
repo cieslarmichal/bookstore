@@ -22,6 +22,8 @@ import { addressModuleSymbols } from '../modules/addressModule/addressModuleSymb
 import { AddressHttpController } from '../modules/addressModule/infrastructure/httpControllers/addressHttpController/addressHttpController';
 import { authorBookModuleSymbols } from '../modules/authorBookModule/authorBookModuleSymbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
+import { authorModuleSymbols } from '../modules/authorModule/authorModuleSymbols';
+import { AuthorHttpController } from '../modules/authorModule/infrastructure/httpControllers/authorHttpController/addressHttpController';
 import { bookCategoryModuleSymbols } from '../modules/bookCategoryModule/bookCategoryModuleSymbols';
 import { BookCategoryHttpController } from '../modules/bookCategoryModule/infrastructure/httpControllers/bookCategoryHttpController/authorBookHttpController';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
@@ -59,6 +61,10 @@ export class HttpRouter {
     );
 
     this.registerControllerRoutes({ controller: bookCategoryHttpController });
+
+    const authorHttpController = this.container.get<AuthorHttpController>(authorModuleSymbols.authorHttpController);
+
+    this.registerControllerRoutes({ controller: authorHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {
