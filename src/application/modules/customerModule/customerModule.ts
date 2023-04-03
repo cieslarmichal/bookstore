@@ -2,7 +2,7 @@ import { CustomerRepositoryFactory } from './application/repositories/customerRe
 import { CustomerService } from './application/services/customerService/customerService';
 import { CustomerServiceImpl } from './application/services/customerService/customerServiceImpl';
 import { customerModuleSymbols } from './customerModuleSymbols';
-import { CustomerController } from './infrastructure/httpControllers/customerController';
+import { CustomerHttpController } from './infrastructure/httpControllers/customerHttpController/customerHttpController';
 import { CustomerMapper } from './infrastructure/repositories/customerRepository/customerMapper/customerMapper';
 import { CustomerMapperImpl } from './infrastructure/repositories/customerRepository/customerMapper/customerMapperImpl';
 import { CustomerRepositoryFactoryImpl } from './infrastructure/repositories/customerRepository/customerRepositoryFactoryImpl';
@@ -20,6 +20,9 @@ export class CustomerModule implements DependencyInjectionModule {
 
     container.bindToConstructor<CustomerService>(customerModuleSymbols.customerService, CustomerServiceImpl);
 
-    container.bindToConstructor<CustomerController>(customerModuleSymbols.customerController, CustomerController);
+    container.bindToConstructor<CustomerHttpController>(
+      customerModuleSymbols.customerHttpController,
+      CustomerHttpController,
+    );
   }
 }

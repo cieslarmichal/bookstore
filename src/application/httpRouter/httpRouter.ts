@@ -30,6 +30,8 @@ import { bookModuleSymbols } from '../modules/bookModule/bookModuleSymbols';
 import { BookHttpController } from '../modules/bookModule/infrastructure/httpControllers/bookHttpController/bookHttpController';
 import { categoryModuleSymbols } from '../modules/categoryModule/categoryModuleSymbols';
 import { CategoryHttpController } from '../modules/categoryModule/infrastructure/httpControllers/categoryHttpController/categoryHttpController';
+import { customerModuleSymbols } from '../modules/customerModule/customerModuleSymbols';
+import { CustomerHttpController } from '../modules/customerModule/infrastructure/httpControllers/customerHttpController/customerHttpController';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
 
@@ -79,6 +81,12 @@ export class HttpRouter {
     );
 
     this.registerControllerRoutes({ controller: categoryHttpController });
+
+    const customerHttpController = this.container.get<CustomerHttpController>(
+      customerModuleSymbols.customerHttpController,
+    );
+
+    this.registerControllerRoutes({ controller: customerHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {
