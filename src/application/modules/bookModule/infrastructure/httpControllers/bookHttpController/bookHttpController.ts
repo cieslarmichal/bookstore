@@ -49,7 +49,6 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerIdNotProvidedError } from '../../../../addressModule/infrastructure/errors/customerIdNotProvidedError';
 import { BookService } from '../../../application/services/bookService/bookService';
 import { CreateBookDraft } from '../../../application/services/bookService/payloads/createBookDraft';
 import { UpdateBookDraft } from '../../../application/services/bookService/payloads/updateBookDraft';
@@ -227,10 +226,6 @@ export class BookHttpController implements HttpController {
           supportedFieldsFilters: findBooksFilters,
         })
       : [];
-
-    if (!filters.length) {
-      throw new CustomerIdNotProvidedError();
-    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

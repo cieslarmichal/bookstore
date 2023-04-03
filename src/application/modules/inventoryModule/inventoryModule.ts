@@ -1,7 +1,7 @@
 import { InventoryRepositoryFactory } from './application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryService } from './application/services/inventoryService/inventoryService';
 import { InventoryServiceImpl } from './application/services/inventoryService/inventoryServiceImpl';
-import { InventoryController } from './infrastructure/httpControllers/inventoryController';
+import { InventoryHttpController } from './infrastructure/httpControllers/inventoryHttpController/inventoryHttpController';
 import { InventoryMapper } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapper';
 import { InventoryMapperImpl } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapperImpl';
 import { InventoryRepositoryFactoryImpl } from './infrastructure/repositories/inventoryRepository/inventoryRepositoryFactoryImpl';
@@ -20,6 +20,9 @@ export class InventoryModule implements DependencyInjectionModule {
 
     container.bindToConstructor<InventoryService>(inventoryModuleSymbols.inventoryService, InventoryServiceImpl);
 
-    container.bindToConstructor<InventoryController>(inventoryModuleSymbols.inventoryController, InventoryController);
+    container.bindToConstructor<InventoryHttpController>(
+      inventoryModuleSymbols.inventoryHttpController,
+      InventoryHttpController,
+    );
   }
 }

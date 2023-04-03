@@ -49,7 +49,6 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerIdNotProvidedError } from '../../../../addressModule/infrastructure/errors/customerIdNotProvidedError';
 import { AuthorService } from '../../../application/services/authorService/authorService';
 import { CreateAuthorDraft } from '../../../application/services/authorService/payloads/createAuthorDraft';
 import { authorModuleSymbols } from '../../../authorModuleSymbols';
@@ -219,10 +218,6 @@ export class AuthorHttpController implements HttpController {
           supportedFieldsFilters: findAuthorsFilters,
         })
       : [];
-
-    if (!filters.length) {
-      throw new CustomerIdNotProvidedError();
-    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
