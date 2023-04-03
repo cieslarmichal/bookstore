@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { ReviewRepositoryFactory } from './application/repositories/reviewRepository/reviewRepositoryFactory';
 import { ReviewService } from './application/services/reviewService/reviewService';
 import { ReviewServiceImpl } from './application/services/reviewService/reviewServiceImpl';
-import { ReviewController } from './infrastructure/httpControllers/reviewController';
+import { ReviewHttpController } from './infrastructure/httpControllers/reviewHttpController/reviewHttpController';
 import { ReviewMapper } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapper';
 import { ReviewMapperImpl } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapperImpl';
 import { ReviewRepositoryFactoryImpl } from './infrastructure/repositories/reviewRepository/reviewRepositoryFactoryImpl';
@@ -37,6 +37,8 @@ describe('ReviewModule', () => {
 
     expect(container.get<ReviewService>(reviewModuleSymbols.reviewService)).toBeInstanceOf(ReviewServiceImpl);
 
-    expect(container.get<ReviewController>(reviewModuleSymbols.reviewController)).toBeInstanceOf(ReviewController);
+    expect(container.get<ReviewHttpController>(reviewModuleSymbols.reviewHttpController)).toBeInstanceOf(
+      ReviewHttpController,
+    );
   });
 });

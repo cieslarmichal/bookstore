@@ -1,7 +1,7 @@
 import { ReviewRepositoryFactory } from './application/repositories/reviewRepository/reviewRepositoryFactory';
 import { ReviewService } from './application/services/reviewService/reviewService';
 import { ReviewServiceImpl } from './application/services/reviewService/reviewServiceImpl';
-import { ReviewController } from './infrastructure/httpControllers/reviewController';
+import { ReviewHttpController } from './infrastructure/httpControllers/reviewHttpController/reviewHttpController';
 import { ReviewMapper } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapper';
 import { ReviewMapperImpl } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapperImpl';
 import { ReviewRepositoryFactoryImpl } from './infrastructure/repositories/reviewRepository/reviewRepositoryFactoryImpl';
@@ -20,6 +20,6 @@ export class ReviewModule implements DependencyInjectionModule {
 
     container.bindToConstructor<ReviewService>(reviewModuleSymbols.reviewService, ReviewServiceImpl);
 
-    container.bindToConstructor<ReviewController>(reviewModuleSymbols.reviewController, ReviewController);
+    container.bindToConstructor<ReviewHttpController>(reviewModuleSymbols.reviewHttpController, ReviewHttpController);
   }
 }
