@@ -2,7 +2,7 @@ import { BookRepositoryFactory } from './application/repositories/bookRepository
 import { BookService } from './application/services/bookService/bookService';
 import { BookServiceImpl } from './application/services/bookService/bookServiceImpl';
 import { bookModuleSymbols } from './bookModuleSymbols';
-import { BookController } from './infrastructure/httpControllers/bookController';
+import { BookHttpController } from './infrastructure/httpControllers/bookHttpController/bookHttpController';
 import { BookMapper } from './infrastructure/repositories/bookRepository/bookMapper/bookMapper';
 import { BookMapperImpl } from './infrastructure/repositories/bookRepository/bookMapper/bookMapperImpl';
 import { BookRepositoryFactoryImpl } from './infrastructure/repositories/bookRepository/bookRepositoryFactoryImpl';
@@ -20,6 +20,6 @@ export class BookModule implements DependencyInjectionModule {
 
     container.bindToConstructor<BookService>(bookModuleSymbols.bookService, BookServiceImpl);
 
-    container.bindToConstructor<BookController>(bookModuleSymbols.bookController, BookController);
+    container.bindToConstructor<BookHttpController>(bookModuleSymbols.bookHttpController, BookHttpController);
   }
 }

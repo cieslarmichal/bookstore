@@ -23,9 +23,11 @@ import { AddressHttpController } from '../modules/addressModule/infrastructure/h
 import { authorBookModuleSymbols } from '../modules/authorBookModule/authorBookModuleSymbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
 import { authorModuleSymbols } from '../modules/authorModule/authorModuleSymbols';
-import { AuthorHttpController } from '../modules/authorModule/infrastructure/httpControllers/authorHttpController/addressHttpController';
+import { AuthorHttpController } from '../modules/authorModule/infrastructure/httpControllers/authorHttpController/authorHttpController';
 import { bookCategoryModuleSymbols } from '../modules/bookCategoryModule/bookCategoryModuleSymbols';
-import { BookCategoryHttpController } from '../modules/bookCategoryModule/infrastructure/httpControllers/bookCategoryHttpController/authorBookHttpController';
+import { BookCategoryHttpController } from '../modules/bookCategoryModule/infrastructure/httpControllers/bookCategoryHttpController/bookCategoryHttpController';
+import { bookModuleSymbols } from '../modules/bookModule/bookModuleSymbols';
+import { BookHttpController } from '../modules/bookModule/infrastructure/httpControllers/bookHttpController/bookHttpController';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
 
@@ -65,6 +67,10 @@ export class HttpRouter {
     const authorHttpController = this.container.get<AuthorHttpController>(authorModuleSymbols.authorHttpController);
 
     this.registerControllerRoutes({ controller: authorHttpController });
+
+    const bookHttpController = this.container.get<BookHttpController>(bookModuleSymbols.bookHttpController);
+
+    this.registerControllerRoutes({ controller: bookHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {

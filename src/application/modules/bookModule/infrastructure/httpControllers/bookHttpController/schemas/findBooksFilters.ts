@@ -1,4 +1,4 @@
-import { FilterSymbol } from '../../../../../common/types/filterSymbol';
+import { FilterSymbol } from '../../../../../../../common/types/filterSymbol';
 
 export const findBooksFilters: Record<string, FilterSymbol[]> = {
   title: [FilterSymbol.equal, FilterSymbol.like],
