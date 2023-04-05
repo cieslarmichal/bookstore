@@ -7,7 +7,7 @@ import { CartValidatorService } from './application/services/cartValidatorServic
 import { CartValidatorServiceImpl } from './application/services/cartValidatorService/cartValidatorServiceImpl';
 import { OrderService } from './application/services/orderService/orderService';
 import { OrderServiceImpl } from './application/services/orderService/orderServiceImpl';
-import { CartController } from './infrastructure/httpControllers/cartController/cartController';
+import { CartHttpController } from './infrastructure/httpControllers/cartHttpController/cartHttpController';
 import { OrderController } from './infrastructure/httpControllers/orderController/orderController';
 import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
 import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
@@ -49,7 +49,7 @@ export class OrderModule implements DependencyInjectionModule {
 
     container.bindToConstructor<CartService>(orderModuleSymbols.cartService, CartServiceImpl);
 
-    container.bindToConstructor<CartController>(orderModuleSymbols.cartController, CartController);
+    container.bindToConstructor<CartHttpController>(orderModuleSymbols.cartHttpController, CartHttpController);
 
     container.bindToConstructor<LineItemMapper>(orderModuleSymbols.lineItemMapper, LineItemMapperImpl);
 

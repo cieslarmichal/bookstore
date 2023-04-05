@@ -8,7 +8,7 @@ export const orderModuleSymbols = {
   cartMapper: Symbol('cartMapper'),
   cartRepositoryFactory: Symbol('cartRepositoryFactory'),
   cartService: Symbol('cartService'),
-  cartController: Symbol('cartController'),
+  cartHttpController: Symbol('cartHttpController'),
 
   lineItemMapper: Symbol('lineItemMapper'),
   lineItemRepositoryFactory: Symbol('lineItemRepositoryFactory'),

@@ -34,6 +34,7 @@ import { customerModuleSymbols } from '../modules/customerModule/customerModuleS
 import { CustomerHttpController } from '../modules/customerModule/infrastructure/httpControllers/customerHttpController/customerHttpController';
 import { InventoryHttpController } from '../modules/inventoryModule/infrastructure/httpControllers/inventoryHttpController/inventoryHttpController';
 import { inventoryModuleSymbols } from '../modules/inventoryModule/inventoryModuleSymbols';
+import { orderModuleSymbols } from '../modules/orderModule/orderModuleSymbols';
 import { ReviewHttpController } from '../modules/reviewModule/infrastructure/httpControllers/reviewHttpController/reviewHttpController';
 import { reviewModuleSymbols } from '../modules/reviewModule/reviewModuleSymbols';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
@@ -101,6 +102,10 @@ export class HttpRouter {
     const reviewHttpController = this.container.get<ReviewHttpController>(reviewModuleSymbols.reviewHttpController);
 
     this.registerControllerRoutes({ controller: reviewHttpController });
+
+    const cartHttpController = this.container.get<ReviewHttpController>(orderModuleSymbols.cartHttpController);
+
+    this.registerControllerRoutes({ controller: cartHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {

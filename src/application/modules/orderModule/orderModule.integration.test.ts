@@ -7,7 +7,7 @@ import { CartService } from './application/services/cartService/cartService';
 import { CartServiceImpl } from './application/services/cartService/cartServiceImpl';
 import { OrderService } from './application/services/orderService/orderService';
 import { OrderServiceImpl } from './application/services/orderService/orderServiceImpl';
-import { CartController } from './infrastructure/httpControllers/cartController/cartController';
+import { CartHttpController } from './infrastructure/httpControllers/cartHttpController/cartHttpController';
 import { OrderController } from './infrastructure/httpControllers/orderController/orderController';
 import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
 import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
@@ -68,7 +68,7 @@ describe('OrderModule', () => {
 
     expect(container.get<CartService>(orderModuleSymbols.cartService)).toBeInstanceOf(CartServiceImpl);
 
-    expect(container.get<CartController>(orderModuleSymbols.cartController)).toBeInstanceOf(CartController);
+    expect(container.get<CartHttpController>(orderModuleSymbols.cartHttpController)).toBeInstanceOf(CartHttpController);
 
     expect(container.get<LineItemMapper>(orderModuleSymbols.lineItemMapper)).toBeInstanceOf(LineItemMapperImpl);
 
