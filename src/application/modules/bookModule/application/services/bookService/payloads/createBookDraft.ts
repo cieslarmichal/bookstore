@@ -4,13 +4,13 @@ import { BookFormat } from '../../../../domain/entities/book/bookFormat';
 import { BookLanguage } from '../../../../domain/entities/book/bookLanguage';
 
 export const createBookDraftSchema = Schema.object({
-  title: Schema.notEmptyString(),
-  isbn: Schema.notEmptyString(),
+  title: Schema.string(),
+  isbn: Schema.string(),
   releaseYear: Schema.positiveInteger(),
   language: Schema.enum(BookLanguage),
   format: Schema.enum(BookFormat),
   price: Schema.positiveNumber(),
-  description: Schema.notEmptyString().optional(),
+  description: Schema.string().optional(),
 });
 
 export type CreateBookDraft = SchemaType<typeof createBookDraftSchema>;

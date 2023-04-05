@@ -5,7 +5,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const updateAddressPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  addressId: Schema.notEmptyString(),
+  addressId: Schema.string(),
   draft: updateAddressDraftSchema,
 });
 

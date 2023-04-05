@@ -4,12 +4,12 @@ import { DeliveryMethod } from '../../../../domain/entities/cart/deliveryMethod'
 import { LineItem } from '../../../../domain/entities/lineItem/lineItem';
 
 export const cartSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  customerId: Schema.notEmptyString(),
+  id: Schema.string(),
+  customerId: Schema.string(),
   status: Schema.enum(CartStatus),
   totalPrice: Schema.number(),
-  billingAddressId: Schema.notEmptyString().optional(),
-  shippingAddressId: Schema.notEmptyString().optional(),
+  billingAddressId: Schema.string().optional(),
+  shippingAddressId: Schema.string().optional(),
   deliveryMethod: Schema.enum(DeliveryMethod).optional(),
   lineItems: Schema.array(Schema.instanceof(LineItem)).optional(),
 });

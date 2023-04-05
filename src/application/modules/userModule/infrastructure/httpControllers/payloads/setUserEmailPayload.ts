@@ -3,8 +3,8 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { AccessTokenData } from '../../../../../common/types/accessTokenData';
 
 export const setUserEmailPayloadSchema = Schema.object({
-  userId: Schema.notEmptyString(),
-  email: Schema.notEmptyString(),
+  userId: Schema.string(),
+  email: Schema.string(),
   accessTokenData: Schema.unsafeType<AccessTokenData>(),
 });
 

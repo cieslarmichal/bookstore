@@ -10,7 +10,7 @@ export type UpdateBookPathParameters = SchemaType<typeof updateBookPathParameter
 
 export const updateBookBodySchema = Schema.object({
   price: Schema.positiveNumber().optional(),
-  description: Schema.notEmptyString().optional(),
+  description: Schema.string().optional(),
 });
 
 export type UpdateBookBody = SchemaType<typeof updateBookBodySchema>;

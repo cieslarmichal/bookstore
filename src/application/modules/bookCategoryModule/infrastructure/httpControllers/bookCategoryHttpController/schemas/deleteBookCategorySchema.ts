@@ -2,8 +2,8 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const deleteBookCategoryPathParametersSchema = Schema.object({
-  bookId: Schema.notEmptyString(),
-  categoryId: Schema.notEmptyString(),
+  bookId: Schema.string(),
+  categoryId: Schema.string(),
 });
 
 export type DeleteBookCategoryPathParameters = SchemaType<typeof deleteBookCategoryPathParametersSchema>;

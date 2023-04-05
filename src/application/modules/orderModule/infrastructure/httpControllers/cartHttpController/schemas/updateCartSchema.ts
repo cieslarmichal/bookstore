@@ -10,8 +10,8 @@ export const updateCartPathParametersSchema = Schema.object({
 export type UpdateCartPathParameters = SchemaType<typeof updateCartPathParametersSchema>;
 
 export const updateCartBodySchema = Schema.object({
-  billingAddressId: Schema.notEmptyString().optional(),
-  shippingAddressId: Schema.notEmptyString().optional(),
+  billingAddressId: Schema.string().optional(),
+  shippingAddressId: Schema.string().optional(),
   deliveryMethod: Schema.enum(DeliveryMethod).optional(),
 });
 

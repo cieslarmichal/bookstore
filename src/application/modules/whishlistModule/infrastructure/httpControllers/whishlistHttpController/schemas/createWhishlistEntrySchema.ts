@@ -3,7 +3,7 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createWhishlistEntryBodySchema = Schema.object({
-  bookId: Schema.notEmptyString(),
+  bookId: Schema.string(),
 });
 
 export type CreateWhishlistEntryBody = SchemaType<typeof createWhishlistEntryBodySchema>;

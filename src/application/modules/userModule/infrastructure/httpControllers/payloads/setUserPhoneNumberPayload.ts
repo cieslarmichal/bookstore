@@ -1,10 +1,10 @@
-import { SchemaType } from '../../../../../libs/validator/schemaType';
-import { Schema } from '../../../../../libs/validator/schema';
 import { AccessTokenData } from '../../../../../common/types/accessTokenData';
+import { Schema } from '../../../../../libs/validator/schema';
+import { SchemaType } from '../../../../../libs/validator/schemaType';
 
 export const setUserPhoneNumberPayloadSchema = Schema.object({
-  userId: Schema.notEmptyString(),
-  phoneNumber: Schema.notEmptyString(),
+  userId: Schema.string(),
+  phoneNumber: Schema.string(),
   accessTokenData: Schema.unsafeType<AccessTokenData>(),
 });
 

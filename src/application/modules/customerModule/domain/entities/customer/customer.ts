@@ -3,8 +3,8 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const customerInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  userId: Schema.notEmptyString(),
+  id: Schema.string(),
+  userId: Schema.string(),
 });
 
 export type CustomerInput = SchemaType<typeof customerInputSchema>;

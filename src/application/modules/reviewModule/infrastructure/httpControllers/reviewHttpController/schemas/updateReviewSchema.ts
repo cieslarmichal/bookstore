@@ -10,7 +10,7 @@ export type UpdateReviewPathParameters = SchemaType<typeof updateReviewPathParam
 
 export const updateReviewBodySchema = Schema.object({
   rate: Schema.positiveInteger().optional(),
-  comment: Schema.notEmptyString().optional(),
+  comment: Schema.string().optional(),
 });
 
 export type UpdateReviewBody = SchemaType<typeof updateReviewBodySchema>;

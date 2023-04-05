@@ -4,10 +4,10 @@ import { Validator } from '../../../../../../libs/validator/validator';
 import { Book } from '../../../../bookModule/domain/entities/book/book';
 
 export const authorInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  firstName: Schema.notEmptyString(),
-  lastName: Schema.notEmptyString(),
-  about: Schema.notEmptyString().optional(),
+  id: Schema.string(),
+  firstName: Schema.string(),
+  lastName: Schema.string(),
+  about: Schema.string().optional(),
   books: Schema.array(Schema.instanceof(Book)).optional(),
 });
 

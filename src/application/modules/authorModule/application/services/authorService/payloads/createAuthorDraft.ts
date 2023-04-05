@@ -2,9 +2,9 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createAuthorDraftSchema = Schema.object({
-  firstName: Schema.notEmptyString(),
-  lastName: Schema.notEmptyString(),
-  about: Schema.notEmptyString().optional(),
+  firstName: Schema.string(),
+  lastName: Schema.string(),
+  about: Schema.string().optional(),
 });
 
 export type CreateAuthorDraft = SchemaType<typeof createAuthorDraftSchema>;

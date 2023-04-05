@@ -6,12 +6,12 @@ import { Validator } from '../../../../../../libs/validator/validator';
 import { LineItem } from '../lineItem/lineItem';
 
 export const cartInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  customerId: Schema.notEmptyString(),
+  id: Schema.string(),
+  customerId: Schema.string(),
   status: Schema.enum(CartStatus),
   totalPrice: Schema.number(),
-  billingAddressId: Schema.notEmptyString().optional(),
-  shippingAddressId: Schema.notEmptyString().optional(),
+  billingAddressId: Schema.string().optional(),
+  shippingAddressId: Schema.string().optional(),
   deliveryMethod: Schema.enum(DeliveryMethod).optional(),
   lineItems: Schema.array(Schema.instanceof(LineItem)).optional(),
 });

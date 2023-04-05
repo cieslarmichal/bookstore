@@ -5,8 +5,8 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 export const findReviewsQueryParametersSchema = Schema.object({
   page: Schema.number().optional(),
   limit: Schema.number().optional(),
-  customerId: Schema.notEmptyString().optional(),
-  isbn: Schema.notEmptyString().optional(),
+  customerId: Schema.string().optional(),
+  isbn: Schema.string().optional(),
 });
 
 export type FindReviewsQueryParameters = SchemaType<typeof findReviewsQueryParametersSchema>;

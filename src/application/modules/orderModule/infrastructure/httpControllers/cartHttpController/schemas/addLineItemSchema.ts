@@ -9,7 +9,7 @@ export const addLineItemPathParametersSchema = Schema.object({
 export type AddLineItemPathParameters = SchemaType<typeof addLineItemPathParametersSchema>;
 
 export const addLineItemBodySchema = Schema.object({
-  bookId: Schema.notEmptyString(),
+  bookId: Schema.string(),
   quantity: Schema.positiveNumber(),
 });
 

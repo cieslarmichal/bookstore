@@ -3,11 +3,11 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const reviewInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  isbn: Schema.notEmptyString(),
+  id: Schema.string(),
+  isbn: Schema.string(),
   rate: Schema.positiveInteger(),
-  comment: Schema.notEmptyString().optional(),
-  customerId: Schema.notEmptyString(),
+  comment: Schema.string().optional(),
+  customerId: Schema.string(),
 });
 
 export type ReviewInput = SchemaType<typeof reviewInputSchema>;

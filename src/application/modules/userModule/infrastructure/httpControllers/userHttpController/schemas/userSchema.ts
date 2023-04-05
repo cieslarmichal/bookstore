@@ -1,7 +1,7 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 
 export const userSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  email: Schema.notEmptyString().optional(),
-  phoneNumber: Schema.notEmptyString().optional(),
+  id: Schema.string(),
+  email: Schema.string().optional(),
+  phoneNumber: Schema.string().optional(),
 });

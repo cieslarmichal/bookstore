@@ -3,7 +3,7 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createCustomerBodySchema = Schema.object({
-  userId: Schema.notEmptyString(),
+  userId: Schema.string(),
 });
 
 export type CreateCustomerBody = SchemaType<typeof createCustomerBodySchema>;

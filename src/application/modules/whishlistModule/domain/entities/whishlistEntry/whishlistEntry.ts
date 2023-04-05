@@ -3,9 +3,9 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const whishlistEntryInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  bookId: Schema.notEmptyString(),
-  customerId: Schema.notEmptyString(),
+  id: Schema.string(),
+  bookId: Schema.string(),
+  customerId: Schema.string(),
 });
 
 export type WhishlistEntryInput = SchemaType<typeof whishlistEntryInputSchema>;

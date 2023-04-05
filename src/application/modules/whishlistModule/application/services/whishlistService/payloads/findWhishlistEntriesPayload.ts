@@ -6,7 +6,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 export const findWhishlistEntriesPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   pagination: Schema.unsafeType<PaginationData>(),
-  customerId: Schema.notEmptyString(),
+  customerId: Schema.string(),
 });
 
 export type FindWhishlistEntriesPayload = SchemaType<typeof findWhishlistEntriesPayloadSchema>;

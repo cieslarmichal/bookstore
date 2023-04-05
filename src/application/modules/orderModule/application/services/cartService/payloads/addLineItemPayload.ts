@@ -5,7 +5,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const addLineItemPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  cartId: Schema.notEmptyString(),
+  cartId: Schema.string(),
   draft: addLineItemDraftSchema,
 });
 

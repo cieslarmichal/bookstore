@@ -4,7 +4,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const deleteBookPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  bookId: Schema.notEmptyString(),
+  bookId: Schema.string(),
 });
 
 export type DeleteBookPayload = SchemaType<typeof deleteBookPayloadSchema>;

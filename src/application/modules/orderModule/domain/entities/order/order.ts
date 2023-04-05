@@ -5,10 +5,10 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const orderInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  cartId: Schema.notEmptyString(),
-  customerId: Schema.notEmptyString(),
-  orderNumber: Schema.notEmptyString(),
+  id: Schema.string(),
+  cartId: Schema.string(),
+  customerId: Schema.string(),
+  orderNumber: Schema.string(),
   status: Schema.enum(OrderStatus),
   paymentMethod: Schema.enum(PaymentMethod),
 });

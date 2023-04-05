@@ -4,7 +4,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const deleteCartPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  cartId: Schema.notEmptyString(),
+  cartId: Schema.string(),
 });
 
 export type DeleteCartPayload = SchemaType<typeof deleteCartPayloadSchema>;

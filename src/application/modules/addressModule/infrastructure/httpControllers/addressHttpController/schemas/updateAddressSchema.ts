@@ -9,15 +9,15 @@ export const updateAddressPathParametersSchema = Schema.object({
 export type UpdateAddressPathParameters = SchemaType<typeof updateAddressPathParametersSchema>;
 
 export const updateAddressBodySchema = Schema.object({
-  firstName: Schema.notEmptyString().optional(),
-  lastName: Schema.notEmptyString().optional(),
-  phoneNumber: Schema.notEmptyString().optional(),
-  country: Schema.notEmptyString().optional(),
-  state: Schema.notEmptyString().optional(),
-  city: Schema.notEmptyString().optional(),
-  zipCode: Schema.notEmptyString().optional(),
-  streetAddress: Schema.notEmptyString().optional(),
-  deliveryInstructions: Schema.notEmptyString().optional(),
+  firstName: Schema.string().optional(),
+  lastName: Schema.string().optional(),
+  phoneNumber: Schema.string().optional(),
+  country: Schema.string().optional(),
+  state: Schema.string().optional(),
+  city: Schema.string().optional(),
+  zipCode: Schema.string().optional(),
+  streetAddress: Schema.string().optional(),
+  deliveryInstructions: Schema.string().optional(),
 });
 
 export type UpdateAddressBody = SchemaType<typeof updateAddressBodySchema>;

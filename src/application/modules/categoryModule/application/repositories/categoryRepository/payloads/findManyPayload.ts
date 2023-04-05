@@ -6,7 +6,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 export const findManyPayloadSchema = Schema.object({
   filters: Schema.array(Schema.unsafeType<Filter>()),
   pagination: Schema.unsafeType<PaginationData>(),
-  bookId: Schema.notEmptyString().optional(),
+  bookId: Schema.string().optional(),
 });
 
 export type FindManyPayload = SchemaType<typeof findManyPayloadSchema>;

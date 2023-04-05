@@ -4,8 +4,8 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const setUserPhoneNumberPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  userId: Schema.notEmptyString(),
-  phoneNumber: Schema.notEmptyString(),
+  userId: Schema.string(),
+  phoneNumber: Schema.string(),
 });
 
 export type SetUserPhoneNumberPayload = SchemaType<typeof setUserPhoneNumberPayloadSchema>;

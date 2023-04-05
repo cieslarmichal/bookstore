@@ -3,8 +3,8 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 import { PaymentMethod } from '../../../../domain/entities/order/paymentMethod';
 
 export const createOrderDraftSchema = Schema.object({
-  cartId: Schema.notEmptyString(),
-  orderCreatorId: Schema.notEmptyString(),
+  cartId: Schema.string(),
+  orderCreatorId: Schema.string(),
   paymentMethod: Schema.enum(PaymentMethod),
 });
 

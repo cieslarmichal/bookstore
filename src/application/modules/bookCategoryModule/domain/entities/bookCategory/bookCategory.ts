@@ -3,9 +3,9 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const bookCategoryInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  bookId: Schema.notEmptyString(),
-  categoryId: Schema.notEmptyString(),
+  id: Schema.string(),
+  bookId: Schema.string(),
+  categoryId: Schema.string(),
 });
 
 export type BookCategoryInput = SchemaType<typeof bookCategoryInputSchema>;

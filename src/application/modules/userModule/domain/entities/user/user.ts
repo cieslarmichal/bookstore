@@ -3,10 +3,10 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const userInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  email: Schema.notEmptyString().optional(),
-  phoneNumber: Schema.notEmptyString().optional(),
-  password: Schema.notEmptyString(),
+  id: Schema.string(),
+  email: Schema.string().optional(),
+  phoneNumber: Schema.string().optional(),
+  password: Schema.string(),
 });
 
 export type UserInput = SchemaType<typeof userInputSchema>;

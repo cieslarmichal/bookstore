@@ -6,8 +6,8 @@ import { DeliveryMethod } from '../../../../domain/entities/cart/deliveryMethod'
 export const updateOneDraftSchema = Schema.object({
   status: Schema.enum(CartStatus).optional(),
   totalPrice: Schema.number().optional(),
-  billingAddressId: Schema.notEmptyString().optional(),
-  shippingAddressId: Schema.notEmptyString().optional(),
+  billingAddressId: Schema.string().optional(),
+  shippingAddressId: Schema.string().optional(),
   deliveryMethod: Schema.enum(DeliveryMethod).optional(),
 });
 

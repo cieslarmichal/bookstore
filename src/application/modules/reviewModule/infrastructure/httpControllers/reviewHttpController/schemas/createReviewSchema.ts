@@ -3,9 +3,9 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createReviewBodySchema = Schema.object({
-  isbn: Schema.notEmptyString(),
+  isbn: Schema.string(),
   rate: Schema.positiveInteger(),
-  comment: Schema.notEmptyString().optional(),
+  comment: Schema.string().optional(),
 });
 
 export type CreateReviewBody = SchemaType<typeof createReviewBodySchema>;

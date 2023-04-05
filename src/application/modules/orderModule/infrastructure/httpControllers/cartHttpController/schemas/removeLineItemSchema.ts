@@ -9,7 +9,7 @@ export const removeLineItemPathParametersSchema = Schema.object({
 export type RemoveLineItemPathParameters = SchemaType<typeof removeLineItemPathParametersSchema>;
 
 export const removeLineItemBodySchema = Schema.object({
-  lineItemId: Schema.notEmptyString(),
+  lineItemId: Schema.string(),
   quantity: Schema.positiveNumber(),
 });
 

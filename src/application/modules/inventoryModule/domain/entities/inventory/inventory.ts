@@ -3,8 +3,8 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { Validator } from '../../../../../../libs/validator/validator';
 
 export const inventoryInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  bookId: Schema.notEmptyString(),
+  id: Schema.string(),
+  bookId: Schema.string(),
   quantity: Schema.integer(),
 });
 

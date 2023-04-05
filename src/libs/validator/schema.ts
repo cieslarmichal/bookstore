@@ -10,10 +10,6 @@ export class Schema {
     return z.literal(value);
   }
 
-  public static notEmptyString(): z.ZodString {
-    return z.string().min(1);
-  }
-
   public static unknownObject(): z.ZodObject<Record<string, ZodTypeAny>, 'passthrough'> {
     return z.object({}).passthrough();
   }

@@ -4,7 +4,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const findWhishlistEntryPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  whishlistEntryId: Schema.notEmptyString(),
+  whishlistEntryId: Schema.string(),
 });
 
 export type FindWhishlistEntryPayload = SchemaType<typeof findWhishlistEntryPayloadSchema>;

@@ -3,7 +3,7 @@ import { SchemaType } from '../../../../../../libs/validator/schemaType';
 import { AccessTokenData } from '../../../../../common/types/accessTokenData';
 
 export const findUserPayloadSchema = Schema.object({
-  id: Schema.notEmptyString(),
+  id: Schema.string(),
   accessTokenData: Schema.unsafeType<AccessTokenData>(),
 });
 

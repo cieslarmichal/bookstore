@@ -4,12 +4,12 @@ import { CartStatus } from '../../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../../domain/entities/cart/deliveryMethod';
 
 export const createOnePayloadSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  customerId: Schema.notEmptyString(),
+  id: Schema.string(),
+  customerId: Schema.string(),
   status: Schema.enum(CartStatus),
   totalPrice: Schema.number(),
-  billingAddressId: Schema.notEmptyString().optional(),
-  shippingAddressId: Schema.notEmptyString().optional(),
+  billingAddressId: Schema.string().optional(),
+  shippingAddressId: Schema.string().optional(),
   deliveryMethod: Schema.enum(DeliveryMethod).optional(),
 });
 

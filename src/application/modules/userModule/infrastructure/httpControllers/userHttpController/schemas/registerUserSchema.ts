@@ -4,12 +4,12 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const registerUserBodySchema = Schema.union([
   Schema.object({
-    email: Schema.notEmptyString(),
-    password: Schema.notEmptyString(),
+    email: Schema.string(),
+    password: Schema.string(),
   }),
   Schema.object({
-    phoneNumber: Schema.notEmptyString(),
-    password: Schema.notEmptyString(),
+    phoneNumber: Schema.string(),
+    password: Schema.string(),
   }),
 ]);
 

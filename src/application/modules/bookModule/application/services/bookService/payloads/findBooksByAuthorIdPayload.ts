@@ -8,7 +8,7 @@ export const findBooksByAuthorIdPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   filters: Schema.array(Schema.unsafeType<Filter>()),
   pagination: Schema.unsafeType<PaginationData>(),
-  authorId: Schema.notEmptyString(),
+  authorId: Schema.string(),
 });
 
 export type FindBooksByAuthorIdPayload = SchemaType<typeof findBooksByAuthorIdPayloadSchema>;

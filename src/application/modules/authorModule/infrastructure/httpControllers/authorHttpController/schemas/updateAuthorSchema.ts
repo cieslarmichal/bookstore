@@ -9,7 +9,7 @@ export const updateAuthorPathParametersSchema = Schema.object({
 export type UpdateAuthorPathParameters = SchemaType<typeof updateAuthorPathParametersSchema>;
 
 export const updateAuthorBodySchema = Schema.object({
-  about: Schema.notEmptyString(),
+  about: Schema.string(),
 });
 
 export type UpdateAuthorBody = SchemaType<typeof updateAuthorBodySchema>;

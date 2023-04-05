@@ -3,7 +3,7 @@ import { SchemaType } from '../../../validator/schemaType';
 import { headersSchema } from '../../httpHeader';
 
 export const httpServiceConfigSchema = Schema.object({
-  baseUrl: Schema.notEmptyString(),
+  baseUrl: Schema.string(),
   headers: headersSchema.optional(),
 });
 

@@ -2,10 +2,10 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createOnePayloadSchema = Schema.object({
-  id: Schema.notEmptyString(),
-  firstName: Schema.notEmptyString(),
-  lastName: Schema.notEmptyString(),
-  about: Schema.notEmptyString().optional(),
+  id: Schema.string(),
+  firstName: Schema.string(),
+  lastName: Schema.string(),
+  about: Schema.string().optional(),
 });
 
 export type CreateOnePayload = SchemaType<typeof createOnePayloadSchema>;

@@ -1,14 +1,14 @@
-import { Validator } from '../../../../../../libs/validator/validator';
 import { Schema } from '../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../libs/validator/schemaType';
+import { Validator } from '../../../../../../libs/validator/validator';
 
 export const lineItemInputSchema = Schema.object({
-  id: Schema.notEmptyString(),
+  id: Schema.string(),
   quantity: Schema.integer(),
   price: Schema.number(),
   totalPrice: Schema.number(),
-  bookId: Schema.notEmptyString(),
-  cartId: Schema.notEmptyString(),
+  bookId: Schema.string(),
+  cartId: Schema.string(),
 });
 
 export type LineItemInput = SchemaType<typeof lineItemInputSchema>;

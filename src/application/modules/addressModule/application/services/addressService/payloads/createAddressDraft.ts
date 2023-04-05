@@ -2,16 +2,16 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createAddressDraftSchema = Schema.object({
-  firstName: Schema.notEmptyString(),
-  lastName: Schema.notEmptyString(),
-  phoneNumber: Schema.notEmptyString(),
-  country: Schema.notEmptyString(),
-  state: Schema.notEmptyString(),
-  city: Schema.notEmptyString(),
-  zipCode: Schema.notEmptyString(),
-  streetAddress: Schema.notEmptyString(),
-  customerId: Schema.notEmptyString(),
-  deliveryInstructions: Schema.notEmptyString().optional(),
+  firstName: Schema.string(),
+  lastName: Schema.string(),
+  phoneNumber: Schema.string(),
+  country: Schema.string(),
+  state: Schema.string(),
+  city: Schema.string(),
+  zipCode: Schema.string(),
+  streetAddress: Schema.string(),
+  customerId: Schema.string(),
+  deliveryInstructions: Schema.string().optional(),
 });
 
 export type CreateAddressDraft = SchemaType<typeof createAddressDraftSchema>;

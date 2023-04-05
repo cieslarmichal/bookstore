@@ -4,8 +4,8 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const setUserEmailPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  userId: Schema.notEmptyString(),
-  email: Schema.notEmptyString(),
+  userId: Schema.string(),
+  email: Schema.string(),
 });
 
 export type SetUserEmailPayload = SchemaType<typeof setUserEmailPayloadSchema>;

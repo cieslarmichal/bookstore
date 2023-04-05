@@ -8,7 +8,7 @@ export const findBooksByCategoryIdPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   filters: Schema.array(Schema.unsafeType<Filter>()),
   pagination: Schema.unsafeType<PaginationData>(),
-  categoryId: Schema.notEmptyString(),
+  categoryId: Schema.string(),
 });
 
 export type FindBooksByCategoryIdPayload = SchemaType<typeof findBooksByCategoryIdPayloadSchema>;

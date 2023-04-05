@@ -5,7 +5,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const findCartsPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  customerId: Schema.notEmptyString(),
+  customerId: Schema.string(),
   pagination: Schema.unsafeType<PaginationData>(),
 });
 

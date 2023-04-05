@@ -4,7 +4,7 @@ import { SchemaType } from '../../../../../../../../libs/validator/schemaType';
 import { PaymentMethod } from '../../../../../domain/entities/order/paymentMethod';
 
 export const createOrderBodySchema = Schema.object({
-  cartId: Schema.notEmptyString(),
+  cartId: Schema.string(),
   paymentMethod: Schema.enum(PaymentMethod),
 });
 

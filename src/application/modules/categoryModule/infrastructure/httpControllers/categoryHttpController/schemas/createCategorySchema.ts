@@ -3,7 +3,7 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createCategoryBodySchema = Schema.object({
-  name: Schema.notEmptyString(),
+  name: Schema.string(),
 });
 
 export type CreateCategoryBody = SchemaType<typeof createCategoryBodySchema>;

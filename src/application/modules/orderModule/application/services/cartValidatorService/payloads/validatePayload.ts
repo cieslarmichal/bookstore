@@ -6,7 +6,7 @@ import { Cart } from '../../../../domain/entities/cart/cart';
 export const validatePayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   cart: Schema.instanceof(Cart),
-  orderCreatorId: Schema.notEmptyString(),
+  orderCreatorId: Schema.string(),
 });
 
 export type ValidatePayload = SchemaType<typeof validatePayloadSchema>;
