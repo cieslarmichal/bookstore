@@ -40,6 +40,7 @@ import { orderModuleSymbols } from '../modules/orderModule/orderModuleSymbols';
 import { ReviewHttpController } from '../modules/reviewModule/infrastructure/httpControllers/reviewHttpController/reviewHttpController';
 import { reviewModuleSymbols } from '../modules/reviewModule/reviewModuleSymbols';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
+import { UserHttpController } from '../modules/userModule/infrastructure/httpControllers/userHttpController/userHttpController';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
 import { WhishlistHttpController } from '../modules/whishlistModule/infrastructure/httpControllers/whishlistHttpController/whishlistHttpController';
 import { whishlistModuleSymbols } from '../modules/whishlistModule/whishlistModuleSymbols';
@@ -120,6 +121,10 @@ export class HttpRouter {
     );
 
     this.registerControllerRoutes({ controller: whishlistHttpController });
+
+    const userHttpController = this.container.get<UserHttpController>(userModuleSymbols.userHttpController);
+
+    this.registerControllerRoutes({ controller: userHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {
