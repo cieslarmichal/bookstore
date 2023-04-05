@@ -188,29 +188,39 @@ export class ReviewHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const review = await unitOfWork.runInTransaction(async () => {
-      const { userId } = request.context;
+    let review: Review | undefined;
 
-      let customer: Customer;
+    try {
+      review = await unitOfWork.runInTransaction(async () => {
+        const { userId } = request.context;
 
-      try {
-        customer = await this.customerService.findCustomer({ unitOfWork, userId });
-      } catch (error) {
-        throw new UserIsNotCustomerError({ userId: userId as string });
+        let customer: Customer;
+
+        try {
+          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+        } catch (error) {
+          throw new UserIsNotCustomerError({ userId: userId as string });
+        }
+
+        let createReviewDraft: CreateReviewDraft = {
+          isbn,
+          rate,
+          customerId: customer.id,
+        };
+
+        if (comment) {
+          createReviewDraft = { ...createReviewDraft, comment };
+        }
+
+        return this.reviewService.createReview({ unitOfWork, draft: createReviewDraft });
+      });
+    } catch (error) {
+      if (error instanceof UserIsNotCustomerError) {
+        return { statusCode: HttpStatusCode.forbidden, body: { error } };
       }
 
-      let createReviewDraft: CreateReviewDraft = {
-        isbn,
-        rate,
-        customerId: customer.id,
-      };
-
-      if (comment) {
-        createReviewDraft = { ...createReviewDraft, comment };
-      }
-
-      return this.reviewService.createReview({ unitOfWork, draft: createReviewDraft });
-    });
+      throw error;
+    }
 
     return { statusCode: HttpStatusCode.created, body: { review } };
   }

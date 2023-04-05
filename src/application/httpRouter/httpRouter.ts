@@ -34,6 +34,8 @@ import { customerModuleSymbols } from '../modules/customerModule/customerModuleS
 import { CustomerHttpController } from '../modules/customerModule/infrastructure/httpControllers/customerHttpController/customerHttpController';
 import { InventoryHttpController } from '../modules/inventoryModule/infrastructure/httpControllers/inventoryHttpController/inventoryHttpController';
 import { inventoryModuleSymbols } from '../modules/inventoryModule/inventoryModuleSymbols';
+import { CartHttpController } from '../modules/orderModule/infrastructure/httpControllers/cartHttpController/cartHttpController';
+import { OrderHttpController } from '../modules/orderModule/infrastructure/httpControllers/orderController/orderHttpController/orderHttpController';
 import { orderModuleSymbols } from '../modules/orderModule/orderModuleSymbols';
 import { ReviewHttpController } from '../modules/reviewModule/infrastructure/httpControllers/reviewHttpController/reviewHttpController';
 import { reviewModuleSymbols } from '../modules/reviewModule/reviewModuleSymbols';
@@ -103,9 +105,13 @@ export class HttpRouter {
 
     this.registerControllerRoutes({ controller: reviewHttpController });
 
-    const cartHttpController = this.container.get<ReviewHttpController>(orderModuleSymbols.cartHttpController);
+    const cartHttpController = this.container.get<CartHttpController>(orderModuleSymbols.cartHttpController);
 
     this.registerControllerRoutes({ controller: cartHttpController });
+
+    const orderHttpController = this.container.get<OrderHttpController>(orderModuleSymbols.orderHttpController);
+
+    this.registerControllerRoutes({ controller: orderHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {

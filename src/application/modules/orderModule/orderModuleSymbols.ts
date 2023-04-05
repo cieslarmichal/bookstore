@@ -3,7 +3,7 @@ export const orderModuleSymbols = {
   orderRepositoryFactory: Symbol('orderRepositoryFactory'),
   orderService: Symbol('orderService'),
   cartValidatorService: Symbol('cartValidatorService'),
-  orderController: Symbol('orderController'),
+  orderHttpController: Symbol('orderHttpController'),
 
   cartMapper: Symbol('cartMapper'),
   cartRepositoryFactory: Symbol('cartRepositoryFactory'),
