@@ -179,9 +179,9 @@ describe(`OrderController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -202,7 +202,7 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -210,7 +210,7 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const { paymentMethod } = orderEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -241,7 +241,7 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -262,9 +262,9 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const { id: inventoryId, quantity: inventoryQuantity } = inventoryEntityTestFactory.create({ quantity: 10 });
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -331,7 +331,7 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const orderRepository = orderRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -343,7 +343,7 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const { id: orderId, paymentMethod, orderNumber, status: orderStatus } = orderEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -383,7 +383,7 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const orderRepository = orderRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -395,9 +395,9 @@ describe(`OrderController (${baseUrl})`, () => {
 
         const { id: orderId, paymentMethod, orderNumber, status: orderStatus } = orderEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 

@@ -165,9 +165,9 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, email, password, role } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ id, email: email as string, password, role });
+        await userRepository.createOne({ id, email: email as string, password });
 
         const response = await request(server.instance).post(registerUrl).send({
           email,
@@ -217,9 +217,9 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, phoneNumber, password, role } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password, role });
+        await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password });
 
         const response = await request(server.instance).post(registerUrl).send({
           phoneNumber,
@@ -282,11 +282,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, email, password, role } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
-        await userRepository.createOne({ id, email: email as string, password: hashedPassword, role });
+        await userRepository.createOne({ id, email: email as string, password: hashedPassword });
 
         const response = await request(server.instance).post(loginUrl).send({
           email,
@@ -336,11 +336,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, phoneNumber, password, role } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
         const hashedPassword = await hashService.hash(password);
 
-        await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password: hashedPassword, role });
+        await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password: hashedPassword });
 
         const response = await request(server.instance).post(loginUrl).send({
           phoneNumber,
@@ -357,9 +357,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password, role } = userEntityTestFactory.create();
+        const { id: userId, password } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setPasswordUrl)
@@ -376,9 +376,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password, role } = userEntityTestFactory.create();
+        const { id: userId, password } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setPasswordUrl)
@@ -411,11 +411,11 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, password, role } = userEntityTestFactory.create();
+        const { id: userId, password } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setPasswordUrl)
@@ -437,11 +437,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, email, password, role } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, email: email as string, password, role });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setPasswordUrl)
@@ -461,9 +461,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email, role } = userEntityTestFactory.create();
+        const { id: userId, email } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setEmailUrl)
@@ -480,9 +480,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email, role } = userEntityTestFactory.create();
+        const { id: userId, email } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setEmailUrl)
@@ -515,11 +515,11 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, email, role } = userEntityTestFactory.create();
+        const { id: userId, email } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setEmailUrl)
@@ -541,15 +541,15 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id: id1, email, password, role } = userEntityTestFactory.create();
+        const { id: id1, email, password } = userEntityTestFactory.create();
 
         const { id: id2, phoneNumber } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ id: id1, email: email as string, password, role });
+        await userRepository.createOne({ id: id1, email: email as string, password });
 
-        const user = await userRepository.createOne({ id: id2, phoneNumber: phoneNumber as string, password, role });
+        const user = await userRepository.createOne({ id: id2, phoneNumber: phoneNumber as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setEmailUrl)
@@ -571,11 +571,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, email, password, role } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, email: email as string, password, role });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setEmailUrl)
@@ -597,11 +597,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, phoneNumber, email, password, role } = userEntityTestFactory.create();
+        const { id, phoneNumber, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password, role });
+        const user = await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setEmailUrl)
@@ -621,9 +621,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber, role } = userEntityTestFactory.create();
+        const { id: userId, phoneNumber } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setPhoneNumberUrl)
@@ -640,9 +640,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber, role } = userEntityTestFactory.create();
+        const { id: userId, phoneNumber } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setPhoneNumberUrl)
@@ -675,11 +675,11 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, phoneNumber, role } = userEntityTestFactory.create();
+        const { id: userId, phoneNumber } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(setPhoneNumberUrl)
@@ -701,15 +701,15 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id: id1, phoneNumber, password, role } = userEntityTestFactory.create();
+        const { id: id1, phoneNumber, password } = userEntityTestFactory.create();
 
         const { id: id2, email } = userEntityTestFactory.create();
 
-        await userRepository.createOne({ id: id1, role, phoneNumber: phoneNumber as string, password });
+        await userRepository.createOne({ id: id1, phoneNumber: phoneNumber as string, password });
 
-        const user = await userRepository.createOne({ id: id2, role, email: email as string, password });
+        const user = await userRepository.createOne({ id: id2, email: email as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setPhoneNumberUrl)
@@ -731,11 +731,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, role, phoneNumber, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, role, phoneNumber: phoneNumber as string, password });
+        const user = await userRepository.createOne({ id, phoneNumber: phoneNumber as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setPhoneNumberUrl)
@@ -757,11 +757,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, role, phoneNumber, email, password } = userEntityTestFactory.create();
+        const { id, phoneNumber, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, role, email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .post(setPhoneNumberUrl)
@@ -781,9 +781,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${userId}`)
@@ -801,9 +801,9 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, role, email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, role, email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
         const response = await request(server.instance).get(`${baseUrl}/${user.id}`);
 
@@ -815,11 +815,11 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${targetUserId}`)
@@ -837,11 +837,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, role, email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, role, email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${user.id}`)
@@ -857,9 +857,9 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${userId}`)
@@ -878,9 +878,9 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, role, email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, role, email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
         const response = await request(server.instance).delete(`${baseUrl}/${user.id}`);
 
@@ -892,11 +892,11 @@ describe(`UserController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id: targetUserId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${targetUserId}`)
@@ -914,11 +914,11 @@ describe(`UserController (${baseUrl})`, () => {
 
         const userRepository = userRepositoryFactory.create(entityManager);
 
-        const { id, role, email, password } = userEntityTestFactory.create();
+        const { id, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id, role, email: email as string, password });
+        const user = await userRepository.createOne({ id, email: email as string, password });
 
-        const accessToken = tokenService.createToken({ userId: user.id, role: user.role });
+        const accessToken = tokenService.createToken({ userId: user.id: user.role });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${user.id}`)

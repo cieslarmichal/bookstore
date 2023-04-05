@@ -3,14 +3,14 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { CartService } from './cartService';
-import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModuleSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
+import { DependencyInjectionContainerFactory } from '../../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../../../../libs/postgres/postgresModule';
+import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressModule } from '../../../../addressModule/addressModule';
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
@@ -140,11 +140,11 @@ describe('CartServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -170,13 +170,13 @@ describe('CartServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
         const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -221,13 +221,13 @@ describe('CartServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
         const { id: cartId, totalPrice } = cartEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -285,7 +285,7 @@ describe('CartServiceImpl', () => {
 
         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -303,7 +303,7 @@ describe('CartServiceImpl', () => {
           title,
         } = bookEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -386,7 +386,7 @@ describe('CartServiceImpl', () => {
 
         const lineItemRepository = lineItemRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -409,7 +409,7 @@ describe('CartServiceImpl', () => {
           quantity,
         } = lineItemEntityTestFactory.create({ quantity: 2, price: bookPrice });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -473,7 +473,7 @@ describe('CartServiceImpl', () => {
 
         const lineItemRepository = lineItemRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -496,7 +496,7 @@ describe('CartServiceImpl', () => {
           quantity,
         } = lineItemEntityTestFactory.create({ quantity: 2, price: bookPrice });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -572,7 +572,7 @@ describe('CartServiceImpl', () => {
 
       const customerRepository = customerRepositoryFactory.create(entityManager);
 
-      const { id: userId, email, password, role } = userEntityTestFactory.create();
+      const { id: userId, email, password } = userEntityTestFactory.create();
 
       const { id: customerId } = customerEntityTestFactory.create();
 
@@ -580,7 +580,7 @@ describe('CartServiceImpl', () => {
 
       const { id: lineItemId } = lineItemEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+      const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -616,13 +616,13 @@ describe('CartServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
         const { id: cartId, status, totalPrice } = cartEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 

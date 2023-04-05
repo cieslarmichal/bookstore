@@ -3,14 +3,14 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { CustomerService } from './customerService';
-import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModuleSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
+import { DependencyInjectionContainerFactory } from '../../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../../../../libs/postgres/postgresModule';
+import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
@@ -104,9 +104,9 @@ describe('CustomerServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerService.createCustomer({ unitOfWork, draft: { userId: user.id } });
 
@@ -126,11 +126,11 @@ describe('CustomerServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -154,11 +154,11 @@ describe('CustomerServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -178,11 +178,11 @@ describe('CustomerServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -218,11 +218,11 @@ describe('CustomerServiceImpl', () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 

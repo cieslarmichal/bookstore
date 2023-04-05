@@ -142,11 +142,11 @@ describe(`BookController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { title } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -182,11 +182,11 @@ describe(`BookController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -210,11 +210,11 @@ describe(`BookController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -258,11 +258,11 @@ describe(`BookController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const book = await bookRepository.createOne({
           id,
@@ -302,13 +302,13 @@ describe(`BookController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const bookEntity1 = bookEntityTestFactory.create();
 
         const bookEntity2 = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         await bookRepository.createOne({
           id: bookEntity1.id,
@@ -345,11 +345,11 @@ describe(`BookController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, price } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -400,13 +400,13 @@ describe(`BookController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
         const { price: newPrice } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const book = await bookRepository.createOne({
           id,
@@ -435,11 +435,11 @@ describe(`BookController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -484,11 +484,11 @@ describe(`BookController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const book = await bookRepository.createOne({
           id,

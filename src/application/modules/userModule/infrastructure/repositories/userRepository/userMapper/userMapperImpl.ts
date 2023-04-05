@@ -6,7 +6,7 @@ import { UserEntity } from '../userEntity/userEntity';
 @Injectable()
 export class UserMapperImpl implements UserMapper {
   public map(entity: UserEntity): User {
-    const { id, email, phoneNumber, password, role } = entity;
+    const { id, email, phoneNumber, password } = entity;
 
     return new User({
       id,

@@ -64,9 +64,9 @@ describe(`AddressController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -87,11 +87,11 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -124,13 +124,13 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -168,13 +168,13 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -200,7 +200,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -216,7 +216,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -251,7 +251,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: otherUserId } = userEntityTestFactory.create();
 
@@ -269,9 +269,9 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId: otherUserId, role });
+        const accessToken = tokenService.createToken({ userId: otherUserId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -308,7 +308,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -324,9 +324,9 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -375,7 +375,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId1, email: email1, password, role } = userEntityTestFactory.create();
+        const { id: userId1, email: email1, password } = userEntityTestFactory.create();
 
         const { id: userId2, email: email2 } = userEntityTestFactory.create();
 
@@ -397,11 +397,11 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { id: addressId2 } = addressEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId: userId1, role });
+        const accessToken = tokenService.createToken({ userId: userId1 });
 
-        const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password, role });
+        const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password });
 
-        const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password, role });
+        const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password });
 
         const customer1 = await customerRepository.createOne({ id: customerId1, userId: user1.id });
 
@@ -478,7 +478,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -496,9 +496,9 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const { streetAddress: updatedStreetAddress } = addressEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -538,13 +538,13 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const customerRepository = customerRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -571,7 +571,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -587,7 +587,7 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -622,7 +622,7 @@ describe(`AddressController (${baseUrl})`, () => {
 
         const addressRepository = addressRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -638,9 +638,9 @@ describe(`AddressController (${baseUrl})`, () => {
           streetAddress,
         } = addressEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 

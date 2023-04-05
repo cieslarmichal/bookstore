@@ -27,9 +27,9 @@ export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}
 
   public async createOne(input: CreateOnePayload): Promise<User> {
-    const { id, email, phoneNumber, password, role } = Validator.validate(createOnePayloadSchema, input);
+    const { id, email, phoneNumber, password } = Validator.validate(createOnePayloadSchema, input);
 
-    let userEntityInput: UserEntity = { id, password, role };
+    let userEntityInput: UserEntity = { id, password };
 
     if (email) {
       userEntityInput = { ...userEntityInput, email };

@@ -136,11 +136,11 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { firstName } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -172,11 +172,11 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { firstName, lastName } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -196,11 +196,11 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .get(`${baseUrl}/${id}`)
@@ -236,11 +236,11 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const author = await authorRepository.createOne({ id, firstName, lastName, about: about as string });
 
@@ -272,13 +272,13 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const authorEntity1 = authorEntityTestFactory.create();
 
         const authorEntity2 = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         await authorRepository.createOne({
           id: authorEntity1.id,
@@ -309,11 +309,11 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, firstName } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -330,11 +330,11 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, about } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .patch(`${baseUrl}/${id}`)
@@ -375,11 +375,11 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const author = await authorRepository.createOne({ id, firstName, lastName });
 
@@ -400,11 +400,11 @@ describe(`AuthorController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .delete(`${baseUrl}/${id}`)
@@ -441,11 +441,11 @@ describe(`AuthorController (${baseUrl})`, () => {
 
         const authorRepository = authorRepositoryFactory.create(entityManager);
 
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { id, firstName, lastName } = authorEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const author = await authorRepository.createOne({ id, firstName, lastName });
 

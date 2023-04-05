@@ -133,11 +133,11 @@ describe(`WhishlistController (${baseUrl})`, () => {
       expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async () => {
-        const { id: userId, role } = userEntityTestFactory.create();
+        const { id: userId } = userEntityTestFactory.create();
 
         const { customerId } = whishlistEntryEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const response = await request(server.instance)
           .post(baseUrl)
@@ -177,13 +177,13 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const book = await bookRepository.createOne({
           id: bookEntity.id,
@@ -195,7 +195,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
           releaseYear: bookEntity.releaseYear,
         });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -237,7 +237,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -245,7 +245,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const book = await bookRepository.createOne({
           id: bookEntity.id,
@@ -257,7 +257,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
           releaseYear: bookEntity.releaseYear,
         });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -290,13 +290,13 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const { id } = whishlistEntryEntityTestFactory.create();
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -323,7 +323,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -341,7 +341,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
           releaseYear: bookEntity.releaseYear,
         });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
@@ -371,7 +371,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const bookRepository = bookRepositoryFactory.create(entityManager);
 
-        const { id: userId, email, password, role } = userEntityTestFactory.create();
+        const { id: userId, email, password } = userEntityTestFactory.create();
 
         const { id: customerId } = customerEntityTestFactory.create();
 
@@ -379,7 +379,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const accessToken = tokenService.createToken({ userId, role });
+        const accessToken = tokenService.createToken({ userId });
 
         const book = await bookRepository.createOne({
           id: bookEntity.id,
@@ -391,7 +391,7 @@ describe(`WhishlistController (${baseUrl})`, () => {
           releaseYear: bookEntity.releaseYear,
         });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password, role });
+        const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
