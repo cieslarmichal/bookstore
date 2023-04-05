@@ -32,7 +32,6 @@ import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { UserRole } from '../../../../../../common/types/userRole';
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
@@ -212,7 +211,7 @@ export class WhishlistHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -231,7 +230,7 @@ export class WhishlistHttpController implements HttpController {
           whishlistEntryId: id,
         });
 
-        if (existingWhishlistEntry.customerId !== customer.id && role === UserRole.user) {
+        if (existingWhishlistEntry.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError({
             customerId: customer.id,
             whistlistEntryCustomerId: existingWhishlistEntry.customerId,

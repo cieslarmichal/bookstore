@@ -3,14 +3,14 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { UserService } from './userService';
-import { TestTransactionInternalRunner } from '../../../../../common/tests/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../../../libs/postgres/postgresModule';
-import { postgresModuleSymbols } from '../../../../../libs/postgres/postgresModuleSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../../../libs/unitOfWork/unitOfWorkModule';
+import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
+import { DependencyInjectionContainerFactory } from '../../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
+import { LoggerModule } from '../../../../../../libs/logger/loggerModule';
+import { LoggerModuleConfigTestFactory } from '../../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { PostgresModule } from '../../../../../../libs/postgres/postgresModule';
+import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
+import { PostgresModuleConfigTestFactory } from '../../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkModule';
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
 import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
@@ -24,7 +24,6 @@ import { LineItemEntity } from '../../../../orderModule/infrastructure/repositor
 import { OrderEntity } from '../../../../orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
 import { User } from '../../../domain/entities/user/user';
-import { UserRole } from '../../../../../../common/types/userRole';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
@@ -132,7 +131,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -189,7 +187,6 @@ describe('UserServiceImpl', () => {
           id,
           phoneNumber: phoneNumber as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -209,7 +206,7 @@ describe('UserServiceImpl', () => {
 
   describe('Login user by email', () => {
     it('should return access token', async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
@@ -224,7 +221,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password: hashedPassword,
-          role: UserRole.user,
         });
 
         const accessToken = await userService.loginUserByEmail({
@@ -238,7 +234,6 @@ describe('UserServiceImpl', () => {
         const data = tokenService.verifyToken(accessToken);
 
         expect(data['id']).toBe(user.id);
-        expect(data['role']).toBe(UserRole.user);
       });
     });
 
@@ -278,7 +273,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -298,7 +292,7 @@ describe('UserServiceImpl', () => {
 
   describe('Login user by phone number', () => {
     it('should return access token', async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
         const entityManager = unitOfWork.getEntityManager();
@@ -313,7 +307,6 @@ describe('UserServiceImpl', () => {
           id,
           phoneNumber: phoneNumber as string,
           password: hashedPassword,
-          role: UserRole.user,
         });
 
         const accessToken = await userService.loginUserByPhoneNumber({
@@ -327,7 +320,6 @@ describe('UserServiceImpl', () => {
         const data = tokenService.verifyToken(accessToken);
 
         expect(data['id']).toBe(user.id);
-        expect(data['role']).toBe(UserRole.user);
       });
     });
 
@@ -367,7 +359,6 @@ describe('UserServiceImpl', () => {
           id,
           phoneNumber: phoneNumber as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -402,7 +393,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password: hashedPassword,
-          role: UserRole.user,
         });
 
         const { password: newPassword } = userEntityTestFactory.create();
@@ -446,7 +436,6 @@ describe('UserServiceImpl', () => {
           id,
           phoneNumber: phoneNumber as string,
           password,
-          role: UserRole.user,
         });
 
         await userService.setUserEmail({ unitOfWork, userId: user.id, email: email as string });
@@ -472,7 +461,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -499,14 +487,12 @@ describe('UserServiceImpl', () => {
           id: userId1,
           email: email as string,
           password: password1,
-          role: UserRole.user,
         });
 
         const user = await userRepository.createOne({
           id: userId2,
           phoneNumber: phoneNumber as string,
           password: password2,
-          role: UserRole.user,
         });
 
         try {
@@ -547,7 +533,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         await userService.setUserPhoneNumber({ unitOfWork, userId: user.id, phoneNumber: phoneNumber as string });
@@ -573,7 +558,6 @@ describe('UserServiceImpl', () => {
           id,
           phoneNumber: phoneNumber as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -600,14 +584,12 @@ describe('UserServiceImpl', () => {
           id: userId1,
           phoneNumber: phoneNumber as string,
           password,
-          role: UserRole.user,
         });
 
         const user = await userRepository.createOne({
           id: userId2,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         try {
@@ -648,7 +630,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         const foundUser = await userService.findUser({ unitOfWork, userId: user.id });
@@ -687,7 +668,6 @@ describe('UserServiceImpl', () => {
           id,
           email: email as string,
           password,
-          role: UserRole.user,
         });
 
         await userService.deleteUser({ unitOfWork, userId: user.id });

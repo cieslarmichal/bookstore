@@ -20,7 +20,6 @@ import { LoggerService } from '../../../../../../libs/logger/services/loggerServ
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { User } from '../../../domain/entities/user/user';
-import { UserRole } from '../../../../../../common/types/userRole';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
 import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
@@ -67,7 +66,6 @@ export class UserServiceImpl implements UserService {
       id: UuidGenerator.generateUuid(),
       email,
       password: hashedPassword,
-      role: UserRole.user,
     });
 
     this.loggerService.info({ message: 'User registered.', context: { email, userId: user.id } });
@@ -99,7 +97,6 @@ export class UserServiceImpl implements UserService {
       id: UuidGenerator.generateUuid(),
       phoneNumber,
       password: hashedPassword,
-      role: UserRole.user,
     });
 
     this.loggerService.info({ message: 'User registered.', context: { phoneNumber, userId: user.id } });

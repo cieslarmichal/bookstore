@@ -1,5 +1,4 @@
 import { AuthorizationType } from '../../../../common/http/authorizationType';
-import { UserRole } from '../../../../common/types/userRole';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
 import { TokenService } from '../../../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../../../modules/userModule/userModuleSymbols';
@@ -7,7 +6,6 @@ import { BearerTokenAuthorizationError } from '../errors/bearerTokenAuthorizatio
 
 export interface AccessTokenData {
   readonly userId: string;
-  readonly role: UserRole;
 }
 
 @Injectable()

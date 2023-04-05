@@ -45,7 +45,6 @@ import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { UserRole } from '../../../../../../common/types/userRole';
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
@@ -234,7 +233,7 @@ export class ReviewHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -252,7 +251,7 @@ export class ReviewHttpController implements HttpController {
 
         const customerReview = await this.reviewService.findReview({ unitOfWork, reviewId: id as string });
 
-        if (customerReview.customerId !== customer.id && role === UserRole.user) {
+        if (customerReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
             customerId: customer.id,
             reviewCustomerId: customerReview.customerId as string,
@@ -324,7 +323,7 @@ export class ReviewHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const { comment, rate } = request.body;
 
@@ -344,7 +343,7 @@ export class ReviewHttpController implements HttpController {
 
         const existingReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
 
-        if (existingReview.customerId !== customer.id && role === UserRole.user) {
+        if (existingReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
             customerId: customer.id,
             reviewCustomerId: existingReview.customerId,
@@ -390,7 +389,7 @@ export class ReviewHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -406,7 +405,7 @@ export class ReviewHttpController implements HttpController {
 
         const existingReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
 
-        if (existingReview.customerId !== customer.id && role === UserRole.user) {
+        if (existingReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
             customerId: customer.id,
             reviewCustomerId: existingReview.customerId,

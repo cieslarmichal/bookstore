@@ -49,7 +49,6 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { Filter } from '../../../../../../common/types/filter';
 import { FilterName } from '../../../../../../common/types/filterName';
-import { UserRole } from '../../../../../../common/types/userRole';
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
@@ -246,7 +245,7 @@ export class AddressHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -264,7 +263,7 @@ export class AddressHttpController implements HttpController {
 
         const customerAddress = await this.addressService.findAddress({ unitOfWork, addressId: id as string });
 
-        if (customerAddress.customerId !== customer.id && role === UserRole.user) {
+        if (customerAddress.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
             customerId: customer.id,
             targetCustomerId: customerAddress.customerId as string,
@@ -356,7 +355,7 @@ export class AddressHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const { city, country, deliveryInstructions, firstName, lastName, phoneNumber, state, streetAddress, zipCode } =
       request.body;
@@ -377,7 +376,7 @@ export class AddressHttpController implements HttpController {
 
         const customerAddress = await this.addressService.findAddress({ unitOfWork, addressId: id });
 
-        if (customerAddress.customerId !== customer.id && role === UserRole.user) {
+        if (customerAddress.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
             customerId: customer.id,
             targetCustomerId: customerAddress.customerId,
@@ -429,7 +428,7 @@ export class AddressHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -445,7 +444,7 @@ export class AddressHttpController implements HttpController {
 
         const customerAddress = await this.addressService.findAddress({ unitOfWork, addressId: id });
 
-        if (customerAddress.customerId !== customer.id && role === UserRole.user) {
+        if (customerAddress.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
             customerId: customer.id,
             targetCustomerId: customerAddress.customerId,

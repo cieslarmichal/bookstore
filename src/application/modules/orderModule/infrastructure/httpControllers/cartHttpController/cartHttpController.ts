@@ -54,7 +54,6 @@ import {
 import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
-import { UserRole } from '../../../../../../common/types/userRole';
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
@@ -257,7 +256,7 @@ export class CartHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -275,7 +274,7 @@ export class CartHttpController implements HttpController {
 
         const customerCart = await this.cartService.findCart({ unitOfWork, cartId: id as string });
 
-        if (customerCart.customerId !== customer.id && role === UserRole.user) {
+        if (customerCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
             customerId: customer.id,
             targetCustomerId: customerCart.customerId as string,
@@ -311,7 +310,7 @@ export class CartHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const { billingAddressId, deliveryMethod, shippingAddressId } = request.body;
 
@@ -331,7 +330,7 @@ export class CartHttpController implements HttpController {
 
         const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
 
-        if (existingCart.customerId !== customer.id && role === UserRole.user) {
+        if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
             customerId: customer.id,
             targetCustomerId: existingCart.customerId,
@@ -371,7 +370,7 @@ export class CartHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const { bookId, quantity } = request.body;
 
@@ -391,7 +390,7 @@ export class CartHttpController implements HttpController {
 
         const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
 
-        if (existingCart.customerId !== customer.id && role === UserRole.user) {
+        if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
             customerId: customer.id,
             targetCustomerId: existingCart.customerId,
@@ -433,7 +432,7 @@ export class CartHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const { lineItemId, quantity } = request.body;
 
@@ -453,7 +452,7 @@ export class CartHttpController implements HttpController {
 
         const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
 
-        if (existingCart.customerId !== customer.id && role === UserRole.user) {
+        if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
             customerId: customer.id,
             targetCustomerId: existingCart.customerId,
@@ -495,7 +494,7 @@ export class CartHttpController implements HttpController {
   > {
     const { id } = request.pathParams;
 
-    const { userId, role } = request.context;
+    const { userId } = request.context;
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -511,7 +510,7 @@ export class CartHttpController implements HttpController {
 
         const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
 
-        if (existingCart.customerId !== customer.id && role === UserRole.user) {
+        if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
             customerId: customer.id,
             targetCustomerId: existingCart.customerId,
