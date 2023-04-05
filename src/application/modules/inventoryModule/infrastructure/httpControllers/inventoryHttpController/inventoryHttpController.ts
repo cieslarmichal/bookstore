@@ -213,14 +213,14 @@ export class InventoryHttpController implements HttpController {
   private async findInventories(
     request: HttpRequest<undefined, FindInventoriesQueryParameters>,
   ): Promise<HttpOkResponse<FindInventoriesResponseOkBody>> {
-    const { limit, page } = request.queryParams;
+    const { limit, page, bookId } = request.queryParams;
 
     const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     const inventories = await unitOfWork.runInTransaction(async () => {
-      return this.inventoryService.findInventories({ unitOfWork, pagination });
+      return this.inventoryService.findInventories({ unitOfWork, pagination, bookId });
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: inventories } };

@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, FindManyOptions } from 'typeorm';
 
 import { InventoryEntity } from './inventoryEntity/inventoryEntity';
 import { InventoryMapper } from './inventoryMapper/inventoryMapper';
@@ -66,14 +66,20 @@ export class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Inventory[]> {
-    const { pagination } = Validator.validate(findManyPayloadSchema, input);
+    const { pagination, bookId } = Validator.validate(findManyPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
-    const inventoryEntities = await this.entityManager.find(InventoryEntity, {
+    let findInput: FindManyOptions<InventoryEntity> = {
       take: pagination.limit,
       skip: numberOfEnitiesToSkip,
-    });
+    };
+
+    if (bookId) {
+      findInput = { ...findInput, where: { bookId } };
+    }
+
+    const inventoryEntities = await this.entityManager.find(InventoryEntity, findInput);
 
     return inventoryEntities.map((inventoryEntity) => this.inventoryMapper.map(inventoryEntity));
   }

@@ -79,13 +79,13 @@ export class InventoryServiceImpl implements InventoryService {
   }
 
   public async findInventories(input: FindInventoriesPayload): Promise<Inventory[]> {
-    const { unitOfWork, pagination } = Validator.validate(findInventoriesPayloadSchema, input);
+    const { unitOfWork, pagination, bookId } = Validator.validate(findInventoriesPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
     const inventoryRepository = this.inventoryRepositoryFactory.create(entityManager);
 
-    const inventories = await inventoryRepository.findMany({ pagination });
+    const inventories = await inventoryRepository.findMany({ pagination, bookId });
 
     return inventories;
   }
