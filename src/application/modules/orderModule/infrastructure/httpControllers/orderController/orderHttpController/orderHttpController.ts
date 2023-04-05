@@ -68,7 +68,7 @@ export class OrderHttpController implements HttpController {
       }),
       new HttpRoute({
         method: HttpMethodName.get,
-        handler: this.findOrders.bind(this),
+        handler: this.findCustomerOrders.bind(this),
         schema: {
           request: {
             queryParams: findOrdersQueryParametersSchema,
@@ -124,7 +124,7 @@ export class OrderHttpController implements HttpController {
     return { statusCode: HttpStatusCode.created, body: { order } };
   }
 
-  private async findOrders(
+  private async findCustomerOrders(
     request: HttpRequest<undefined, FindOrdersQueryParameters>,
   ): Promise<HttpOkResponse<FindOrdersResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
     const { limit, page } = request.queryParams;

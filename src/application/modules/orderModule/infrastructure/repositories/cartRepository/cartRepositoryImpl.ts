@@ -3,8 +3,6 @@ import { EntityManager } from 'typeorm';
 import { CartEntity } from './cartEntity/cartEntity';
 import { CartMapper } from './cartMapper/cartMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { Cart } from '../../../../orderModule/domain/entities/cart/cart';
-import { CartNotFoundError } from '../../../../orderModule/infrastructure/errors/cartNotFoundError';
 import { CartRepository } from '../../../application/repositories/cartRepository/cartRepository';
 import {
   CreateOnePayload,
@@ -15,6 +13,10 @@ import {
   deleteOnePayloadSchema,
 } from '../../../application/repositories/cartRepository/payloads/deleteOnePayload';
 import {
+  FindManyPayload,
+  findManyPayloadSchema,
+} from '../../../application/repositories/cartRepository/payloads/findManyPayload';
+import {
   FindOnePayload,
   findOnePayloadSchema,
 } from '../../../application/repositories/cartRepository/payloads/findOnePayload';
@@ -22,6 +24,8 @@ import {
   UpdateOnePayload,
   updateOnePayloadSchema,
 } from '../../../application/repositories/cartRepository/payloads/updateOnePayload';
+import { Cart } from '../../../domain/entities/cart/cart';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 
 export class CartRepositoryImpl implements CartRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly cartMapper: CartMapper) {}
@@ -54,6 +58,20 @@ export class CartRepositoryImpl implements CartRepository {
     const savedCartEntity = await this.entityManager.save(cartEntity);
 
     return this.cartMapper.map(savedCartEntity);
+  }
+
+  public async findMany(input: FindManyPayload): Promise<Cart[]> {
+    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
+
+    const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
+
+    const cartsEntities = await this.entityManager.find(CartEntity, {
+      skip: numberOfEnitiesToSkip,
+      take: pagination.limit,
+      where: { customerId },
+    });
+
+    return cartsEntities.map((cartEntity) => this.cartMapper.map(cartEntity));
   }
 
   public async findOne(input: FindOnePayload): Promise<Cart | null> {

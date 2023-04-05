@@ -25,6 +25,12 @@ import {
   findCartResponseOkBodySchema,
 } from './schemas/findCartSchema';
 import {
+  FindCartsQueryParameters,
+  FindCartsResponseOkBody,
+  findCartsQueryParametersSchema,
+  findCartsResponseOkBodySchema,
+} from './schemas/findCartsSchema';
+import {
   RemoveLineItemBody,
   RemoveLineItemPathParameters,
   RemoveLineItemResponseOkBody,
@@ -54,6 +60,7 @@ import {
 import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
+import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
@@ -91,6 +98,24 @@ export class CartHttpController implements HttpController {
           response: {
             [HttpStatusCode.created]: {
               schema: createCartResponseCreatedBodySchema,
+            },
+            [HttpStatusCode.forbidden]: {
+              schema: responseErrorBodySchema,
+            },
+          },
+        },
+        authorizationType: AuthorizationType.bearerToken,
+      }),
+      new HttpRoute({
+        method: HttpMethodName.get,
+        handler: this.findCustomerCarts.bind(this),
+        schema: {
+          request: {
+            queryParams: findCartsQueryParametersSchema,
+          },
+          response: {
+            [HttpStatusCode.ok]: {
+              schema: findCartsResponseOkBodySchema,
             },
             [HttpStatusCode.forbidden]: {
               schema: responseErrorBodySchema,
@@ -299,6 +324,42 @@ export class CartHttpController implements HttpController {
     }
 
     return { statusCode: HttpStatusCode.ok, body: { cart: cart as Cart } };
+  }
+
+  private async findCustomerCarts(
+    request: HttpRequest<undefined, FindCartsQueryParameters>,
+  ): Promise<HttpOkResponse<FindCartsResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
+    const { limit, page } = request.queryParams;
+
+    const { userId } = request.context;
+
+    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
+    let carts: Cart[] = [];
+
+    try {
+      carts = await unitOfWork.runInTransaction(async () => {
+        let customer: Customer;
+
+        try {
+          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+        } catch (error) {
+          throw new UserIsNotCustomerError({ userId: userId as string });
+        }
+
+        return this.cartService.findCarts({ unitOfWork, pagination, customerId: customer.id });
+      });
+    } catch (error) {
+      if (error instanceof UserIsNotCustomerError) {
+        return { statusCode: HttpStatusCode.forbidden, body: { error } };
+      }
+
+      throw error;
+    }
+
+    return { statusCode: HttpStatusCode.ok, body: { data: carts } };
   }
 
   private async updateCart(

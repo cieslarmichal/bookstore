@@ -1,5 +1,6 @@
 import { CreateOnePayload } from './payloads/createOnePayload';
 import { DeleteOnePayload } from './payloads/deleteOnePayload';
+import { FindManyPayload } from './payloads/findManyPayload';
 import { FindOnePayload } from './payloads/findOnePayload';
 import { UpdateOnePayload } from './payloads/updateOnePayload';
 import { Cart } from '../../../domain/entities/cart/cart';
@@ -7,6 +8,7 @@ import { Cart } from '../../../domain/entities/cart/cart';
 export interface CartRepository {
   createOne(input: CreateOnePayload): Promise<Cart>;
   findOne(input: FindOnePayload): Promise<Cart | null>;
+  findMany(input: FindManyPayload): Promise<Cart[]>;
   deleteOne(input: DeleteOnePayload): Promise<void>;
   updateOne(input: UpdateOnePayload): Promise<Cart>;
 }

@@ -3,6 +3,7 @@ import { AddLineItemPayload, addLineItemPayloadSchema } from './payloads/addLine
 import { CreateCartPayload, createCartPayloadSchema } from './payloads/createCartPayload';
 import { DeleteCartPayload, deleteCartPayloadSchema } from './payloads/deleteCartPayload';
 import { FindCartPayload, findCartPayloadSchema } from './payloads/findCartPayload';
+import { FindCartsPayload, findCartsPayloadSchema } from './payloads/findCartsPayload';
 import { RemoveLineItemPayload, removeLineItemPayloadSchema } from './payloads/removeLineItemPayload';
 import { UpdateCartPayload, updateCartPayloadSchema } from './payloads/updateCartPayload';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
@@ -64,6 +65,18 @@ export class CartServiceImpl implements CartService {
     this.loggerService.info({ message: 'Cart created.', context: { cartId: cart.id, customerId } });
 
     return cart;
+  }
+
+  public async findCarts(input: FindCartsPayload): Promise<Cart[]> {
+    const { unitOfWork, customerId, pagination } = Validator.validate(findCartsPayloadSchema, input);
+
+    const entityManager = unitOfWork.getEntityManager();
+
+    const cartRepository = this.cartRepositoryFactory.create(entityManager);
+
+    const carts = await cartRepository.findMany({ customerId, pagination });
+
+    return carts;
   }
 
   public async findCart(input: FindCartPayload): Promise<Cart> {
