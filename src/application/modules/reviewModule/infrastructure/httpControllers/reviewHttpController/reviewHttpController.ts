@@ -281,35 +281,15 @@ export class ReviewHttpController implements HttpController {
   private async findReviews(
     request: HttpRequest<undefined, FindReviewsQueryParameters>,
   ): Promise<HttpOkResponse<FindReviewsResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
-    const { limit, page } = request.queryParams;
-
-    const { userId } = request.context;
+    const { limit, page, customerId, isbn } = request.queryParams;
 
     const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let reviews: Review[] = [];
-
-    try {
-      reviews = await unitOfWork.runInTransaction(async () => {
-        let customer: Customer;
-
-        try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
-        } catch (error) {
-          throw new UserIsNotCustomerError({ userId: userId as string });
-        }
-
-        return this.reviewService.findReviews({ unitOfWork, pagination, customerId: customer.id });
-      });
-    } catch (error) {
-      if (error instanceof UserIsNotCustomerError) {
-        return { statusCode: HttpStatusCode.forbidden, body: { error } };
-      }
-
-      throw error;
-    }
+    const reviews = await unitOfWork.runInTransaction(async () => {
+      return this.reviewService.findReviews({ unitOfWork, pagination, customerId, isbn });
+    });
 
     return { statusCode: HttpStatusCode.ok, body: { data: reviews } };
   }

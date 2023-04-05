@@ -56,13 +56,13 @@ export class ReviewServiceImpl implements ReviewService {
   }
 
   public async findReviews(input: FindReviewsPayload): Promise<Review[]> {
-    const { unitOfWork, pagination, customerId } = Validator.validate(findReviewsPayloadSchema, input);
+    const { unitOfWork, pagination, customerId, isbn } = Validator.validate(findReviewsPayloadSchema, input);
 
     const entityManager = unitOfWork.getEntityManager();
 
     const reviewRepository = this.reviewRepositoryFactory.create(entityManager);
 
-    const reviews = await reviewRepository.findMany({ customerId, pagination });
+    const reviews = await reviewRepository.findMany({ customerId, isbn, pagination });
 
     return reviews;
   }

@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, FindManyOptions } from 'typeorm';
 
 import { ReviewEntity } from './reviewEntity/reviewEntity';
 import { ReviewMapper } from './reviewMapper/reviewMapper';
@@ -59,15 +59,24 @@ export class ReviewRepositoryImpl implements ReviewRepository {
   }
 
   public async findMany(input: FindManyPayload): Promise<Review[]> {
-    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
+    const { pagination, customerId, isbn } = Validator.validate(findManyPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
-    const reviewsEntities = await this.entityManager.find(ReviewEntity, {
+    let findInput: FindManyOptions<ReviewEntity> = {
       take: pagination.limit,
       skip: numberOfEnitiesToSkip,
-      where: { customerId },
-    });
+    };
+
+    if (customerId) {
+      findInput = { ...findInput, where: { customerId } };
+    }
+
+    if (isbn) {
+      findInput = { ...findInput, where: { ...findInput.where, isbn } };
+    }
+
+    const reviewsEntities = await this.entityManager.find(ReviewEntity, findInput);
 
     return reviewsEntities.map((reviewEntity) => this.reviewMapper.map(reviewEntity));
   }
