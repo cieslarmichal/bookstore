@@ -41,6 +41,8 @@ import { ReviewHttpController } from '../modules/reviewModule/infrastructure/htt
 import { reviewModuleSymbols } from '../modules/reviewModule/reviewModuleSymbols';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
+import { WhishlistHttpController } from '../modules/whishlistModule/infrastructure/httpControllers/whishlistHttpController/whishlistHttpController';
+import { whishlistModuleSymbols } from '../modules/whishlistModule/whishlistModuleSymbols';
 
 export class HttpRouter {
   private readonly rootPath = '';
@@ -112,6 +114,12 @@ export class HttpRouter {
     const orderHttpController = this.container.get<OrderHttpController>(orderModuleSymbols.orderHttpController);
 
     this.registerControllerRoutes({ controller: orderHttpController });
+
+    const whishlistHttpController = this.container.get<WhishlistHttpController>(
+      whishlistModuleSymbols.whishlistHttpController,
+    );
+
+    this.registerControllerRoutes({ controller: whishlistHttpController });
   }
 
   private registerControllerRoutes(input: RegisterControllerRoutesPayload): void {

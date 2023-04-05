@@ -1,7 +1,7 @@
 import { WhishlistEntryRepositoryFactory } from './application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 import { WhishlistService } from './application/services/whishlistService/whishlistService';
 import { WhishlistServiceImpl } from './application/services/whishlistService/whishlistServiceImpl';
-import { WhishlistController } from './infrastructure/httpControllers/whishlistController';
+import { WhishlistHttpController } from './infrastructure/httpControllers/whishlistHttpController/whishlistHttpController';
 import { WhishlistEntryMapper } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapper';
 import { WhishlistEntryMapperImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapperImpl';
 import { WhishlistEntryRepositoryFactoryImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactoryImpl';
@@ -23,6 +23,9 @@ export class WhishlistModule implements DependencyInjectionModule {
 
     container.bindToConstructor<WhishlistService>(whishlistModuleSymbols.whishlistService, WhishlistServiceImpl);
 
-    container.bindToConstructor<WhishlistController>(whishlistModuleSymbols.whishlistController, WhishlistController);
+    container.bindToConstructor<WhishlistHttpController>(
+      whishlistModuleSymbols.whishlistHttpController,
+      WhishlistHttpController,
+    );
   }
 }

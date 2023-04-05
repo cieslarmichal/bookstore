@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { WhishlistEntryRepositoryFactory } from './application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 import { WhishlistService } from './application/services/whishlistService/whishlistService';
 import { WhishlistServiceImpl } from './application/services/whishlistService/whishlistServiceImpl';
-import { WhishlistController } from './infrastructure/httpControllers/whishlistController';
+import { WhishlistHttpController } from './infrastructure/httpControllers/whishlistHttpController/whishlistHttpController';
 import { WhishlistEntryMapper } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapper';
 import { WhishlistEntryMapperImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapperImpl';
 import { WhishlistEntryRepositoryFactoryImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactoryImpl';
@@ -41,8 +41,8 @@ describe('WhishlistModule', () => {
       WhishlistServiceImpl,
     );
 
-    expect(container.get<WhishlistController>(whishlistModuleSymbols.whishlistController)).toBeInstanceOf(
-      WhishlistController,
+    expect(container.get<WhishlistHttpController>(whishlistModuleSymbols.whishlistHttpController)).toBeInstanceOf(
+      WhishlistHttpController,
     );
   });
 });
