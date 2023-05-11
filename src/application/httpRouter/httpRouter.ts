@@ -19,7 +19,7 @@ import { loggerModuleSymbols } from '../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../libs/validator/validator';
 import { AddressHttpController } from '../modules/addressModule/infrastructure/httpControllers/addressHttpController/addressHttpController';
-import { addressModuleSymbols } from '../modules/addressModule/symbols';
+import { addressSymbols } from '../modules/addressModule/symbols';
 import { authorBookModuleSymbols } from '../modules/authorBookModule/authorBookModuleSymbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
 import { authorModuleSymbols } from '../modules/authorModule/authorModuleSymbols';
@@ -62,7 +62,7 @@ export class HttpRouter {
   }
 
   public registerAllRoutes(): void {
-    const addressHttpController = this.container.get<AddressHttpController>(addressModuleSymbols.addressHttpController);
+    const addressHttpController = this.container.get<AddressHttpController>(addressSymbols.addressHttpController);
 
     this.registerControllerRoutes({ controller: addressHttpController });
 
@@ -168,18 +168,8 @@ export class HttpRouter {
             Validator.validate(schema.request.pathParams, pathParams);
           }
 
-          const normalizedQueryParams: Record<string, string | number> = {};
-
-          for (const key in queryParams) {
-            const queryParamValue = queryParams[key];
-
-            const normalizedValue = Number.isNaN(queryParamValue) ? String(queryParamValue) : Number(queryParamValue);
-
-            normalizedQueryParams[key] = normalizedValue;
-          }
-
           if (schema.request.queryParams) {
-            Validator.validate(schema.request.queryParams, normalizedQueryParams);
+            Validator.validate(schema.request.queryParams, queryParams);
           }
 
           let context: RequestContext = {};
@@ -193,15 +183,9 @@ export class HttpRouter {
           const { statusCode, body: responseBody } = await handler({
             body: requestBody,
             pathParams,
-            queryParams: normalizedQueryParams,
+            queryParams,
             context,
           });
-
-          const responseSchema = schema.response[String(statusCode)]?.schema;
-
-          if (responseSchema) {
-            Validator.validate(responseSchema, queryParams);
-          }
 
           fastifyReply.status(statusCode);
 
