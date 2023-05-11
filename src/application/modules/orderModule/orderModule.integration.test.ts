@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 
+import { CartHttpController } from './api/httpControllers/cartHttpController/cartHttpController';
+import { OrderHttpController } from './api/httpControllers/orderController/orderHttpController/orderHttpController';
 import { CartRepositoryFactory } from './application/repositories/cartRepository/cartRepositoryFactory';
 import { LineItemRepositoryFactory } from './application/repositories/lineItemRepository/lineItemRepositoryFactory';
 import { OrderRepositoryFactory } from './application/repositories/orderRepository/orderRepositoryFactory';
@@ -7,8 +9,6 @@ import { CartService } from './application/services/cartService/cartService';
 import { CartServiceImpl } from './application/services/cartService/cartServiceImpl';
 import { OrderService } from './application/services/orderService/orderService';
 import { OrderServiceImpl } from './application/services/orderService/orderServiceImpl';
-import { CartHttpController } from './infrastructure/httpControllers/cartHttpController/cartHttpController';
-import { OrderHttpController } from './infrastructure/httpControllers/orderController/orderHttpController/orderHttpController';
 import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
 import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
 import { CartRepositoryFactoryImpl } from './infrastructure/repositories/cartRepository/cartRepositoryFactoryImpl';

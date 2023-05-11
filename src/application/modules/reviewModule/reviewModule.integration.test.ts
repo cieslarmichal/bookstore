@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
+import { ReviewHttpController } from './api/httpControllers/reviewHttpController/reviewHttpController';
 import { ReviewRepositoryFactory } from './application/repositories/reviewRepository/reviewRepositoryFactory';
 import { ReviewService } from './application/services/reviewService/reviewService';
 import { ReviewServiceImpl } from './application/services/reviewService/reviewServiceImpl';
-import { ReviewHttpController } from './infrastructure/httpControllers/reviewHttpController/reviewHttpController';
 import { ReviewMapper } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapper';
 import { ReviewMapperImpl } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapperImpl';
 import { ReviewRepositoryFactoryImpl } from './infrastructure/repositories/reviewRepository/reviewRepositoryFactoryImpl';

@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
+import { InventoryHttpController } from './api/httpControllers/inventoryHttpController/inventoryHttpController';
 import { InventoryRepositoryFactory } from './application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryService } from './application/services/inventoryService/inventoryService';
 import { InventoryServiceImpl } from './application/services/inventoryService/inventoryServiceImpl';
-import { InventoryHttpController } from './infrastructure/httpControllers/inventoryHttpController/inventoryHttpController';
 import { InventoryMapper } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapper';
 import { InventoryMapperImpl } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapperImpl';
 import { InventoryRepositoryFactoryImpl } from './infrastructure/repositories/inventoryRepository/inventoryRepositoryFactoryImpl';

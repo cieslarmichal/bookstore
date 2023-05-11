@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 
+import { CustomerHttpController } from './api/httpControllers/customerHttpController/customerHttpController';
 import { CustomerRepositoryFactory } from './application/repositories/customerRepository/customerRepositoryFactory';
 import { CustomerService } from './application/services/customerService/customerService';
 import { CustomerServiceImpl } from './application/services/customerService/customerServiceImpl';
 import { CustomerModule } from './customerModule';
 import { customerModuleSymbols } from './customerModuleSymbols';
-import { CustomerHttpController } from './infrastructure/httpControllers/customerHttpController/customerHttpController';
 import { CustomerMapper } from './infrastructure/repositories/customerRepository/customerMapper/customerMapper';
 import { CustomerMapperImpl } from './infrastructure/repositories/customerRepository/customerMapper/customerMapperImpl';
 import { CustomerRepositoryFactoryImpl } from './infrastructure/repositories/customerRepository/customerRepositoryFactoryImpl';

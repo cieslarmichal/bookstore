@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { AddressModule } from './addressModule';
-import { AddressHttpController } from './infrastructure/httpControllers/addressHttpController/addressHttpController';
+import { AddressHttpController } from './api/httpControllers/addressHttpController/addressHttpController';
 import { addressSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';

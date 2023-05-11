@@ -1,3 +1,4 @@
+import { UserHttpController } from './api/httpControllers/userHttpController/userHttpController';
 import { UserRepositoryFactory } from './application/repositories/userRepository/userRepositoryFactory';
 import { HashService } from './application/services/hashService/hashService';
 import { HashServiceImpl } from './application/services/hashService/hashServiceImpl';
@@ -5,7 +6,6 @@ import { TokenService } from './application/services/tokenService/tokenService';
 import { TokenServiceImpl } from './application/services/tokenService/tokenServiceImpl';
 import { UserService } from './application/services/userService/userService';
 import { UserServiceImpl } from './application/services/userService/userServiceImpl';
-import { UserHttpController } from './infrastructure/httpControllers/userHttpController/userHttpController';
 import { UserMapper } from './infrastructure/repositories/userRepository/userMapper/userMapper';
 import { UserMapperImpl } from './infrastructure/repositories/userRepository/userMapper/userMapperImpl';
 import { UserRepositoryFactoryImpl } from './infrastructure/repositories/userRepository/userRepositoryFactoryImpl';

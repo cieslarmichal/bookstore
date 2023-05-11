@@ -1,3 +1,4 @@
+import { AddressHttpController } from './api/httpControllers/addressHttpController/addressHttpController';
 import { CreateAddressCommandHandler } from './application/commandHandlers/createAddressCommandHandler/createAddressCommandHandler';
 import { CreateAddressCommandHandlerImpl } from './application/commandHandlers/createAddressCommandHandler/createAddressCommandHandlerImpl';
 import { DeleteAddressCommandHandler } from './application/commandHandlers/deleteAddressCommandHandler/deleteAddressCommandHandler';
@@ -9,7 +10,6 @@ import { FindAddressesQueryHandlerImpl } from './application/queryHandlers/findA
 import { FindAddressQueryHandler } from './application/queryHandlers/findAddressQueryHandler/findAddressQueryHandler';
 import { FindAddressQueryHandlerImpl } from './application/queryHandlers/findAddressQueryHandler/findAddressQueryHandlerImpl';
 import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
-import { AddressHttpController } from './infrastructure/httpControllers/addressHttpController/addressHttpController';
 import { AddressMapper } from './infrastructure/repositories/addressRepository/addressMapper/addressMapper';
 import { AddressMapperImpl } from './infrastructure/repositories/addressRepository/addressMapper/addressMapperImpl';
 import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';

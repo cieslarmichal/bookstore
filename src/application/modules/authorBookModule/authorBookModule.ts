@@ -1,8 +1,8 @@
+import { AuthorBookHttpController } from './api/httpControllers/authorBookHttpController/authorBookHttpController';
 import { AuthorBookRepositoryFactory } from './application/repositories/authorBookRepository/authorBookRepositoryFactory';
 import { AuthorBookService } from './application/services/authorBookService/authorBookService';
 import { AuthorBookServiceImpl } from './application/services/authorBookService/authorBookServiceImpl';
 import { authorBookModuleSymbols } from './authorBookModuleSymbols';
-import { AuthorBookHttpController } from './infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
 import { AuthorBookMapper } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapper';
 import { AuthorBookMapperImpl } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapperImpl';
 import { AuthorBookRepositoryFactoryImpl } from './infrastructure/repositories/authorBookRepository/authorBookRepositoryFactoryImpl';

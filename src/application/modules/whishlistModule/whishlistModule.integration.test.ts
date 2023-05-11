@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
+import { WhishlistHttpController } from './api/httpControllers/whishlistHttpController/whishlistHttpController';
 import { WhishlistEntryRepositoryFactory } from './application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 import { WhishlistService } from './application/services/whishlistService/whishlistService';
 import { WhishlistServiceImpl } from './application/services/whishlistService/whishlistServiceImpl';
-import { WhishlistHttpController } from './infrastructure/httpControllers/whishlistHttpController/whishlistHttpController';
 import { WhishlistEntryMapper } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapper';
 import { WhishlistEntryMapperImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryMapper/whishlistEntryMapperImpl';
 import { WhishlistEntryRepositoryFactoryImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactoryImpl';
