@@ -13,8 +13,8 @@ import { LoggerService } from '../../../../../../libs/logger/services/loggerServ
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { AuthorService } from '../../../../authorModule/application/services/authorService/authorService';
-import { authorModuleSymbols } from '../../../../authorModule/authorModuleSymbols';
 import { AuthorNotFoundError } from '../../../../authorModule/infrastructure/errors/authorNotFoundError';
+import { authorModuleSymbols } from '../../../../authorModule/symbols';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';

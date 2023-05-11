@@ -23,7 +23,7 @@ import { addressSymbols } from '../modules/addressModule/symbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/api/httpControllers/authorBookHttpController/authorBookHttpController';
 import { authorBookSymbols } from '../modules/authorBookModule/symbols';
 import { AuthorHttpController } from '../modules/authorModule/api/httpControllers/authorHttpController/authorHttpController';
-import { authorModuleSymbols } from '../modules/authorModule/authorModuleSymbols';
+import { authorModuleSymbols } from '../modules/authorModule/symbols';
 import { BookCategoryHttpController } from '../modules/bookCategoryModule/api/httpControllers/bookCategoryHttpController/bookCategoryHttpController';
 import { bookCategoryModuleSymbols } from '../modules/bookCategoryModule/bookCategoryModuleSymbols';
 import { BookHttpController } from '../modules/bookModule/api/httpControllers/bookHttpController/bookHttpController';

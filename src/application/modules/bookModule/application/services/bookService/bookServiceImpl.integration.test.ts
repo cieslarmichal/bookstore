@@ -22,8 +22,8 @@ import { authorBookSymbols } from '../../../../authorBookModule/symbols';
 import { AuthorBookEntityTestFactory } from '../../../../authorBookModule/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
 import { AuthorModule } from '../../../../authorModule/authorModule';
-import { authorModuleSymbols } from '../../../../authorModule/authorModuleSymbols';
 import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
+import { authorModuleSymbols } from '../../../../authorModule/symbols';
 import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 import { BookCategoryModule } from '../../../../bookCategoryModule/bookCategoryModule';
@@ -615,7 +615,7 @@ describe('BookServiceImpl', () => {
           releaseYear: bookEntity3.releaseYear,
         });
 
-        const author = await authorRepository.createOne({
+        const author = await authorRepository.createAuthor({
           id: authorEntity.id,
           firstName: authorEntity.firstName,
           lastName: authorEntity.lastName,

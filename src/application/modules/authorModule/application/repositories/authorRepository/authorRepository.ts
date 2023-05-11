@@ -1,14 +1,14 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
-import { UpdateOnePayload } from './payloads/updateOnePayload';
+import { CreateAuthorPayload } from './payloads/createAuthorPayload';
+import { DeleteAuthorPayload } from './payloads/deleteAuthorPayload';
+import { FindAuthorPayload } from './payloads/findAuthorPayload';
+import { FindAuthorsPayload } from './payloads/findAuthorsPayload';
+import { UpdateAuthorPayload } from './payloads/updateAuthorPayload';
 import { Author } from '../../../domain/entities/author/author';
 
 export interface AuthorRepository {
-  createOne(input: CreateOnePayload): Promise<Author>;
-  findOne(input: FindOnePayload): Promise<Author | null>;
-  findMany(input: FindManyPayload): Promise<Author[]>;
-  updateOne(input: UpdateOnePayload): Promise<Author>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createAuthor(input: CreateAuthorPayload): Promise<Author>;
+  findAuthor(input: FindAuthorPayload): Promise<Author | null>;
+  findAuthors(input: FindAuthorsPayload): Promise<Author[]>;
+  updateAuthor(input: UpdateAuthorPayload): Promise<Author>;
+  deleteAuthor(input: DeleteAuthorPayload): Promise<void>;
 }

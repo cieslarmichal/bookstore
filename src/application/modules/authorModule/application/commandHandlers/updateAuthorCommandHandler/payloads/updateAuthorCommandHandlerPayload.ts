@@ -1,10 +1,12 @@
+import { updateAuthorDraftSchema } from './updateAuthorDraft';
 import { UnitOfWork } from '../../../../../../../libs/unitOfWork/unitOfWork';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const deleteAuthorPayloadSchema = Schema.object({
+export const updateAuthorCommandHandlerPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   authorId: Schema.string(),
+  draft: updateAuthorDraftSchema,
 });
 
-export type DeleteAuthorPayload = SchemaType<typeof deleteAuthorPayloadSchema>;
+export type UpdateAuthorCommandHandlerPayload = SchemaType<typeof updateAuthorCommandHandlerPayloadSchema>;

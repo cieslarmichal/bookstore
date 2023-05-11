@@ -7,7 +7,7 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
-import { authorModuleSymbols } from '../../../../authorModule/authorModuleSymbols';
+import { authorModuleSymbols } from '../../../../authorModule/symbols';
 import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
@@ -63,7 +63,7 @@ describe('CreateAuthorBookCommandHandler', () => {
 
       const bookEntity = bookEntityTestFactory.create();
 
-      const author = await authorRepository.createOne({
+      const author = await authorRepository.createAuthor({
         id: authorEntity.id,
         firstName: authorEntity.firstName,
         lastName: authorEntity.lastName,
@@ -107,7 +107,7 @@ describe('CreateAuthorBookCommandHandler', () => {
 
       const bookEntity = bookEntityTestFactory.create();
 
-      const author = await authorRepository.createOne({
+      const author = await authorRepository.createAuthor({
         id: authorEntity.id,
         firstName: authorEntity.firstName,
         lastName: authorEntity.lastName,

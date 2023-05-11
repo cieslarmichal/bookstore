@@ -51,9 +51,9 @@ import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/u
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { AuthorService } from '../../../application/services/authorService/authorService';
 import { CreateAuthorDraft } from '../../../application/services/authorService/payloads/createAuthorDraft';
-import { authorModuleSymbols } from '../../../authorModuleSymbols';
 import { Author } from '../../../domain/entities/author/author';
 import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
+import { authorModuleSymbols } from '../../../symbols';
 
 export class AuthorHttpController implements HttpController {
   public readonly basePath = 'authors';

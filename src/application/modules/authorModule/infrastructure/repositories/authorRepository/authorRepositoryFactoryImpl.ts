@@ -5,7 +5,7 @@ import { AuthorRepositoryImpl } from './authorRepositoryImpl';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { AuthorRepository } from '../../../application/repositories/authorRepository/authorRepository';
 import { AuthorRepositoryFactory } from '../../../application/repositories/authorRepository/authorRepositoryFactory';
-import { authorModuleSymbols } from '../../../authorModuleSymbols';
+import { authorModuleSymbols } from '../../../symbols';
 
 @Injectable()
 export class AuthorRepositoryFactoryImpl implements AuthorRepositoryFactory {
