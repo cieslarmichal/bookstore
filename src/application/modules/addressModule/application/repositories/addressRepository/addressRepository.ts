@@ -1,14 +1,14 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
-import { UpdateOnePayload } from './payloads/updateOnePayload';
+import { CreateAddressPayload } from './payloads/createAddressPayload';
+import { DeleteAddressPayload } from './payloads/deleteAddressPayload';
+import { FindAddressesPayload } from './payloads/findAddressesPayload';
+import { FindAddressPayload } from './payloads/findAddressPayload';
+import { UpdateAddressPayload } from './payloads/updateAddressPayload';
 import { Address } from '../../../domain/entities/address/address';
 
 export interface AddressRepository {
-  createOne(input: CreateOnePayload): Promise<Address>;
-  findOne(input: FindOnePayload): Promise<Address | null>;
-  findMany(input: FindManyPayload): Promise<Address[]>;
-  updateOne(input: UpdateOnePayload): Promise<Address>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createAddress(input: CreateAddressPayload): Promise<Address>;
+  findAddress(input: FindAddressPayload): Promise<Address | null>;
+  findAddresses(input: FindAddressesPayload): Promise<Address[]>;
+  updateAddress(input: UpdateAddressPayload): Promise<Address>;
+  deleteAddress(input: DeleteAddressPayload): Promise<void>;
 }

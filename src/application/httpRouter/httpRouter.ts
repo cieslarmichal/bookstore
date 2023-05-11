@@ -18,8 +18,8 @@ import { DependencyInjectionContainer } from '../../libs/dependencyInjection/dep
 import { loggerModuleSymbols } from '../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../libs/validator/validator';
-import { addressModuleSymbols } from '../modules/addressModule/addressModuleSymbols';
 import { AddressHttpController } from '../modules/addressModule/infrastructure/httpControllers/addressHttpController/addressHttpController';
+import { addressModuleSymbols } from '../modules/addressModule/symbols';
 import { authorBookModuleSymbols } from '../modules/authorBookModule/authorBookModuleSymbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/infrastructure/httpControllers/authorBookHttpController/authorBookHttpController';
 import { authorModuleSymbols } from '../modules/authorModule/authorModuleSymbols';

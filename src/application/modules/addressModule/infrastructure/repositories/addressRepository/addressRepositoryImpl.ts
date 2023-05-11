@@ -6,32 +6,32 @@ import { AddressQueryBuilder } from './addressQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { AddressRepository } from '../../../application/repositories/addressRepository/addressRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/addressRepository/payloads/createOnePayload';
+  CreateAddressPayload,
+  createAddressPayloadSchema,
+} from '../../../application/repositories/addressRepository/payloads/createAddressPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/addressRepository/payloads/deleteOnePayload';
+  DeleteAddressPayload,
+  deleteAddressPayloadSchema,
+} from '../../../application/repositories/addressRepository/payloads/deleteAddressPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/addressRepository/payloads/findManyPayload';
+  FindAddressesPayload,
+  findAddressesPayloadSchema,
+} from '../../../application/repositories/addressRepository/payloads/findAddressesPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/addressRepository/payloads/findOnePayload';
+  FindAddressPayload,
+  findAddressPayloadSchema,
+} from '../../../application/repositories/addressRepository/payloads/findAddressPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/addressRepository/payloads/updateOnePayload';
+  UpdateAddressPayload,
+  updateAddressPayloadSchema,
+} from '../../../application/repositories/addressRepository/payloads/updateAddressPayload';
 import { Address } from '../../../domain/entities/address/address';
 import { AddressNotFoundError } from '../../errors/addressNotFoundError';
 
 export class AddressRepositoryImpl implements AddressRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly addressMapper: AddressMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Address> {
+  public async createAddress(input: CreateAddressPayload): Promise<Address> {
     const {
       id,
       firstName,
@@ -44,7 +44,7 @@ export class AddressRepositoryImpl implements AddressRepository {
       streetAddress,
       deliveryInstructions,
       customerId,
-    } = Validator.validate(createOnePayloadSchema, input);
+    } = Validator.validate(createAddressPayloadSchema, input);
 
     let addressEntityInput: AddressEntity = {
       id,
@@ -70,8 +70,8 @@ export class AddressRepositoryImpl implements AddressRepository {
     return this.addressMapper.map(savedAddressEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Address | null> {
-    const { id } = Validator.validate(findOnePayloadSchema, input);
+  public async findAddress(input: FindAddressPayload): Promise<Address | null> {
+    const { id } = Validator.validate(findAddressPayloadSchema, input);
 
     const addressEntity = await this.entityManager.findOne(AddressEntity, { where: { id } });
 
@@ -82,8 +82,8 @@ export class AddressRepositoryImpl implements AddressRepository {
     return this.addressMapper.map(addressEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Address[]> {
-    const { filters, pagination } = Validator.validate(findManyPayloadSchema, input);
+  public async findAddresses(input: FindAddressesPayload): Promise<Address[]> {
+    const { filters, pagination } = Validator.validate(findAddressesPayloadSchema, input);
 
     const addressQueryBuilder = new AddressQueryBuilder(this.entityManager);
 
@@ -98,13 +98,13 @@ export class AddressRepositoryImpl implements AddressRepository {
     return addressesEntities.map((address) => this.addressMapper.map(address));
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<Address> {
+  public async updateAddress(input: UpdateAddressPayload): Promise<Address> {
     const {
       id,
       draft: { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress, deliveryInstructions },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateAddressPayloadSchema, input);
 
-    const addressEntity = await this.findOne({ id });
+    const addressEntity = await this.findAddress({ id });
 
     if (!addressEntity) {
       throw new AddressNotFoundError({ id });
@@ -150,15 +150,15 @@ export class AddressRepositoryImpl implements AddressRepository {
 
     await this.entityManager.update(AddressEntity, { id }, { ...addressEntityInput });
 
-    const updatedAddressEntity = await this.findOne({ id });
+    const updatedAddressEntity = await this.findAddress({ id });
 
     return updatedAddressEntity as Address;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteAddress(input: DeleteAddressPayload): Promise<void> {
+    const { id } = Validator.validate(deleteAddressPayloadSchema, input);
 
-    const addressEntity = await this.findOne({ id });
+    const addressEntity = await this.findAddress({ id });
 
     if (!addressEntity) {
       throw new AddressNotFoundError({ id });

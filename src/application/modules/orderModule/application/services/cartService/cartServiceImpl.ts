@@ -11,8 +11,8 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { addressModuleSymbols } from '../../../../addressModule/addressModuleSymbols';
 import { AddressService } from '../../../../addressModule/application/services/addressService/addressService';
+import { addressModuleSymbols } from '../../../../addressModule/symbols';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';

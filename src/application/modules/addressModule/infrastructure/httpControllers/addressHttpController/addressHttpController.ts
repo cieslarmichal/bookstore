@@ -55,10 +55,10 @@ import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitO
 import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
 import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
-import { addressModuleSymbols } from '../../../addressModuleSymbols';
 import { AddressService } from '../../../application/services/addressService/addressService';
 import { CreateAddressDraft } from '../../../application/services/addressService/payloads/createAddressDraft';
 import { Address } from '../../../domain/entities/address/address';
+import { addressModuleSymbols } from '../../../symbols';
 import { AddressNotFoundError } from '../../errors/addressNotFoundError';
 import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../../errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
 import { CustomerIdNotProvidedError } from '../../errors/customerIdNotProvidedError';

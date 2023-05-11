@@ -1,7 +1,7 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const updateOneDraftSchema = Schema.object({
+export const updateAddressDraftSchema = Schema.object({
   firstName: Schema.string().optional(),
   lastName: Schema.string().optional(),
   phoneNumber: Schema.string().optional(),
@@ -13,4 +13,4 @@ export const updateOneDraftSchema = Schema.object({
   deliveryInstructions: Schema.string().optional(),
 });
 
-export type UpdateOneDraft = SchemaType<typeof updateOneDraftSchema>;
+export type UpdateAddressDraft = SchemaType<typeof updateAddressDraftSchema>;

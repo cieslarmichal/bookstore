@@ -1,7 +1,7 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const createOnePayloadSchema = Schema.object({
+export const createAddressPayloadSchema = Schema.object({
   id: Schema.string(),
   firstName: Schema.string(),
   lastName: Schema.string(),
@@ -15,4 +15,4 @@ export const createOnePayloadSchema = Schema.object({
   deliveryInstructions: Schema.string().optional(),
 });
 
-export type CreateOnePayload = SchemaType<typeof createOnePayloadSchema>;
+export type CreateAddressPayload = SchemaType<typeof createAddressPayloadSchema>;

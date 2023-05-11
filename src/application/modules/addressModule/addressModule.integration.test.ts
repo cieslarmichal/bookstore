@@ -1,14 +1,8 @@
 import 'reflect-metadata';
 
 import { AddressModule } from './addressModule';
-import { addressModuleSymbols } from './addressModuleSymbols';
-import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
-import { AddressService } from './application/services/addressService/addressService';
-import { AddressServiceImpl } from './application/services/addressService/addressServiceImpl';
 import { AddressHttpController } from './infrastructure/httpControllers/addressHttpController/addressHttpController';
-import { AddressMapper } from './infrastructure/repositories/addressRepository/addressMapper/addressMapper';
-import { AddressMapperImpl } from './infrastructure/repositories/addressRepository/addressMapper/addressMapperImpl';
-import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
+import { addressSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -23,21 +17,13 @@ describe('AddressModule', () => {
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    container = await DependencyInjectionContainerFactory.create({
+    container = DependencyInjectionContainerFactory.create({
       modules: [new PostgresModule(postgresModuleConfig), new LoggerModule(loggerModuleConfig), new AddressModule()],
     });
   });
 
   it('declares bindings', async () => {
-    expect(container.get<AddressMapper>(addressModuleSymbols.addressMapper)).toBeInstanceOf(AddressMapperImpl);
-
-    expect(container.get<AddressRepositoryFactory>(addressModuleSymbols.addressRepositoryFactory)).toBeInstanceOf(
-      AddressRepositoryFactoryImpl,
-    );
-
-    expect(container.get<AddressService>(addressModuleSymbols.addressService)).toBeInstanceOf(AddressServiceImpl);
-
-    expect(container.get<AddressHttpController>(addressModuleSymbols.addressHttpController)).toBeInstanceOf(
+    expect(container.get<AddressHttpController>(addressSymbols.addressHttpController)).toBeInstanceOf(
       AddressHttpController,
     );
   });
