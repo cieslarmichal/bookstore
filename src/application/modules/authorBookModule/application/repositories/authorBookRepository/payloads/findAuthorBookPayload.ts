@@ -1,10 +1,10 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const findOnePayloadSchema = Schema.object({
+export const findAuthorBookPayloadSchema = Schema.object({
   id: Schema.string().optional(),
   authorId: Schema.string().optional(),
   bookId: Schema.string().optional(),
 });
 
-export type FindOnePayload = SchemaType<typeof findOnePayloadSchema>;
+export type FindAuthorBookPayload = SchemaType<typeof findAuthorBookPayloadSchema>;

@@ -2,13 +2,9 @@ import 'reflect-metadata';
 
 import { AuthorBookHttpController } from './api/httpControllers/authorBookHttpController/authorBookHttpController';
 import { AuthorBookRepositoryFactory } from './application/repositories/authorBookRepository/authorBookRepositoryFactory';
-import { AuthorBookService } from './application/services/authorBookService/authorBookService';
-import { AuthorBookServiceImpl } from './application/services/authorBookService/authorBookServiceImpl';
 import { AuthorBookModule } from './authorBookModule';
-import { authorBookModuleSymbols } from './authorBookModuleSymbols';
-import { AuthorBookMapper } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapper';
-import { AuthorBookMapperImpl } from './infrastructure/repositories/authorBookRepository/authorBookMapper/authorBookMapperImpl';
 import { AuthorBookRepositoryFactoryImpl } from './infrastructure/repositories/authorBookRepository/authorBookRepositoryFactoryImpl';
+import { authorBookSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -37,19 +33,11 @@ describe('AuthorBookModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<AuthorBookMapper>(authorBookModuleSymbols.authorBookMapper)).toBeInstanceOf(
-      AuthorBookMapperImpl,
+    expect(container.get<AuthorBookRepositoryFactory>(authorBookSymbols.authorBookRepositoryFactory)).toBeInstanceOf(
+      AuthorBookRepositoryFactoryImpl,
     );
 
-    expect(
-      container.get<AuthorBookRepositoryFactory>(authorBookModuleSymbols.authorBookRepositoryFactory),
-    ).toBeInstanceOf(AuthorBookRepositoryFactoryImpl);
-
-    expect(container.get<AuthorBookService>(authorBookModuleSymbols.authorBookService)).toBeInstanceOf(
-      AuthorBookServiceImpl,
-    );
-
-    expect(container.get<AuthorBookHttpController>(authorBookModuleSymbols.authorBookHttpController)).toBeInstanceOf(
+    expect(container.get<AuthorBookHttpController>(authorBookSymbols.authorBookHttpController)).toBeInstanceOf(
       AuthorBookHttpController,
     );
   });

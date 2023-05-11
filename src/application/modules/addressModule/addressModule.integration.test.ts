@@ -2,6 +2,8 @@ import 'reflect-metadata';
 
 import { AddressModule } from './addressModule';
 import { AddressHttpController } from './api/httpControllers/addressHttpController/addressHttpController';
+import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
+import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
 import { addressSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
@@ -25,6 +27,10 @@ describe('AddressModule', () => {
   it('declares bindings', async () => {
     expect(container.get<AddressHttpController>(addressSymbols.addressHttpController)).toBeInstanceOf(
       AddressHttpController,
+    );
+
+    expect(container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory)).toBeInstanceOf(
+      AddressRepositoryFactoryImpl,
     );
   });
 });

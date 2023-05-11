@@ -5,17 +5,17 @@ import { AuthorBookMapper } from './authorBookMapper/authorBookMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { AuthorBookRepository } from '../../../application/repositories/authorBookRepository/authorBookRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/authorBookRepository/payloads/createOnePayload';
+  CreateAuthorBookPayload,
+  createAuthorBookPayloadSchema,
+} from '../../../application/repositories/authorBookRepository/payloads/createAuthorBookPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/authorBookRepository/payloads/deleteOnePayload';
+  DeleteAuthorBookPayload,
+  deleteAuthorBookPayloadSchema,
+} from '../../../application/repositories/authorBookRepository/payloads/deleteAuthorBookPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/authorBookRepository/payloads/findOnePayload';
+  FindAuthorBookPayload,
+  findAuthorBookPayloadSchema,
+} from '../../../application/repositories/authorBookRepository/payloads/findAuthorBookPayload';
 import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
 import { AuthorBookNotFoundError } from '../../errors/authorBookNotFoundError';
 
@@ -25,8 +25,8 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
     private readonly authorBookMapper: AuthorBookMapper,
   ) {}
 
-  public async createOne(input: CreateOnePayload): Promise<AuthorBook> {
-    const { id, authorId, bookId } = Validator.validate(createOnePayloadSchema, input);
+  public async createAuthorBook(input: CreateAuthorBookPayload): Promise<AuthorBook> {
+    const { id, authorId, bookId } = Validator.validate(createAuthorBookPayloadSchema, input);
 
     const authorBookEntity = this.entityManager.create(AuthorBookEntity, { id, authorId, bookId });
 
@@ -35,8 +35,8 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
     return this.authorBookMapper.map(savedAuthorBookEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<AuthorBook | null> {
-    const { authorId, bookId, id } = Validator.validate(findOnePayloadSchema, input);
+  public async findAuthorBook(input: FindAuthorBookPayload): Promise<AuthorBook | null> {
+    const { authorId, bookId, id } = Validator.validate(findAuthorBookPayloadSchema, input);
 
     let findOneInput = {};
 
@@ -61,10 +61,10 @@ export class AuthorBookRepositoryImpl implements AuthorBookRepository {
     return this.authorBookMapper.map(authorBookEntity);
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteAuthorBook(input: DeleteAuthorBookPayload): Promise<void> {
+    const { id } = Validator.validate(deleteAuthorBookPayloadSchema, input);
 
-    const authorBookEntity = await this.findOne({ id });
+    const authorBookEntity = await this.findAuthorBook({ id });
 
     if (!authorBookEntity) {
       throw new AuthorBookNotFoundError({ id });

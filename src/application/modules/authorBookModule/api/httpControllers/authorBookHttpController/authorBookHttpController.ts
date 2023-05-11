@@ -27,7 +27,7 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { AuthorBookService } from '../../../application/services/authorBookService/authorBookService';
-import { authorBookModuleSymbols } from '../../../authorBookModuleSymbols';
+import { authorBookSymbols } from '../../../symbols';
 import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
 import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
 import { AuthorBookNotFoundError } from '../../../infrastructure/errors/authorBookNotFoundError';
@@ -38,7 +38,7 @@ export class AuthorBookHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(authorBookModuleSymbols.authorBookService)
+    @Inject(authorBookSymbols.authorBookService)
     private readonly authorBookService: AuthorBookService,
   ) {}
 

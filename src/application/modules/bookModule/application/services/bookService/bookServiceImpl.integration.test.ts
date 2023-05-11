@@ -17,8 +17,8 @@ import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkMo
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { AuthorBookRepositoryFactory } from '../../../../authorBookModule/application/repositories/authorBookRepository/authorBookRepositoryFactory';
 import { AuthorBookModule } from '../../../../authorBookModule/authorBookModule';
-import { authorBookModuleSymbols } from '../../../../authorBookModule/authorBookModuleSymbols';
 import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
+import { authorBookSymbols } from '../../../../authorBookModule/symbols';
 import { AuthorBookEntityTestFactory } from '../../../../authorBookModule/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
 import { AuthorModule } from '../../../../authorModule/authorModule';
@@ -104,7 +104,7 @@ describe('BookServiceImpl', () => {
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
-      authorBookModuleSymbols.authorBookRepositoryFactory,
+      authorBookSymbols.authorBookRepositoryFactory,
     );
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategoryModuleSymbols.bookCategoryRepositoryFactory,
@@ -621,9 +621,9 @@ describe('BookServiceImpl', () => {
           lastName: authorEntity.lastName,
         });
 
-        await authorBookRepository.createOne({ id: authorBookId1, bookId: book1.id, authorId: author.id });
+        await authorBookRepository.createAuthorBook({ id: authorBookId1, bookId: book1.id, authorId: author.id });
 
-        await authorBookRepository.createOne({ id: authorBookId2, bookId: book2.id, authorId: author.id });
+        await authorBookRepository.createAuthorBook({ id: authorBookId2, bookId: book2.id, authorId: author.id });
 
         const equalFilterForTitleField: EqualFilter = {
           fieldName: 'title',

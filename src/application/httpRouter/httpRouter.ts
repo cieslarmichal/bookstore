@@ -21,7 +21,7 @@ import { Validator } from '../../libs/validator/validator';
 import { AddressHttpController } from '../modules/addressModule/api/httpControllers/addressHttpController/addressHttpController';
 import { addressSymbols } from '../modules/addressModule/symbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/api/httpControllers/authorBookHttpController/authorBookHttpController';
-import { authorBookModuleSymbols } from '../modules/authorBookModule/authorBookModuleSymbols';
+import { authorBookSymbols } from '../modules/authorBookModule/symbols';
 import { AuthorHttpController } from '../modules/authorModule/api/httpControllers/authorHttpController/authorHttpController';
 import { authorModuleSymbols } from '../modules/authorModule/authorModuleSymbols';
 import { BookCategoryHttpController } from '../modules/bookCategoryModule/api/httpControllers/bookCategoryHttpController/bookCategoryHttpController';
@@ -67,7 +67,7 @@ export class HttpRouter {
     this.registerControllerRoutes({ controller: addressHttpController });
 
     const authorBookHttpController = this.container.get<AuthorBookHttpController>(
-      authorBookModuleSymbols.authorBookHttpController,
+      authorBookSymbols.authorBookHttpController,
     );
 
     this.registerControllerRoutes({ controller: authorBookHttpController });

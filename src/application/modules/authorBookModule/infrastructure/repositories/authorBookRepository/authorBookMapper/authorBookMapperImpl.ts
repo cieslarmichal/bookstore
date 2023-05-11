@@ -6,10 +6,6 @@ import { AuthorBookEntity } from '../authorBookEntity/authorBookEntity';
 @Injectable()
 export class AuthorBookMapperImpl implements AuthorBookMapper {
   public map({ id, authorId, bookId }: AuthorBookEntity): AuthorBook {
-    return new AuthorBook({
-      id,
-      authorId,
-      bookId,
-    });
+    return new AuthorBook({ id, authorId, bookId });
   }
 }

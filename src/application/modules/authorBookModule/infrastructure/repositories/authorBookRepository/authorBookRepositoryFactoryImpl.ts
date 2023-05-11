@@ -2,15 +2,15 @@ import { EntityManager } from 'typeorm';
 
 import { AuthorBookMapper } from './authorBookMapper/authorBookMapper';
 import { AuthorBookRepositoryImpl } from './authorBookRepositoryImpl';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { AuthorBookRepository } from '../../../application/repositories/authorBookRepository/authorBookRepository';
 import { AuthorBookRepositoryFactory } from '../../../application/repositories/authorBookRepository/authorBookRepositoryFactory';
-import { authorBookModuleSymbols } from '../../../authorBookModuleSymbols';
+import { symbols } from '../../../symbols';
 
 @Injectable()
 export class AuthorBookRepositoryFactoryImpl implements AuthorBookRepositoryFactory {
   public constructor(
-    @Inject(authorBookModuleSymbols.authorBookMapper)
+    @Inject(symbols.authorBookMapper)
     private readonly authorBookMapper: AuthorBookMapper,
   ) {}
 

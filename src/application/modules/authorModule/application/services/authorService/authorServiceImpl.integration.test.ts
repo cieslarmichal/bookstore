@@ -17,8 +17,8 @@ import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkMo
 import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
 import { AuthorBookRepositoryFactory } from '../../../../authorBookModule/application/repositories/authorBookRepository/authorBookRepositoryFactory';
 import { AuthorBookModule } from '../../../../authorBookModule/authorBookModule';
-import { authorBookModuleSymbols } from '../../../../authorBookModule/authorBookModuleSymbols';
 import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
+import { authorBookSymbols } from '../../../../authorBookModule/symbols';
 import { AuthorBookEntityTestFactory } from '../../../../authorBookModule/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
@@ -88,7 +88,7 @@ describe('AuthorServiceImpl', () => {
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
-      authorBookModuleSymbols.authorBookRepositoryFactory,
+      authorBookSymbols.authorBookRepositoryFactory,
     );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -331,9 +331,9 @@ describe('AuthorServiceImpl', () => {
           lastName: lastName3,
         });
 
-        await authorBookRepository.createOne({ id: authorBookId1, bookId: book.id, authorId: author1.id });
+        await authorBookRepository.createAuthorBook({ id: authorBookId1, bookId: book.id, authorId: author1.id });
 
-        await authorBookRepository.createOne({ id: authorBookId2, bookId: book.id, authorId: author2.id });
+        await authorBookRepository.createAuthorBook({ id: authorBookId2, bookId: book.id, authorId: author2.id });
 
         const equalFilterForFirstNameField: EqualFilter = {
           fieldName: 'firstName',

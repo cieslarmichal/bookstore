@@ -1,6 +1,12 @@
-import { AuthorBookService } from './authorBookService';
-import { CreateAuthorBookPayload, createAuthorBookPayloadSchema } from './payloads/createAuthorBookPayload';
-import { DeleteAuthorBookPayload, deleteAuthorBookPayloadSchema } from './payloads/deleteAuthorBookPayload';
+import { CreateAuthorBookCommandHandler } from './createAuthorBookCommandHandler';
+import {
+  CreateAuthorBookCommandHandlerPayload,
+  createAuthorBookCommandHandlerPayloadSchema,
+} from './payloads/createAuthorBookCommandHandlerPayload';
+import {
+  CreateAuthorBookCommandHandlerResult,
+  createAuthorBookCommandHandlerResultSchema,
+} from './payloads/createAuthorBookCommandHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
@@ -12,16 +18,14 @@ import { AuthorNotFoundError } from '../../../../authorModule/infrastructure/err
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
-import { AuthorBookRepositoryFactory } from '../../../application/repositories/authorBookRepository/authorBookRepositoryFactory';
-import { authorBookModuleSymbols } from '../../../authorBookModuleSymbols';
-import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
 import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
-import { AuthorBookNotFoundError } from '../../../infrastructure/errors/authorBookNotFoundError';
+import { authorBookSymbols } from '../../../symbols';
+import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
 
 @Injectable()
-export class AuthorBookServiceImpl implements AuthorBookService {
+export class CreateAuthorBookCommandHandlerImpl implements CreateAuthorBookCommandHandler {
   public constructor(
-    @Inject(authorBookModuleSymbols.authorBookRepositoryFactory)
+    @Inject(authorBookSymbols.authorBookRepositoryFactory)
     private readonly authorBookRepositoryFactory: AuthorBookRepositoryFactory,
     @Inject(authorModuleSymbols.authorService)
     private readonly authorService: AuthorService,
@@ -31,11 +35,11 @@ export class AuthorBookServiceImpl implements AuthorBookService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createAuthorBook(input: CreateAuthorBookPayload): Promise<AuthorBook> {
+  public async execute(input: CreateAuthorBookCommandHandlerPayload): Promise<CreateAuthorBookCommandHandlerResult> {
     const {
       unitOfWork,
       draft: { authorId, bookId },
-    } = Validator.validate(createAuthorBookPayloadSchema, input);
+    } = Validator.validate(createAuthorBookCommandHandlerPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating authorBook...', context: { authorId, bookId } });
 
@@ -55,36 +59,20 @@ export class AuthorBookServiceImpl implements AuthorBookService {
 
     const authorBookRepository = this.authorBookRepositoryFactory.create(entityManager);
 
-    const existingAuthorBook = await authorBookRepository.findOne({ authorId, bookId });
+    const existingAuthorBook = await authorBookRepository.findAuthorBook({ authorId, bookId });
 
     if (existingAuthorBook) {
       throw new AuthorBookAlreadyExistsError({ authorId, bookId });
     }
 
-    const authorBook = await authorBookRepository.createOne({ id: UuidGenerator.generateUuid(), authorId, bookId });
+    const authorBook = await authorBookRepository.createAuthorBook({
+      id: UuidGenerator.generateUuid(),
+      authorId,
+      bookId,
+    });
 
     this.loggerService.info({ message: 'AuthorBook created.', context: { authorBookId: authorBook.id } });
 
-    return authorBook;
-  }
-
-  public async deleteAuthorBook(input: DeleteAuthorBookPayload): Promise<void> {
-    const { unitOfWork, authorId, bookId } = Validator.validate(deleteAuthorBookPayloadSchema, input);
-
-    this.loggerService.debug({ message: 'Deleting authorBook...', context: { authorId, bookId } });
-
-    const entityManager = unitOfWork.getEntityManager();
-
-    const authorBookRepository = this.authorBookRepositoryFactory.create(entityManager);
-
-    const authorBook = await authorBookRepository.findOne({ authorId, bookId });
-
-    if (!authorBook) {
-      throw new AuthorBookNotFoundError({ authorId, bookId });
-    }
-
-    await authorBookRepository.deleteOne({ id: authorBook.id });
-
-    this.loggerService.info({ message: 'AuthorBook deleted.', context: { authorBookId: authorBook.id } });
+    return Validator.validate(createAuthorBookCommandHandlerResultSchema, { authorBook });
   }
 }
