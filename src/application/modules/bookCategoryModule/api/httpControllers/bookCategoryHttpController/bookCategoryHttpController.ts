@@ -26,11 +26,12 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { BookCategoryService } from '../../../application/services/bookCategoryService/bookCategoryService';
-import { bookCategoryModuleSymbols } from '../../../bookCategoryModuleSymbols';
+import { CreateBookCategoryCommandHandler } from '../../../application/commandHandlers/createBookCategoryCommandHandler/createBookCategoryCommandHandler';
+import { DeleteBookCategoryCommandHandler } from '../../../application/commandHandlers/deleteBookCategoryCommandHandler/deleteBookCategoryCommandHandler';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
-import { BookCategoryAlreadyExistsError } from '../../errors/bookCategoryAlreadyExistsError';
-import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
+import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
+import { BookCategoryNotFoundError } from '../../../infrastructure/errors/bookCategoryNotFoundError';
+import { symbols } from '../../../symbols';
 
 export class BookCategoryHttpController implements HttpController {
   public readonly basePath = '/books/:bookId/categories/:categoryId';
@@ -38,8 +39,10 @@ export class BookCategoryHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(bookCategoryModuleSymbols.bookCategoryService)
-    private readonly bookCategoryService: BookCategoryService,
+    @Inject(symbols.createBookCategoryCommandHandler)
+    private readonly createBookCategoryCommandHandler: CreateBookCategoryCommandHandler,
+    @Inject(symbols.deleteBookCategoryCommandHandler)
+    private readonly deleteBookCategoryCommandHandler: DeleteBookCategoryCommandHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -95,8 +98,8 @@ export class BookCategoryHttpController implements HttpController {
     let bookCategory: BookCategory | undefined;
 
     try {
-      bookCategory = await unitOfWork.runInTransaction(async () => {
-        return this.bookCategoryService.createBookCategory({
+      const result = await unitOfWork.runInTransaction(async () => {
+        return this.createBookCategoryCommandHandler.execute({
           unitOfWork,
           draft: {
             bookId,
@@ -104,6 +107,8 @@ export class BookCategoryHttpController implements HttpController {
           },
         });
       });
+
+      bookCategory = result.bookCategory;
     } catch (error) {
       if (error instanceof BookCategoryAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
@@ -124,7 +129,7 @@ export class BookCategoryHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.bookCategoryService.deleteBookCategory({
+        await this.deleteBookCategoryCommandHandler.execute({
           unitOfWork,
           bookId,
           categoryId,

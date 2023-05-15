@@ -1,6 +1,12 @@
-import { BookCategoryService } from './bookCategoryService';
-import { CreateBookCategoryPayload, createBookCategoryPayloadSchema } from './payloads/createBookCategoryPayload';
-import { DeleteBookCategoryPayload, deleteBookCategoryPayloadSchema } from './payloads/deleteBookCategoryPayload';
+import { CreateBookCategoryCommandHandler } from './createBookCategoryCommandHandler';
+import {
+  CreateBookCategoryCommandHandlerPayload,
+  createBookCategoryCommandHandlerPayloadSchema,
+} from './payloads/createBookCategoryCommandHandlerPayload';
+import {
+  CreateBookCategoryCommandHandlerResult,
+  createBookCategoryCommandHandlerResultSchema,
+} from './payloads/createBookCategoryCommandHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
@@ -12,16 +18,14 @@ import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/
 import { CategoryService } from '../../../../categoryModule/application/services/categoryService/categoryService';
 import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
 import { CategoryNotFoundError } from '../../../../categoryModule/infrastructure/errors/categoryNotFoundError';
-import { bookCategoryModuleSymbols } from '../../../bookCategoryModuleSymbols';
-import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
 import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
-import { BookCategoryNotFoundError } from '../../../infrastructure/errors/bookCategoryNotFoundError';
+import { bookCategorySymbols } from '../../../symbols';
 import { BookCategoryRepositoryFactory } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 
 @Injectable()
-export class BookCategoryServiceImpl implements BookCategoryService {
+export class CreateBookCategoryCommandHandlerImpl implements CreateBookCategoryCommandHandler {
   public constructor(
-    @Inject(bookCategoryModuleSymbols.bookCategoryRepositoryFactory)
+    @Inject(bookCategorySymbols.bookCategoryRepositoryFactory)
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
     @Inject(categoryModuleSymbols.categoryService)
     private readonly categoryService: CategoryService,
@@ -31,11 +35,13 @@ export class BookCategoryServiceImpl implements BookCategoryService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async createBookCategory(input: CreateBookCategoryPayload): Promise<BookCategory> {
+  public async execute(
+    input: CreateBookCategoryCommandHandlerPayload,
+  ): Promise<CreateBookCategoryCommandHandlerResult> {
     const {
       unitOfWork,
       draft: { bookId, categoryId },
-    } = Validator.validate(createBookCategoryPayloadSchema, input);
+    } = Validator.validate(createBookCategoryCommandHandlerPayloadSchema, input);
 
     this.loggerService.debug({ message: 'Creating bookCategory...', context: { bookId, categoryId } });
 
@@ -55,13 +61,13 @@ export class BookCategoryServiceImpl implements BookCategoryService {
 
     const bookCategoryRepository = this.bookCategoryRepositoryFactory.create(entityManager);
 
-    const existingBookCategory = await bookCategoryRepository.findOne({ bookId, categoryId });
+    const existingBookCategory = await bookCategoryRepository.findBookCategory({ bookId, categoryId });
 
     if (existingBookCategory) {
       throw new BookCategoryAlreadyExistsError({ bookId, categoryId });
     }
 
-    const bookCategory = await bookCategoryRepository.createOne({
+    const bookCategory = await bookCategoryRepository.createBookCategory({
       id: UuidGenerator.generateUuid(),
       bookId,
       categoryId,
@@ -69,26 +75,6 @@ export class BookCategoryServiceImpl implements BookCategoryService {
 
     this.loggerService.info({ message: 'BookCategory created.', context: { bookCategoryId: bookCategory.id } });
 
-    return bookCategory;
-  }
-
-  public async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
-    const { unitOfWork, bookId, categoryId } = Validator.validate(deleteBookCategoryPayloadSchema, input);
-
-    this.loggerService.debug({ message: 'Deleting bookCategory...', context: { bookId, categoryId } });
-
-    const entityManager = unitOfWork.getEntityManager();
-
-    const bookCategoryRepository = this.bookCategoryRepositoryFactory.create(entityManager);
-
-    const bookCategory = await bookCategoryRepository.findOne({ bookId, categoryId });
-
-    if (!bookCategory) {
-      throw new BookCategoryNotFoundError({ bookId, categoryId });
-    }
-
-    await bookCategoryRepository.deleteOne({ id: bookCategory.id });
-
-    this.loggerService.info({ message: 'BookCategory deleted.', context: { bookCategoryId: bookCategory.id } });
+    return Validator.validate(createBookCategoryCommandHandlerResultSchema, { bookCategory });
   }
 }

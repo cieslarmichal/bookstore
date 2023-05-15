@@ -1,10 +1,10 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindOnePayload } from './payloads/findOnePayload';
+import { CreateBookCategoryPayload } from './payloads/createBookCategoryPayload';
+import { DeleteBookCategoryPayload } from './payloads/deleteBookCategoryPayload';
+import { FindBookCategoryPayload } from './payloads/findBookCategoryPayload';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
 
 export interface BookCategoryRepository {
-  createOne(input: CreateOnePayload): Promise<BookCategory>;
-  findOne(input: FindOnePayload): Promise<BookCategory | null>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createBookCategory(input: CreateBookCategoryPayload): Promise<BookCategory>;
+  findBookCategory(input: FindBookCategoryPayload): Promise<BookCategory | null>;
+  deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void>;
 }

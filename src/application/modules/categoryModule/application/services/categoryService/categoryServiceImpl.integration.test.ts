@@ -20,7 +20,7 @@ import { AuthorModule } from '../../../../authorModule/authorModule';
 import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 import { BookCategoryModule } from '../../../../bookCategoryModule/bookCategoryModule';
-import { bookCategoryModuleSymbols } from '../../../../bookCategoryModule/bookCategoryModuleSymbols';
+import { bookCategorySymbols } from '../../../../bookCategoryModule/symbols';
 import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategoryModule/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
@@ -93,7 +93,7 @@ describe('CategoryServiceImpl', () => {
     );
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
-      bookCategoryModuleSymbols.bookCategoryRepositoryFactory,
+      bookCategorySymbols.bookCategoryRepositoryFactory,
     );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -271,13 +271,13 @@ describe('CategoryServiceImpl', () => {
           releaseYear: bookEntity.releaseYear,
         });
 
-        await bookCategoryRepository.createOne({
+        await bookCategoryRepository.createBookCategory({
           id: bookCategoryId1,
           categoryId: category1.id,
           bookId: book.id,
         });
 
-        await bookCategoryRepository.createOne({
+        await bookCategoryRepository.createBookCategory({
           id: bookCategoryId2,
           categoryId: category2.id,
           bookId: book.id,

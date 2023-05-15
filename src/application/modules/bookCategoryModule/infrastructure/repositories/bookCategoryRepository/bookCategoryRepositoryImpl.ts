@@ -5,17 +5,17 @@ import { BookCategoryMapper } from './bookCategoryMapper/bookCategoryMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { BookCategoryRepository } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/bookCategoryRepository/payloads/createOnePayload';
+  CreateBookCategoryPayload,
+  createBookCategoryPayloadSchema,
+} from '../../../application/repositories/bookCategoryRepository/payloads/createBookCategoryPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/bookCategoryRepository/payloads/deleteOnePayload';
+  DeleteBookCategoryPayload,
+  deleteBookCategoryPayloadSchema,
+} from '../../../application/repositories/bookCategoryRepository/payloads/deleteBookCategoryPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/bookCategoryRepository/payloads/findOnePayload';
+  FindBookCategoryPayload,
+  findBookCategoryPayloadSchema,
+} from '../../../application/repositories/bookCategoryRepository/payloads/findBookCategoryPayload';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
 import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
 
@@ -25,8 +25,8 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
     private readonly bookCategoryMapper: BookCategoryMapper,
   ) {}
 
-  public async createOne(input: CreateOnePayload): Promise<BookCategory> {
-    const { id, bookId, categoryId } = Validator.validate(createOnePayloadSchema, input);
+  public async createBookCategory(input: CreateBookCategoryPayload): Promise<BookCategory> {
+    const { id, bookId, categoryId } = Validator.validate(createBookCategoryPayloadSchema, input);
 
     const bookCategoryEntity = this.entityManager.create(BookCategoryEntity, { id, bookId, categoryId });
 
@@ -35,8 +35,8 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
     return this.bookCategoryMapper.map(savedBookCategoryEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<BookCategory | null> {
-    const { id, bookId, categoryId } = Validator.validate(findOnePayloadSchema, input);
+  public async findBookCategory(input: FindBookCategoryPayload): Promise<BookCategory | null> {
+    const { id, bookId, categoryId } = Validator.validate(findBookCategoryPayloadSchema, input);
 
     let findOneInput = {};
 
@@ -61,10 +61,10 @@ export class BookCategoryRepositoryImpl implements BookCategoryRepository {
     return this.bookCategoryMapper.map(bookCategoryEntity);
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteBookCategory(input: DeleteBookCategoryPayload): Promise<void> {
+    const { id } = Validator.validate(deleteBookCategoryPayloadSchema, input);
 
-    const bookCategoryEntity = await this.findOne({ id });
+    const bookCategoryEntity = await this.findBookCategory({ id });
 
     if (!bookCategoryEntity) {
       throw new BookCategoryNotFoundError({ id });
