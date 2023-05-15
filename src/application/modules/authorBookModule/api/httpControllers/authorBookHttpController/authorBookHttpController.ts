@@ -26,11 +26,11 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { AuthorBookService } from '../../../application/services/authorBookService/authorBookService';
-import { authorBookSymbols } from '../../../symbols';
-import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
+import { CreateAuthorBookCommandHandler } from '../../../application/commandHandlers/createAuthorBookCommandHandler/createAuthorBookCommandHandler';
+import { DeleteAuthorBookCommandHandler } from '../../../application/commandHandlers/deleteAuthorBookCommandHandler/deleteAuthorBookCommandHandler';
 import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
 import { AuthorBookNotFoundError } from '../../../infrastructure/errors/authorBookNotFoundError';
+import { symbols } from '../../../symbols';
 
 export class AuthorBookHttpController implements HttpController {
   public readonly basePath = '/authors/:authorId/books/:bookId';
@@ -38,8 +38,10 @@ export class AuthorBookHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(authorBookSymbols.authorBookService)
-    private readonly authorBookService: AuthorBookService,
+    @Inject(symbols.createAuthorBookCommandHandler)
+    private readonly createAuthorBookCommandHandler: CreateAuthorBookCommandHandler,
+    @Inject(symbols.deleteAuthorBookCommandHandler)
+    private readonly deleteAuthorBookCommandHandler: DeleteAuthorBookCommandHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -92,11 +94,9 @@ export class AuthorBookHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let authorBook: AuthorBook | undefined;
-
     try {
-      authorBook = await unitOfWork.runInTransaction(async () => {
-        return this.authorBookService.createAuthorBook({
+      const { authorBook } = await unitOfWork.runInTransaction(async () => {
+        return this.createAuthorBookCommandHandler.execute({
           unitOfWork,
           draft: {
             authorId,
@@ -104,6 +104,7 @@ export class AuthorBookHttpController implements HttpController {
           },
         });
       });
+      return { statusCode: HttpStatusCode.created, body: { authorBook } };
     } catch (error) {
       if (error instanceof AuthorBookAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
@@ -111,8 +112,6 @@ export class AuthorBookHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { authorBook } };
   }
 
   private async deleteAuthorBook(
@@ -124,7 +123,7 @@ export class AuthorBookHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.authorBookService.deleteAuthorBook({
+        await this.deleteAuthorBookCommandHandler.execute({
           unitOfWork,
           authorId,
           bookId,

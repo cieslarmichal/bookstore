@@ -49,11 +49,14 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { AuthorService } from '../../../application/services/authorService/authorService';
-import { CreateAuthorDraft } from '../../../application/services/authorService/payloads/createAuthorDraft';
-import { Author } from '../../../domain/entities/author/author';
+import { CreateAuthorCommandHandler } from '../../../application/commandHandlers/createAuthorCommandHandler/createAuthorCommandHandler';
+import { CreateAuthorDraft } from '../../../application/commandHandlers/createAuthorCommandHandler/payloads/createAuthorDraft';
+import { DeleteAuthorCommandHandler } from '../../../application/commandHandlers/deleteAuthorCommandHandler/deleteAuthorCommandHandler';
+import { UpdateAuthorCommandHandler } from '../../../application/commandHandlers/updateAuthorCommandHandler/updateAuthorCommandHandler';
+import { FindAuthorQueryHandler } from '../../../application/queryHandlers/findAuthorQueryHandler/findAuthorQueryHandler';
+import { FindAuthorsQueryHandler } from '../../../application/queryHandlers/findAuthorsQueryHandler/findAuthorsQueryHandler';
 import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
-import { authorModuleSymbols } from '../../../symbols';
+import { symbols } from '../../../symbols';
 
 export class AuthorHttpController implements HttpController {
   public readonly basePath = 'authors';
@@ -61,8 +64,16 @@ export class AuthorHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(authorModuleSymbols.authorService)
-    private readonly authorService: AuthorService,
+    @Inject(symbols.createAuthorCommandHandler)
+    private readonly createAuthorCommandHandler: CreateAuthorCommandHandler,
+    @Inject(symbols.deleteAuthorCommandHandler)
+    private readonly deleteAuthorCommandHandler: DeleteAuthorCommandHandler,
+    @Inject(symbols.updateAuthorCommandHandler)
+    private readonly updateAuthorCommandHandler: UpdateAuthorCommandHandler,
+    @Inject(symbols.findAuthorQueryHandler)
+    private readonly findAuthorQueryHandler: FindAuthorQueryHandler,
+    @Inject(symbols.findAuthorsQueryHandler)
+    private readonly findAuthorsQueryHandler: FindAuthorsQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -165,7 +176,7 @@ export class AuthorHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const author = await unitOfWork.runInTransaction(async () => {
+    const { author } = await unitOfWork.runInTransaction(async () => {
       let createAuthorDraft: CreateAuthorDraft = {
         firstName,
         lastName,
@@ -175,7 +186,7 @@ export class AuthorHttpController implements HttpController {
         createAuthorDraft = { ...createAuthorDraft, about };
       }
 
-      return this.authorService.createAuthor({ unitOfWork, draft: createAuthorDraft });
+      return this.createAuthorCommandHandler.execute({ unitOfWork, draft: createAuthorDraft });
     });
 
     return { statusCode: HttpStatusCode.created, body: { author } };
@@ -188,12 +199,12 @@ export class AuthorHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let author: Author | undefined;
-
     try {
-      author = await unitOfWork.runInTransaction(async () => {
-        return this.authorService.findAuthor({ unitOfWork, authorId: id as string });
+      const { author } = await unitOfWork.runInTransaction(async () => {
+        return this.findAuthorQueryHandler.execute({ unitOfWork, authorId: id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { author: author } };
     } catch (error) {
       if (error instanceof AuthorNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -201,8 +212,6 @@ export class AuthorHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { author: author as Author } };
   }
 
   private async findAuthors(
@@ -221,8 +230,8 @@ export class AuthorHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const authors = await unitOfWork.runInTransaction(async () => {
-      return this.authorService.findAuthors({ unitOfWork, filters, pagination });
+    const { authors } = await unitOfWork.runInTransaction(async () => {
+      return this.findAuthorsQueryHandler.execute({ unitOfWork, filters, pagination });
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: authors } };
@@ -237,12 +246,12 @@ export class AuthorHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let author: Author | undefined;
-
     try {
-      author = await unitOfWork.runInTransaction(async () => {
-        return this.authorService.updateAuthor({ unitOfWork, authorId: id as string, draft: { about } });
+      const { author } = await unitOfWork.runInTransaction(async () => {
+        return this.updateAuthorCommandHandler.execute({ unitOfWork, authorId: id as string, draft: { about } });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { author } };
     } catch (error) {
       if (error instanceof AuthorNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -250,8 +259,6 @@ export class AuthorHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { author: author as Author } };
   }
 
   private async deleteAuthor(
@@ -263,7 +270,7 @@ export class AuthorHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.authorService.deleteAuthor({ unitOfWork, authorId: id as string });
+        await this.deleteAuthorCommandHandler.execute({ unitOfWork, authorId: id });
       });
     } catch (error) {
       if (error instanceof AuthorNotFoundError) {
