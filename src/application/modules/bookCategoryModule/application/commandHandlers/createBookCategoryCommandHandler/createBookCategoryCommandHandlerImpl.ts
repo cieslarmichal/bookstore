@@ -13,8 +13,8 @@ import { LoggerService } from '../../../../../../libs/logger/services/loggerServ
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { CategoryService } from '../../../../categoryModule/application/services/categoryService/categoryService';
 import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
 import { CategoryNotFoundError } from '../../../../categoryModule/infrastructure/errors/categoryNotFoundError';
@@ -29,7 +29,7 @@ export class CreateBookCategoryCommandHandlerImpl implements CreateBookCategoryC
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
     @Inject(categoryModuleSymbols.categoryService)
     private readonly categoryService: CategoryService,
-    @Inject(bookModuleSymbols.bookService)
+    @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,

@@ -20,13 +20,13 @@ import { AuthorModule } from '../../../../authorModule/authorModule';
 import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
 import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 import { BookCategoryModule } from '../../../../bookCategoryModule/bookCategoryModule';
-import { bookCategorySymbols } from '../../../../bookCategoryModule/symbols';
 import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
+import { bookCategorySymbols } from '../../../../bookCategoryModule/symbols';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategoryModule/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { BookModule } from '../../../../bookModule/bookModule';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
@@ -75,7 +75,7 @@ describe('CategoryServiceImpl', () => {
   });
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new BookModule(),
@@ -91,7 +91,7 @@ describe('CategoryServiceImpl', () => {
     categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
       categoryModuleSymbols.categoryRepositoryFactory,
     );
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategorySymbols.bookCategoryRepositoryFactory,
     );
@@ -261,7 +261,7 @@ describe('CategoryServiceImpl', () => {
 
         const category2 = await categoryRepository.createOne(categoryEntity2);
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookEntity.id,
           format: bookEntity.format,
           language: bookEntity.language,

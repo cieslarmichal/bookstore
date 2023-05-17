@@ -249,12 +249,12 @@ export class ReviewHttpController implements HttpController {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const customerReview = await this.reviewService.findReview({ unitOfWork, reviewId: id as string });
+        const customerReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
 
         if (customerReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
             customerId: customer.id,
-            reviewCustomerId: customerReview.customerId as string,
+            reviewCustomerId: customerReview.customerId,
           });
         }
 
@@ -275,7 +275,7 @@ export class ReviewHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { review: review as Review } };
+    return { statusCode: HttpStatusCode.ok, body: { review } };
   }
 
   private async findReviews(
@@ -357,7 +357,7 @@ export class ReviewHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { review: review as Review } };
+    return { statusCode: HttpStatusCode.ok, body: { review } };
   }
 
   private async deleteReview(

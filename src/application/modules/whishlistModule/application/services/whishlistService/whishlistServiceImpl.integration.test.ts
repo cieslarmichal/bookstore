@@ -17,8 +17,8 @@ import { AuthorEntity } from '../../../../authorModule/infrastructure/repositori
 import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { BookModule } from '../../../../bookModule/bookModule';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
@@ -79,7 +79,7 @@ describe('WhishlistEntryServiceImpl', () => {
   });
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new WhishlistModule(),
@@ -99,7 +99,7 @@ describe('WhishlistEntryServiceImpl', () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
       customerModuleSymbols.customerRepositoryFactory,
     );
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -132,7 +132,7 @@ describe('WhishlistEntryServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookEntity.id,
           format: bookEntity.format,
           language: bookEntity.language,
@@ -182,7 +182,7 @@ describe('WhishlistEntryServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookEntity.id,
           format: bookEntity.format,
           language: bookEntity.language,
@@ -240,7 +240,7 @@ describe('WhishlistEntryServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookEntity.id,
           format: bookEntity.format,
           language: bookEntity.language,
@@ -313,7 +313,7 @@ describe('WhishlistEntryServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookEntity.id,
           format: bookEntity.format,
           language: bookEntity.language,
@@ -381,7 +381,7 @@ describe('WhishlistEntryServiceImpl', () => {
 
         const bookEntity = bookEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookEntity.id,
           format: bookEntity.format,
           language: bookEntity.language,

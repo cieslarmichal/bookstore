@@ -158,7 +158,7 @@ export class CategoryHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.created, body: { category: category as Category } };
+    return { statusCode: HttpStatusCode.created, body: { category } };
   }
 
   private async findCategory(
@@ -172,7 +172,7 @@ export class CategoryHttpController implements HttpController {
 
     try {
       category = await unitOfWork.runInTransaction(async () => {
-        return this.categoryService.findCategory({ unitOfWork, categoryId: id as string });
+        return this.categoryService.findCategory({ unitOfWork, categoryId: id });
       });
     } catch (error) {
       if (error instanceof CategoryNotFoundError) {
@@ -182,7 +182,7 @@ export class CategoryHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { category: category as Category } };
+    return { statusCode: HttpStatusCode.ok, body: { category } };
   }
 
   private async findCategories(
@@ -221,7 +221,7 @@ export class CategoryHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.categoryService.deleteCategory({ unitOfWork, categoryId: id as string });
+        await this.categoryService.deleteCategory({ unitOfWork, categoryId: id });
       });
     } catch (error) {
       if (error instanceof CategoryNotFoundError) {

@@ -297,12 +297,12 @@ export class CartHttpController implements HttpController {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const customerCart = await this.cartService.findCart({ unitOfWork, cartId: id as string });
+        const customerCart = await this.cartService.findCart({ unitOfWork, cartId: id });
 
         if (customerCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
             customerId: customer.id,
-            targetCustomerId: customerCart.customerId as string,
+            targetCustomerId: customerCart.customerId,
           });
         }
 
@@ -323,7 +323,7 @@ export class CartHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { cart: cart as Cart } };
+    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async findCustomerCarts(
@@ -419,7 +419,7 @@ export class CartHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { cart: cart as Cart } };
+    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async addLineItem(
@@ -481,7 +481,7 @@ export class CartHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { cart: cart as Cart } };
+    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async removeLineItem(
@@ -543,7 +543,7 @@ export class CartHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { cart: cart as Cart } };
+    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async deleteCart(

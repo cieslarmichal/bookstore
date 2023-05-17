@@ -93,7 +93,7 @@ describe(`UserController (${baseUrl})`, () => {
   const createContainerFunction = DependencyInjectionContainerFactory.create;
 
   beforeEach(async () => {
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new CategoryModule(),

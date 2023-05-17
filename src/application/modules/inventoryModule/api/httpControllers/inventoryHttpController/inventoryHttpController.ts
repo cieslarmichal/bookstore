@@ -197,7 +197,7 @@ export class InventoryHttpController implements HttpController {
 
     try {
       inventory = await unitOfWork.runInTransaction(async () => {
-        return this.inventoryService.findInventory({ unitOfWork, inventoryId: id as string });
+        return this.inventoryService.findInventory({ unitOfWork, inventoryId: id });
       });
     } catch (error) {
       if (error instanceof InventoryNotFoundError) {
@@ -207,7 +207,7 @@ export class InventoryHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { inventory: inventory as Inventory } };
+    return { statusCode: HttpStatusCode.ok, body: { inventory } };
   }
 
   private async findInventories(
@@ -249,7 +249,7 @@ export class InventoryHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { inventory: inventory as Inventory } };
+    return { statusCode: HttpStatusCode.ok, body: { inventory } };
   }
 
   private async deleteInventory(
@@ -261,7 +261,7 @@ export class InventoryHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.inventoryService.deleteInventory({ unitOfWork, inventoryId: id as string });
+        await this.inventoryService.deleteInventory({ unitOfWork, inventoryId: id });
       });
     } catch (error) {
       if (error instanceof InventoryNotFoundError) {

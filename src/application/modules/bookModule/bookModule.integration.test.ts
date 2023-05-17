@@ -2,13 +2,9 @@ import 'reflect-metadata';
 
 import { BookHttpController } from './api/httpControllers/bookHttpController/bookHttpController';
 import { BookRepositoryFactory } from './application/repositories/bookRepository/bookRepositoryFactory';
-import { BookService } from './application/services/bookService/bookService';
-import { BookServiceImpl } from './application/services/bookService/bookServiceImpl';
 import { BookModule } from './bookModule';
-import { bookModuleSymbols } from './bookModuleSymbols';
-import { BookMapper } from './infrastructure/repositories/bookRepository/bookMapper/bookMapper';
-import { BookMapperImpl } from './infrastructure/repositories/bookRepository/bookMapper/bookMapperImpl';
 import { BookRepositoryFactoryImpl } from './infrastructure/repositories/bookRepository/bookRepositoryFactoryImpl';
+import { bookSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -23,20 +19,16 @@ describe('BookModule', () => {
   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    container = await DependencyInjectionContainerFactory.create({
+    container = DependencyInjectionContainerFactory.create({
       modules: [new PostgresModule(postgresModuleConfig), new LoggerModule(loggerModuleConfig), new BookModule()],
     });
   });
 
   it('declares bindings', async () => {
-    expect(container.get<BookMapper>(bookModuleSymbols.bookMapper)).toBeInstanceOf(BookMapperImpl);
-
-    expect(container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory)).toBeInstanceOf(
       BookRepositoryFactoryImpl,
     );
 
-    expect(container.get<BookService>(bookModuleSymbols.bookService)).toBeInstanceOf(BookServiceImpl);
-
-    expect(container.get<BookHttpController>(bookModuleSymbols.bookHttpController)).toBeInstanceOf(BookHttpController);
+    expect(container.get<BookHttpController>(bookSymbols.bookHttpController)).toBeInstanceOf(BookHttpController);
   });
 });

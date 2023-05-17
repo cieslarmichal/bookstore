@@ -16,8 +16,8 @@ import { AuthorService } from '../../../../authorModule/application/services/aut
 import { AuthorNotFoundError } from '../../../../authorModule/infrastructure/errors/authorNotFoundError';
 import { authorModuleSymbols } from '../../../../authorModule/symbols';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
 import { authorBookSymbols } from '../../../symbols';
 import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
@@ -29,7 +29,7 @@ export class CreateAuthorBookCommandHandlerImpl implements CreateAuthorBookComma
     private readonly authorBookRepositoryFactory: AuthorBookRepositoryFactory,
     @Inject(authorModuleSymbols.authorService)
     private readonly authorService: AuthorService,
-    @Inject(bookModuleSymbols.bookService)
+    @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,

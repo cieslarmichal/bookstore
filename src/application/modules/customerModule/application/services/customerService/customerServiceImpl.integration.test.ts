@@ -67,7 +67,7 @@ describe('CustomerServiceImpl', () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new CustomerModule(),

@@ -133,7 +133,7 @@ export class CustomerHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.created, body: { customer: customer as Customer } };
+    return { statusCode: HttpStatusCode.created, body: { customer } };
   }
 
   private async findCustomer(
@@ -147,7 +147,7 @@ export class CustomerHttpController implements HttpController {
 
     try {
       customer = await unitOfWork.runInTransaction(async () => {
-        return this.customerService.findCustomer({ unitOfWork, customerId: id as string });
+        return this.customerService.findCustomer({ unitOfWork, customerId: id });
       });
     } catch (error) {
       if (error instanceof CustomerNotFoundError) {
@@ -157,7 +157,7 @@ export class CustomerHttpController implements HttpController {
       throw error;
     }
 
-    return { statusCode: HttpStatusCode.ok, body: { customer: customer as Customer } };
+    return { statusCode: HttpStatusCode.ok, body: { customer } };
   }
 
   private async deleteCustomer(
@@ -169,7 +169,7 @@ export class CustomerHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.customerService.deleteCustomer({ unitOfWork, customerId: id as string });
+        await this.customerService.deleteCustomer({ unitOfWork, customerId: id });
       });
     } catch (error) {
       if (error instanceof CustomerNotFoundError) {

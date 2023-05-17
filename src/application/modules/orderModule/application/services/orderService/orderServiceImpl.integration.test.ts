@@ -18,8 +18,8 @@ import { AuthorEntity } from '../../../../authorModule/infrastructure/repositori
 import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { BookModule } from '../../../../bookModule/bookModule';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
@@ -95,7 +95,7 @@ describe('OrderServiceImpl', () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new LoggerModule(loggerModuleConfig),
@@ -116,7 +116,7 @@ describe('OrderServiceImpl', () => {
       customerModuleSymbols.customerRepositoryFactory,
     );
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
       inventoryModuleSymbols.inventoryRepositoryFactory,
@@ -182,7 +182,7 @@ describe('OrderServiceImpl', () => {
 
         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookId,
           price: bookPrice,
           format,
@@ -311,7 +311,7 @@ describe('OrderServiceImpl', () => {
 
         const customer2 = await customerRepository.createOne({ id: customerId2, userId: user2.id });
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id: bookId,
           price: bookPrice,
           format,

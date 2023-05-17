@@ -13,7 +13,7 @@ import { AuthorBookRepositoryFactory } from '../../../../authorBookModule/applic
 import { authorBookSymbols } from '../../../../authorBookModule/symbols';
 import { AuthorBookEntityTestFactory } from '../../../../authorBookModule/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { symbols } from '../../../symbols';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
@@ -38,7 +38,7 @@ describe('FindAuthorsByBookIdQueryHandler', () => {
       symbols.findAuthorsByBookIdQueryHandler,
     );
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(symbols.authorRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
       authorBookSymbols.authorBookRepositoryFactory,
     );
@@ -77,7 +77,7 @@ describe('FindAuthorsByBookIdQueryHandler', () => {
 
       const { id: authorBookId2 } = authorBookEntityTestFactory.create();
 
-      const book = await bookRepository.createOne({
+      const book = await bookRepository.createBook({
         id: bookId,
         title,
         isbn,

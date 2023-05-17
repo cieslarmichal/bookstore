@@ -11,7 +11,7 @@ describe('HttpModule', () => {
   let container: DependencyInjectionContainer;
 
   beforeAll(async () => {
-    container = await DependencyInjectionContainerFactory.create({
+    container = DependencyInjectionContainerFactory.create({
       modules: [new HttpModule()],
     });
   });

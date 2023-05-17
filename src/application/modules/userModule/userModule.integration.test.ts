@@ -29,7 +29,7 @@ describe('UserModule', () => {
   const userModuleConfig = new UserModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    container = await DependencyInjectionContainerFactory.create({
+    container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new LoggerModule(loggerModuleConfig),

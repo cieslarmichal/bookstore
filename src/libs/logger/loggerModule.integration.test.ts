@@ -14,7 +14,7 @@ describe('LoggerModule', () => {
   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
 
   beforeAll(async () => {
-    container = await DependencyInjectionContainerFactory.create({
+    container = DependencyInjectionContainerFactory.create({
       modules: [new LoggerModule(loggerModuleConfig)],
     });
   });

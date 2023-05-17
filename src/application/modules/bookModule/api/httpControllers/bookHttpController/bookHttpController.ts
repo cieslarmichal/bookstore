@@ -49,12 +49,15 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { BookService } from '../../../application/services/bookService/bookService';
-import { CreateBookDraft } from '../../../application/services/bookService/payloads/createBookDraft';
-import { UpdateBookDraft } from '../../../application/services/bookService/payloads/updateBookDraft';
-import { bookModuleSymbols } from '../../../bookModuleSymbols';
-import { Book } from '../../../domain/entities/book/book';
+import { CreateBookCommandHandler } from '../../../application/commandHandlers/createBookCommandHandler/createBookCommandHandler';
+import { CreateBookDraft } from '../../../application/commandHandlers/createBookCommandHandler/payloads/createBookDraft';
+import { DeleteBookCommandHandler } from '../../../application/commandHandlers/deleteBookCommandHandler/deleteBookCommandHandler';
+import { UpdateBookCommandHandler } from '../../../application/commandHandlers/updateBookCommandHandler/updateBookCommandHandler';
+import { FindBookQueryHandler } from '../../../application/queryHandlers/findBookQueryHandler/findBookQueryHandler';
+import { FindBooksQueryHandler } from '../../../application/queryHandlers/findBooksQueryHandler/findBooksQueryHandler';
+import { UpdateBookDraft } from '../../../application/repositories/bookRepository/payloads/updateBookDraft';
 import { BookNotFoundError } from '../../../infrastructure/errors/bookNotFoundError';
+import { symbols } from '../../../symbols';
 
 export class BookHttpController implements HttpController {
   public readonly basePath = 'books';
@@ -62,8 +65,16 @@ export class BookHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(bookModuleSymbols.bookService)
-    private readonly bookService: BookService,
+    @Inject(symbols.createBookCommandHandler)
+    private readonly createBookCommandHandler: CreateBookCommandHandler,
+    @Inject(symbols.deleteBookCommandHandler)
+    private readonly deleteBookCommandHandler: DeleteBookCommandHandler,
+    @Inject(symbols.updateBookCommandHandler)
+    private readonly updateBookCommandHandler: UpdateBookCommandHandler,
+    @Inject(symbols.findBookQueryHandler)
+    private readonly findBookQueryHandler: FindBookQueryHandler,
+    @Inject(symbols.findBooksQueryHandler)
+    private readonly findBooksQueryHandler: FindBooksQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -166,7 +177,7 @@ export class BookHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const book = await unitOfWork.runInTransaction(async () => {
+    const { book } = await unitOfWork.runInTransaction(async () => {
       let createBookDraft: CreateBookDraft = {
         title,
         isbn,
@@ -180,7 +191,7 @@ export class BookHttpController implements HttpController {
         createBookDraft = { ...createBookDraft, description };
       }
 
-      return this.bookService.createBook({
+      return this.createBookCommandHandler.execute({
         unitOfWork,
         draft: createBookDraft,
       });
@@ -196,12 +207,12 @@ export class BookHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let book: Book | undefined;
-
     try {
-      book = await unitOfWork.runInTransaction(async () => {
-        return this.bookService.findBook({ unitOfWork, bookId: id as string });
+      const { book } = await unitOfWork.runInTransaction(async () => {
+        return this.findBookQueryHandler.execute({ unitOfWork, bookId: id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { book: book } };
     } catch (error) {
       if (error instanceof BookNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -209,8 +220,6 @@ export class BookHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { book: book as Book } };
   }
 
   private async findBooks(
@@ -229,8 +238,8 @@ export class BookHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const books = await unitOfWork.runInTransaction(async () => {
-      return this.bookService.findBooks({ unitOfWork, filters, pagination });
+    const { books } = await unitOfWork.runInTransaction(async () => {
+      return this.findBooksQueryHandler.execute({ unitOfWork, filters, pagination });
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: books } };
@@ -245,10 +254,8 @@ export class BookHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let book: Book | undefined;
-
     try {
-      book = await unitOfWork.runInTransaction(async () => {
+      const { book } = await unitOfWork.runInTransaction(async () => {
         let updateBookDraft: UpdateBookDraft = {};
 
         if (description) {
@@ -259,8 +266,10 @@ export class BookHttpController implements HttpController {
           updateBookDraft = { ...updateBookDraft, price };
         }
 
-        return this.bookService.updateBook({ unitOfWork, bookId: id, draft: updateBookDraft });
+        return this.updateBookCommandHandler.execute({ unitOfWork, bookId: id, draft: updateBookDraft });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { book } };
     } catch (error) {
       if (error instanceof BookNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -268,8 +277,6 @@ export class BookHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { book: book as Book } };
   }
 
   private async deleteBook(
@@ -281,7 +288,7 @@ export class BookHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.bookService.deleteBook({ unitOfWork, bookId: id as string });
+        await this.deleteBookCommandHandler.execute({ unitOfWork, bookId: id });
       });
     } catch (error) {
       if (error instanceof BookNotFoundError) {

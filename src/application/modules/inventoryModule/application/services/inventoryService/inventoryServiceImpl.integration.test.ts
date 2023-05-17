@@ -17,8 +17,8 @@ import { AuthorEntity } from '../../../../authorModule/infrastructure/repositori
 import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { BookModule } from '../../../../bookModule/bookModule';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
 import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
@@ -65,7 +65,7 @@ describe('InventoryServiceImpl', () => {
   });
 
   beforeAll(async () => {
-    const container = await DependencyInjectionContainerFactory.create({
+    const container = DependencyInjectionContainerFactory.create({
       modules: [
         new PostgresModule(postgresModuleConfig),
         new InventoryModule(),
@@ -79,7 +79,7 @@ describe('InventoryServiceImpl', () => {
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
       inventoryModuleSymbols.inventoryRepositoryFactory,
     );
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -106,7 +106,7 @@ describe('InventoryServiceImpl', () => {
 
         const { quantity } = inventoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id,
           title,
           isbn,
@@ -138,7 +138,7 @@ describe('InventoryServiceImpl', () => {
 
         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id,
           title,
           isbn,
@@ -174,7 +174,7 @@ describe('InventoryServiceImpl', () => {
 
         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id,
           title,
           isbn,
@@ -222,7 +222,7 @@ describe('InventoryServiceImpl', () => {
 
         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id,
           title,
           isbn,
@@ -265,7 +265,7 @@ describe('InventoryServiceImpl', () => {
 
         const updatedQuantity = quantity + 1;
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id,
           title,
           isbn,
@@ -318,7 +318,7 @@ describe('InventoryServiceImpl', () => {
 
         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
 
-        const book = await bookRepository.createOne({
+        const book = await bookRepository.createBook({
           id,
           title,
           isbn,

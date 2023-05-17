@@ -4,10 +4,12 @@ import { UnitOfWork } from '../../../../../../../libs/unitOfWork/unitOfWork';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const findBooksPayloadSchema = Schema.object({
+export const findBooksQueryHandlerPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   filters: Schema.array(Schema.unsafeType<Filter>()),
   pagination: Schema.unsafeType<PaginationData>(),
+  authorId: Schema.string().optional(),
+  categoryId: Schema.string().optional(),
 });
 
-export type FindBooksPayload = SchemaType<typeof findBooksPayloadSchema>;
+export type FindBooksQueryHandlerPayload = SchemaType<typeof findBooksQueryHandlerPayloadSchema>;

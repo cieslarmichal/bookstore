@@ -12,7 +12,7 @@ import { Application } from '../../../../../application';
 import { AuthorBookRepositoryFactory } from '../../../../authorBookModule/application/repositories/authorBookRepository/authorBookRepositoryFactory';
 import { authorBookSymbols } from '../../../../authorBookModule/symbols';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { symbols } from '../../../symbols';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { AuthorRepositoryFactory } from '../../repositories/authorRepository/authorRepositoryFactory';
@@ -32,7 +32,7 @@ describe('FindAuthorsQueryHandler', () => {
 
     findAuthorsQueryHandler = container.get<FindAuthorsQueryHandler>(symbols.findAuthorsQueryHandler);
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(symbols.authorRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
       authorBookSymbols.authorBookRepositoryFactory,
     );

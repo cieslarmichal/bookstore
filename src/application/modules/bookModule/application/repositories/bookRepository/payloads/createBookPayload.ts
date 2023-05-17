@@ -3,7 +3,7 @@ import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 import { BookFormat } from '../../../../domain/entities/book/bookFormat';
 import { BookLanguage } from '../../../../domain/entities/book/bookLanguage';
 
-export const createOnePayloadSchema = Schema.object({
+export const createBookPayloadSchema = Schema.object({
   id: Schema.string(),
   title: Schema.string(),
   isbn: Schema.string(),
@@ -14,4 +14,4 @@ export const createOnePayloadSchema = Schema.object({
   description: Schema.string().optional(),
 });
 
-export type CreateOnePayload = SchemaType<typeof createOnePayloadSchema>;
+export type CreateBookPayload = SchemaType<typeof createBookPayloadSchema>;

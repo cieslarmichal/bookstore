@@ -1,14 +1,14 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
-import { UpdateOnePayload } from './payloads/updateOnePayload';
+import { CreateBookPayload } from './payloads/createBookPayload';
+import { DeleteBookPayload } from './payloads/deleteBookPayload';
+import { FindBookPayload } from './payloads/findBookPayload';
+import { FindBooksPayload } from './payloads/findBooksPayload';
+import { UpdateBookPayload } from './payloads/updateBookPayload';
 import { Book } from '../../../domain/entities/book/book';
 
 export interface BookRepository {
-  createOne(input: CreateOnePayload): Promise<Book>;
-  findOne(input: FindOnePayload): Promise<Book | null>;
-  findMany(input: FindManyPayload): Promise<Book[]>;
-  updateOne(input: UpdateOnePayload): Promise<Book>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createBook(input: CreateBookPayload): Promise<Book>;
+  findBook(input: FindBookPayload): Promise<Book | null>;
+  findBooks(input: FindBooksPayload): Promise<Book[]>;
+  updateBook(input: UpdateBookPayload): Promise<Book>;
+  deleteBook(input: DeleteBookPayload): Promise<void>;
 }

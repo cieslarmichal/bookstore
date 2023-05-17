@@ -10,7 +10,7 @@ import { AuthorRepositoryFactory } from '../../../../authorModule/application/re
 import { authorModuleSymbols } from '../../../../authorModule/symbols';
 import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { AuthorBookNotFoundError } from '../../../infrastructure/errors/authorBookNotFoundError';
 import { authorBookSymbols, symbols } from '../../../symbols';
@@ -39,7 +39,7 @@ describe('DeleteAuthorBookCommandHandler', () => {
       authorBookSymbols.authorBookRepositoryFactory,
     );
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -75,7 +75,7 @@ describe('DeleteAuthorBookCommandHandler', () => {
         lastName: authorEntity.lastName,
       });
 
-      const book = await bookRepository.createOne({
+      const book = await bookRepository.createBook({
         id: bookEntity.id,
         format: bookEntity.format,
         language: bookEntity.language,

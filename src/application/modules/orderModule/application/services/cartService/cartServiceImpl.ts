@@ -14,7 +14,7 @@ import { Validator } from '../../../../../../libs/validator/validator';
 import { AddressService } from '../../../../addressModule/application/services/addressService/addressService';
 import { addressModuleSymbols } from '../../../../addressModule/symbols';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
 import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
 import { Cart } from '../../../domain/entities/cart/cart';
@@ -33,7 +33,7 @@ export class CartServiceImpl implements CartService {
     private readonly cartRepositoryFactory: CartRepositoryFactory,
     @Inject(orderModuleSymbols.lineItemRepositoryFactory)
     private readonly lineItemRepositoryFactory: LineItemRepositoryFactory,
-    @Inject(bookModuleSymbols.bookService)
+    @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,
     @Inject(addressModuleSymbols.addressService)
     private readonly addressService: AddressService,

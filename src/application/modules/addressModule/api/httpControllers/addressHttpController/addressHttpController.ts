@@ -272,13 +272,13 @@ export class AddressHttpController implements HttpController {
 
         const { address: customerAddress } = await this.findAddressQueryHandler.execute({
           unitOfWork,
-          addressId: id as string,
+          addressId: id,
         });
 
         if (customerAddress.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromAddressError({
             customerId: customer.id,
-            targetCustomerId: customerAddress.customerId as string,
+            targetCustomerId: customerAddress.customerId,
           });
         }
 

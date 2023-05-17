@@ -6,34 +6,34 @@ import { BookQueryBuilder } from './bookQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { BookRepository } from '../../../application/repositories/bookRepository/bookRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/bookRepository/payloads/createOnePayload';
+  CreateBookPayload,
+  createBookPayloadSchema,
+} from '../../../application/repositories/bookRepository/payloads/createBookPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/bookRepository/payloads/deleteOnePayload';
+  DeleteBookPayload,
+  deleteBookPayloadSchema,
+} from '../../../application/repositories/bookRepository/payloads/deleteBookPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/bookRepository/payloads/findManyPayload';
+  FindBooksPayload,
+  findBooksPayloadSchema,
+} from '../../../application/repositories/bookRepository/payloads/findBooksPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/bookRepository/payloads/findOnePayload';
+  FindBookPayload,
+  findBookPayloadSchema,
+} from '../../../application/repositories/bookRepository/payloads/findBookPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/bookRepository/payloads/updateOnePayload';
+  UpdateBookPayload,
+  updateBookPayloadSchema,
+} from '../../../application/repositories/bookRepository/payloads/updateBookPayload';
 import { Book } from '../../../domain/entities/book/book';
 import { BookNotFoundError } from '../../errors/bookNotFoundError';
 
 export class BookRepositoryImpl implements BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Book> {
+  public async createBook(input: CreateBookPayload): Promise<Book> {
     const { id, title, isbn, releaseYear, format, language, price, description } = Validator.validate(
-      createOnePayloadSchema,
+      createBookPayloadSchema,
       input,
     );
 
@@ -50,8 +50,8 @@ export class BookRepositoryImpl implements BookRepository {
     return this.bookMapper.map(savedBook);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Book | null> {
-    const { id } = Validator.validate(findOnePayloadSchema, input);
+  public async findBook(input: FindBookPayload): Promise<Book | null> {
+    const { id } = Validator.validate(findBookPayloadSchema, input);
 
     const bookEntity = await this.entityManager.findOne(BookEntity, { where: { id } });
 
@@ -62,8 +62,8 @@ export class BookRepositoryImpl implements BookRepository {
     return this.bookMapper.map(bookEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Book[]> {
-    const { authorId, categoryId, filters, pagination } = Validator.validate(findManyPayloadSchema, input);
+  public async findBooks(input: FindBooksPayload): Promise<Book[]> {
+    const { authorId, categoryId, filters, pagination } = Validator.validate(findBooksPayloadSchema, input);
 
     let bookQueryBuilder = new BookQueryBuilder(this.entityManager);
 
@@ -86,13 +86,13 @@ export class BookRepositoryImpl implements BookRepository {
     return booksEntities.map((book) => this.bookMapper.map(book));
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<Book> {
+  public async updateBook(input: UpdateBookPayload): Promise<Book> {
     const {
       id,
       draft: { description, price },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateBookPayloadSchema, input);
 
-    const bookEntity = await this.findOne({ id });
+    const bookEntity = await this.findBook({ id });
 
     if (!bookEntity) {
       throw new BookNotFoundError({ id });
@@ -110,15 +110,15 @@ export class BookRepositoryImpl implements BookRepository {
 
     await this.entityManager.update(BookEntity, { id }, { ...updateOneInput });
 
-    const updatedBookEntity = await this.findOne({ id });
+    const updatedBookEntity = await this.findBook({ id });
 
     return updatedBookEntity as Book;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteBook(input: DeleteBookPayload): Promise<void> {
+    const { id } = Validator.validate(deleteBookPayloadSchema, input);
 
-    const bookEntity = await this.findOne({ id });
+    const bookEntity = await this.findBook({ id });
 
     if (!bookEntity) {
       throw new BookNotFoundError({ id });

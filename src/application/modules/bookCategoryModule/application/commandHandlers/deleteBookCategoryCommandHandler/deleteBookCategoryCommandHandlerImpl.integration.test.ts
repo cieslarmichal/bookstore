@@ -7,7 +7,7 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookModuleSymbols } from '../../../../bookModule/bookModuleSymbols';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
 import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
@@ -39,7 +39,7 @@ describe('DeleteBookCategoryCommandHandler', () => {
     categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
       categoryModuleSymbols.categoryRepositoryFactory,
     );
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
+    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -71,7 +71,7 @@ describe('DeleteBookCategoryCommandHandler', () => {
 
       const category = await categoryRepository.createOne(categoryEntity);
 
-      const book = await bookRepository.createOne({
+      const book = await bookRepository.createBook({
         id: bookEntity.id,
         format: bookEntity.format,
         language: bookEntity.language,
