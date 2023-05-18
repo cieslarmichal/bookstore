@@ -16,7 +16,7 @@ import { BookService } from '../../../../bookModule/application/services/bookSer
 import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { CategoryService } from '../../../../categoryModule/application/services/categoryService/categoryService';
-import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CategoryNotFoundError } from '../../../../categoryModule/infrastructure/errors/categoryNotFoundError';
 import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
 import { bookCategorySymbols } from '../../../symbols';
@@ -27,7 +27,7 @@ export class CreateBookCategoryCommandHandlerImpl implements CreateBookCategoryC
   public constructor(
     @Inject(bookCategorySymbols.bookCategoryRepositoryFactory)
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
-    @Inject(categoryModuleSymbols.categoryService)
+    @Inject(categorySymbols.categoryService)
     private readonly categoryService: CategoryService,
     @Inject(bookSymbols.bookService)
     private readonly bookService: BookService,

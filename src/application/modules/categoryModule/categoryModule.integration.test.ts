@@ -2,13 +2,9 @@ import 'reflect-metadata';
 
 import { CategoryHttpController } from './api/httpControllers/categoryHttpController/categoryHttpController';
 import { CategoryRepositoryFactory } from './application/repositories/categoryRepository/categoryRepositoryFactory';
-import { CategoryService } from './application/services/categoryService/categoryService';
-import { CategoryServiceImpl } from './application/services/categoryService/categoryServiceImpl';
 import { CategoryModule } from './categoryModule';
-import { categoryModuleSymbols } from './categoryModuleSymbols';
-import { CategoryMapper } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapper';
-import { CategoryMapperImpl } from './infrastructure/repositories/categoryRepository/categoryMapper/categoryMapperImpl';
 import { CategoryRepositoryFactoryImpl } from './infrastructure/repositories/categoryRepository/categoryRepositoryFactoryImpl';
+import { categorySymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -29,15 +25,10 @@ describe('CategoryModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<CategoryMapper>(categoryModuleSymbols.categoryMapper)).toBeInstanceOf(CategoryMapperImpl);
-
-    expect(container.get<CategoryRepositoryFactory>(categoryModuleSymbols.categoryRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory)).toBeInstanceOf(
       CategoryRepositoryFactoryImpl,
     );
-
-    expect(container.get<CategoryService>(categoryModuleSymbols.categoryService)).toBeInstanceOf(CategoryServiceImpl);
-
-    expect(container.get<CategoryHttpController>(categoryModuleSymbols.categoryHttpController)).toBeInstanceOf(
+    expect(container.get<CategoryHttpController>(categorySymbols.categoryHttpController)).toBeInstanceOf(
       CategoryHttpController,
     );
   });

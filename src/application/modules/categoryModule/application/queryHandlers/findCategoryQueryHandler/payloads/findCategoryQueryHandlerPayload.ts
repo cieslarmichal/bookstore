@@ -1,11 +1,10 @@
-import { createCategoryDraftSchema } from './createCategoryDraft';
 import { UnitOfWork } from '../../../../../../../libs/unitOfWork/unitOfWork';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const createCategoryPayloadSchema = Schema.object({
+export const findCategoryQueryHandlerPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  draft: createCategoryDraftSchema,
+  categoryId: Schema.string(),
 });
 
-export type CreateCategoryPayload = SchemaType<typeof createCategoryPayloadSchema>;
+export type FindCategoryQueryHandlerPayload = SchemaType<typeof findCategoryQueryHandlerPayloadSchema>;

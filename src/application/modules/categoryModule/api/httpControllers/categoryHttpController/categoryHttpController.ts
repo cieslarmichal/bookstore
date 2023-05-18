@@ -43,11 +43,13 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerIdNotProvidedError } from '../../../../addressModule/infrastructure/errors/customerIdNotProvidedError';
-import { CategoryService } from '../../../application/services/categoryService/categoryService';
-import { categoryModuleSymbols } from '../../../categoryModuleSymbols';
-import { Category } from '../../../domain/entities/category/category';
-import { CategoryAlreadyExistsError } from '../../errors/categoryAlreadyExistsError';
-import { CategoryNotFoundError } from '../../errors/categoryNotFoundError';
+import { CreateCategoryCommandHandler } from '../../../application/commandHandlers/createCategoryCommandHandler/createCategoryCommandHandler';
+import { DeleteCategoryCommandHandler } from '../../../application/commandHandlers/deleteCategoryCommandHandler/deleteCategoryCommandHandler';
+import { FindCategoriesQueryHandler } from '../../../application/queryHandlers/findCategoriesQueryHandler/findCategoriesQueryHandler';
+import { FindCategoryQueryHandler } from '../../../application/queryHandlers/findCategoryQueryHandler/findCategoryQueryHandler';
+import { CategoryAlreadyExistsError } from '../../../infrastructure/errors/categoryAlreadyExistsError';
+import { CategoryNotFoundError } from '../../../infrastructure/errors/categoryNotFoundError';
+import { symbols } from '../../../symbols';
 
 export class CategoryHttpController implements HttpController {
   public readonly basePath = 'categories';
@@ -55,8 +57,14 @@ export class CategoryHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(categoryModuleSymbols.categoryService)
-    private readonly categoryService: CategoryService,
+    @Inject(symbols.createCategoryCommandHandler)
+    private readonly createCategoryCommandHandler: CreateCategoryCommandHandler,
+    @Inject(symbols.deleteCategoryCommandHandler)
+    private readonly deleteCategoryCommandHandler: DeleteCategoryCommandHandler,
+    @Inject(symbols.findCategoriesQueryHandler)
+    private readonly findCategoriesQueryHandler: FindCategoriesQueryHandler,
+    @Inject(symbols.findCategoryQueryHandler)
+    private readonly findCategoryQueryHandler: FindCategoryQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -144,12 +152,12 @@ export class CategoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let category: Category | undefined;
-
     try {
-      category = await unitOfWork.runInTransaction(async () => {
-        return this.categoryService.createCategory({ unitOfWork, draft: { name } });
+      const { category } = await unitOfWork.runInTransaction(async () => {
+        return this.createCategoryCommandHandler.execute({ unitOfWork, draft: { name } });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { category } };
     } catch (error) {
       if (error instanceof CategoryAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
@@ -157,8 +165,6 @@ export class CategoryHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { category } };
   }
 
   private async findCategory(
@@ -168,12 +174,12 @@ export class CategoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let category: Category | undefined;
-
     try {
-      category = await unitOfWork.runInTransaction(async () => {
-        return this.categoryService.findCategory({ unitOfWork, categoryId: id });
+      const { category } = await unitOfWork.runInTransaction(async () => {
+        return this.findCategoryQueryHandler.execute({ unitOfWork, categoryId: id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { category } };
     } catch (error) {
       if (error instanceof CategoryNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -181,8 +187,6 @@ export class CategoryHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { category } };
   }
 
   private async findCategories(
@@ -205,8 +209,8 @@ export class CategoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const categories = await unitOfWork.runInTransaction(async () => {
-      return this.categoryService.findCategories({ unitOfWork, filters, pagination });
+    const { categories } = await unitOfWork.runInTransaction(async () => {
+      return this.findCategoriesQueryHandler.execute({ unitOfWork, filters, pagination });
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: categories } };
@@ -221,7 +225,7 @@ export class CategoryHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.categoryService.deleteCategory({ unitOfWork, categoryId: id });
+        await this.deleteCategoryCommandHandler.execute({ unitOfWork, categoryId: id });
       });
     } catch (error) {
       if (error instanceof CategoryNotFoundError) {

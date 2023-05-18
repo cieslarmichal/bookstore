@@ -10,7 +10,7 @@ import { BookRepositoryFactory } from '../../../../bookModule/application/reposi
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
-import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { BookCategoryNotFoundError } from '../../../infrastructure/errors/bookCategoryNotFoundError';
 import { symbols } from '../../../symbols';
@@ -36,9 +36,7 @@ describe('DeleteBookCategoryCommandHandler', () => {
       symbols.deleteBookCategoryCommandHandler,
     );
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(symbols.bookCategoryRepositoryFactory);
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
-      categoryModuleSymbols.categoryRepositoryFactory,
-    );
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -69,7 +67,7 @@ describe('DeleteBookCategoryCommandHandler', () => {
 
       const { id: bookCategoryId } = bookCategoryEntityTestFactory.create();
 
-      const category = await categoryRepository.createOne(categoryEntity);
+      const category = await categoryRepository.createCategory(categoryEntity);
 
       const book = await bookRepository.createBook({
         id: bookEntity.id,

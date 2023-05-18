@@ -19,7 +19,7 @@ import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/ap
 import { bookCategorySymbols } from '../../../../bookCategoryModule/symbols';
 import { BookCategoryEntityTestFactory } from '../../../../bookCategoryModule/tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
-import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { BookFormat } from '../../../domain/entities/book/bookFormat';
 import { BookLanguage } from '../../../domain/entities/book/bookLanguage';
@@ -55,9 +55,7 @@ describe('FindBooksQueryHandler', () => {
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
       bookCategorySymbols.bookCategoryRepositoryFactory,
     );
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
-      categoryModuleSymbols.categoryRepositoryFactory,
-    );
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -552,9 +550,9 @@ describe('FindBooksQueryHandler', () => {
 
         const { id: bookCategoryId2 } = bookCategoryEntityTestFactory.create();
 
-        const category1 = await categoryRepository.createOne(categoryEntity1);
+        const category1 = await categoryRepository.createCategory(categoryEntity1);
 
-        const category2 = await categoryRepository.createOne(categoryEntity2);
+        const category2 = await categoryRepository.createCategory(categoryEntity2);
 
         const book1 = await bookRepository.createBook({
           id: bookEntity1.id,

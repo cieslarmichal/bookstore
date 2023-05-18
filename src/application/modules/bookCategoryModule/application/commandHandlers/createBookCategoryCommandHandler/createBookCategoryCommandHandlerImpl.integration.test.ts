@@ -10,7 +10,7 @@ import { BookRepositoryFactory } from '../../../../bookModule/application/reposi
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
-import { categoryModuleSymbols } from '../../../../categoryModule/categoryModuleSymbols';
+import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
 import { symbols } from '../../../symbols';
@@ -34,9 +34,7 @@ describe('CreateBookCategoryCommandHandler', () => {
       symbols.createBookCategoryCommandHandler,
     );
     bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(symbols.bookCategoryRepositoryFactory);
-    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(
-      categoryModuleSymbols.categoryRepositoryFactory,
-    );
+    categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(categorySymbols.categoryRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -65,7 +63,7 @@ describe('CreateBookCategoryCommandHandler', () => {
 
       const bookEntity = bookEntityTestFactory.create();
 
-      const category = await categoryRepository.createOne(categoryEntity);
+      const category = await categoryRepository.createCategory(categoryEntity);
 
       const book = await bookRepository.createBook({
         id: bookEntity.id,
@@ -105,7 +103,7 @@ describe('CreateBookCategoryCommandHandler', () => {
 
       const bookEntity = bookEntityTestFactory.create();
 
-      const category = await categoryRepository.createOne(categoryEntity);
+      const category = await categoryRepository.createCategory(categoryEntity);
 
       const book = await bookRepository.createBook({
         id: bookEntity.id,

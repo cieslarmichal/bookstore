@@ -6,29 +6,29 @@ import { CategoryQueryBuilder } from './categoryQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { CategoryRepository } from '../../../application/repositories/categoryRepository/categoryRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/categoryRepository/payloads/createOnePayload';
+  CreateCategoryPayload,
+  createCategoryPayloadSchema,
+} from '../../../application/repositories/categoryRepository/payloads/createCategoryPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/categoryRepository/payloads/deleteOnePayload';
+  DeleteCategoryPayload,
+  deleteCategoryPayloadSchema,
+} from '../../../application/repositories/categoryRepository/payloads/deleteCategoryPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/categoryRepository/payloads/findManyPayload';
+  FindCategoriesPayload,
+  findCategoriesPayloadSchema,
+} from '../../../application/repositories/categoryRepository/payloads/findCategoriesPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/categoryRepository/payloads/findOnePayload';
+  FindCategoryPayload,
+  findCategoryPayloadSchema,
+} from '../../../application/repositories/categoryRepository/payloads/findCategoryPayload';
 import { Category } from '../../../domain/entities/category/category';
 import { CategoryNotFoundError } from '../../errors/categoryNotFoundError';
 
 export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Category> {
-    const { id, name } = Validator.validate(createOnePayloadSchema, input);
+  public async createCategory(input: CreateCategoryPayload): Promise<Category> {
+    const { id, name } = Validator.validate(createCategoryPayloadSchema, input);
 
     const categoryEntity = this.entityManager.create(CategoryEntity, { id, name });
 
@@ -37,8 +37,8 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return this.categoryMapper.map(savedCategoryEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Category | null> {
-    const { id, name } = Validator.validate(findOnePayloadSchema, input);
+  public async findCategory(input: FindCategoryPayload): Promise<Category | null> {
+    const { id, name } = Validator.validate(findCategoryPayloadSchema, input);
 
     let findOneInput = {};
 
@@ -59,8 +59,8 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return this.categoryMapper.map(categoryEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Category[]> {
-    const { bookId, filters, pagination } = Validator.validate(findManyPayloadSchema, input);
+  public async findCategories(input: FindCategoriesPayload): Promise<Category[]> {
+    const { bookId, filters, pagination } = Validator.validate(findCategoriesPayloadSchema, input);
 
     let categoryQueryBuilder = new CategoryQueryBuilder(this.entityManager);
 
@@ -79,10 +79,10 @@ export class CategoryRepositoryImpl implements CategoryRepository {
     return categoriesEntities.map((category) => this.categoryMapper.map(category));
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteCategory(input: DeleteCategoryPayload): Promise<void> {
+    const { id } = Validator.validate(deleteCategoryPayloadSchema, input);
 
-    const categoryEntity = await this.findOne({ id });
+    const categoryEntity = await this.findCategory({ id });
 
     if (!categoryEntity) {
       throw new CategoryNotFoundError({ id });
