@@ -7,7 +7,7 @@ import { LoggerService } from '../../../../../../libs/logger/services/loggerServ
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
-import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
+import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItem } from '../../../domain/entities/lineItem/lineItem';
 import { Order } from '../../../domain/entities/order/order';
@@ -26,7 +26,7 @@ export class OrderServiceImpl implements OrderService {
     private readonly loggerService: LoggerService,
     @Inject(orderModuleSymbols.cartService)
     private readonly cartService: CartService,
-    @Inject(inventoryModuleSymbols.inventoryService)
+    @Inject(inventorySymbols.inventoryService)
     private readonly inventoryService: InventoryService,
     @Inject(orderModuleSymbols.cartValidatorService)
     private readonly cartValidatorService: CartValidatorService,

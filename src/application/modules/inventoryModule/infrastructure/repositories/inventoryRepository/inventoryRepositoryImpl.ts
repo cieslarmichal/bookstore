@@ -5,25 +5,25 @@ import { InventoryMapper } from './inventoryMapper/inventoryMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { InventoryRepository } from '../../../application/repositories/inventoryRepository/inventoryRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/inventoryRepository/payloads/createOnePayload';
+  CreateInventoryPayload,
+  createInventoryPayloadSchema,
+} from '../../../application/repositories/inventoryRepository/payloads/createInventoryPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/inventoryRepository/payloads/deleteOnePayload';
+  DeleteInventoryPayload,
+  deleteInventoryPayloadSchema,
+} from '../../../application/repositories/inventoryRepository/payloads/deleteInventoryPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/inventoryRepository/payloads/findManyPayload';
+  FindInventoriesPayload,
+  findInventoriesPayloadSchema,
+} from '../../../application/repositories/inventoryRepository/payloads/findInventoriesPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/inventoryRepository/payloads/findOnePayload';
+  FindInventoryPayload,
+  findInventoryPayloadSchema,
+} from '../../../application/repositories/inventoryRepository/payloads/findInventoryPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/inventoryRepository/payloads/updateOnePayload';
+  UpdateInventoryPayload,
+  updateInventoryPayloadSchema,
+} from '../../../application/repositories/inventoryRepository/payloads/updateInventoryPayload';
 import { Inventory } from '../../../domain/entities/inventory/inventory';
 import { InventoryNotFoundError } from '../../errors/inventoryNotFoundError';
 
@@ -33,8 +33,8 @@ export class InventoryRepositoryImpl implements InventoryRepository {
     private readonly inventoryMapper: InventoryMapper,
   ) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Inventory> {
-    const { id, bookId, quantity } = Validator.validate(createOnePayloadSchema, input);
+  public async createInventory(input: CreateInventoryPayload): Promise<Inventory> {
+    const { id, bookId, quantity } = Validator.validate(createInventoryPayloadSchema, input);
 
     const inventoryEntity = this.entityManager.create(InventoryEntity, { id, bookId, quantity });
 
@@ -43,8 +43,8 @@ export class InventoryRepositoryImpl implements InventoryRepository {
     return this.inventoryMapper.map(savedInventoryEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Inventory | null> {
-    const { id, bookId } = Validator.validate(findOnePayloadSchema, input);
+  public async findInventory(input: FindInventoryPayload): Promise<Inventory | null> {
+    const { id, bookId } = Validator.validate(findInventoryPayloadSchema, input);
 
     let findOneInput = {};
 
@@ -65,8 +65,8 @@ export class InventoryRepositoryImpl implements InventoryRepository {
     return this.inventoryMapper.map(inventoryEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Inventory[]> {
-    const { pagination, bookId } = Validator.validate(findManyPayloadSchema, input);
+  public async findInventories(input: FindInventoriesPayload): Promise<Inventory[]> {
+    const { pagination, bookId } = Validator.validate(findInventoriesPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -84,13 +84,13 @@ export class InventoryRepositoryImpl implements InventoryRepository {
     return inventoryEntities.map((inventoryEntity) => this.inventoryMapper.map(inventoryEntity));
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<Inventory> {
+  public async updateInventory(input: UpdateInventoryPayload): Promise<Inventory> {
     const {
       id,
       draft: { quantity },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateInventoryPayloadSchema, input);
 
-    const inventoryEntity = await this.findOne({ id });
+    const inventoryEntity = await this.findInventory({ id });
 
     if (!inventoryEntity) {
       throw new InventoryNotFoundError({ inventoryId: id });
@@ -98,15 +98,15 @@ export class InventoryRepositoryImpl implements InventoryRepository {
 
     await this.entityManager.update(InventoryEntity, { id }, { quantity });
 
-    const updatedInventoryEntity = await this.findOne({ id });
+    const updatedInventoryEntity = await this.findInventory({ id });
 
     return updatedInventoryEntity as Inventory;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteInventory(input: DeleteInventoryPayload): Promise<void> {
+    const { id } = Validator.validate(deleteInventoryPayloadSchema, input);
 
-    const inventoryEntity = await this.findOne({ id });
+    const inventoryEntity = await this.findInventory({ id });
 
     if (!inventoryEntity) {
       throw new InventoryNotFoundError({ inventoryId: id });

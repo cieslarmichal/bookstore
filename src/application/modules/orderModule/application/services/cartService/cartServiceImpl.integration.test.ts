@@ -30,7 +30,7 @@ import { CustomerEntityTestFactory } from '../../../../customerModule/tests/fact
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../../inventoryModule/inventoryModule';
-import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
+import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { ReviewEntity } from '../../../../reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
@@ -110,9 +110,7 @@ describe('CartServiceImpl', () => {
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
-    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
-      inventoryModuleSymbols.inventoryRepositoryFactory,
-    );
+    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -315,7 +313,7 @@ describe('CartServiceImpl', () => {
           title,
         });
 
-        await inventoryRepository.createOne({
+        await inventoryRepository.createInventory({
           id: inventoryId,
           quantity,
           bookId,

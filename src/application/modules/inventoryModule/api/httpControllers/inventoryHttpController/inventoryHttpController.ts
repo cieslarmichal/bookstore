@@ -48,11 +48,14 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { InventoryService } from '../../../application/services/inventoryService/inventoryService';
-import { Inventory } from '../../../domain/entities/inventory/inventory';
+import { CreateInventoryCommandHandler } from '../../../application/commandHandlers/createInventoryCommandHandler/createInventoryCommandHandler';
+import { DeleteInventoryCommandHandler } from '../../../application/commandHandlers/deleteInventoryCommandHandler/deleteInventoryCommandHandler';
+import { UpdateInventoryCommandHandler } from '../../../application/commandHandlers/updateInventoryCommandHandler/updateInventoryCommandHandler';
+import { FindInventoriesQueryHandler } from '../../../application/queryHandlers/findInventoriesQueryHandler/findInventoriesQueryHandler';
+import { FindInventoryQueryHandler } from '../../../application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { InventoryAlreadyExistsError } from '../../../infrastructure/errors/inventoryAlreadyExistsError';
 import { InventoryNotFoundError } from '../../../infrastructure/errors/inventoryNotFoundError';
-import { inventoryModuleSymbols } from '../../../inventoryModuleSymbols';
+import { symbols } from '../../../symbols';
 
 export class InventoryHttpController implements HttpController {
   public readonly basePath = 'inventories';
@@ -60,8 +63,16 @@ export class InventoryHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(inventoryModuleSymbols.inventoryService)
-    private readonly inventoryService: InventoryService,
+    @Inject(symbols.createInventoryCommandHandler)
+    private readonly createInventoryCommandHandler: CreateInventoryCommandHandler,
+    @Inject(symbols.deleteInventoryCommandHandler)
+    private readonly deleteInventoryCommandHandler: DeleteInventoryCommandHandler,
+    @Inject(symbols.updateInventoryCommandHandler)
+    private readonly updateInventoryCommandHandler: UpdateInventoryCommandHandler,
+    @Inject(symbols.findInventoryQueryHandler)
+    private readonly findInventoryQueryHandler: FindInventoryQueryHandler,
+    @Inject(symbols.findInventoriesQueryHandler)
+    private readonly findInventoriesQueryHandler: FindInventoriesQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -169,12 +180,12 @@ export class InventoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let inventory: Inventory | undefined;
-
     try {
-      inventory = await unitOfWork.runInTransaction(async () => {
-        return this.inventoryService.createInventory({ unitOfWork, draft: { bookId, quantity } });
+      const { inventory } = await unitOfWork.runInTransaction(async () => {
+        return this.createInventoryCommandHandler.execute({ unitOfWork, draft: { bookId, quantity } });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { inventory } };
     } catch (error) {
       if (error instanceof InventoryAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
@@ -182,8 +193,6 @@ export class InventoryHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { inventory } };
   }
 
   private async findInventory(
@@ -193,12 +202,12 @@ export class InventoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let inventory: Inventory | undefined;
-
     try {
-      inventory = await unitOfWork.runInTransaction(async () => {
-        return this.inventoryService.findInventory({ unitOfWork, inventoryId: id });
+      const { inventory } = await unitOfWork.runInTransaction(async () => {
+        return this.findInventoryQueryHandler.execute({ unitOfWork, inventoryId: id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { inventory } };
     } catch (error) {
       if (error instanceof InventoryNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -206,8 +215,6 @@ export class InventoryHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { inventory } };
   }
 
   private async findInventories(
@@ -219,8 +226,8 @@ export class InventoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const inventories = await unitOfWork.runInTransaction(async () => {
-      return this.inventoryService.findInventories({ unitOfWork, pagination, bookId });
+    const { inventories } = await unitOfWork.runInTransaction(async () => {
+      return this.findInventoriesQueryHandler.execute({ unitOfWork, pagination, bookId });
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: inventories } };
@@ -235,12 +242,12 @@ export class InventoryHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let inventory: Inventory | undefined;
-
     try {
-      inventory = await unitOfWork.runInTransaction(async () => {
-        return this.inventoryService.updateInventory({ unitOfWork, inventoryId: id, draft: { quantity } });
+      const { inventory } = await unitOfWork.runInTransaction(async () => {
+        return this.updateInventoryCommandHandler.execute({ unitOfWork, inventoryId: id, draft: { quantity } });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { inventory } };
     } catch (error) {
       if (error instanceof InventoryNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -248,8 +255,6 @@ export class InventoryHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { inventory } };
   }
 
   private async deleteInventory(
@@ -261,7 +266,7 @@ export class InventoryHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.inventoryService.deleteInventory({ unitOfWork, inventoryId: id });
+        await this.deleteInventoryCommandHandler.execute({ unitOfWork, inventoryId: id });
       });
     } catch (error) {
       if (error instanceof InventoryNotFoundError) {

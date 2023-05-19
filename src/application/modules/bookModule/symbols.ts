@@ -10,6 +10,6 @@ export const symbols = {
 };
 
 export const bookSymbols = {
-  bookRepositoryFactory: Symbol('bookRepositoryFactory'),
-  bookHttpController: Symbol('bookHttpController'),
+  bookRepositoryFactory: symbols.bookRepositoryFactory,
+  bookHttpController: symbols.bookHttpController,
 };

@@ -16,7 +16,7 @@ import { addressModuleSymbols } from '../../../../addressModule/symbols';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
-import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
+import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { Cart } from '../../../domain/entities/cart/cart';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItemOutOfInventoryError } from '../../../domain/errors/lineItemOutOfInventoryError';
@@ -37,7 +37,7 @@ export class CartServiceImpl implements CartService {
     private readonly bookService: BookService,
     @Inject(addressModuleSymbols.addressService)
     private readonly addressService: AddressService,
-    @Inject(inventoryModuleSymbols.inventoryService)
+    @Inject(inventorySymbols.inventoryService)
     private readonly inventoryService: InventoryService,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,

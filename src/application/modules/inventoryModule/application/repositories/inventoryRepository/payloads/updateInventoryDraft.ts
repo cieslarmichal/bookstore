@@ -1,8 +1,8 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const updateOneDraftSchema = Schema.object({
+export const updateInventoryDraftSchema = Schema.object({
   quantity: Schema.number(),
 });
 
-export type UpdateOneDraft = SchemaType<typeof updateOneDraftSchema>;
+export type UpdateInventoryDraft = SchemaType<typeof updateInventoryDraftSchema>;

@@ -33,7 +33,7 @@ import { categorySymbols } from '../modules/categoryModule/symbols';
 import { CustomerHttpController } from '../modules/customerModule/api/httpControllers/customerHttpController/customerHttpController';
 import { customerSymbols } from '../modules/customerModule/symbols';
 import { InventoryHttpController } from '../modules/inventoryModule/api/httpControllers/inventoryHttpController/inventoryHttpController';
-import { inventoryModuleSymbols } from '../modules/inventoryModule/inventoryModuleSymbols';
+import { inventorySymbols } from '../modules/inventoryModule/symbols';
 import { CartHttpController } from '../modules/orderModule/api/httpControllers/cartHttpController/cartHttpController';
 import { OrderHttpController } from '../modules/orderModule/api/httpControllers/orderController/orderHttpController/orderHttpController';
 import { orderModuleSymbols } from '../modules/orderModule/orderModuleSymbols';
@@ -95,7 +95,7 @@ export class HttpRouter {
     this.registerControllerRoutes({ controller: customerHttpController });
 
     const inventoryHttpController = this.container.get<InventoryHttpController>(
-      inventoryModuleSymbols.inventoryHttpController,
+      inventorySymbols.inventoryHttpController,
     );
 
     this.registerControllerRoutes({ controller: inventoryHttpController });

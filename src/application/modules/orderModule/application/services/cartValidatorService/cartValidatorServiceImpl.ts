@@ -5,7 +5,7 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
 import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
-import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
+import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { BillingAddressNotProvidedError } from '../../../domain/errors/billingAddressNotProvidedError';
 import { CartNotActiveError } from '../../../domain/errors/cartNotActiveError';
@@ -19,7 +19,7 @@ import { ShippingAddressNotProvidedError } from '../../../domain/errors/shipping
 @Injectable()
 export class CartValidatorServiceImpl implements CartValidatorService {
   public constructor(
-    @Inject(inventoryModuleSymbols.inventoryService)
+    @Inject(inventorySymbols.inventoryService)
     private readonly inventoryService: InventoryService,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,

@@ -5,12 +5,12 @@ import { InventoryRepositoryImpl } from './inventoryRepositoryImpl';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { InventoryRepository } from '../../../application/repositories/inventoryRepository/inventoryRepository';
 import { InventoryRepositoryFactory } from '../../../application/repositories/inventoryRepository/inventoryRepositoryFactory';
-import { inventoryModuleSymbols } from '../../../inventoryModuleSymbols';
+import { inventorySymbols } from '../../../symbols';
 
 @Injectable()
 export class InventoryRepositoryFactoryImpl implements InventoryRepositoryFactory {
   public constructor(
-    @Inject(inventoryModuleSymbols.inventoryMapper)
+    @Inject(inventorySymbols.inventoryMapper)
     private readonly inventoryMapper: InventoryMapper,
   ) {}
 

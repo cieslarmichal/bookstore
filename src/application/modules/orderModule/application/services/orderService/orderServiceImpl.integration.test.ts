@@ -30,7 +30,7 @@ import { CustomerEntityTestFactory } from '../../../../customerModule/tests/fact
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
 import { InventoryModule } from '../../../../inventoryModule/inventoryModule';
-import { inventoryModuleSymbols } from '../../../../inventoryModule/inventoryModuleSymbols';
+import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
@@ -116,9 +116,7 @@ describe('OrderServiceImpl', () => {
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
-    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
-      inventoryModuleSymbols.inventoryRepositoryFactory,
-    );
+    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -190,7 +188,7 @@ describe('OrderServiceImpl', () => {
           title,
         });
 
-        await inventoryRepository.createOne({
+        await inventoryRepository.createInventory({
           id: inventoryId,
           quantity: inventoryQuantity,
           bookId,

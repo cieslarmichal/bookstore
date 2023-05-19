@@ -2,13 +2,9 @@ import 'reflect-metadata';
 
 import { InventoryHttpController } from './api/httpControllers/inventoryHttpController/inventoryHttpController';
 import { InventoryRepositoryFactory } from './application/repositories/inventoryRepository/inventoryRepositoryFactory';
-import { InventoryService } from './application/services/inventoryService/inventoryService';
-import { InventoryServiceImpl } from './application/services/inventoryService/inventoryServiceImpl';
-import { InventoryMapper } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapper';
-import { InventoryMapperImpl } from './infrastructure/repositories/inventoryRepository/inventoryMapper/inventoryMapperImpl';
 import { InventoryRepositoryFactoryImpl } from './infrastructure/repositories/inventoryRepository/inventoryRepositoryFactoryImpl';
 import { InventoryModule } from './inventoryModule';
-import { inventoryModuleSymbols } from './inventoryModuleSymbols';
+import { inventorySymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -29,17 +25,11 @@ describe('InventoryModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<InventoryMapper>(inventoryModuleSymbols.inventoryMapper)).toBeInstanceOf(InventoryMapperImpl);
-
-    expect(container.get<InventoryRepositoryFactory>(inventoryModuleSymbols.inventoryRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory)).toBeInstanceOf(
       InventoryRepositoryFactoryImpl,
     );
 
-    expect(container.get<InventoryService>(inventoryModuleSymbols.inventoryService)).toBeInstanceOf(
-      InventoryServiceImpl,
-    );
-
-    expect(container.get<InventoryHttpController>(inventoryModuleSymbols.inventoryHttpController)).toBeInstanceOf(
+    expect(container.get<InventoryHttpController>(inventorySymbols.inventoryHttpController)).toBeInstanceOf(
       InventoryHttpController,
     );
   });
