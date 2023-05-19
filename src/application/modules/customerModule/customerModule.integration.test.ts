@@ -2,13 +2,9 @@ import 'reflect-metadata';
 
 import { CustomerHttpController } from './api/httpControllers/customerHttpController/customerHttpController';
 import { CustomerRepositoryFactory } from './application/repositories/customerRepository/customerRepositoryFactory';
-import { CustomerService } from './application/services/customerService/customerService';
-import { CustomerServiceImpl } from './application/services/customerService/customerServiceImpl';
 import { CustomerModule } from './customerModule';
-import { customerModuleSymbols } from './customerModuleSymbols';
-import { CustomerMapper } from './infrastructure/repositories/customerRepository/customerMapper/customerMapper';
-import { CustomerMapperImpl } from './infrastructure/repositories/customerRepository/customerMapper/customerMapperImpl';
 import { CustomerRepositoryFactoryImpl } from './infrastructure/repositories/customerRepository/customerRepositoryFactoryImpl';
+import { customerSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -29,15 +25,11 @@ describe('CustomerModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<CustomerMapper>(customerModuleSymbols.customerMapper)).toBeInstanceOf(CustomerMapperImpl);
-
-    expect(container.get<CustomerRepositoryFactory>(customerModuleSymbols.customerRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory)).toBeInstanceOf(
       CustomerRepositoryFactoryImpl,
     );
 
-    expect(container.get<CustomerService>(customerModuleSymbols.customerService)).toBeInstanceOf(CustomerServiceImpl);
-
-    expect(container.get<CustomerHttpController>(customerModuleSymbols.customerHttpController)).toBeInstanceOf(
+    expect(container.get<CustomerHttpController>(customerSymbols.customerHttpController)).toBeInstanceOf(
       CustomerHttpController,
     );
   });

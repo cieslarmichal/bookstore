@@ -33,11 +33,12 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerService } from '../../../application/services/customerService/customerService';
-import { customerModuleSymbols } from '../../../customerModuleSymbols';
-import { Customer } from '../../../domain/entities/customer/customer';
+import { CreateCustomerCommandHandler } from '../../../application/commandHandlers/createCustomerCommandHandler/createCustomerCommandHandler';
+import { DeleteCustomerCommandHandler } from '../../../application/commandHandlers/deleteCustomerCommandHandler/deleteCustomerCommandHandler';
+import { FindCustomerQueryHandler } from '../../../application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { CustomerAlreadyExistsError } from '../../../infrastructure/errors/customerAlreadyExistsError';
 import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
+import { symbols } from '../../../symbols';
 
 export class CustomerHttpController implements HttpController {
   public readonly basePath = 'customers';
@@ -45,8 +46,12 @@ export class CustomerHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(customerModuleSymbols.customerService)
-    private readonly customerService: CustomerService,
+    @Inject(symbols.createCustomerCommandHandler)
+    private readonly createCustomerCommandHandler: CreateCustomerCommandHandler,
+    @Inject(symbols.deleteCustomerCommandHandler)
+    private readonly deleteCustomerCommandHandler: DeleteCustomerCommandHandler,
+    @Inject(symbols.findCustomerQueryHandler)
+    private readonly findCustomerQueryHandler: FindCustomerQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -119,12 +124,12 @@ export class CustomerHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let customer: Customer | undefined;
-
     try {
-      customer = await unitOfWork.runInTransaction(async () => {
-        return this.customerService.createCustomer({ unitOfWork, draft: { userId } });
+      const { customer } = await unitOfWork.runInTransaction(async () => {
+        return this.createCustomerCommandHandler.execute({ unitOfWork, draft: { userId } });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { customer } };
     } catch (error) {
       if (error instanceof CustomerAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
@@ -132,8 +137,6 @@ export class CustomerHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { customer } };
   }
 
   private async findCustomer(
@@ -143,12 +146,12 @@ export class CustomerHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let customer: Customer | undefined;
-
     try {
-      customer = await unitOfWork.runInTransaction(async () => {
-        return this.customerService.findCustomer({ unitOfWork, customerId: id });
+      const { customer } = await unitOfWork.runInTransaction(async () => {
+        return this.findCustomerQueryHandler.execute({ unitOfWork, customerId: id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { customer } };
     } catch (error) {
       if (error instanceof CustomerNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -156,8 +159,6 @@ export class CustomerHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { customer } };
   }
 
   private async deleteCustomer(
@@ -169,7 +170,7 @@ export class CustomerHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.customerService.deleteCustomer({ unitOfWork, customerId: id });
+        await this.deleteCustomerCommandHandler.execute({ unitOfWork, customerId: id });
       });
     } catch (error) {
       if (error instanceof CustomerNotFoundError) {

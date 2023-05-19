@@ -36,7 +36,7 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { WhishlistService } from '../../../application/services/whishlistService/whishlistService';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
@@ -54,7 +54,7 @@ export class WhishlistHttpController implements HttpController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(whishlistModuleSymbols.whishlistService)
     private readonly whishlistService: WhishlistService,
-    @Inject(customerModuleSymbols.customerService)
+    @Inject(customerSymbols.customerService)
     private readonly customerService: CustomerService,
   ) {}
 

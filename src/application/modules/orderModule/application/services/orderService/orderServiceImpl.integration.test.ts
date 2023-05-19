@@ -24,8 +24,8 @@ import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bo
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
 import { CustomerModule } from '../../../../customerModule/customerModule';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
@@ -112,9 +112,7 @@ describe('OrderServiceImpl', () => {
     orderService = container.get<OrderService>(orderModuleSymbols.orderService);
     orderRepositoryFactory = container.get<OrderRepositoryFactory>(orderModuleSymbols.orderRepositoryFactory);
     cartRepositoryFactory = container.get<CartRepositoryFactory>(orderModuleSymbols.cartRepositoryFactory);
-    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
-      customerModuleSymbols.customerRepositoryFactory,
-    );
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
@@ -180,7 +178,7 @@ describe('OrderServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const book = await bookRepository.createBook({
           id: bookId,
@@ -307,9 +305,9 @@ describe('OrderServiceImpl', () => {
 
         const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password });
 
-        const customer1 = await customerRepository.createOne({ id: customerId1, userId: user1.id });
+        const customer1 = await customerRepository.createCustomer({ id: customerId1, userId: user1.id });
 
-        const customer2 = await customerRepository.createOne({ id: customerId2, userId: user2.id });
+        const customer2 = await customerRepository.createCustomer({ id: customerId2, userId: user2.id });
 
         const book = await bookRepository.createBook({
           id: bookId,

@@ -49,7 +49,7 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { CreateReviewDraft } from '../../../application/services/reviewService/payloads/createReviewDraft';
 import { UpdateReviewDraft } from '../../../application/services/reviewService/payloads/updateReviewDraft';
@@ -68,7 +68,7 @@ export class ReviewHttpController implements HttpController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(reviewModuleSymbols.reviewService)
     private readonly reviewService: ReviewService,
-    @Inject(customerModuleSymbols.customerService)
+    @Inject(customerSymbols.customerService)
     private readonly customerService: CustomerService,
   ) {}
 

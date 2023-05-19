@@ -53,8 +53,8 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { CreateAddressCommandHandler } from '../../../application/commandHandlers/createAddressCommandHandler/createAddressCommandHandler';
 import { CreateAddressDraft } from '../../../application/commandHandlers/createAddressCommandHandler/payloads/createAddressDraft';
 import { DeleteAddressCommandHandler } from '../../../application/commandHandlers/deleteAddressCommandHandler/deleteAddressCommandHandler';
@@ -73,7 +73,7 @@ export class AddressHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(customerModuleSymbols.customerService)
+    @Inject(customerSymbols.customerService)
     private readonly customerService: CustomerService,
     @Inject(symbols.createAddressCommandHandler)
     private readonly createAddressCommandHandler: CreateAddressCommandHandler,

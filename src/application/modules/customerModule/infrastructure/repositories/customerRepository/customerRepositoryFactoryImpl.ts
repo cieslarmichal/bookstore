@@ -4,13 +4,13 @@ import { CustomerMapper } from './customerMapper/customerMapper';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { CustomerRepository } from '../../../application/repositories/customerRepository/customerRepository';
 import { CustomerRepositoryFactory } from '../../../application/repositories/customerRepository/customerRepositoryFactory';
-import { customerModuleSymbols } from '../../../customerModuleSymbols';
+import { customerSymbols } from '../../../symbols';
 import { CustomerRepositoryImpl } from '../../repositories/customerRepository/customerRepositoryImpl';
 
 @Injectable()
 export class CustomerRepositoryFactoryImpl implements CustomerRepositoryFactory {
   public constructor(
-    @Inject(customerModuleSymbols.customerMapper)
+    @Inject(customerSymbols.customerMapper)
     private readonly customerMapper: CustomerMapper,
   ) {}
 

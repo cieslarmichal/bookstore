@@ -65,8 +65,8 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { CartService } from '../../../application/services/cartService/cartService';
 import { Cart } from '../../../domain/entities/cart/cart';
 import { orderModuleSymbols } from '../../../orderModuleSymbols';
@@ -82,7 +82,7 @@ export class CartHttpController implements HttpController {
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
     @Inject(orderModuleSymbols.cartService)
     private readonly cartService: CartService,
-    @Inject(customerModuleSymbols.customerService)
+    @Inject(customerSymbols.customerService)
     private readonly customerService: CustomerService,
   ) {}
 

@@ -24,8 +24,8 @@ import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bo
 import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
 import { CustomerModule } from '../../../../customerModule/customerModule';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
 import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
 import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
@@ -107,9 +107,7 @@ describe('CartServiceImpl', () => {
 
     cartService = container.get<CartService>(orderModuleSymbols.cartService);
     cartRepositoryFactory = container.get<CartRepositoryFactory>(orderModuleSymbols.cartRepositoryFactory);
-    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
-      customerModuleSymbols.customerRepositoryFactory,
-    );
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(
@@ -146,7 +144,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const cart = await cartService.createCart({ unitOfWork, draft: { customerId: customer.id } });
 
@@ -178,7 +176,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const cart = await cartRepository.createOne({
           id: cartId,
@@ -229,7 +227,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const cart = await cartRepository.createOne({
           id: cartId,
@@ -305,7 +303,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const book = await bookRepository.createBook({
           id: bookId,
@@ -411,7 +409,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const book = await bookRepository.createBook({
           id: bookId,
@@ -498,7 +496,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const book = await bookRepository.createBook({
           id: bookId,
@@ -582,7 +580,7 @@ describe('CartServiceImpl', () => {
 
       const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-      const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
       await cartRepository.createOne({
         id: cartId,
@@ -624,7 +622,7 @@ describe('CartServiceImpl', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const cart = await cartRepository.createOne({
           id: cartId,

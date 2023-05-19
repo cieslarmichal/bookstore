@@ -5,25 +5,25 @@ import { CustomerMapper } from './customerMapper/customerMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { CustomerRepository } from '../../../application/repositories/customerRepository/customerRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/customerRepository/payloads/createOnePayload';
+  CreateCustomerPayload,
+  createCustomerPayloadSchema,
+} from '../../../application/repositories/customerRepository/payloads/createCustomerPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/customerRepository/payloads/deleteOnePayload';
+  DeleteCustomerPayload,
+  deleteCustomerPayloadSchema,
+} from '../../../application/repositories/customerRepository/payloads/deleteCustomerPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/customerRepository/payloads/findOnePayload';
+  FindCustomerPayload,
+  findCustomerPayloadSchema,
+} from '../../../application/repositories/customerRepository/payloads/findCustomerPayload';
 import { Customer } from '../../../domain/entities/customer/customer';
 import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
 
 export class CustomerRepositoryImpl implements CustomerRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly customerMapper: CustomerMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Customer> {
-    const { id, userId } = Validator.validate(createOnePayloadSchema, input);
+  public async createCustomer(input: CreateCustomerPayload): Promise<Customer> {
+    const { id, userId } = Validator.validate(createCustomerPayloadSchema, input);
 
     const customerEntity = this.entityManager.create(CustomerEntity, { id, userId });
 
@@ -32,8 +32,8 @@ export class CustomerRepositoryImpl implements CustomerRepository {
     return this.customerMapper.map(savedCustomerEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Customer | null> {
-    const { id, userId } = Validator.validate(findOnePayloadSchema, input);
+  public async findCustomer(input: FindCustomerPayload): Promise<Customer | null> {
+    const { id, userId } = Validator.validate(findCustomerPayloadSchema, input);
 
     let findOneInput = {};
 
@@ -54,10 +54,10 @@ export class CustomerRepositoryImpl implements CustomerRepository {
     return this.customerMapper.map(customerEntity);
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteCustomer(input: DeleteCustomerPayload): Promise<void> {
+    const { id } = Validator.validate(deleteCustomerPayloadSchema, input);
 
-    const customerEntity = await this.findOne({ id });
+    const customerEntity = await this.findCustomer({ id });
 
     if (!customerEntity) {
       throw new CustomerNotFoundError({ id });

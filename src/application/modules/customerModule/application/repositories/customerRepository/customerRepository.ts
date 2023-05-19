@@ -1,10 +1,10 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindOnePayload } from './payloads/findOnePayload';
+import { CreateCustomerPayload } from './payloads/createCustomerPayload';
+import { DeleteCustomerPayload } from './payloads/deleteCustomerPayload';
+import { FindCustomerPayload } from './payloads/findCustomerPayload';
 import { Customer } from '../../../domain/entities/customer/customer';
 
 export interface CustomerRepository {
-  createOne(input: CreateOnePayload): Promise<Customer>;
-  findOne(input: FindOnePayload): Promise<Customer | null>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createCustomer(input: CreateCustomerPayload): Promise<Customer>;
+  findCustomer(input: FindCustomerPayload): Promise<Customer | null>;
+  deleteCustomer(input: DeleteCustomerPayload): Promise<void>;
 }

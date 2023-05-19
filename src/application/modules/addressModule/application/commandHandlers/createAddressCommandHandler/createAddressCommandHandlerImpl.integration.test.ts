@@ -7,7 +7,7 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
-import { customerModuleSymbols } from '../../../../customerModule/customerModuleSymbols';
+import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
@@ -33,9 +33,7 @@ describe('CreateAddressCommandHandler', () => {
     const container = Application.createContainer();
 
     addressRepositoryFactory = container.get<AddressRepositoryFactory>(symbols.addressRepositoryFactory);
-    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(
-      customerModuleSymbols.customerRepositoryFactory,
-    );
+    customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -72,7 +70,7 @@ describe('CreateAddressCommandHandler', () => {
 
         const user = await userRepository.createOne({ id: userId, email: email as string, password });
 
-        const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+        const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
         const { address } = await createAddressCommandHandler.execute({
           unitOfWork,

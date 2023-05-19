@@ -1,9 +1,9 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const findOnePayloadSchema = Schema.object({
+export const findCustomerPayloadSchema = Schema.object({
   id: Schema.string().optional(),
   userId: Schema.string().optional(),
 });
 
-export type FindOnePayload = SchemaType<typeof findOnePayloadSchema>;
+export type FindCustomerPayload = SchemaType<typeof findCustomerPayloadSchema>;
