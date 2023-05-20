@@ -5,25 +5,25 @@ import { OrderMapper } from './orderMapper/orderMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { OrderRepository } from '../../../application/repositories/orderRepository/orderRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/orderRepository/payloads/createOnePayload';
+  CreateOrderPayload,
+  createOrderPayloadSchema,
+} from '../../../application/repositories/orderRepository/payloads/createOrderPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/orderRepository/payloads/findManyPayload';
+  FindOrdersPayload,
+  findOrdersPayloadSchema,
+} from '../../../application/repositories/orderRepository/payloads/findOrdersPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/orderRepository/payloads/findOnePayload';
+  FindOrderPayload,
+  findOrderPayloadSchema,
+} from '../../../application/repositories/orderRepository/payloads/findOrderPayload';
 import { Order } from '../../../domain/entities/order/order';
 
 export class OrderRepositoryImpl implements OrderRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly orderMapper: OrderMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Order> {
+  public async createOrder(input: CreateOrderPayload): Promise<Order> {
     const { id, cartId, customerId, orderNumber, paymentMethod, status } = Validator.validate(
-      createOnePayloadSchema,
+      createOrderPayloadSchema,
       input,
     );
 
@@ -41,8 +41,8 @@ export class OrderRepositoryImpl implements OrderRepository {
     return this.orderMapper.map(savedOrderEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Order | null> {
-    const { id } = Validator.validate(findOnePayloadSchema, input);
+  public async findOrder(input: FindOrderPayload): Promise<Order | null> {
+    const { id } = Validator.validate(findOrderPayloadSchema, input);
 
     const orderEntity = await this.entityManager.findOne(OrderEntity, { where: { id } });
 
@@ -53,8 +53,8 @@ export class OrderRepositoryImpl implements OrderRepository {
     return this.orderMapper.map(orderEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Order[]> {
-    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
+  public async findOrders(input: FindOrdersPayload): Promise<Order[]> {
+    const { pagination, customerId } = Validator.validate(findOrdersPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 

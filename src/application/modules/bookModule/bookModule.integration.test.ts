@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 
 import { BookHttpController } from './api/httpControllers/bookHttpController/bookHttpController';
+import { FindBookQueryHandler } from './application/queryHandlers/findBookQueryHandler/findBookQueryHandler';
+import { FindBookQueryHandlerImpl } from './application/queryHandlers/findBookQueryHandler/findBookQueryHandlerImpl';
 import { BookRepositoryFactory } from './application/repositories/bookRepository/bookRepositoryFactory';
 import { BookModule } from './bookModule';
 import { BookRepositoryFactoryImpl } from './infrastructure/repositories/bookRepository/bookRepositoryFactoryImpl';
@@ -30,5 +32,9 @@ describe('BookModule', () => {
     );
 
     expect(container.get<BookHttpController>(bookSymbols.bookHttpController)).toBeInstanceOf(BookHttpController);
+
+    expect(container.get<FindBookQueryHandler>(bookSymbols.findBookQueryHandler)).toBeInstanceOf(
+      FindBookQueryHandlerImpl,
+    );
   });
 });

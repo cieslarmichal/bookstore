@@ -1,10 +1,10 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
+import { CreateOrderPayload } from './payloads/createOrderPayload';
+import { FindOrderPayload } from './payloads/findOrderPayload';
+import { FindOrdersPayload } from './payloads/findOrdersPayload';
 import { Order } from '../../../domain/entities/order/order';
 
 export interface OrderRepository {
-  createOne(input: CreateOnePayload): Promise<Order>;
-  findOne(input: FindOnePayload): Promise<Order | null>;
-  findMany(input: FindManyPayload): Promise<Order[]>;
+  createOrder(input: CreateOrderPayload): Promise<Order>;
+  findOrder(input: FindOrderPayload): Promise<Order | null>;
+  findOrders(input: FindOrdersPayload): Promise<Order[]>;
 }

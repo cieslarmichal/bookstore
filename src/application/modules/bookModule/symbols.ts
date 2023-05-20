@@ -12,4 +12,5 @@ export const symbols = {
 export const bookSymbols = {
   bookRepositoryFactory: symbols.bookRepositoryFactory,
   bookHttpController: symbols.bookHttpController,
+  findBookQueryHandler: symbols.findBookQueryHandler,
 };

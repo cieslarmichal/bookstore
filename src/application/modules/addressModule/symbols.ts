@@ -12,4 +12,5 @@ export const symbols = {
 export const addressSymbols = {
   addressHttpController: symbols.addressHttpController,
   addressRepositoryFactory: symbols.addressRepositoryFactory,
+  findAddressQueryHandler: symbols.findAddressQueryHandler,
 };

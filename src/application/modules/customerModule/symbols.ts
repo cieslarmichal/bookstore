@@ -10,4 +10,5 @@ export const symbols = {
 export const customerSymbols = {
   customerRepositoryFactory: symbols.customerRepositoryFactory,
   customerHttpController: symbols.customerHttpController,
+  findCustomerQueryHandler: symbols.findCustomerQueryHandler,
 };

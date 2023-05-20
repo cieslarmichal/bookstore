@@ -2,6 +2,8 @@ import 'reflect-metadata';
 
 import { AddressModule } from './addressModule';
 import { AddressHttpController } from './api/httpControllers/addressHttpController/addressHttpController';
+import { FindAddressQueryHandler } from './application/queryHandlers/findAddressQueryHandler/findAddressQueryHandler';
+import { FindAddressQueryHandlerImpl } from './application/queryHandlers/findAddressQueryHandler/findAddressQueryHandlerImpl';
 import { AddressRepositoryFactory } from './application/repositories/addressRepository/addressRepositoryFactory';
 import { AddressRepositoryFactoryImpl } from './infrastructure/repositories/addressRepository/addressRepositoryFactoryImpl';
 import { addressSymbols } from './symbols';
@@ -31,6 +33,10 @@ describe('AddressModule', () => {
 
     expect(container.get<AddressRepositoryFactory>(addressSymbols.addressRepositoryFactory)).toBeInstanceOf(
       AddressRepositoryFactoryImpl,
+    );
+
+    expect(container.get<FindAddressQueryHandler>(addressSymbols.findAddressQueryHandler)).toBeInstanceOf(
+      FindAddressQueryHandlerImpl,
     );
   });
 });

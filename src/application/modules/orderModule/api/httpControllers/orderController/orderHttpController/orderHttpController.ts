@@ -26,13 +26,13 @@ import { PaginationDataBuilder } from '../../../../../../../common/paginationDat
 import { Inject } from '../../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerService } from '../../../../../customerModule/application/services/customerService/customerService';
+import { FindCustomerQueryHandler } from '../../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { Customer } from '../../../../../customerModule/domain/entities/customer/customer';
 import { customerSymbols } from '../../../../../customerModule/symbols';
-import { OrderService } from '../../../../application/services/orderService/orderService';
-import { Order } from '../../../../domain/entities/order/order';
-import { orderModuleSymbols } from '../../../../orderModuleSymbols';
-import { UserIsNotCustomerError } from '../../../errors/userIsNotCustomerError';
+import { CreateOrderCommandHandler } from '../../../../application/commandHandlers/createOrderCommandHandler/createOrderCommandHandler';
+import { FindOrdersQueryHandler } from '../../../../application/queryHandlers/findOrdersQueryHandler/findOrdersQueryHandler';
+import { UserIsNotCustomerError } from '../../../../infrastructure/errors/userIsNotCustomerError';
+import { symbols } from '../../../../symbols';
 
 export class OrderHttpController implements HttpController {
   public readonly basePath = 'orders';
@@ -40,10 +40,12 @@ export class OrderHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(orderModuleSymbols.orderService)
-    private readonly orderService: OrderService,
-    @Inject(customerSymbols.customerService)
-    private readonly customerService: CustomerService,
+    @Inject(customerSymbols.findCustomerQueryHandler)
+    private readonly findCustomerQueryHandler: FindCustomerQueryHandler,
+    @Inject(symbols.createOrderCommandHandler)
+    private readonly createOrderCommandHandler: CreateOrderCommandHandler,
+    @Inject(symbols.findOrdersQueryHandler)
+    private readonly findOrdersQueryHandler: FindOrdersQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -94,25 +96,27 @@ export class OrderHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let order: Order | undefined;
-
     try {
-      order = await unitOfWork.runInTransaction(async () => {
+      const { order } = await unitOfWork.runInTransaction(async () => {
         const { userId } = request.context;
 
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        return this.orderService.createOrder({
+        return this.createOrderCommandHandler.execute({
           unitOfWork,
           draft: { cartId, paymentMethod, orderCreatorId: customer.id },
         });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { order } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -120,8 +124,6 @@ export class OrderHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { order } };
   }
 
   private async findCustomerOrders(
@@ -135,20 +137,22 @@ export class OrderHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let orders: Order[] = [];
-
     try {
-      orders = await unitOfWork.runInTransaction(async () => {
+      const { orders } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        return this.orderService.findOrders({ unitOfWork, pagination, customerId: customer.id });
+        return this.findOrdersQueryHandler.execute({ unitOfWork, pagination, customerId: customer.id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { data: orders } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -156,7 +160,5 @@ export class OrderHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { data: orders } };
   }
 }

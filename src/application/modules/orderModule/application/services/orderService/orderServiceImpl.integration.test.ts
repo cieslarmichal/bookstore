@@ -4,49 +4,25 @@ import { DataSource } from 'typeorm';
 
 import { OrderService } from './orderService';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
-import { DependencyInjectionContainerFactory } from '../../../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../../../../libs/postgres/postgresModule';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
-import { PostgresModuleConfigTestFactory } from '../../../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { UnitOfWorkModule } from '../../../../../../libs/unitOfWork/unitOfWorkModule';
-import { AddressModule } from '../../../../addressModule/addressModule';
-import { AddressEntity } from '../../../../addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-import { AuthorBookEntity } from '../../../../authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
-import { AuthorEntity } from '../../../../authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
-import { BookCategoryEntity } from '../../../../bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
+import { Application } from '../../../../../application';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { BookModule } from '../../../../bookModule/bookModule';
-import { BookEntity } from '../../../../bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { CategoryEntity } from '../../../../categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
-import { CustomerModule } from '../../../../customerModule/customerModule';
-import { CustomerEntity } from '../../../../customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
-import { InventoryEntity } from '../../../../inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
-import { InventoryModule } from '../../../../inventoryModule/inventoryModule';
 import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntity } from '../../../../userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { UserModuleConfigTestFactory } from '../../../../userModule/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-import { UserModule } from '../../../../userModule/userModule';
 import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { PaymentMethod } from '../../../domain/entities/order/paymentMethod';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
-import { CartEntity } from '../../../infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-import { LineItemEntity } from '../../../infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-import { OrderEntity } from '../../../infrastructure/repositories/orderRepository/orderEntity/orderEntity';
-import { OrderModule } from '../../../orderModule';
-import { orderModuleSymbols } from '../../../orderModuleSymbols';
+import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
 import { OrderEntityTestFactory } from '../../../tests/factories/orderEntityTestFactory/orderEntityTestFactory';
@@ -74,48 +50,16 @@ describe('OrderServiceImpl', () => {
   const lineItemEntityTestFactory = new LineItemEntityTestFactory();
   const inventoryEntityTestFactory = new InventoryEntityTestFactory();
 
-  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
-    entities: [
-      BookEntity,
-      AuthorEntity,
-      UserEntity,
-      CategoryEntity,
-      AuthorBookEntity,
-      BookCategoryEntity,
-      AddressEntity,
-      OrderEntity,
-      CartEntity,
-      OrderEntity,
-      CustomerEntity,
-      LineItemEntity,
-      InventoryEntity,
-    ],
-  });
-  const userModuleConfig = new UserModuleConfigTestFactory().create();
-
   beforeAll(async () => {
-    const container = DependencyInjectionContainerFactory.create({
-      modules: [
-        new PostgresModule(postgresModuleConfig),
-        new LoggerModule(loggerModuleConfig),
-        new UserModule(userModuleConfig),
-        new CustomerModule(),
-        new UnitOfWorkModule(),
-        new BookModule(),
-        new OrderModule(),
-        new AddressModule(),
-        new InventoryModule(),
-      ],
-    });
+    const container = Application.createContainer();
 
-    orderService = container.get<OrderService>(orderModuleSymbols.orderService);
-    orderRepositoryFactory = container.get<OrderRepositoryFactory>(orderModuleSymbols.orderRepositoryFactory);
-    cartRepositoryFactory = container.get<CartRepositoryFactory>(orderModuleSymbols.cartRepositoryFactory);
+    orderService = container.get<OrderService>(symbols.orderService);
+    orderRepositoryFactory = container.get<OrderRepositoryFactory>(symbols.orderRepositoryFactory);
+    cartRepositoryFactory = container.get<CartRepositoryFactory>(symbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
-    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory);
+    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(symbols.lineItemRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -194,7 +138,7 @@ describe('OrderServiceImpl', () => {
           bookId,
         });
 
-        const cart = await cartRepository.createOne({
+        const cart = await cartRepository.createCart({
           id: cartId,
           customerId: customer.id,
           status: CartStatus.active,
@@ -204,7 +148,7 @@ describe('OrderServiceImpl', () => {
           deliveryMethod: deliveryMethod as DeliveryMethod,
         });
 
-        await lineItemRepository.createOne({
+        await lineItemRepository.createLineItem({
           id: lineItemId,
           price,
           quantity: lineItemQuantity,
@@ -218,9 +162,9 @@ describe('OrderServiceImpl', () => {
           draft: { cartId: cart.id, paymentMethod: PaymentMethod.bankTransfer, orderCreatorId: customer.id },
         });
 
-        const foundOrder = await orderRepository.findOne({ id: order.id });
+        const foundOrder = await orderRepository.findOrder({ id: order.id });
 
-        const foundCart = await cartRepository.findOne({ id: cartId });
+        const foundCart = await cartRepository.findCart({ id: cartId });
 
         expect(foundOrder).not.toBeNull();
         expect(foundCart?.status).toEqual(CartStatus.inactive);
@@ -317,7 +261,7 @@ describe('OrderServiceImpl', () => {
           title,
         });
 
-        const cart1 = await cartRepository.createOne({
+        const cart1 = await cartRepository.createCart({
           id: cartId1,
           customerId: customer1.id,
           status: CartStatus.active,
@@ -327,7 +271,7 @@ describe('OrderServiceImpl', () => {
           deliveryMethod: deliveryMethod as DeliveryMethod,
         });
 
-        await lineItemRepository.createOne({
+        await lineItemRepository.createLineItem({
           id: lineItemId1,
           price,
           quantity,
@@ -336,7 +280,7 @@ describe('OrderServiceImpl', () => {
           bookId: book.id,
         });
 
-        const cart2 = await cartRepository.createOne({
+        const cart2 = await cartRepository.createCart({
           id: cartId2,
           customerId: customer2.id,
           status: CartStatus.active,
@@ -346,7 +290,7 @@ describe('OrderServiceImpl', () => {
           deliveryMethod: deliveryMethod as DeliveryMethod,
         });
 
-        await lineItemRepository.createOne({
+        await lineItemRepository.createLineItem({
           id: lineItemId2,
           price,
           quantity,
@@ -355,7 +299,7 @@ describe('OrderServiceImpl', () => {
           bookId: book.id,
         });
 
-        const order1 = await orderRepository.createOne({
+        const order1 = await orderRepository.createOrder({
           id: orderId1,
           cartId: cart1.id,
           paymentMethod,
@@ -364,7 +308,7 @@ describe('OrderServiceImpl', () => {
           status,
         });
 
-        await orderRepository.createOne({
+        await orderRepository.createOrder({
           id: orderId2,
           cartId: cart2.id,
           paymentMethod,

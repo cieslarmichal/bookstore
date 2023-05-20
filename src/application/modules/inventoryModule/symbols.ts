@@ -12,4 +12,6 @@ export const symbols = {
 export const inventorySymbols = {
   inventoryRepositoryFactory: symbols.inventoryRepositoryFactory,
   inventoryHttpController: symbols.inventoryHttpController,
+  findInventoryQueryHandler: symbols.findInventoryQueryHandler,
+  updateInventoryCommandHandler: symbols.updateInventoryCommandHandler,
 };

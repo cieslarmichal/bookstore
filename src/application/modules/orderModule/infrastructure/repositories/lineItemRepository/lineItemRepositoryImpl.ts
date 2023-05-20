@@ -7,31 +7,31 @@ import { LineItem } from '../../../../orderModule/domain/entities/lineItem/lineI
 import { LineItemNotFoundError } from '../../../../orderModule/infrastructure/errors/lineItemNotFoundError';
 import { LineItemRepository } from '../../../application/repositories/lineItemRepository/lineItemRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/lineItemRepository/payloads/createOnePayload';
+  CreateLineItemPayload,
+  createLineItemPayloadSchema,
+} from '../../../application/repositories/lineItemRepository/payloads/createLineItemPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/lineItemRepository/payloads/deleteOnePayload';
+  DeleteLineItemPayload,
+  deleteLineItemPayloadSchema,
+} from '../../../application/repositories/lineItemRepository/payloads/deleteLineItemPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/lineItemRepository/payloads/findManyPayload';
+  FindLineItemsPayload,
+  findLineItemsPayloadSchema,
+} from '../../../application/repositories/lineItemRepository/payloads/findLineItemsPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/lineItemRepository/payloads/findOnePayload';
+  FindLineItemPayload,
+  findLineItemPayloadSchema,
+} from '../../../application/repositories/lineItemRepository/payloads/findLineItemPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/lineItemRepository/payloads/updateOnePayload';
+  UpdateLineItemPayload,
+  updateLineItemPayloadSchema,
+} from '../../../application/repositories/lineItemRepository/payloads/updateLineItemPayload';
 
 export class LineItemRepositoryImpl implements LineItemRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly lineItemMapper: LineItemMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<LineItem> {
-    const { id, price, totalPrice, quantity, bookId, cartId } = Validator.validate(createOnePayloadSchema, input);
+  public async createLineItem(input: CreateLineItemPayload): Promise<LineItem> {
+    const { id, price, totalPrice, quantity, bookId, cartId } = Validator.validate(createLineItemPayloadSchema, input);
 
     const lineItemEntity = this.entityManager.create(LineItemEntity, {
       id,
@@ -47,8 +47,8 @@ export class LineItemRepositoryImpl implements LineItemRepository {
     return this.lineItemMapper.map(savedLineItemEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<LineItem | null> {
-    const { id } = Validator.validate(findOnePayloadSchema, input);
+  public async findLineItem(input: FindLineItemPayload): Promise<LineItem | null> {
+    const { id } = Validator.validate(findLineItemPayloadSchema, input);
 
     const lineItemEntity = await this.entityManager.findOne(LineItemEntity, { where: { id } });
 
@@ -59,8 +59,8 @@ export class LineItemRepositoryImpl implements LineItemRepository {
     return this.lineItemMapper.map(lineItemEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<LineItem[]> {
-    const { pagination, cartId } = Validator.validate(findManyPayloadSchema, input);
+  public async findLineItems(input: FindLineItemsPayload): Promise<LineItem[]> {
+    const { pagination, cartId } = Validator.validate(findLineItemsPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -73,13 +73,13 @@ export class LineItemRepositoryImpl implements LineItemRepository {
     return lineItemesEntities.map((lineItem) => this.lineItemMapper.map(lineItem));
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<LineItem> {
+  public async updateLineItem(input: UpdateLineItemPayload): Promise<LineItem> {
     const {
       id,
       draft: { price, totalPrice, quantity },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateLineItemPayloadSchema, input);
 
-    const lineItemEntity = await this.findOne({ id });
+    const lineItemEntity = await this.findLineItem({ id });
 
     if (!lineItemEntity) {
       throw new LineItemNotFoundError({ id });
@@ -101,15 +101,15 @@ export class LineItemRepositoryImpl implements LineItemRepository {
 
     await this.entityManager.update(LineItemEntity, { id }, { ...lineItemEntityInput });
 
-    const updatedLineItemEntity = await this.findOne({ id });
+    const updatedLineItemEntity = await this.findLineItem({ id });
 
     return updatedLineItemEntity as LineItem;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteLineItem(input: DeleteLineItemPayload): Promise<void> {
+    const { id } = Validator.validate(deleteLineItemPayloadSchema, input);
 
-    const lineItemEntity = await this.findOne({ id });
+    const lineItemEntity = await this.findLineItem({ id });
 
     if (!lineItemEntity) {
       throw new LineItemNotFoundError({ id });

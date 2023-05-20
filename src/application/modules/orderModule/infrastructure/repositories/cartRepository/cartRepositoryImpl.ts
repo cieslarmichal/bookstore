@@ -5,34 +5,34 @@ import { CartMapper } from './cartMapper/cartMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { CartRepository } from '../../../application/repositories/cartRepository/cartRepository';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/cartRepository/payloads/createOnePayload';
+  CreateCartPayload,
+  createCartPayloadSchema,
+} from '../../../application/repositories/cartRepository/payloads/createCartPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/cartRepository/payloads/deleteOnePayload';
+  DeleteCartPayload,
+  deleteCartPayloadSchema,
+} from '../../../application/repositories/cartRepository/payloads/deleteCartPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/cartRepository/payloads/findManyPayload';
+  FindCartsPayload,
+  findCartsPayloadSchema,
+} from '../../../application/repositories/cartRepository/payloads/findCartsPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/cartRepository/payloads/findOnePayload';
+  FindCartPayload,
+  findCartPayloadSchema,
+} from '../../../application/repositories/cartRepository/payloads/findCartPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/cartRepository/payloads/updateOnePayload';
+  UpdateCartPayload,
+  updateCartPayloadSchema,
+} from '../../../application/repositories/cartRepository/payloads/updateCartPayload';
 import { Cart } from '../../../domain/entities/cart/cart';
 import { CartNotFoundError } from '../../errors/cartNotFoundError';
 
 export class CartRepositoryImpl implements CartRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly cartMapper: CartMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Cart> {
+  public async createCart(input: CreateCartPayload): Promise<Cart> {
     const { id, customerId, status, totalPrice, billingAddressId, deliveryMethod, shippingAddressId } =
-      Validator.validate(createOnePayloadSchema, input);
+      Validator.validate(createCartPayloadSchema, input);
 
     let cartEntityInput: CartEntity = {
       id,
@@ -60,8 +60,8 @@ export class CartRepositoryImpl implements CartRepository {
     return this.cartMapper.map(savedCartEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Cart[]> {
-    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
+  public async findCarts(input: FindCartsPayload): Promise<Cart[]> {
+    const { pagination, customerId } = Validator.validate(findCartsPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -74,8 +74,8 @@ export class CartRepositoryImpl implements CartRepository {
     return cartsEntities.map((cartEntity) => this.cartMapper.map(cartEntity));
   }
 
-  public async findOne(input: FindOnePayload): Promise<Cart | null> {
-    const { id } = Validator.validate(findOnePayloadSchema, input);
+  public async findCart(input: FindCartPayload): Promise<Cart | null> {
+    const { id } = Validator.validate(findCartPayloadSchema, input);
 
     const cartEntity = await this.entityManager.findOne(CartEntity, { where: { id } });
 
@@ -86,13 +86,13 @@ export class CartRepositoryImpl implements CartRepository {
     return this.cartMapper.map(cartEntity);
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<Cart> {
+  public async updateCart(input: UpdateCartPayload): Promise<Cart> {
     const {
       id,
       draft: { status, totalPrice, billingAddressId, deliveryMethod, shippingAddressId },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateCartPayloadSchema, input);
 
-    const cartEntity = await this.findOne({ id });
+    const cartEntity = await this.findCart({ id });
 
     if (!cartEntity) {
       throw new CartNotFoundError({ id });
@@ -122,15 +122,15 @@ export class CartRepositoryImpl implements CartRepository {
 
     await this.entityManager.update(CartEntity, { id }, { ...cartEntityInput });
 
-    const updatedCartEntity = await this.findOne({ id });
+    const updatedCartEntity = await this.findCart({ id });
 
     return updatedCartEntity as Cart;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteCart(input: DeleteCartPayload): Promise<void> {
+    const { id } = Validator.validate(deleteCartPayloadSchema, input);
 
-    const cartEntity = await this.findOne({ id });
+    const cartEntity = await this.findCart({ id });
 
     if (!cartEntity) {
       throw new CartNotFoundError({ id });

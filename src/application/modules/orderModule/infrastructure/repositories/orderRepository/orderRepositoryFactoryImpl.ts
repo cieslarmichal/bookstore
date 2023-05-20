@@ -5,12 +5,12 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { OrderRepository } from '../../../application/repositories/orderRepository/orderRepository';
 import { OrderRepositoryFactory } from '../../../application/repositories/orderRepository/orderRepositoryFactory';
 import { OrderRepositoryImpl } from '../../../infrastructure/repositories/orderRepository/orderRepositoryImpl';
-import { orderModuleSymbols } from '../../../orderModuleSymbols';
+import { orderSymbols } from '../../../symbols';
 
 @Injectable()
 export class OrderRepositoryFactoryImpl implements OrderRepositoryFactory {
   public constructor(
-    @Inject(orderModuleSymbols.orderMapper)
+    @Inject(orderSymbols.orderMapper)
     private readonly orderMapper: OrderMapper,
   ) {}
 

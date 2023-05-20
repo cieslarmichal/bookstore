@@ -64,15 +64,20 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
+import { FindCustomerQueryHandler } from '../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { customerSymbols } from '../../../../customerModule/symbols';
-import { CartService } from '../../../application/services/cartService/cartService';
-import { Cart } from '../../../domain/entities/cart/cart';
-import { orderModuleSymbols } from '../../../orderModuleSymbols';
-import { CartNotFoundError } from '../../errors/cartNotFoundError';
-import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
-import { UserIsNotCustomerError } from '../../errors/userIsNotCustomerError';
+import { AddLineItemCommandHandler } from '../../../application/commandHandlers/addLineItemCommandHandler/addLineItemCommandHandler';
+import { CreateCartCommandHandler } from '../../../application/commandHandlers/createCartCommandHandler/createCartCommandHandler';
+import { DeleteCartCommandHandler } from '../../../application/commandHandlers/deleteCartCommandHandler/deleteCartCommandHandler';
+import { RemoveLineItemCommandHandler } from '../../../application/commandHandlers/removeLineItemCommandHandler/removeLineItemCommandHandler';
+import { UpdateCartCommandHandler } from '../../../application/commandHandlers/updateCartCommandHandler/updateCartCommandHandler';
+import { FindCartQueryHandler } from '../../../application/queryHandlers/findCartQueryHandler/findCartQueryHandler';
+import { FindCartsQueryHandler } from '../../../application/queryHandlers/findCartsQueryHandler/findCartsQueryHandler';
+import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
+import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
+import { symbols } from '../../../symbols';
 
 export class CartHttpController implements HttpController {
   public readonly basePath = 'carts';
@@ -80,10 +85,22 @@ export class CartHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(orderModuleSymbols.cartService)
-    private readonly cartService: CartService,
-    @Inject(customerSymbols.customerService)
-    private readonly customerService: CustomerService,
+    @Inject(customerSymbols.findCustomerQueryHandler)
+    private readonly findCustomerQueryHandler: FindCustomerQueryHandler,
+    @Inject(symbols.createCartCommandHandler)
+    private readonly createCartCommandHandler: CreateCartCommandHandler,
+    @Inject(symbols.deleteCartCommandHandler)
+    private readonly deleteCartCommandHandler: DeleteCartCommandHandler,
+    @Inject(symbols.updateCartCommandHandler)
+    private readonly updateCartCommandHandler: UpdateCartCommandHandler,
+    @Inject(symbols.findCartQueryHandler)
+    private readonly findCartQueryHandler: FindCartQueryHandler,
+    @Inject(symbols.findCartsQueryHandler)
+    private readonly findCartsQueryHandler: FindCartsQueryHandler,
+    @Inject(symbols.addLineItemCommandHandler)
+    private readonly addLineItemCommandHandler: AddLineItemCommandHandler,
+    @Inject(symbols.removeLineItemCommandHandler)
+    private readonly removeLineItemCommandHandler: RemoveLineItemCommandHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -247,20 +264,20 @@ export class CartHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let cart: Cart | undefined;
-
     try {
-      cart = await unitOfWork.runInTransaction(async () => {
+      const { cart } = await unitOfWork.runInTransaction(async () => {
         const { userId } = request.context;
 
         try {
-          await this.customerService.findCustomer({ unitOfWork, userId });
+          await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        return this.cartService.createCart({ unitOfWork, draft: { customerId } });
+        return this.createCartCommandHandler.execute({ unitOfWork, draft: { customerId } });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { cart } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -268,8 +285,6 @@ export class CartHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { cart } };
   }
 
   private async findCart(
@@ -285,19 +300,19 @@ export class CartHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let cart: Cart | undefined;
-
     try {
-      cart = await unitOfWork.runInTransaction(async () => {
+      const cart = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const customerCart = await this.cartService.findCart({ unitOfWork, cartId: id });
+        const { cart: customerCart } = await this.findCartQueryHandler.execute({ unitOfWork, cartId: id });
 
         if (customerCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
@@ -308,6 +323,8 @@ export class CartHttpController implements HttpController {
 
         return customerCart;
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { cart } };
     } catch (error) {
       if (
         error instanceof CustomerFromAccessTokenNotMatchingCustomerFromCartError ||
@@ -322,8 +339,6 @@ export class CartHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async findCustomerCarts(
@@ -337,20 +352,22 @@ export class CartHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let carts: Cart[] = [];
-
     try {
-      carts = await unitOfWork.runInTransaction(async () => {
+      const { carts } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        return this.cartService.findCarts({ unitOfWork, pagination, customerId: customer.id });
+        return this.findCartsQueryHandler.execute({ unitOfWork, pagination, customerId: customer.id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { data: carts } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -358,8 +375,6 @@ export class CartHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { data: carts } };
   }
 
   private async updateCart(
@@ -377,19 +392,19 @@ export class CartHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let cart: Cart | undefined;
-
     try {
-      cart = await unitOfWork.runInTransaction(async () => {
+      const { cart } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
+        const { cart: existingCart } = await this.findCartQueryHandler.execute({ unitOfWork, cartId: id });
 
         if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
@@ -398,12 +413,14 @@ export class CartHttpController implements HttpController {
           });
         }
 
-        return this.cartService.updateCart({
+        return this.updateCartCommandHandler.execute({
           unitOfWork,
           cartId: id,
           draft: { billingAddressId, deliveryMethod, shippingAddressId },
         });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { cart } };
     } catch (error) {
       if (
         error instanceof CustomerFromAccessTokenNotMatchingCustomerFromCartError ||
@@ -418,8 +435,6 @@ export class CartHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async addLineItem(
@@ -437,19 +452,19 @@ export class CartHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let cart: Cart | undefined;
-
     try {
-      cart = await unitOfWork.runInTransaction(async () => {
+      const { cart } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
+        const { cart: existingCart } = await this.findCartQueryHandler.execute({ unitOfWork, cartId: id });
 
         if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
@@ -458,14 +473,14 @@ export class CartHttpController implements HttpController {
           });
         }
 
-        const updatedCart = await this.cartService.addLineItem({
+        return this.addLineItemCommandHandler.execute({
           unitOfWork,
           cartId: id,
           draft: { bookId, quantity },
         });
-
-        return updatedCart;
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { cart } };
     } catch (error) {
       if (
         error instanceof CustomerFromAccessTokenNotMatchingCustomerFromCartError ||
@@ -480,8 +495,6 @@ export class CartHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async removeLineItem(
@@ -499,19 +512,19 @@ export class CartHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let cart: Cart | undefined;
-
     try {
-      cart = await unitOfWork.runInTransaction(async () => {
+      const { cart } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
+        const { cart: existingCart } = await this.findCartQueryHandler.execute({ unitOfWork, cartId: id });
 
         if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
@@ -520,14 +533,14 @@ export class CartHttpController implements HttpController {
           });
         }
 
-        const updatedCart = await this.cartService.removeLineItem({
+        return this.removeLineItemCommandHandler.execute({
           unitOfWork,
           cartId: id,
           draft: { lineItemId, quantity },
         });
-
-        return updatedCart;
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { cart } };
     } catch (error) {
       if (
         error instanceof CustomerFromAccessTokenNotMatchingCustomerFromCartError ||
@@ -542,8 +555,6 @@ export class CartHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { cart } };
   }
 
   private async deleteCart(
@@ -564,12 +575,14 @@ export class CartHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingCart = await this.cartService.findCart({ unitOfWork, cartId: id });
+        const { cart: existingCart } = await this.findCartQueryHandler.execute({ unitOfWork, cartId: id });
 
         if (existingCart.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromCartError({
@@ -578,7 +591,7 @@ export class CartHttpController implements HttpController {
           });
         }
 
-        await this.cartService.deleteCart({ unitOfWork, cartId: id });
+        await this.deleteCartCommandHandler.execute({ unitOfWork, cartId: id });
       });
     } catch (error) {
       if (

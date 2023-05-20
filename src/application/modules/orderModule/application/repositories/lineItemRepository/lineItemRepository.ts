@@ -1,14 +1,14 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
-import { UpdateOnePayload } from './payloads/updateOnePayload';
+import { CreateLineItemPayload } from './payloads/createLineItemPayload';
+import { DeleteLineItemPayload } from './payloads/deleteLineItemPayload';
+import { FindLineItemPayload } from './payloads/findLineItemPayload';
+import { FindLineItemsPayload } from './payloads/findLineItemsPayload';
+import { UpdateLineItemPayload } from './payloads/updateLineItemPayload';
 import { LineItem } from '../../../domain/entities/lineItem/lineItem';
 
 export interface LineItemRepository {
-  createOne(input: CreateOnePayload): Promise<LineItem>;
-  findOne(input: FindOnePayload): Promise<LineItem | null>;
-  findMany(input: FindManyPayload): Promise<LineItem[]>;
-  updateOne(input: UpdateOnePayload): Promise<LineItem>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createLineItem(input: CreateLineItemPayload): Promise<LineItem>;
+  findLineItem(input: FindLineItemPayload): Promise<LineItem | null>;
+  findLineItems(input: FindLineItemsPayload): Promise<LineItem[]>;
+  updateLineItem(input: UpdateLineItemPayload): Promise<LineItem>;
+  deleteLineItem(input: DeleteLineItemPayload): Promise<void>;
 }

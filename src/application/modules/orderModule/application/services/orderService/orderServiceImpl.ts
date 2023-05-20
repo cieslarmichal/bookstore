@@ -6,29 +6,35 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
+import { UpdateInventoryCommandHandler } from '../../../../inventoryModule/application/commandHandlers/updateInventoryCommandHandler/updateInventoryCommandHandler';
+import { FindInventoryQueryHandler } from '../../../../inventoryModule/application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItem } from '../../../domain/entities/lineItem/lineItem';
 import { Order } from '../../../domain/entities/order/order';
 import { OrderStatus } from '../../../domain/entities/order/orderStatus';
-import { orderModuleSymbols } from '../../../orderModuleSymbols';
+import { symbols } from '../../../symbols';
+import { UpdateCartCommandHandler } from '../../commandHandlers/updateCartCommandHandler/updateCartCommandHandler';
+import { FindCartQueryHandler } from '../../queryHandlers/findCartQueryHandler/findCartQueryHandler';
 import { OrderRepositoryFactory } from '../../repositories/orderRepository/orderRepositoryFactory';
-import { CartService } from '../cartService/cartService';
 import { CartValidatorService } from '../cartValidatorService/cartValidatorService';
 
 @Injectable()
 export class OrderServiceImpl implements OrderService {
   public constructor(
-    @Inject(orderModuleSymbols.orderRepositoryFactory)
+    @Inject(symbols.orderRepositoryFactory)
     private readonly orderRepositoryFactory: OrderRepositoryFactory,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
-    @Inject(orderModuleSymbols.cartService)
-    private readonly cartService: CartService,
-    @Inject(inventorySymbols.inventoryService)
-    private readonly inventoryService: InventoryService,
-    @Inject(orderModuleSymbols.cartValidatorService)
+    @Inject(symbols.findCartQueryHandler)
+    private readonly findCartQueryHandler: FindCartQueryHandler,
+    @Inject(symbols.updateCartCommandHandler)
+    private readonly updateCartCommandHandler: UpdateCartCommandHandler,
+    @Inject(inventorySymbols.findInventoryQueryHandler)
+    private readonly findInventoryQueryHandler: FindInventoryQueryHandler,
+    @Inject(inventorySymbols.updateInventoryCommandHandler)
+    private readonly updateInventoryCommandHandler: UpdateInventoryCommandHandler,
+    @Inject(symbols.cartValidatorService)
     private readonly cartValidatorService: CartValidatorService,
   ) {}
 
@@ -42,7 +48,7 @@ export class OrderServiceImpl implements OrderService {
 
     const orderRepository = this.orderRepositoryFactory.create(entityManager);
 
-    const cart = await this.cartService.findCart({ unitOfWork, cartId });
+    const { cart } = await this.findCartQueryHandler.execute({ unitOfWork, cartId });
 
     this.loggerService.debug({
       message: 'Creating order...',
@@ -51,7 +57,7 @@ export class OrderServiceImpl implements OrderService {
 
     await this.cartValidatorService.validate({ unitOfWork, cart, orderCreatorId });
 
-    const order = await orderRepository.createOne({
+    const order = await orderRepository.createOrder({
       id: UuidGenerator.generateUuid(),
       customerId: cart.customerId,
       cartId,
@@ -64,11 +70,14 @@ export class OrderServiceImpl implements OrderService {
 
     await Promise.all(
       lineItems.map(async (lineItem) => {
-        const inventory = await this.inventoryService.findInventory({ unitOfWork, bookId: lineItem.bookId });
+        const { inventory } = await this.findInventoryQueryHandler.execute({
+          unitOfWork,
+          bookId: lineItem.bookId,
+        });
 
         const updatedQuantity = inventory.quantity - lineItem.quantity;
 
-        await this.inventoryService.updateInventory({
+        await this.updateInventoryCommandHandler.execute({
           unitOfWork,
           inventoryId: inventory.id,
           draft: { quantity: updatedQuantity },
@@ -76,7 +85,7 @@ export class OrderServiceImpl implements OrderService {
       }),
     );
 
-    await this.cartService.updateCart({ unitOfWork, cartId, draft: { status: CartStatus.inactive } });
+    await this.updateCartCommandHandler.execute({ unitOfWork, cartId, draft: { status: CartStatus.inactive } });
 
     this.loggerService.info({
       message: 'Order created.',
@@ -93,7 +102,7 @@ export class OrderServiceImpl implements OrderService {
 
     const orderRepository = this.orderRepositoryFactory.create(entityManager);
 
-    const orders = await orderRepository.findMany({ customerId, pagination });
+    const orders = await orderRepository.findOrders({ customerId, pagination });
 
     return orders;
   }

@@ -5,21 +5,11 @@ import { OrderHttpController } from './api/httpControllers/orderController/order
 import { CartRepositoryFactory } from './application/repositories/cartRepository/cartRepositoryFactory';
 import { LineItemRepositoryFactory } from './application/repositories/lineItemRepository/lineItemRepositoryFactory';
 import { OrderRepositoryFactory } from './application/repositories/orderRepository/orderRepositoryFactory';
-import { CartService } from './application/services/cartService/cartService';
-import { CartServiceImpl } from './application/services/cartService/cartServiceImpl';
-import { OrderService } from './application/services/orderService/orderService';
-import { OrderServiceImpl } from './application/services/orderService/orderServiceImpl';
-import { CartMapper } from './infrastructure/repositories/cartRepository/cartMapper/cartMapper';
-import { CartMapperImpl } from './infrastructure/repositories/cartRepository/cartMapper/cartMapperImpl';
 import { CartRepositoryFactoryImpl } from './infrastructure/repositories/cartRepository/cartRepositoryFactoryImpl';
-import { LineItemMapper } from './infrastructure/repositories/lineItemRepository/lineItemMapper/lineItemMapper';
-import { LineItemMapperImpl } from './infrastructure/repositories/lineItemRepository/lineItemMapper/lineItemMapperImpl';
 import { LineItemRepositoryFactoryImpl } from './infrastructure/repositories/lineItemRepository/lineItemRepositoryFactoryImpl';
-import { OrderMapper } from './infrastructure/repositories/orderRepository/orderMapper/orderMapper';
-import { OrderMapperImpl } from './infrastructure/repositories/orderRepository/orderMapper/orderMapperImpl';
 import { OrderRepositoryFactoryImpl } from './infrastructure/repositories/orderRepository/orderRepositoryFactoryImpl';
 import { OrderModule } from './orderModule';
-import { orderModuleSymbols } from './orderModuleSymbols';
+import { orderSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -50,31 +40,19 @@ describe('OrderModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<OrderMapper>(orderModuleSymbols.orderMapper)).toBeInstanceOf(OrderMapperImpl);
-
-    expect(container.get<OrderRepositoryFactory>(orderModuleSymbols.orderRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<OrderRepositoryFactory>(orderSymbols.orderRepositoryFactory)).toBeInstanceOf(
       OrderRepositoryFactoryImpl,
     );
 
-    expect(container.get<OrderService>(orderModuleSymbols.orderService)).toBeInstanceOf(OrderServiceImpl);
+    expect(container.get<OrderHttpController>(orderSymbols.orderHttpController)).toBeInstanceOf(OrderHttpController);
 
-    expect(container.get<OrderHttpController>(orderModuleSymbols.orderHttpController)).toBeInstanceOf(
-      OrderHttpController,
-    );
-
-    expect(container.get<CartMapper>(orderModuleSymbols.cartMapper)).toBeInstanceOf(CartMapperImpl);
-
-    expect(container.get<CartRepositoryFactory>(orderModuleSymbols.cartRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<CartRepositoryFactory>(orderSymbols.cartRepositoryFactory)).toBeInstanceOf(
       CartRepositoryFactoryImpl,
     );
 
-    expect(container.get<CartService>(orderModuleSymbols.cartService)).toBeInstanceOf(CartServiceImpl);
+    expect(container.get<CartHttpController>(orderSymbols.cartHttpController)).toBeInstanceOf(CartHttpController);
 
-    expect(container.get<CartHttpController>(orderModuleSymbols.cartHttpController)).toBeInstanceOf(CartHttpController);
-
-    expect(container.get<LineItemMapper>(orderModuleSymbols.lineItemMapper)).toBeInstanceOf(LineItemMapperImpl);
-
-    expect(container.get<LineItemRepositoryFactory>(orderModuleSymbols.lineItemRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<LineItemRepositoryFactory>(orderSymbols.lineItemRepositoryFactory)).toBeInstanceOf(
       LineItemRepositoryFactoryImpl,
     );
   });
