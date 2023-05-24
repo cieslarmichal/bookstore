@@ -1,12 +1,11 @@
-import { updateReviewDraftSchema } from './updateReviewDraft';
+import { createReviewDraftSchema } from './createReviewDraft';
 import { UnitOfWork } from '../../../../../../../libs/unitOfWork/unitOfWork';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const updateReviewPayloadSchema = Schema.object({
+export const createReviewCommandHandlerPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  reviewId: Schema.string(),
-  draft: updateReviewDraftSchema,
+  draft: createReviewDraftSchema,
 });
 
-export type UpdateReviewPayload = SchemaType<typeof updateReviewPayloadSchema>;
+export type CreateReviewCommandHandlerPayload = SchemaType<typeof createReviewCommandHandlerPayloadSchema>;

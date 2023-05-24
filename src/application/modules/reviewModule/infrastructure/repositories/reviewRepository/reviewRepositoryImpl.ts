@@ -4,25 +4,25 @@ import { ReviewEntity } from './reviewEntity/reviewEntity';
 import { ReviewMapper } from './reviewMapper/reviewMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/reviewRepository/payloads/createOnePayload';
+  CreateReviewPayload,
+  createReviewPayloadSchema,
+} from '../../../application/repositories/reviewRepository/payloads/createReviewPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/reviewRepository/payloads/deleteOnePayload';
+  DeleteReviewPayload,
+  deleteReviewPayloadSchema,
+} from '../../../application/repositories/reviewRepository/payloads/deleteReviewPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/reviewRepository/payloads/findManyPayload';
+  FindReviewsPayload,
+  findReviewsPayloadSchema,
+} from '../../../application/repositories/reviewRepository/payloads/findReviewsPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/reviewRepository/payloads/findOnePayload';
+  FindReviewPayload,
+  findReviewPayloadSchema,
+} from '../../../application/repositories/reviewRepository/payloads/findReviewPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/reviewRepository/payloads/updateOnePayload';
+  UpdateReviewPayload,
+  updateReviewPayloadSchema,
+} from '../../../application/repositories/reviewRepository/payloads/updateReviewPayload';
 import { ReviewRepository } from '../../../application/repositories/reviewRepository/reviewRepository';
 import { Review } from '../../../domain/entities/review/review';
 import { ReviewNotFoundError } from '../../errors/reviewNotFoundError';
@@ -30,8 +30,8 @@ import { ReviewNotFoundError } from '../../errors/reviewNotFoundError';
 export class ReviewRepositoryImpl implements ReviewRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly reviewMapper: ReviewMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<Review> {
-    const { id, isbn, rate, comment, customerId } = Validator.validate(createOnePayloadSchema, input);
+  public async createReview(input: CreateReviewPayload): Promise<Review> {
+    const { id, isbn, rate, comment, customerId } = Validator.validate(createReviewPayloadSchema, input);
 
     let reviewEntityInput: ReviewEntity = { id, isbn, rate, customerId };
 
@@ -46,8 +46,8 @@ export class ReviewRepositoryImpl implements ReviewRepository {
     return this.reviewMapper.map(savedReview);
   }
 
-  public async findOne(input: FindOnePayload): Promise<Review | null> {
-    const { id } = Validator.validate(findOnePayloadSchema, input);
+  public async findReview(input: FindReviewPayload): Promise<Review | null> {
+    const { id } = Validator.validate(findReviewPayloadSchema, input);
 
     const reviewEntity = await this.entityManager.findOne(ReviewEntity, { where: { id } });
 
@@ -58,8 +58,8 @@ export class ReviewRepositoryImpl implements ReviewRepository {
     return this.reviewMapper.map(reviewEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<Review[]> {
-    const { pagination, customerId, isbn } = Validator.validate(findManyPayloadSchema, input);
+  public async findReviews(input: FindReviewsPayload): Promise<Review[]> {
+    const { pagination, customerId, isbn } = Validator.validate(findReviewsPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -81,13 +81,13 @@ export class ReviewRepositoryImpl implements ReviewRepository {
     return reviewsEntities.map((reviewEntity) => this.reviewMapper.map(reviewEntity));
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<Review> {
+  public async updateReviews(input: UpdateReviewPayload): Promise<Review> {
     const {
       id,
       draft: { comment, rate },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateReviewPayloadSchema, input);
 
-    const reviewEntity = await this.findOne({ id });
+    const reviewEntity = await this.findReview({ id });
 
     if (!reviewEntity) {
       throw new ReviewNotFoundError({ id });
@@ -105,15 +105,15 @@ export class ReviewRepositoryImpl implements ReviewRepository {
 
     await this.entityManager.update(ReviewEntity, { id }, { ...updateOneInput });
 
-    const updatedReviewEntity = await this.findOne({ id });
+    const updatedReviewEntity = await this.findReview({ id });
 
     return updatedReviewEntity as Review;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteReview(input: DeleteReviewPayload): Promise<void> {
+    const { id } = Validator.validate(deleteReviewPayloadSchema, input);
 
-    const reviewEntity = await this.findOne({ id });
+    const reviewEntity = await this.findReview({ id });
 
     if (!reviewEntity) {
       throw new ReviewNotFoundError({ id });

@@ -5,12 +5,12 @@ import { Injectable, Inject } from '../../../../../libs/dependencyInjection/deco
 import { ReviewRepository } from '../../../application/repositories/reviewRepository/reviewRepository';
 import { ReviewRepositoryFactory } from '../../../application/repositories/reviewRepository/reviewRepositoryFactory';
 import { ReviewRepositoryImpl } from '../../../infrastructure/repositories/reviewRepository/reviewRepositoryImpl';
-import { reviewModuleSymbols } from '../../../reviewModuleSymbols';
+import { reviewSymbols } from '../../../symbols';
 
 @Injectable()
 export class ReviewRepositoryFactoryImpl implements ReviewRepositoryFactory {
   public constructor(
-    @Inject(reviewModuleSymbols.reviewMapper)
+    @Inject(reviewSymbols.reviewMapper)
     private readonly reviewMapper: ReviewMapper,
   ) {}
 

@@ -1,14 +1,14 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
-import { UpdateOnePayload } from './payloads/updateOnePayload';
+import { CreateReviewPayload } from './payloads/createReviewPayload';
+import { DeleteReviewPayload } from './payloads/deleteReviewPayload';
+import { FindReviewPayload } from './payloads/findReviewPayload';
+import { FindReviewsPayload } from './payloads/findReviewsPayload';
+import { UpdateReviewPayload } from './payloads/updateReviewPayload';
 import { Review } from '../../../domain/entities/review/review';
 
 export interface ReviewRepository {
-  createOne(input: CreateOnePayload): Promise<Review>;
-  findOne(input: FindOnePayload): Promise<Review | null>;
-  findMany(input: FindManyPayload): Promise<Review[]>;
-  updateOne(input: UpdateOnePayload): Promise<Review>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createReview(input: CreateReviewPayload): Promise<Review>;
+  findReview(input: FindReviewPayload): Promise<Review | null>;
+  findReviews(input: FindReviewsPayload): Promise<Review[]>;
+  updateReviews(input: UpdateReviewPayload): Promise<Review>;
+  deleteReview(input: DeleteReviewPayload): Promise<void>;
 }

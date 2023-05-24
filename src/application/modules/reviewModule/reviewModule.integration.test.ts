@@ -8,7 +8,7 @@ import { ReviewMapper } from './infrastructure/repositories/reviewRepository/rev
 import { ReviewMapperImpl } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapperImpl';
 import { ReviewRepositoryFactoryImpl } from './infrastructure/repositories/reviewRepository/reviewRepositoryFactoryImpl';
 import { ReviewModule } from './reviewModule';
-import { reviewModuleSymbols } from './reviewModuleSymbols';
+import { reviewSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -29,15 +29,15 @@ describe('ReviewModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<ReviewMapper>(reviewModuleSymbols.reviewMapper)).toBeInstanceOf(ReviewMapperImpl);
+    expect(container.get<ReviewMapper>(reviewSymbols.reviewMapper)).toBeInstanceOf(ReviewMapperImpl);
 
-    expect(container.get<ReviewRepositoryFactory>(reviewModuleSymbols.reviewRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<ReviewRepositoryFactory>(reviewSymbols.reviewRepositoryFactory)).toBeInstanceOf(
       ReviewRepositoryFactoryImpl,
     );
 
-    expect(container.get<ReviewService>(reviewModuleSymbols.reviewService)).toBeInstanceOf(ReviewServiceImpl);
+    expect(container.get<ReviewService>(reviewSymbols.reviewService)).toBeInstanceOf(ReviewServiceImpl);
 
-    expect(container.get<ReviewHttpController>(reviewModuleSymbols.reviewHttpController)).toBeInstanceOf(
+    expect(container.get<ReviewHttpController>(reviewSymbols.reviewHttpController)).toBeInstanceOf(
       ReviewHttpController,
     );
   });

@@ -48,17 +48,20 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
-import { customerSymbols } from '../../../../customerModule/symbols';
+import { FindCustomerQueryHandler } from '../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
-import { CreateReviewDraft } from '../../../application/services/reviewService/payloads/createReviewDraft';
-import { UpdateReviewDraft } from '../../../application/services/reviewService/payloads/updateReviewDraft';
-import { ReviewService } from '../../../application/services/reviewService/reviewService';
-import { Review } from '../../../domain/entities/review/review';
+import { customerSymbols } from '../../../../customerModule/symbols';
+import { CreateReviewCommandHandler } from '../../../application/commandHandlers/createReviewCommandHandler/createReviewCommandHandler';
+import { CreateReviewDraft } from '../../../application/commandHandlers/createReviewCommandHandler/payloads/createReviewDraft';
+import { DeleteReviewCommandHandler } from '../../../application/commandHandlers/deleteReviewCommandHandler/deleteReviewCommandHandler';
+import { UpdateReviewCommandHandler } from '../../../application/commandHandlers/updateReviewCommandHandler/updateReviewCommandHandler';
+import { FindReviewQueryHandler } from '../../../application/queryHandlers/findReviewQueryHandler/findReviewQueryHandler';
+import { FindReviewsQueryHandler } from '../../../application/queryHandlers/findReviewsQueryHandler/findReviewsQueryHandler';
+import { UpdateReviewDraft } from '../../../application/repositories/reviewRepository/payloads/updateReviewDraft';
 import { CustomerFromAccessTokenNotMatchingCustomerFromReviewError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { ReviewNotFoundError } from '../../../infrastructure/errors/reviewNotFoundError';
 import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
-import { reviewModuleSymbols } from '../../../reviewModuleSymbols';
+import { symbols } from '../../../symbols';
 
 export class ReviewHttpController implements HttpController {
   public readonly basePath = 'reviews';
@@ -66,10 +69,18 @@ export class ReviewHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(reviewModuleSymbols.reviewService)
-    private readonly reviewService: ReviewService,
-    @Inject(customerSymbols.customerService)
-    private readonly customerService: CustomerService,
+    @Inject(symbols.createReviewCommandHandler)
+    private readonly createReviewCommandHandler: CreateReviewCommandHandler,
+    @Inject(symbols.deleteReviewCommandHandler)
+    private readonly deleteReviewCommandHandler: DeleteReviewCommandHandler,
+    @Inject(symbols.updateReviewCommandHandler)
+    private readonly updateReviewCommandHandler: UpdateReviewCommandHandler,
+    @Inject(symbols.findReviewQueryHandler)
+    private readonly findReviewQueryHandler: FindReviewQueryHandler,
+    @Inject(symbols.findReviewsQueryHandler)
+    private readonly findReviewsQueryHandler: FindReviewsQueryHandler,
+    @Inject(customerSymbols.findCustomerQueryHandler)
+    private readonly findCustomerQueryHandler: FindCustomerQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -187,16 +198,16 @@ export class ReviewHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let review: Review | undefined;
-
     try {
-      review = await unitOfWork.runInTransaction(async () => {
+      const { review } = await unitOfWork.runInTransaction(async () => {
         const { userId } = request.context;
 
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
@@ -211,8 +222,10 @@ export class ReviewHttpController implements HttpController {
           createReviewDraft = { ...createReviewDraft, comment };
         }
 
-        return this.reviewService.createReview({ unitOfWork, draft: createReviewDraft });
+        return this.createReviewCommandHandler.execute({ unitOfWork, draft: createReviewDraft });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { review } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -220,8 +233,6 @@ export class ReviewHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { review } };
   }
 
   private async findReview(
@@ -237,19 +248,19 @@ export class ReviewHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let review: Review | undefined;
-
     try {
-      review = await unitOfWork.runInTransaction(async () => {
+      const review = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const customerReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
+        const { review: customerReview } = await this.findReviewQueryHandler.execute({ unitOfWork, reviewId: id });
 
         if (customerReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
@@ -260,6 +271,8 @@ export class ReviewHttpController implements HttpController {
 
         return customerReview;
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { review } };
     } catch (error) {
       if (
         error instanceof CustomerFromAccessTokenNotMatchingCustomerFromReviewError ||
@@ -274,8 +287,6 @@ export class ReviewHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { review } };
   }
 
   private async findReviews(
@@ -287,8 +298,8 @@ export class ReviewHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    const reviews = await unitOfWork.runInTransaction(async () => {
-      return this.reviewService.findReviews({ unitOfWork, pagination, customerId, isbn });
+    const { reviews } = await unitOfWork.runInTransaction(async () => {
+      return this.findReviewsQueryHandler.execute({ unitOfWork, pagination, customerId, isbn });
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: reviews } };
@@ -309,19 +320,19 @@ export class ReviewHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let review: Review | undefined;
-
     try {
-      review = await unitOfWork.runInTransaction(async () => {
+      const { review } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
+        const { review: existingReview } = await this.findReviewQueryHandler.execute({ unitOfWork, reviewId: id });
 
         if (existingReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
@@ -340,8 +351,10 @@ export class ReviewHttpController implements HttpController {
           updateReviewDraft = { ...updateReviewDraft, rate };
         }
 
-        return this.reviewService.updateReview({ unitOfWork, reviewId: id, draft: updateReviewDraft });
+        return this.updateReviewCommandHandler.execute({ unitOfWork, reviewId: id, draft: updateReviewDraft });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { review } };
     } catch (error) {
       if (
         error instanceof CustomerFromAccessTokenNotMatchingCustomerFromReviewError ||
@@ -356,8 +369,6 @@ export class ReviewHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { review } };
   }
 
   private async deleteReview(
@@ -378,12 +389,14 @@ export class ReviewHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingReview = await this.reviewService.findReview({ unitOfWork, reviewId: id });
+        const { review: existingReview } = await this.findReviewQueryHandler.execute({ unitOfWork, reviewId: id });
 
         if (existingReview.customerId !== customer.id) {
           throw new CustomerFromAccessTokenNotMatchingCustomerFromReviewError({
@@ -392,7 +405,7 @@ export class ReviewHttpController implements HttpController {
           });
         }
 
-        await this.reviewService.deleteReview({ unitOfWork, reviewId: id });
+        await this.deleteReviewCommandHandler.execute({ unitOfWork, reviewId: id });
       });
     } catch (error) {
       if (
