@@ -35,16 +35,18 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
-import { customerSymbols } from '../../../../customerModule/symbols';
+import { FindCustomerQueryHandler } from '../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
-import { WhishlistService } from '../../../application/services/whishlistService/whishlistService';
-import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
+import { customerSymbols } from '../../../../customerModule/symbols';
+import { CreateWhishlistEntryCommandHandler } from '../../../application/commandHandlers/createWhishlistEntryCommandHandler/createWhishlistEntryCommandHandler';
+import { DeleteWhishlistEntryCommandHandler } from '../../../application/commandHandlers/deleteWhishlistEntryCommandHandler/deleteWhishlistEntryCommandHandler';
+import { FindWhishlistEntriesQueryHandler } from '../../../application/queryHandlers/findWhishlistEntriesQueryHandler/findWhishlistEntriesQueryHandler';
+import { FindWhishlistEntryQueryHandler } from '../../../application/queryHandlers/findWhishlistEntryQueryHandler/findWhishlistEntryQueryHandler';
 import { CustomerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError';
 import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
 import { WhishlistEntryAlreadyExistsError } from '../../../infrastructure/errors/whishlistEntryAlreadyExistsError';
 import { WhishlistEntryNotFoundError } from '../../../infrastructure/errors/whishlistEntryNotFoundError';
-import { whishlistModuleSymbols } from '../../../whishlistModuleSymbols';
+import { symbols } from '../../../symbols';
 
 export class WhishlistHttpController implements HttpController {
   public readonly basePath = 'whishlist-entries';
@@ -52,10 +54,16 @@ export class WhishlistHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(whishlistModuleSymbols.whishlistService)
-    private readonly whishlistService: WhishlistService,
-    @Inject(customerSymbols.customerService)
-    private readonly customerService: CustomerService,
+    @Inject(symbols.createWhishlistEntryCommandHandler)
+    private readonly createWhishlistEntryCommandHandler: CreateWhishlistEntryCommandHandler,
+    @Inject(symbols.deleteWhishlistEntryCommandHandler)
+    private readonly deleteWhishlistEntryCommandHandler: DeleteWhishlistEntryCommandHandler,
+    @Inject(symbols.findWhishlistEntryQueryHandler)
+    private readonly findWhishlistEntryQueryHandler: FindWhishlistEntryQueryHandler,
+    @Inject(symbols.findWhishlistEntriesQueryHandler)
+    private readonly findWhishlistEntriesQueryHandler: FindWhishlistEntriesQueryHandler,
+    @Inject(customerSymbols.findCustomerQueryHandler)
+    private readonly findCustomerQueryHandler: FindCustomerQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -135,22 +143,27 @@ export class WhishlistHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let whishlistEntry: WhishlistEntry | undefined;
-
     try {
-      whishlistEntry = await unitOfWork.runInTransaction(async () => {
+      const { whishlistEntry } = await unitOfWork.runInTransaction(async () => {
         const { userId } = request.context;
 
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        return this.whishlistService.createWhishlistEntry({ unitOfWork, draft: { bookId, customerId: customer.id } });
+        return this.createWhishlistEntryCommandHandler.execute({
+          unitOfWork,
+          draft: { bookId, customerId: customer.id },
+        });
       });
+
+      return { statusCode: HttpStatusCode.created, body: { whishlistEntry } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -162,8 +175,6 @@ export class WhishlistHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { whishlistEntry } };
   }
 
   private async findWhishlistEntries(
@@ -177,20 +188,22 @@ export class WhishlistHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let whishlistEntries: WhishlistEntry[] = [];
-
     try {
-      whishlistEntries = await unitOfWork.runInTransaction(async () => {
+      const { whishlistEntries } = await unitOfWork.runInTransaction(async () => {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        return this.whishlistService.findWhishlistEntries({ unitOfWork, pagination, customerId: customer.id });
+        return this.findWhishlistEntriesQueryHandler.execute({ unitOfWork, pagination, customerId: customer.id });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { data: whishlistEntries } };
     } catch (error) {
       if (error instanceof UserIsNotCustomerError) {
         return { statusCode: HttpStatusCode.forbidden, body: { error } };
@@ -198,8 +211,6 @@ export class WhishlistHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { data: whishlistEntries } };
   }
 
   private async deleteWhishlistEntry(
@@ -220,12 +231,14 @@ export class WhishlistHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
 
-        const existingWhishlistEntry = await this.whishlistService.findWhishlistEntry({
+        const { whishlistEntry: existingWhishlistEntry } = await this.findWhishlistEntryQueryHandler.execute({
           unitOfWork,
           whishlistEntryId: id,
         });
@@ -237,7 +250,7 @@ export class WhishlistHttpController implements HttpController {
           });
         }
 
-        await this.whishlistService.deleteWhishlistEntry({ unitOfWork, whishlistEntryId: id });
+        await this.deleteWhishlistEntryCommandHandler.execute({ unitOfWork, whishlistEntryId: id });
       });
     } catch (error) {
       if (

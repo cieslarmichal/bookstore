@@ -4,21 +4,21 @@ import { WhishlistEntryEntity } from './whishlistEntryEntity/whishlistEntryEntit
 import { WhishlistEntryMapper } from './whishlistEntryMapper/whishlistEntryMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/whishlistEntryRepository/payloads/createOnePayload';
+  CreateWhishlistEntryPayload,
+  createWhishlistEntryPayloadSchema,
+} from '../../../application/repositories/whishlistEntryRepository/payloads/createWhishlistEntryPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/whishlistEntryRepository/payloads/deleteOnePayload';
+  DeleteWhishlistEntryPayload,
+  deleteWhishlistEntryPayloadSchema,
+} from '../../../application/repositories/whishlistEntryRepository/payloads/deleteWhishlistEntryPayload';
 import {
-  FindManyPayload,
-  findManyPayloadSchema,
-} from '../../../application/repositories/whishlistEntryRepository/payloads/findManyPayload';
+  FindWhishlistEntriesPayload,
+  findWhishlistEntriesPayloadSchema,
+} from '../../../application/repositories/whishlistEntryRepository/payloads/findWhishlistEntriesPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/whishlistEntryRepository/payloads/findOnePayload';
+  FindWhishlistEntryPayload,
+  findWhishlistEntryPayloadSchema,
+} from '../../../application/repositories/whishlistEntryRepository/payloads/findWhishlistEntryPayload';
 import { WhishlistEntryRepository } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepository';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
 import { WhishlistEntryNotFoundError } from '../../../infrastructure/errors/whishlistEntryNotFoundError';
@@ -29,8 +29,8 @@ export class WhishlistEntryRepositoryImpl implements WhishlistEntryRepository {
     private readonly whishlistEntryMapper: WhishlistEntryMapper,
   ) {}
 
-  public async createOne(input: CreateOnePayload): Promise<WhishlistEntry> {
-    const { id, bookId, customerId } = Validator.validate(createOnePayloadSchema, input);
+  public async createWhishlistEntry(input: CreateWhishlistEntryPayload): Promise<WhishlistEntry> {
+    const { id, bookId, customerId } = Validator.validate(createWhishlistEntryPayloadSchema, input);
 
     const whishlistEntry = this.entityManager.create(WhishlistEntryEntity, { id, bookId, customerId });
 
@@ -39,8 +39,8 @@ export class WhishlistEntryRepositoryImpl implements WhishlistEntryRepository {
     return this.whishlistEntryMapper.map(savedWhishlistEntry);
   }
 
-  public async findOne(input: FindOnePayload): Promise<WhishlistEntry | null> {
-    const { id, bookId, customerId } = Validator.validate(findOnePayloadSchema, input);
+  public async findWhishlistEntry(input: FindWhishlistEntryPayload): Promise<WhishlistEntry | null> {
+    const { id, bookId, customerId } = Validator.validate(findWhishlistEntryPayloadSchema, input);
 
     let findWhishlistEntryInput = {};
 
@@ -67,8 +67,8 @@ export class WhishlistEntryRepositoryImpl implements WhishlistEntryRepository {
     return this.whishlistEntryMapper.map(whishlistEntryEntity);
   }
 
-  public async findMany(input: FindManyPayload): Promise<WhishlistEntry[]> {
-    const { pagination, customerId } = Validator.validate(findManyPayloadSchema, input);
+  public async findWhishlistEntries(input: FindWhishlistEntriesPayload): Promise<WhishlistEntry[]> {
+    const { pagination, customerId } = Validator.validate(findWhishlistEntriesPayloadSchema, input);
 
     const numberOfEnitiesToSkip = (pagination.page - 1) * pagination.limit;
 
@@ -81,10 +81,10 @@ export class WhishlistEntryRepositoryImpl implements WhishlistEntryRepository {
     return whishlistEntrysEntities.map((whishlistEntryEntity) => this.whishlistEntryMapper.map(whishlistEntryEntity));
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteWhishlistEntry(input: DeleteWhishlistEntryPayload): Promise<void> {
+    const { id } = Validator.validate(deleteWhishlistEntryPayloadSchema, input);
 
-    const whishlistEntryEntity = await this.findOne({ id });
+    const whishlistEntryEntity = await this.findWhishlistEntry({ id });
 
     if (!whishlistEntryEntity) {
       throw new WhishlistEntryNotFoundError({ id });

@@ -2,9 +2,11 @@ import { UnitOfWork } from '../../../../../../../libs/unitOfWork/unitOfWork';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const findWhishlistEntryPayloadSchema = Schema.object({
+export const deleteWhishlistEntryCommandHandlerPayloadSchema = Schema.object({
   unitOfWork: Schema.unsafeType<UnitOfWork>(),
   whishlistEntryId: Schema.string(),
 });
 
-export type FindWhishlistEntryPayload = SchemaType<typeof findWhishlistEntryPayloadSchema>;
+export type DeleteWhishlistEntryCommandHandlerPayload = SchemaType<
+  typeof deleteWhishlistEntryCommandHandlerPayloadSchema
+>;

@@ -43,7 +43,7 @@ import { UserHttpController } from '../modules/userModule/api/httpControllers/us
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
 import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
 import { WhishlistHttpController } from '../modules/whishlistModule/api/httpControllers/whishlistHttpController/whishlistHttpController';
-import { whishlistModuleSymbols } from '../modules/whishlistModule/whishlistModuleSymbols';
+import { whishlistSymbols } from '../modules/whishlistModule/symbols';
 
 export class HttpRouter {
   private readonly rootPath = '';
@@ -113,7 +113,7 @@ export class HttpRouter {
     this.registerControllerRoutes({ controller: orderHttpController });
 
     const whishlistHttpController = this.container.get<WhishlistHttpController>(
-      whishlistModuleSymbols.whishlistHttpController,
+      whishlistSymbols.whishlistHttpController,
     );
 
     this.registerControllerRoutes({ controller: whishlistHttpController });

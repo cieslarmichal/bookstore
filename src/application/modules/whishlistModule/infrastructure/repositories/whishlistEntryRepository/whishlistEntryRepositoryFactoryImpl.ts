@@ -4,13 +4,13 @@ import { WhishlistEntryMapper } from './whishlistEntryMapper/whishlistEntryMappe
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { WhishlistEntryRepository } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepository';
 import { WhishlistEntryRepositoryFactory } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
-import { whishlistModuleSymbols } from '../../../whishlistModuleSymbols';
+import { whishlistSymbols } from '../../../symbols';
 import { WhishlistEntryRepositoryImpl } from '../../repositories/whishlistEntryRepository/whishlistEntryRepositoryImpl';
 
 @Injectable()
 export class WhishlistEntryRepositoryFactoryImpl implements WhishlistEntryRepositoryFactory {
   public constructor(
-    @Inject(whishlistModuleSymbols.whishlistEntryMapper)
+    @Inject(whishlistSymbols.whishlistEntryMapper)
     private readonly whishlistEntryMapper: WhishlistEntryMapper,
   ) {}
 

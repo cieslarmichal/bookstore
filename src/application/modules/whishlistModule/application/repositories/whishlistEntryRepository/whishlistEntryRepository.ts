@@ -1,12 +1,12 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindManyPayload } from './payloads/findManyPayload';
-import { FindOnePayload } from './payloads/findOnePayload';
+import { CreateWhishlistEntryPayload } from './payloads/createWhishlistEntryPayload';
+import { DeleteWhishlistEntryPayload } from './payloads/deleteWhishlistEntryPayload';
+import { FindWhishlistEntriesPayload } from './payloads/findWhishlistEntriesPayload';
+import { FindWhishlistEntryPayload } from './payloads/findWhishlistEntryPayload';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
 
 export interface WhishlistEntryRepository {
-  createOne(input: CreateOnePayload): Promise<WhishlistEntry>;
-  findOne(input: FindOnePayload): Promise<WhishlistEntry | null>;
-  findMany(input: FindManyPayload): Promise<WhishlistEntry[]>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createWhishlistEntry(input: CreateWhishlistEntryPayload): Promise<WhishlistEntry>;
+  findWhishlistEntry(input: FindWhishlistEntryPayload): Promise<WhishlistEntry | null>;
+  findWhishlistEntries(input: FindWhishlistEntriesPayload): Promise<WhishlistEntry[]>;
+  deleteWhishlistEntry(input: DeleteWhishlistEntryPayload): Promise<void>;
 }

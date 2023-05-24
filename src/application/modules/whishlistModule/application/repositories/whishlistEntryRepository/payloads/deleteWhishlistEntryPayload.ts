@@ -1,8 +1,8 @@
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
-export const deleteOnePayloadSchema = Schema.object({
+export const deleteWhishlistEntryPayloadSchema = Schema.object({
   id: Schema.string(),
 });
 
-export type DeleteOnePayload = SchemaType<typeof deleteOnePayloadSchema>;
+export type DeleteWhishlistEntryPayload = SchemaType<typeof deleteWhishlistEntryPayloadSchema>;

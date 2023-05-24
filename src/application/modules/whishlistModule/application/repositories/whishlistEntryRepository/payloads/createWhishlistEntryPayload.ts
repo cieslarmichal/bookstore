@@ -1,11 +1,10 @@
-import { createWhishlistEntryDraftSchema } from './createWhishlistEntryDraft';
-import { UnitOfWork } from '../../../../../../../libs/unitOfWork/unitOfWork';
 import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const createWhishlistEntryPayloadSchema = Schema.object({
-  unitOfWork: Schema.unsafeType<UnitOfWork>(),
-  draft: createWhishlistEntryDraftSchema,
+  id: Schema.string(),
+  bookId: Schema.string(),
+  customerId: Schema.string(),
 });
 
 export type CreateWhishlistEntryPayload = SchemaType<typeof createWhishlistEntryPayloadSchema>;

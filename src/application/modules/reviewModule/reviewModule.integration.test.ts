@@ -2,10 +2,6 @@ import 'reflect-metadata';
 
 import { ReviewHttpController } from './api/httpControllers/reviewHttpController/reviewHttpController';
 import { ReviewRepositoryFactory } from './application/repositories/reviewRepository/reviewRepositoryFactory';
-import { ReviewService } from './application/services/reviewService/reviewService';
-import { ReviewServiceImpl } from './application/services/reviewService/reviewServiceImpl';
-import { ReviewMapper } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapper';
-import { ReviewMapperImpl } from './infrastructure/repositories/reviewRepository/reviewMapper/reviewMapperImpl';
 import { ReviewRepositoryFactoryImpl } from './infrastructure/repositories/reviewRepository/reviewRepositoryFactoryImpl';
 import { ReviewModule } from './reviewModule';
 import { reviewSymbols } from './symbols';
@@ -29,13 +25,9 @@ describe('ReviewModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<ReviewMapper>(reviewSymbols.reviewMapper)).toBeInstanceOf(ReviewMapperImpl);
-
     expect(container.get<ReviewRepositoryFactory>(reviewSymbols.reviewRepositoryFactory)).toBeInstanceOf(
       ReviewRepositoryFactoryImpl,
     );
-
-    expect(container.get<ReviewService>(reviewSymbols.reviewService)).toBeInstanceOf(ReviewServiceImpl);
 
     expect(container.get<ReviewHttpController>(reviewSymbols.reviewHttpController)).toBeInstanceOf(
       ReviewHttpController,
