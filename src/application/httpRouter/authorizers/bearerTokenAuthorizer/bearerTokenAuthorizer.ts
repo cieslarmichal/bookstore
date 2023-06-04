@@ -1,7 +1,7 @@
 import { AuthorizationType } from '../../../../common/http/authorizationType';
 import { Injectable, Inject } from '../../../../libs/dependencyInjection/decorators';
 import { TokenService } from '../../../modules/userModule/application/services/tokenService/tokenService';
-import { userModuleSymbols } from '../../../modules/userModule/userModuleSymbols';
+import { userSymbols } from '../../../modules/userModule/symbols';
 import { BearerTokenAuthorizationError } from '../errors/bearerTokenAuthorizationError';
 
 export interface AccessTokenData {
@@ -11,7 +11,7 @@ export interface AccessTokenData {
 @Injectable()
 export class BearerTokenAuthorizer {
   public constructor(
-    @Inject(userModuleSymbols.tokenService)
+    @Inject(userSymbols.tokenService)
     private readonly tokenService: TokenService,
   ) {}
 

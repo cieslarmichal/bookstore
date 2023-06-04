@@ -2,18 +2,12 @@ import 'reflect-metadata';
 
 import { UserHttpController } from './api/httpControllers/userHttpController/userHttpController';
 import { UserRepositoryFactory } from './application/repositories/userRepository/userRepositoryFactory';
-import { HashService } from './application/services/hashService/hashService';
-import { HashServiceImpl } from './application/services/hashService/hashServiceImpl';
 import { TokenService } from './application/services/tokenService/tokenService';
 import { TokenServiceImpl } from './application/services/tokenService/tokenServiceImpl';
-import { UserService } from './application/services/userService/userService';
-import { UserServiceImpl } from './application/services/userService/userServiceImpl';
-import { UserMapper } from './infrastructure/repositories/userRepository/userMapper/userMapper';
-import { UserMapperImpl } from './infrastructure/repositories/userRepository/userMapper/userMapperImpl';
 import { UserRepositoryFactoryImpl } from './infrastructure/repositories/userRepository/userRepositoryFactoryImpl';
+import { userSymbols } from './symbols';
 import { UserModuleConfigTestFactory } from './tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
 import { UserModule } from './userModule';
-import { userModuleSymbols } from './userModuleSymbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
 import { LoggerModule } from '../../../libs/logger/loggerModule';
@@ -39,18 +33,12 @@ describe('UserModule', () => {
   });
 
   it('declares bindings', async () => {
-    expect(container.get<UserMapper>(userModuleSymbols.userMapper)).toBeInstanceOf(UserMapperImpl);
-
-    expect(container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory)).toBeInstanceOf(
+    expect(container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory)).toBeInstanceOf(
       UserRepositoryFactoryImpl,
     );
 
-    expect(container.get<UserService>(userModuleSymbols.userService)).toBeInstanceOf(UserServiceImpl);
+    expect(container.get<TokenService>(userSymbols.tokenService)).toBeInstanceOf(TokenServiceImpl);
 
-    expect(container.get<HashService>(userModuleSymbols.hashService)).toBeInstanceOf(HashServiceImpl);
-
-    expect(container.get<TokenService>(userModuleSymbols.tokenService)).toBeInstanceOf(TokenServiceImpl);
-
-    expect(container.get<UserHttpController>(userModuleSymbols.userHttpController)).toBeInstanceOf(UserHttpController);
+    expect(container.get<UserHttpController>(userSymbols.userHttpController)).toBeInstanceOf(UserHttpController);
   });
 });

@@ -11,7 +11,7 @@ import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
+import { userSymbols } from '../../../../userModule/symbols';
 import { symbols } from '../../../symbols';
 import { ReviewEntityTestFactory } from '../../../tests/factories/reviewEntityTestFactory/reviewEntityTestFactory';
 import { ReviewRepositoryFactory } from '../../repositories/reviewRepository/reviewRepositoryFactory';
@@ -33,7 +33,7 @@ describe('CreateReviewCommandHandler', () => {
 
     createReviewCommandHandler = container.get<CreateReviewCommandHandler>(symbols.createReviewCommandHandler);
     reviewRepositoryFactory = container.get<ReviewRepositoryFactory>(symbols.reviewRepositoryFactory);
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
@@ -64,7 +64,7 @@ describe('CreateReviewCommandHandler', () => {
 
       const { id: customerId } = customerEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 

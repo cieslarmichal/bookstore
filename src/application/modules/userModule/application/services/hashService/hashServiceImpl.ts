@@ -2,13 +2,13 @@ import { hash, compare, genSalt } from 'bcrypt';
 
 import { HashService } from './hashService';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
+import { userSymbols } from '../../../symbols';
 import { UserModuleConfig } from '../../../userModuleConfig';
-import { userModuleSymbols } from '../../../userModuleSymbols';
 
 @Injectable()
 export class HashServiceImpl implements HashService {
   public constructor(
-    @Inject(userModuleSymbols.userModuleConfig)
+    @Inject(userSymbols.userModuleConfig)
     private readonly userModuleConfig: UserModuleConfig,
   ) {}
 

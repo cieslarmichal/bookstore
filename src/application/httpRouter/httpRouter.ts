@@ -41,7 +41,7 @@ import { ReviewHttpController } from '../modules/reviewModule/api/httpController
 import { reviewSymbols } from '../modules/reviewModule/symbols';
 import { UserHttpController } from '../modules/userModule/api/httpControllers/userHttpController/userHttpController';
 import { TokenService } from '../modules/userModule/application/services/tokenService/tokenService';
-import { userModuleSymbols } from '../modules/userModule/userModuleSymbols';
+import { userSymbols } from '../modules/userModule/symbols';
 import { WhishlistHttpController } from '../modules/whishlistModule/api/httpControllers/whishlistHttpController/whishlistHttpController';
 import { whishlistSymbols } from '../modules/whishlistModule/symbols';
 
@@ -54,7 +54,7 @@ export class HttpRouter {
     private readonly server: FastifyInstance,
     private readonly container: DependencyInjectionContainer,
   ) {
-    const tokenService = this.container.get<TokenService>(userModuleSymbols.tokenService);
+    const tokenService = this.container.get<TokenService>(userSymbols.tokenService);
 
     this.bearerTokenAuthorizer = new BearerTokenAuthorizer(tokenService);
 
@@ -118,7 +118,7 @@ export class HttpRouter {
 
     this.registerControllerRoutes({ controller: whishlistHttpController });
 
-    const userHttpController = this.container.get<UserHttpController>(userModuleSymbols.userHttpController);
+    const userHttpController = this.container.get<UserHttpController>(userSymbols.userHttpController);
 
     this.registerControllerRoutes({ controller: userHttpController });
   }

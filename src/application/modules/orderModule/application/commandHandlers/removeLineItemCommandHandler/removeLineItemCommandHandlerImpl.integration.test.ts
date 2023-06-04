@@ -14,7 +14,7 @@ import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
+import { userSymbols } from '../../../../userModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItem } from '../../../domain/entities/lineItem/lineItem';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
@@ -47,7 +47,7 @@ describe('RemoveLineItemCommandHandler', () => {
     removeLineItemCommandHandler = container.get<RemoveLineItemCommandHandler>(symbols.removeLineItemCommandHandler);
     cartRepositoryFactory = container.get<CartRepositoryFactory>(symbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(symbols.lineItemRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
@@ -101,7 +101,7 @@ describe('RemoveLineItemCommandHandler', () => {
           quantity,
         } = lineItemEntityTestFactory.create({ quantity: 2, price: bookPrice });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password });
+        const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
@@ -188,7 +188,7 @@ describe('RemoveLineItemCommandHandler', () => {
           quantity,
         } = lineItemEntityTestFactory.create({ quantity: 2, price: bookPrice });
 
-        const user = await userRepository.createOne({ id: userId, email: email as string, password });
+        const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
         const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
@@ -272,7 +272,7 @@ describe('RemoveLineItemCommandHandler', () => {
 
       const { id: lineItemId } = lineItemEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 

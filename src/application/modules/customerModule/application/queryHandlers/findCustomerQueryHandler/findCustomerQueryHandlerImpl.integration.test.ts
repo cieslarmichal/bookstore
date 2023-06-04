@@ -8,7 +8,7 @@ import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresM
 import { Application } from '../../../../../application';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
+import { userSymbols } from '../../../../userModule/symbols';
 import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
 import { symbols } from '../../../symbols';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
@@ -29,7 +29,7 @@ describe('FindCustomerQueryHandler', () => {
 
     findCustomerQueryHandler = container.get<FindCustomerQueryHandler>(symbols.findCustomerQueryHandler);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(symbols.customerRepositoryFactory);
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -55,7 +55,7 @@ describe('FindCustomerQueryHandler', () => {
 
       const { id: customerId } = customerEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 
@@ -82,7 +82,7 @@ describe('FindCustomerQueryHandler', () => {
 
       const { id: customerId } = customerEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       await customerRepository.createCustomer({ id: customerId, userId: user.id });
 

@@ -1,12 +1,12 @@
-import { CreateOnePayload } from './payloads/createOnePayload';
-import { DeleteOnePayload } from './payloads/deleteOnePayload';
-import { FindOnePayload } from './payloads/findOnePayload';
-import { UpdateOnePayload } from './payloads/updateOnePayload';
+import { CreateUserPayload } from './payloads/createUserPayload';
+import { DeleteUserPayload } from './payloads/deleteUserPayload';
+import { FindUserPayload } from './payloads/findUserPayload';
+import { UpdateUserPayload } from './payloads/updateUserPayload';
 import { User } from '../../../domain/entities/user/user';
 
 export interface UserRepository {
-  createOne(input: CreateOnePayload): Promise<User>;
-  findOne(input: FindOnePayload): Promise<User | null>;
-  updateOne(input: UpdateOnePayload): Promise<User>;
-  deleteOne(input: DeleteOnePayload): Promise<void>;
+  createUser(input: CreateUserPayload): Promise<User>;
+  findUser(input: FindUserPayload): Promise<User | null>;
+  updateUser(input: UpdateUserPayload): Promise<User>;
+  deleteUser(input: DeleteUserPayload): Promise<void>;
 }

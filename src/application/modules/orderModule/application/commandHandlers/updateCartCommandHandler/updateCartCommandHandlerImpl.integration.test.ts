@@ -15,7 +15,7 @@ import { InventoryRepositoryFactory } from '../../../../inventoryModule/applicat
 import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
+import { userSymbols } from '../../../../userModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
@@ -45,7 +45,7 @@ describe('UpdateCartCommandHandler', () => {
     updateCartCommandHandler = container.get<UpdateCartCommandHandler>(symbols.updateCartCommandHandler);
     cartRepositoryFactory = container.get<CartRepositoryFactory>(symbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
     lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(symbols.lineItemRepositoryFactory);
@@ -78,7 +78,7 @@ describe('UpdateCartCommandHandler', () => {
 
       const { id: cartId, totalPrice } = cartEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 

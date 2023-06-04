@@ -5,12 +5,12 @@ import { UserRepositoryImpl } from './userRepositoryImpl';
 import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
 import { UserRepository } from '../../../application/repositories/userRepository/userRepository';
 import { UserRepositoryFactory } from '../../../application/repositories/userRepository/userRepositoryFactory';
-import { userModuleSymbols } from '../../../userModuleSymbols';
+import { userSymbols } from '../../../symbols';
 
 @Injectable()
 export class UserRepositoryFactoryImpl implements UserRepositoryFactory {
   public constructor(
-    @Inject(userModuleSymbols.userMapper)
+    @Inject(userSymbols.userMapper)
     private readonly userMapper: UserMapper,
   ) {}
 

@@ -4,21 +4,21 @@ import { UserEntity } from './userEntity/userEntity';
 import { UserMapper } from './userMapper/userMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
 import {
-  CreateOnePayload,
-  createOnePayloadSchema,
-} from '../../../application/repositories/userRepository/payloads/createOnePayload';
+  CreateUserPayload,
+  createUserPayloadSchema,
+} from '../../../application/repositories/userRepository/payloads/createUserPayload';
 import {
-  DeleteOnePayload,
-  deleteOnePayloadSchema,
-} from '../../../application/repositories/userRepository/payloads/deleteOnePayload';
+  DeleteUserPayload,
+  deleteUserPayloadSchema,
+} from '../../../application/repositories/userRepository/payloads/deleteUserPayload';
 import {
-  FindOnePayload,
-  findOnePayloadSchema,
-} from '../../../application/repositories/userRepository/payloads/findOnePayload';
+  FindUserPayload,
+  findUserPayloadSchema,
+} from '../../../application/repositories/userRepository/payloads/findUserPayload';
 import {
-  UpdateOnePayload,
-  updateOnePayloadSchema,
-} from '../../../application/repositories/userRepository/payloads/updateOnePayload';
+  UpdateUserPayload,
+  updateUserPayloadSchema,
+} from '../../../application/repositories/userRepository/payloads/updateUserPayload';
 import { UserRepository } from '../../../application/repositories/userRepository/userRepository';
 import { User } from '../../../domain/entities/user/user';
 import { UserNotFoundError } from '../../errors/userNotFoundError';
@@ -26,8 +26,8 @@ import { UserNotFoundError } from '../../errors/userNotFoundError';
 export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}
 
-  public async createOne(input: CreateOnePayload): Promise<User> {
-    const { id, email, phoneNumber, password } = Validator.validate(createOnePayloadSchema, input);
+  public async createUser(input: CreateUserPayload): Promise<User> {
+    const { id, email, phoneNumber, password } = Validator.validate(createUserPayloadSchema, input);
 
     let userEntityInput: UserEntity = { id, password };
 
@@ -46,8 +46,8 @@ export class UserRepositoryImpl implements UserRepository {
     return this.userMapper.map(savedUserEntity);
   }
 
-  public async findOne(input: FindOnePayload): Promise<User | null> {
-    const { id, email, phoneNumber } = Validator.validate(findOnePayloadSchema, input);
+  public async findUser(input: FindUserPayload): Promise<User | null> {
+    const { id, email, phoneNumber } = Validator.validate(findUserPayloadSchema, input);
 
     let findOneInput = {};
 
@@ -72,13 +72,13 @@ export class UserRepositoryImpl implements UserRepository {
     return this.userMapper.map(userEntity);
   }
 
-  public async updateOne(input: UpdateOnePayload): Promise<User> {
+  public async updateUser(input: UpdateUserPayload): Promise<User> {
     const {
       id,
       draft: { email, password, phoneNumber },
-    } = Validator.validate(updateOnePayloadSchema, input);
+    } = Validator.validate(updateUserPayloadSchema, input);
 
-    const userEntity = await this.findOne({ id });
+    const userEntity = await this.findUser({ id });
 
     if (!userEntity) {
       throw new UserNotFoundError({ id });
@@ -100,15 +100,15 @@ export class UserRepositoryImpl implements UserRepository {
 
     await this.entityManager.update(UserEntity, { id }, { ...updateOneInput });
 
-    const updatedUserEntity = await this.findOne({ id });
+    const updatedUserEntity = await this.findUser({ id });
 
     return updatedUserEntity as User;
   }
 
-  public async deleteOne(input: DeleteOnePayload): Promise<void> {
-    const { id } = Validator.validate(deleteOnePayloadSchema, input);
+  public async deleteUser(input: DeleteUserPayload): Promise<void> {
+    const { id } = Validator.validate(deleteUserPayloadSchema, input);
 
-    const userEntity = await this.findOne({ id });
+    const userEntity = await this.findUser({ id });
 
     if (!userEntity) {
       throw new UserNotFoundError({ id });

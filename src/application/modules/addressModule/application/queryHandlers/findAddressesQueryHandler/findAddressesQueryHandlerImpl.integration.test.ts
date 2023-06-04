@@ -13,8 +13,8 @@ import { CustomerRepositoryFactory } from '../../../../customerModule/applicatio
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
+import { userSymbols } from '../../../../userModule/symbols';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
 import { symbols } from '../../../symbols';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
 import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory';
@@ -37,7 +37,7 @@ describe('FindAddressesQueryHandler', () => {
 
     addressRepositoryFactory = container.get<AddressRepositoryFactory>(symbols.addressRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();
@@ -87,9 +87,9 @@ describe('FindAddressesQueryHandler', () => {
 
       const { id: addressId3 } = addressEntityTestFactory.create();
 
-      const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password });
+      const user1 = await userRepository.createUser({ id: userId1, email: email1 as string, password });
 
-      const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password });
+      const user2 = await userRepository.createUser({ id: userId2, email: email2 as string, password });
 
       const customer1 = await customerRepository.createCustomer({ id: customerId1, userId: user1.id });
 
@@ -188,7 +188,7 @@ describe('FindAddressesQueryHandler', () => {
 
       const { id: addressId3 } = addressEntityTestFactory.create();
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 

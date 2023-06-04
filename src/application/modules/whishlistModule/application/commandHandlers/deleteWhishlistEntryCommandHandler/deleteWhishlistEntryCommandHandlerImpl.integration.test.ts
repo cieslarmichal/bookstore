@@ -14,7 +14,7 @@ import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { userModuleSymbols } from '../../../../userModule/userModuleSymbols';
+import { userSymbols } from '../../../../userModule/symbols';
 import { WhishlistEntryNotFoundError } from '../../../infrastructure/errors/whishlistEntryNotFoundError';
 import { symbols } from '../../../symbols';
 import { WhishlistEntryEntityTestFactory } from '../../../tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
@@ -43,7 +43,7 @@ describe('DeleteWhishlistEntryCommandHandler', () => {
     whishlistEntryRepositoryFactory = container.get<WhishlistEntryRepositoryFactory>(
       symbols.whishlistEntryRepositoryFactory,
     );
-    userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
+    userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
@@ -89,7 +89,7 @@ describe('DeleteWhishlistEntryCommandHandler', () => {
         releaseYear: bookEntity.releaseYear,
       });
 
-      const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const user = await userRepository.createUser({ id: userId, email: email as string, password });
 
       const customer = await customerRepository.createCustomer({ id: customerId, userId: user.id });
 

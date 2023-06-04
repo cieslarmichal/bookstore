@@ -2,13 +2,13 @@ import { sign, verify } from 'jsonwebtoken';
 
 import { TokenService } from './tokenService';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { userSymbols } from '../../../symbols';
 import { UserModuleConfig } from '../../../userModuleConfig';
-import { userModuleSymbols } from '../../../userModuleSymbols';
 
 @Injectable()
 export class TokenServiceImpl implements TokenService {
   public constructor(
-    @Inject(userModuleSymbols.userModuleConfig)
+    @Inject(userSymbols.userModuleConfig)
     private readonly userModuleConfig: UserModuleConfig,
   ) {}
 

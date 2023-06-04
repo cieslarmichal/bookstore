@@ -47,13 +47,19 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { UserService } from '../../../application/services/userService/userService';
+import { DeleteUserCommandHandler } from '../../../application/commandHandlers/deleteUserCommandHandler/deleteUserCommandHandler';
+import { LoginUserCommandHandler } from '../../../application/commandHandlers/loginUserCommandHandler/loginUserCommandHandler';
+import { RegisterUserCommandHandler } from '../../../application/commandHandlers/registerUserCommandHandler/registerUserCommandHandler';
+import { SetUserEmailCommandHandler } from '../../../application/commandHandlers/setUserEmailCommandHandler/setUserEmailCommandHandler';
+import { SetUserPasswordCommandHandler } from '../../../application/commandHandlers/setUserPasswordCommandHandler/setUserPasswordCommandHandler';
+import { SetUserPhoneNumberCommandHandler } from '../../../application/commandHandlers/setUserPhoneNumberCommandHandler/setUserPhoneNumberCommandHandler';
+import { FindUserQueryHandler } from '../../../application/queryHandlers/findUserQueryHandler/findUserQueryHandler';
 import { User } from '../../../domain/entities/user/user';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
-import { userModuleSymbols } from '../../../userModuleSymbols';
-import { UserAlreadyExistsError } from '../../errors/userAlreadyExistsError';
-import { UserNotFoundError } from '../../errors/userNotFoundError';
+import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../../infrastructure/errors/userNotFoundError';
+import { symbols } from '../../../symbols';
 
 export class UserHttpController implements HttpController {
   public readonly basePath = 'users';
@@ -61,8 +67,20 @@ export class UserHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(userModuleSymbols.userService)
-    private readonly userService: UserService,
+    @Inject(symbols.registerUserCommandHandler)
+    private readonly registerUserCommandHandler: RegisterUserCommandHandler,
+    @Inject(symbols.loginUserCommandHandler)
+    private readonly loginUserCommandHandler: LoginUserCommandHandler,
+    @Inject(symbols.deleteUserCommandHandler)
+    private readonly deleteUserCommandHandler: DeleteUserCommandHandler,
+    @Inject(symbols.setUserEmailCommandHandler)
+    private readonly setUserEmailCommandHandler: SetUserEmailCommandHandler,
+    @Inject(symbols.setUserPasswordCommandHandler)
+    private readonly setUserPasswordCommandHandler: SetUserPasswordCommandHandler,
+    @Inject(symbols.setUserPhoneNumberCommandHandler)
+    private readonly setUserPhoneNumberCommandHandler: SetUserPhoneNumberCommandHandler,
+    @Inject(symbols.findUserQueryHandler)
+    private readonly findUserQueryHandler: FindUserQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -212,20 +230,23 @@ export class UserHttpController implements HttpController {
   > {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let user: User | undefined;
-
     try {
-      user = await unitOfWork.runInTransaction(async () => {
+      const { user } = await unitOfWork.runInTransaction(async () => {
         if ('email' in request.body) {
           const { email, password } = request.body;
 
-          return this.userService.registerUserByEmail({ unitOfWork, draft: { email, password } });
+          return this.registerUserCommandHandler.execute({ unitOfWork, draft: { email, password } });
         } else {
           const { phoneNumber, password } = request.body;
 
-          return this.userService.registerUserByPhoneNumber({ unitOfWork, draft: { phoneNumber, password } });
+          return this.registerUserCommandHandler.execute({
+            unitOfWork,
+            draft: { phoneNumber, password },
+          });
         }
       });
+
+      return { statusCode: HttpStatusCode.created, body: { user } };
     } catch (error) {
       if (error instanceof UserAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
@@ -233,8 +254,6 @@ export class UserHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.created, body: { user } };
   }
 
   private async loginUser(
@@ -242,20 +261,20 @@ export class UserHttpController implements HttpController {
   ): Promise<HttpOkResponse<LoginUserResponseOkBody> | HttpNotFoundResponse<ResponseErrorBody>> {
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let token: string | undefined;
-
     try {
-      token = await unitOfWork.runInTransaction(async () => {
+      const { accessToken } = await unitOfWork.runInTransaction(async () => {
         if ('email' in request.body) {
           const { email, password } = request.body;
 
-          return this.userService.loginUserByEmail({ unitOfWork, draft: { email, password } });
+          return this.loginUserCommandHandler.execute({ unitOfWork, draft: { email, password } });
         } else {
           const { phoneNumber, password } = request.body;
 
-          return this.userService.loginUserByPhoneNumber({ unitOfWork, draft: { phoneNumber, password } });
+          return this.loginUserCommandHandler.execute({ unitOfWork, draft: { phoneNumber, password } });
         }
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { token: accessToken } };
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -263,8 +282,6 @@ export class UserHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { token } };
   }
 
   private async setUserPassword(
@@ -276,12 +293,12 @@ export class UserHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let user: User | undefined;
-
     try {
-      await unitOfWork.runInTransaction(async () => {
-        await this.userService.setUserPassword({ unitOfWork, userId: userId as string, password });
+      const { user } = await unitOfWork.runInTransaction(async () => {
+        return this.setUserPasswordCommandHandler.execute({ unitOfWork, userId: userId as string, password });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { user } };
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -289,8 +306,6 @@ export class UserHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
   }
 
   private async setUserEmail(
@@ -306,12 +321,12 @@ export class UserHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let user: User | undefined;
-
     try {
-      await unitOfWork.runInTransaction(async () => {
-        await this.userService.setUserEmail({ unitOfWork, userId: userId as string, email });
+      const { user } = await unitOfWork.runInTransaction(async () => {
+        return this.setUserEmailCommandHandler.execute({ unitOfWork, userId: userId as string, email });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { user } };
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -323,8 +338,6 @@ export class UserHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
   }
 
   private async setUserPhoneNumber(
@@ -340,12 +353,12 @@ export class UserHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let user: User | undefined;
-
     try {
-      await unitOfWork.runInTransaction(async () => {
-        await this.userService.setUserPhoneNumber({ unitOfWork, userId: userId as string, phoneNumber });
+      const { user } = await unitOfWork.runInTransaction(async () => {
+        return this.setUserPhoneNumberCommandHandler.execute({ unitOfWork, userId: userId as string, phoneNumber });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -357,8 +370,6 @@ export class UserHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
   }
 
   private async findUser(
@@ -368,12 +379,12 @@ export class UserHttpController implements HttpController {
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
-    let user: User | undefined;
-
     try {
-      user = await unitOfWork.runInTransaction(async () => {
-        return this.userService.findUser({ unitOfWork, userId: userId as string });
+      const { user } = await unitOfWork.runInTransaction(async () => {
+        return this.findUserQueryHandler.execute({ unitOfWork, userId: userId as string });
       });
+
+      return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return { statusCode: HttpStatusCode.notFound, body: { error } };
@@ -381,8 +392,6 @@ export class UserHttpController implements HttpController {
 
       throw error;
     }
-
-    return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
   }
 
   private async deleteUser(
@@ -394,7 +403,7 @@ export class UserHttpController implements HttpController {
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.userService.deleteUser({ unitOfWork, userId: userId as string });
+        await this.deleteUserCommandHandler.execute({ unitOfWork, userId: userId as string });
       });
     } catch (error) {
       if (error instanceof UserNotFoundError) {
