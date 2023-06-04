@@ -53,8 +53,8 @@ import { DeleteInventoryCommandHandler } from '../../../application/commandHandl
 import { UpdateInventoryCommandHandler } from '../../../application/commandHandlers/updateInventoryCommandHandler/updateInventoryCommandHandler';
 import { FindInventoriesQueryHandler } from '../../../application/queryHandlers/findInventoriesQueryHandler/findInventoriesQueryHandler';
 import { FindInventoryQueryHandler } from '../../../application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
-import { InventoryAlreadyExistsError } from '../../../infrastructure/errors/inventoryAlreadyExistsError';
-import { InventoryNotFoundError } from '../../../infrastructure/errors/inventoryNotFoundError';
+import { InventoryAlreadyExistsError } from '../../../application/errors/inventoryAlreadyExistsError';
+import { InventoryNotFoundError } from '../../../application/errors/inventoryNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class InventoryHttpController implements HttpController {

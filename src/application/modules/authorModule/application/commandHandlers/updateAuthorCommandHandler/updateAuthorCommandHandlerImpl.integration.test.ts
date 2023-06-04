@@ -6,7 +6,7 @@ import { UpdateAuthorCommandHandler } from './updateAuthorCommandHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
+import { AuthorNotFoundError } from '../../errors/authorNotFoundError';
 import { symbols } from '../../../symbols';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { AuthorRepositoryFactory } from '../../repositories/authorRepository/authorRepositoryFactory';

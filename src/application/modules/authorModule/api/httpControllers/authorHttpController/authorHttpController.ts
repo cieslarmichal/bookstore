@@ -55,7 +55,7 @@ import { DeleteAuthorCommandHandler } from '../../../application/commandHandlers
 import { UpdateAuthorCommandHandler } from '../../../application/commandHandlers/updateAuthorCommandHandler/updateAuthorCommandHandler';
 import { FindAuthorQueryHandler } from '../../../application/queryHandlers/findAuthorQueryHandler/findAuthorQueryHandler';
 import { FindAuthorsQueryHandler } from '../../../application/queryHandlers/findAuthorsQueryHandler/findAuthorsQueryHandler';
-import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
+import { AuthorNotFoundError } from '../../../application/errors/authorNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class AuthorHttpController implements HttpController {

@@ -12,7 +12,7 @@ import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bo
 import { CategoryRepositoryFactory } from '../../../../categoryModule/application/repositories/categoryRepository/categoryRepositoryFactory';
 import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CategoryEntityTestFactory } from '../../../../categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
-import { BookCategoryNotFoundError } from '../../../infrastructure/errors/bookCategoryNotFoundError';
+import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
 import { symbols } from '../../../symbols';
 import { BookCategoryEntityTestFactory } from '../../../tests/factories/bookCategoryEntityTestFactory/bookCategoryEntityTestFactory';
 import { BookCategoryRepositoryFactory } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryFactory';

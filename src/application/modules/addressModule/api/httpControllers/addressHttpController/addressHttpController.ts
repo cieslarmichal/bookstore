@@ -52,7 +52,7 @@ import { FilterName } from '../../../../../../common/types/filterName';
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerService } from '../../../../customerModule/application/services/customerService/customerService';
+import { FindCustomerQueryHandler } from '../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { Customer } from '../../../../customerModule/domain/entities/customer/customer';
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CreateAddressCommandHandler } from '../../../application/commandHandlers/createAddressCommandHandler/createAddressCommandHandler';
@@ -60,11 +60,11 @@ import { CreateAddressDraft } from '../../../application/commandHandlers/createA
 import { DeleteAddressCommandHandler } from '../../../application/commandHandlers/deleteAddressCommandHandler/deleteAddressCommandHandler';
 import { UpdateAddressCommandHandler } from '../../../application/commandHandlers/updateAddressCommandHandler/updateAddressCommandHandler';
 import { AddressNotFoundError } from '../../../application/errors/addressNotFoundError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
+import { CustomerIdNotProvidedError } from '../../../application/errors/customerIdNotProvidedError';
+import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
 import { FindAddressesQueryHandler } from '../../../application/queryHandlers/findAddressesQueryHandler/findAddressesQueryHandler';
 import { FindAddressQueryHandler } from '../../../application/queryHandlers/findAddressQueryHandler/findAddressQueryHandler';
-import { CustomerFromAccessTokenNotMatchingCustomerFromAddressError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromAddressError';
-import { CustomerIdNotProvidedError } from '../../../infrastructure/errors/customerIdNotProvidedError';
-import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
 import { symbols } from '../../../symbols';
 
 export class AddressHttpController implements HttpController {
@@ -73,8 +73,8 @@ export class AddressHttpController implements HttpController {
   public constructor(
     @Inject(unitOfWorkModuleSymbols.unitOfWorkFactory)
     private readonly unitOfWorkFactory: UnitOfWorkFactory,
-    @Inject(customerSymbols.customerService)
-    private readonly customerService: CustomerService,
+    @Inject(customerSymbols.findCustomerQueryHandler)
+    private readonly findCustomerQueryHandler: FindCustomerQueryHandler,
     @Inject(symbols.createAddressCommandHandler)
     private readonly createAddressCommandHandler: CreateAddressCommandHandler,
     @Inject(symbols.updateAddressCommandHandler)
@@ -233,7 +233,7 @@ export class AddressHttpController implements HttpController {
       const { userId } = request.context;
 
       try {
-        await this.customerService.findCustomer({ unitOfWork, userId: userId as string });
+        await this.findCustomerQueryHandler.execute({ unitOfWork, userId: userId as string });
       } catch (error) {
         throw new UserIsNotCustomerError({ userId: userId as string });
       }
@@ -265,7 +265,9 @@ export class AddressHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
@@ -329,7 +331,9 @@ export class AddressHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
@@ -377,7 +381,9 @@ export class AddressHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }
@@ -445,7 +451,9 @@ export class AddressHttpController implements HttpController {
         let customer: Customer;
 
         try {
-          customer = await this.customerService.findCustomer({ unitOfWork, userId });
+          const result = await this.findCustomerQueryHandler.execute({ unitOfWork, userId });
+
+          customer = result.customer;
         } catch (error) {
           throw new UserIsNotCustomerError({ userId: userId as string });
         }

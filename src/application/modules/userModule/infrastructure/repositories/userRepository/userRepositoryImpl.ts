@@ -21,7 +21,7 @@ import {
 } from '../../../application/repositories/userRepository/payloads/updateUserPayload';
 import { UserRepository } from '../../../application/repositories/userRepository/userRepository';
 import { User } from '../../../domain/entities/user/user';
-import { UserNotFoundError } from '../../errors/userNotFoundError';
+import { UserNotFoundError } from '../../../application/errors/userNotFoundError';
 
 export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}

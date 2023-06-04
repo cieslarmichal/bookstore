@@ -9,7 +9,7 @@ import { Application } from '../../../../../application';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
+import { CustomerNotFoundError } from '../../errors/customerNotFoundError';
 import { symbols } from '../../../symbols';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { CustomerRepositoryFactory } from '../../repositories/customerRepository/customerRepositoryFactory';

@@ -13,12 +13,12 @@ import { LoggerService } from '../../../../../../libs/logger/services/loggerServ
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
-import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
+import { BookNotFoundError } from '../../../../bookModule/application/errors/bookNotFoundError';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { CategoryService } from '../../../../categoryModule/application/services/categoryService/categoryService';
 import { categorySymbols } from '../../../../categoryModule/symbols';
-import { CategoryNotFoundError } from '../../../../categoryModule/infrastructure/errors/categoryNotFoundError';
-import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
+import { CategoryNotFoundError } from '../../../../categoryModule/application/errors/categoryNotFoundError';
+import { BookCategoryAlreadyExistsError } from '../../errors/bookCategoryAlreadyExistsError';
 import { bookCategorySymbols } from '../../../symbols';
 import { BookCategoryRepositoryFactory } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 

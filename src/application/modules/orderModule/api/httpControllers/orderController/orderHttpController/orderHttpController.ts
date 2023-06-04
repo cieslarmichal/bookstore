@@ -31,7 +31,7 @@ import { Customer } from '../../../../../customerModule/domain/entities/customer
 import { customerSymbols } from '../../../../../customerModule/symbols';
 import { CreateOrderCommandHandler } from '../../../../application/commandHandlers/createOrderCommandHandler/createOrderCommandHandler';
 import { FindOrdersQueryHandler } from '../../../../application/queryHandlers/findOrdersQueryHandler/findOrdersQueryHandler';
-import { UserIsNotCustomerError } from '../../../../infrastructure/errors/userIsNotCustomerError';
+import { UserIsNotCustomerError } from '../../../../application/errors/userIsNotCustomerError';
 import { symbols } from '../../../../symbols';
 
 export class OrderHttpController implements HttpController {

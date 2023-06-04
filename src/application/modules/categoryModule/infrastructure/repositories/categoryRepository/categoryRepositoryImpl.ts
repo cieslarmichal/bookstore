@@ -22,7 +22,7 @@ import {
   findCategoryPayloadSchema,
 } from '../../../application/repositories/categoryRepository/payloads/findCategoryPayload';
 import { Category } from '../../../domain/entities/category/category';
-import { CategoryNotFoundError } from '../../errors/categoryNotFoundError';
+import { CategoryNotFoundError } from '../../../application/errors/categoryNotFoundError';
 
 export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}

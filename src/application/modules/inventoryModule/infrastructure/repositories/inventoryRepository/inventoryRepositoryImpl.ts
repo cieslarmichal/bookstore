@@ -3,6 +3,7 @@ import { EntityManager, FindManyOptions } from 'typeorm';
 import { InventoryEntity } from './inventoryEntity/inventoryEntity';
 import { InventoryMapper } from './inventoryMapper/inventoryMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { InventoryNotFoundError } from '../../../application/errors/inventoryNotFoundError';
 import { InventoryRepository } from '../../../application/repositories/inventoryRepository/inventoryRepository';
 import {
   CreateInventoryPayload,
@@ -25,7 +26,6 @@ import {
   updateInventoryPayloadSchema,
 } from '../../../application/repositories/inventoryRepository/payloads/updateInventoryPayload';
 import { Inventory } from '../../../domain/entities/inventory/inventory';
-import { InventoryNotFoundError } from '../../errors/inventoryNotFoundError';
 
 export class InventoryRepositoryImpl implements InventoryRepository {
   public constructor(

@@ -17,7 +17,7 @@ import {
   findCustomerPayloadSchema,
 } from '../../../application/repositories/customerRepository/payloads/findCustomerPayload';
 import { Customer } from '../../../domain/entities/customer/customer';
-import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
+import { CustomerNotFoundError } from '../../../application/errors/customerNotFoundError';
 
 export class CustomerRepositoryImpl implements CustomerRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly customerMapper: CustomerMapper) {}

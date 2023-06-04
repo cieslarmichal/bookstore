@@ -9,7 +9,7 @@ import {
 } from './payloads/findInventoryQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { InventoryNotFoundError } from '../../../infrastructure/errors/inventoryNotFoundError';
+import { InventoryNotFoundError } from '../../errors/inventoryNotFoundError';
 import { inventorySymbols } from '../../../symbols';
 import { InventoryRepositoryFactory } from '../../repositories/inventoryRepository/inventoryRepositoryFactory';
 

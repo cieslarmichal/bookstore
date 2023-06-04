@@ -6,7 +6,7 @@ import { RegisterUserCommandHandler } from './registerUserCommandHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
+import { UserAlreadyExistsError } from '../../errors/userAlreadyExistsError';
 import { symbols, userSymbols } from '../../../symbols';
 import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';

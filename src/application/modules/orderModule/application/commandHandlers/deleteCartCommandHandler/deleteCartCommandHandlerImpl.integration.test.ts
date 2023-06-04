@@ -12,7 +12,7 @@ import { CustomerEntityTestFactory } from '../../../../customerModule/tests/fact
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';

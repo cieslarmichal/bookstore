@@ -7,7 +7,7 @@ import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/d
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { AuthorBookNotFoundError } from '../../../infrastructure/errors/authorBookNotFoundError';
+import { AuthorBookNotFoundError } from '../../errors/authorBookNotFoundError';
 import { authorBookSymbols } from '../../../symbols';
 import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
 

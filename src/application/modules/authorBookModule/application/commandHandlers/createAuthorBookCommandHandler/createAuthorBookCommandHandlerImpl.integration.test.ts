@@ -12,7 +12,7 @@ import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factorie
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
+import { AuthorBookAlreadyExistsError } from '../../errors/authorBookAlreadyExistsError';
 import { symbols } from '../../../symbols';
 import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
 

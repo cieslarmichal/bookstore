@@ -26,7 +26,7 @@ import {
   updateAuthorPayloadSchema,
 } from '../../../application/repositories/authorRepository/payloads/updateAuthorPayload';
 import { Author } from '../../../domain/entities/author/author';
-import { AuthorNotFoundError } from '../../errors/authorNotFoundError';
+import { AuthorNotFoundError } from '../../../application/errors/authorNotFoundError';
 
 export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}

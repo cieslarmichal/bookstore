@@ -10,7 +10,7 @@ import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/ap
 import { bookCategorySymbols } from '../../../../bookCategoryModule/symbols';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { bookSymbols } from '../../../../bookModule/symbols';
-import { CategoryAlreadyExistsError } from '../../../infrastructure/errors/categoryAlreadyExistsError';
+import { CategoryAlreadyExistsError } from '../../errors/categoryAlreadyExistsError';
 import { symbols } from '../../../symbols';
 import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { CategoryRepositoryFactory } from '../../repositories/categoryRepository/categoryRepositoryFactory';

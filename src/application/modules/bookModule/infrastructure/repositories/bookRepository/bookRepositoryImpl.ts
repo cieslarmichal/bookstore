@@ -26,7 +26,7 @@ import {
   updateBookPayloadSchema,
 } from '../../../application/repositories/bookRepository/payloads/updateBookPayload';
 import { Book } from '../../../domain/entities/book/book';
-import { BookNotFoundError } from '../../errors/bookNotFoundError';
+import { BookNotFoundError } from '../../../application/errors/bookNotFoundError';
 
 export class BookRepositoryImpl implements BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}

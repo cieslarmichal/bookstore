@@ -47,8 +47,8 @@ import { CreateCategoryCommandHandler } from '../../../application/commandHandle
 import { DeleteCategoryCommandHandler } from '../../../application/commandHandlers/deleteCategoryCommandHandler/deleteCategoryCommandHandler';
 import { FindCategoriesQueryHandler } from '../../../application/queryHandlers/findCategoriesQueryHandler/findCategoriesQueryHandler';
 import { FindCategoryQueryHandler } from '../../../application/queryHandlers/findCategoryQueryHandler/findCategoryQueryHandler';
-import { CategoryAlreadyExistsError } from '../../../infrastructure/errors/categoryAlreadyExistsError';
-import { CategoryNotFoundError } from '../../../infrastructure/errors/categoryNotFoundError';
+import { CategoryAlreadyExistsError } from '../../../application/errors/categoryAlreadyExistsError';
+import { CategoryNotFoundError } from '../../../application/errors/categoryNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class CategoryHttpController implements HttpController {

@@ -9,9 +9,9 @@ import { Application } from '../../../../../application';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { InventoryAlreadyExistsError } from '../../../infrastructure/errors/inventoryAlreadyExistsError';
 import { symbols } from '../../../symbols';
 import { InventoryEntityTestFactory } from '../../../tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
+import { InventoryAlreadyExistsError } from '../../errors/inventoryAlreadyExistsError';
 import { InventoryRepositoryFactory } from '../../repositories/inventoryRepository/inventoryRepositoryFactory';
 
 describe('CreateInventoryCommandHandler', () => {

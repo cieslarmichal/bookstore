@@ -25,7 +25,7 @@ import {
   updateCartPayloadSchema,
 } from '../../../application/repositories/cartRepository/payloads/updateCartPayload';
 import { Cart } from '../../../domain/entities/cart/cart';
-import { CartNotFoundError } from '../../errors/cartNotFoundError';
+import { CartNotFoundError } from '../../../application/errors/cartNotFoundError';
 
 export class CartRepositoryImpl implements CartRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly cartMapper: CartMapper) {}

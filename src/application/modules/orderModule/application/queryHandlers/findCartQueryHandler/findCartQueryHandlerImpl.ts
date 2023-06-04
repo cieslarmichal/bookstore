@@ -3,7 +3,7 @@ import { FindCartQueryHandlerPayload, findCartQueryHandlerPayloadSchema } from '
 import { FindCartQueryHandlerResult, findCartQueryHandlerResultSchema } from './payloads/findCartQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { orderSymbols } from '../../../symbols';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
 

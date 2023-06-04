@@ -15,7 +15,7 @@ import { CustomerEntityTestFactory } from '../../../../customerModule/tests/fact
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { WhishlistEntryAlreadyExistsError } from '../../../infrastructure/errors/whishlistEntryAlreadyExistsError';
+import { WhishlistEntryAlreadyExistsError } from '../../errors/whishlistEntryAlreadyExistsError';
 import { symbols } from '../../../symbols';
 import { WhishlistEntryEntityTestFactory } from '../../../tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
 import { WhishlistEntryRepositoryFactory } from '../../repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';

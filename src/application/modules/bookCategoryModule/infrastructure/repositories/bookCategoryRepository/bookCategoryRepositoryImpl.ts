@@ -17,7 +17,7 @@ import {
   findBookCategoryPayloadSchema,
 } from '../../../application/repositories/bookCategoryRepository/payloads/findBookCategoryPayload';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
-import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
+import { BookCategoryNotFoundError } from '../../../application/errors/bookCategoryNotFoundError';
 
 export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   public constructor(

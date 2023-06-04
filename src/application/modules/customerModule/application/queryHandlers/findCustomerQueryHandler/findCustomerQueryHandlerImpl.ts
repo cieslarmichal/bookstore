@@ -9,7 +9,7 @@ import {
 } from './payloads/findCustomerQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CustomerNotFoundError } from '../../../infrastructure/errors/customerNotFoundError';
+import { CustomerNotFoundError } from '../../errors/customerNotFoundError';
 import { customerSymbols } from '../../../symbols';
 import { CustomerRepositoryFactory } from '../../repositories/customerRepository/customerRepositoryFactory';
 

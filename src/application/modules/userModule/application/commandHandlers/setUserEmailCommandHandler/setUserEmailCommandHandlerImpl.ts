@@ -12,8 +12,8 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
-import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
-import { UserNotFoundError } from '../../../infrastructure/errors/userNotFoundError';
+import { UserAlreadyExistsError } from '../../errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { symbols } from '../../../symbols';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';
 

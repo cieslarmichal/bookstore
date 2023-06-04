@@ -25,7 +25,7 @@ import {
 } from '../../../application/repositories/reviewRepository/payloads/updateReviewPayload';
 import { ReviewRepository } from '../../../application/repositories/reviewRepository/reviewRepository';
 import { Review } from '../../../domain/entities/review/review';
-import { ReviewNotFoundError } from '../../errors/reviewNotFoundError';
+import { ReviewNotFoundError } from '../../../application/errors/reviewNotFoundError';
 
 export class ReviewRepositoryImpl implements ReviewRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly reviewMapper: ReviewMapper) {}

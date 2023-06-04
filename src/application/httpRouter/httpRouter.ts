@@ -23,7 +23,7 @@ import { addressSymbols } from '../modules/addressModule/symbols';
 import { AuthorBookHttpController } from '../modules/authorBookModule/api/httpControllers/authorBookHttpController/authorBookHttpController';
 import { authorBookSymbols } from '../modules/authorBookModule/symbols';
 import { AuthorHttpController } from '../modules/authorModule/api/httpControllers/authorHttpController/authorHttpController';
-import { authorModuleSymbols } from '../modules/authorModule/symbols';
+import { authorSymbols } from '../modules/authorModule/symbols';
 import { BookCategoryHttpController } from '../modules/bookCategoryModule/api/httpControllers/bookCategoryHttpController/bookCategoryHttpController';
 import { bookCategorySymbols } from '../modules/bookCategoryModule/symbols';
 import { BookHttpController } from '../modules/bookModule/api/httpControllers/bookHttpController/bookHttpController';
@@ -78,7 +78,7 @@ export class HttpRouter {
 
     this.registerControllerRoutes({ controller: bookCategoryHttpController });
 
-    const authorHttpController = this.container.get<AuthorHttpController>(authorModuleSymbols.authorHttpController);
+    const authorHttpController = this.container.get<AuthorHttpController>(authorSymbols.authorHttpController);
 
     this.registerControllerRoutes({ controller: authorHttpController });
 

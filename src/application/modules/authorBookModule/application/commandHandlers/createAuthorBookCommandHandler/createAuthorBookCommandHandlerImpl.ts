@@ -13,12 +13,12 @@ import { LoggerService } from '../../../../../../libs/logger/services/loggerServ
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
 import { AuthorService } from '../../../../authorModule/application/services/authorService/authorService';
-import { AuthorNotFoundError } from '../../../../authorModule/infrastructure/errors/authorNotFoundError';
+import { AuthorNotFoundError } from '../../../../authorModule/application/errors/authorNotFoundError';
 import { authorModuleSymbols } from '../../../../authorModule/symbols';
 import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
-import { BookNotFoundError } from '../../../../bookModule/infrastructure/errors/bookNotFoundError';
+import { BookNotFoundError } from '../../../../bookModule/application/errors/bookNotFoundError';
 import { bookSymbols } from '../../../../bookModule/symbols';
-import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
+import { AuthorBookAlreadyExistsError } from '../../errors/authorBookAlreadyExistsError';
 import { authorBookSymbols } from '../../../symbols';
 import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
 

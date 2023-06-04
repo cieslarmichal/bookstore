@@ -58,9 +58,9 @@ import { UpdateReviewCommandHandler } from '../../../application/commandHandlers
 import { FindReviewQueryHandler } from '../../../application/queryHandlers/findReviewQueryHandler/findReviewQueryHandler';
 import { FindReviewsQueryHandler } from '../../../application/queryHandlers/findReviewsQueryHandler/findReviewsQueryHandler';
 import { UpdateReviewDraft } from '../../../application/repositories/reviewRepository/payloads/updateReviewDraft';
-import { CustomerFromAccessTokenNotMatchingCustomerFromReviewError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
-import { ReviewNotFoundError } from '../../../infrastructure/errors/reviewNotFoundError';
-import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromReviewError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
+import { ReviewNotFoundError } from '../../../application/errors/reviewNotFoundError';
+import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
 import { symbols } from '../../../symbols';
 
 export class ReviewHttpController implements HttpController {

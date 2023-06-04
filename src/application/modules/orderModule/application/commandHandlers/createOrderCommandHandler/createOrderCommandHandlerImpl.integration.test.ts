@@ -21,7 +21,7 @@ import { userSymbols } from '../../../../userModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { PaymentMethod } from '../../../domain/entities/order/paymentMethod';
-import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';

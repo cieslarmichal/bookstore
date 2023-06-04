@@ -8,8 +8,8 @@ import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresM
 import { Application } from '../../../../../application';
 import { User } from '../../../domain/entities/user/user';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
-import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
-import { UserNotFoundError } from '../../../infrastructure/errors/userNotFoundError';
+import { UserAlreadyExistsError } from '../../errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { symbols, userSymbols } from '../../../symbols';
 import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';

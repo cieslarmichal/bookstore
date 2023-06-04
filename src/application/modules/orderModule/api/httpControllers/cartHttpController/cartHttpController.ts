@@ -74,9 +74,9 @@ import { RemoveLineItemCommandHandler } from '../../../application/commandHandle
 import { UpdateCartCommandHandler } from '../../../application/commandHandlers/updateCartCommandHandler/updateCartCommandHandler';
 import { FindCartQueryHandler } from '../../../application/queryHandlers/findCartQueryHandler/findCartQueryHandler';
 import { FindCartsQueryHandler } from '../../../application/queryHandlers/findCartsQueryHandler/findCartsQueryHandler';
-import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
-import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
-import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
+import { CartNotFoundError } from '../../../application/errors/cartNotFoundError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
+import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
 import { symbols } from '../../../symbols';
 
 export class CartHttpController implements HttpController {

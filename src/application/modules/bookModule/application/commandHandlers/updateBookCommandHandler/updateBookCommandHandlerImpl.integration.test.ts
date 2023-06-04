@@ -8,7 +8,7 @@ import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresM
 import { Application } from '../../../../../application';
 import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
 import { authorSymbols } from '../../../../authorModule/symbols';
-import { BookNotFoundError } from '../../../infrastructure/errors/bookNotFoundError';
+import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { symbols } from '../../../symbols';
 import { BookEntityTestFactory } from '../../../tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { BookRepositoryFactory } from '../../repositories/bookRepository/bookRepositoryFactory';

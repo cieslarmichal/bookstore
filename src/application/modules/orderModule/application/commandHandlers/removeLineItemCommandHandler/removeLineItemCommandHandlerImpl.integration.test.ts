@@ -17,8 +17,8 @@ import { UserEntityTestFactory } from '../../../../userModule/tests/factories/us
 import { userSymbols } from '../../../../userModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItem } from '../../../domain/entities/lineItem/lineItem';
-import { CartNotFoundError } from '../../../infrastructure/errors/cartNotFoundError';
-import { LineItemNotFoundError } from '../../../infrastructure/errors/lineItemNotFoundError';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
+import { LineItemNotFoundError } from '../../errors/lineItemNotFoundError';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';

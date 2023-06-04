@@ -56,7 +56,7 @@ import { UpdateBookCommandHandler } from '../../../application/commandHandlers/u
 import { FindBookQueryHandler } from '../../../application/queryHandlers/findBookQueryHandler/findBookQueryHandler';
 import { FindBooksQueryHandler } from '../../../application/queryHandlers/findBooksQueryHandler/findBooksQueryHandler';
 import { UpdateBookDraft } from '../../../application/repositories/bookRepository/payloads/updateBookDraft';
-import { BookNotFoundError } from '../../../infrastructure/errors/bookNotFoundError';
+import { BookNotFoundError } from '../../../application/errors/bookNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class BookHttpController implements HttpController {

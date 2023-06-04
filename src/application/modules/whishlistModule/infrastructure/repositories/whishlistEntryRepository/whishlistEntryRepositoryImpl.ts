@@ -21,7 +21,7 @@ import {
 } from '../../../application/repositories/whishlistEntryRepository/payloads/findWhishlistEntryPayload';
 import { WhishlistEntryRepository } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepository';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
-import { WhishlistEntryNotFoundError } from '../../../infrastructure/errors/whishlistEntryNotFoundError';
+import { WhishlistEntryNotFoundError } from '../../../application/errors/whishlistEntryNotFoundError';
 
 export class WhishlistEntryRepositoryImpl implements WhishlistEntryRepository {
   public constructor(

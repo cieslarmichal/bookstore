@@ -7,7 +7,7 @@ import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/d
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { BookCategoryNotFoundError } from '../../../infrastructure/errors/bookCategoryNotFoundError';
+import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
 import { bookCategorySymbols } from '../../../symbols';
 import { BookCategoryRepositoryFactory } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 

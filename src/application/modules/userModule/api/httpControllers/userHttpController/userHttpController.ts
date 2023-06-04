@@ -57,8 +57,8 @@ import { FindUserQueryHandler } from '../../../application/queryHandlers/findUse
 import { User } from '../../../domain/entities/user/user';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
-import { UserAlreadyExistsError } from '../../../infrastructure/errors/userAlreadyExistsError';
-import { UserNotFoundError } from '../../../infrastructure/errors/userNotFoundError';
+import { UserAlreadyExistsError } from '../../../application/errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../../application/errors/userNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class UserHttpController implements HttpController {

@@ -9,7 +9,7 @@ import {
 } from './payloads/findCategoryQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CategoryNotFoundError } from '../../../infrastructure/errors/categoryNotFoundError';
+import { CategoryNotFoundError } from '../../errors/categoryNotFoundError';
 import { categorySymbols } from '../../../symbols';
 import { CategoryRepositoryFactory } from '../../repositories/categoryRepository/categoryRepositoryFactory';
 

@@ -12,7 +12,7 @@ import { CustomerEntityTestFactory } from '../../../../customerModule/tests/fact
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { ReviewNotFoundError } from '../../../infrastructure/errors/reviewNotFoundError';
+import { ReviewNotFoundError } from '../../errors/reviewNotFoundError';
 import { symbols } from '../../../symbols';
 import { ReviewEntityTestFactory } from '../../../tests/factories/reviewEntityTestFactory/reviewEntityTestFactory';
 import { ReviewRepositoryFactory } from '../../repositories/reviewRepository/reviewRepositoryFactory';

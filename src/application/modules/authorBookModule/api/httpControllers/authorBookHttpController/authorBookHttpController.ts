@@ -28,8 +28,8 @@ import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/u
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CreateAuthorBookCommandHandler } from '../../../application/commandHandlers/createAuthorBookCommandHandler/createAuthorBookCommandHandler';
 import { DeleteAuthorBookCommandHandler } from '../../../application/commandHandlers/deleteAuthorBookCommandHandler/deleteAuthorBookCommandHandler';
-import { AuthorBookAlreadyExistsError } from '../../../infrastructure/errors/authorBookAlreadyExistsError';
-import { AuthorBookNotFoundError } from '../../../infrastructure/errors/authorBookNotFoundError';
+import { AuthorBookAlreadyExistsError } from '../../../application/errors/authorBookAlreadyExistsError';
+import { AuthorBookNotFoundError } from '../../../application/errors/authorBookNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class AuthorBookHttpController implements HttpController {

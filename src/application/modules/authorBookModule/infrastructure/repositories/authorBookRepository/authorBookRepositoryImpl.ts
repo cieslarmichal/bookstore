@@ -3,6 +3,7 @@ import { EntityManager } from 'typeorm';
 import { AuthorBookEntity } from './authorBookEntity/authorBookEntity';
 import { AuthorBookMapper } from './authorBookMapper/authorBookMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { AuthorBookNotFoundError } from '../../../application/errors/authorBookNotFoundError';
 import { AuthorBookRepository } from '../../../application/repositories/authorBookRepository/authorBookRepository';
 import {
   CreateAuthorBookPayload,
@@ -17,7 +18,6 @@ import {
   findAuthorBookPayloadSchema,
 } from '../../../application/repositories/authorBookRepository/payloads/findAuthorBookPayload';
 import { AuthorBook } from '../../../domain/entities/authorBook/authorBook';
-import { AuthorBookNotFoundError } from '../../errors/authorBookNotFoundError';
 
 export class AuthorBookRepositoryImpl implements AuthorBookRepository {
   public constructor(

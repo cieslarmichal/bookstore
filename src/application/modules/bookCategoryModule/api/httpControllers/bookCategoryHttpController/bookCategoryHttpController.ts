@@ -29,8 +29,8 @@ import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitO
 import { CreateBookCategoryCommandHandler } from '../../../application/commandHandlers/createBookCategoryCommandHandler/createBookCategoryCommandHandler';
 import { DeleteBookCategoryCommandHandler } from '../../../application/commandHandlers/deleteBookCategoryCommandHandler/deleteBookCategoryCommandHandler';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
-import { BookCategoryAlreadyExistsError } from '../../../infrastructure/errors/bookCategoryAlreadyExistsError';
-import { BookCategoryNotFoundError } from '../../../infrastructure/errors/bookCategoryNotFoundError';
+import { BookCategoryAlreadyExistsError } from '../../../application/errors/bookCategoryAlreadyExistsError';
+import { BookCategoryNotFoundError } from '../../../application/errors/bookCategoryNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class BookCategoryHttpController implements HttpController {

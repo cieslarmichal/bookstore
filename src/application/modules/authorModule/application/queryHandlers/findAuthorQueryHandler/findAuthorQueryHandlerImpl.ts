@@ -9,7 +9,7 @@ import {
 } from './payloads/findAuthorQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { AuthorNotFoundError } from '../../../infrastructure/errors/authorNotFoundError';
+import { AuthorNotFoundError } from '../../errors/authorNotFoundError';
 import { authorSymbols } from '../../../symbols';
 import { AuthorRepositoryFactory } from '../../repositories/authorRepository/authorRepositoryFactory';
 

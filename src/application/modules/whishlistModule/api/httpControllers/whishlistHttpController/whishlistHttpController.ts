@@ -42,10 +42,10 @@ import { CreateWhishlistEntryCommandHandler } from '../../../application/command
 import { DeleteWhishlistEntryCommandHandler } from '../../../application/commandHandlers/deleteWhishlistEntryCommandHandler/deleteWhishlistEntryCommandHandler';
 import { FindWhishlistEntriesQueryHandler } from '../../../application/queryHandlers/findWhishlistEntriesQueryHandler/findWhishlistEntriesQueryHandler';
 import { FindWhishlistEntryQueryHandler } from '../../../application/queryHandlers/findWhishlistEntryQueryHandler/findWhishlistEntryQueryHandler';
-import { CustomerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError } from '../../../infrastructure/errors/customerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError';
-import { UserIsNotCustomerError } from '../../../infrastructure/errors/userIsNotCustomerError';
-import { WhishlistEntryAlreadyExistsError } from '../../../infrastructure/errors/whishlistEntryAlreadyExistsError';
-import { WhishlistEntryNotFoundError } from '../../../infrastructure/errors/whishlistEntryNotFoundError';
+import { CustomerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError';
+import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
+import { WhishlistEntryAlreadyExistsError } from '../../../application/errors/whishlistEntryAlreadyExistsError';
+import { WhishlistEntryNotFoundError } from '../../../application/errors/whishlistEntryNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class WhishlistHttpController implements HttpController {
