@@ -30,8 +30,8 @@ import { FindCustomerQueryHandler } from '../../../../../customerModule/applicat
 import { Customer } from '../../../../../customerModule/domain/entities/customer/customer';
 import { customerSymbols } from '../../../../../customerModule/symbols';
 import { CreateOrderCommandHandler } from '../../../../application/commandHandlers/createOrderCommandHandler/createOrderCommandHandler';
-import { FindOrdersQueryHandler } from '../../../../application/queryHandlers/findOrdersQueryHandler/findOrdersQueryHandler';
 import { UserIsNotCustomerError } from '../../../../application/errors/userIsNotCustomerError';
+import { FindOrdersQueryHandler } from '../../../../application/queryHandlers/findOrdersQueryHandler/findOrdersQueryHandler';
 import { symbols } from '../../../../symbols';
 
 export class OrderHttpController implements HttpController {
@@ -133,7 +133,7 @@ export class OrderHttpController implements HttpController {
 
     const { userId } = request.context;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

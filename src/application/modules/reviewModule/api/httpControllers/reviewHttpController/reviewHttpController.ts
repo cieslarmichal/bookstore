@@ -55,12 +55,12 @@ import { CreateReviewCommandHandler } from '../../../application/commandHandlers
 import { CreateReviewDraft } from '../../../application/commandHandlers/createReviewCommandHandler/payloads/createReviewDraft';
 import { DeleteReviewCommandHandler } from '../../../application/commandHandlers/deleteReviewCommandHandler/deleteReviewCommandHandler';
 import { UpdateReviewCommandHandler } from '../../../application/commandHandlers/updateReviewCommandHandler/updateReviewCommandHandler';
-import { FindReviewQueryHandler } from '../../../application/queryHandlers/findReviewQueryHandler/findReviewQueryHandler';
-import { FindReviewsQueryHandler } from '../../../application/queryHandlers/findReviewsQueryHandler/findReviewsQueryHandler';
-import { UpdateReviewDraft } from '../../../application/repositories/reviewRepository/payloads/updateReviewDraft';
 import { CustomerFromAccessTokenNotMatchingCustomerFromReviewError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { ReviewNotFoundError } from '../../../application/errors/reviewNotFoundError';
 import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
+import { FindReviewQueryHandler } from '../../../application/queryHandlers/findReviewQueryHandler/findReviewQueryHandler';
+import { FindReviewsQueryHandler } from '../../../application/queryHandlers/findReviewsQueryHandler/findReviewsQueryHandler';
+import { UpdateReviewDraft } from '../../../application/repositories/reviewRepository/payloads/updateReviewDraft';
 import { symbols } from '../../../symbols';
 
 export class ReviewHttpController implements HttpController {
@@ -294,7 +294,7 @@ export class ReviewHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindReviewsResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
     const { limit, page, customerId, isbn } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

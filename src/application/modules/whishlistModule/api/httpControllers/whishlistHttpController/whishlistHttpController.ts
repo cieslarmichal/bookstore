@@ -40,12 +40,12 @@ import { Customer } from '../../../../customerModule/domain/entities/customer/cu
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CreateWhishlistEntryCommandHandler } from '../../../application/commandHandlers/createWhishlistEntryCommandHandler/createWhishlistEntryCommandHandler';
 import { DeleteWhishlistEntryCommandHandler } from '../../../application/commandHandlers/deleteWhishlistEntryCommandHandler/deleteWhishlistEntryCommandHandler';
-import { FindWhishlistEntriesQueryHandler } from '../../../application/queryHandlers/findWhishlistEntriesQueryHandler/findWhishlistEntriesQueryHandler';
-import { FindWhishlistEntryQueryHandler } from '../../../application/queryHandlers/findWhishlistEntryQueryHandler/findWhishlistEntryQueryHandler';
 import { CustomerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromWhishlistEntryError';
 import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
 import { WhishlistEntryAlreadyExistsError } from '../../../application/errors/whishlistEntryAlreadyExistsError';
 import { WhishlistEntryNotFoundError } from '../../../application/errors/whishlistEntryNotFoundError';
+import { FindWhishlistEntriesQueryHandler } from '../../../application/queryHandlers/findWhishlistEntriesQueryHandler/findWhishlistEntriesQueryHandler';
+import { FindWhishlistEntryQueryHandler } from '../../../application/queryHandlers/findWhishlistEntryQueryHandler/findWhishlistEntryQueryHandler';
 import { symbols } from '../../../symbols';
 
 export class WhishlistHttpController implements HttpController {
@@ -184,7 +184,7 @@ export class WhishlistHttpController implements HttpController {
 
     const { userId } = request.context;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

@@ -51,10 +51,10 @@ import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitO
 import { CreateInventoryCommandHandler } from '../../../application/commandHandlers/createInventoryCommandHandler/createInventoryCommandHandler';
 import { DeleteInventoryCommandHandler } from '../../../application/commandHandlers/deleteInventoryCommandHandler/deleteInventoryCommandHandler';
 import { UpdateInventoryCommandHandler } from '../../../application/commandHandlers/updateInventoryCommandHandler/updateInventoryCommandHandler';
-import { FindInventoriesQueryHandler } from '../../../application/queryHandlers/findInventoriesQueryHandler/findInventoriesQueryHandler';
-import { FindInventoryQueryHandler } from '../../../application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { InventoryAlreadyExistsError } from '../../../application/errors/inventoryAlreadyExistsError';
 import { InventoryNotFoundError } from '../../../application/errors/inventoryNotFoundError';
+import { FindInventoriesQueryHandler } from '../../../application/queryHandlers/findInventoriesQueryHandler/findInventoriesQueryHandler';
+import { FindInventoryQueryHandler } from '../../../application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { symbols } from '../../../symbols';
 
 export class InventoryHttpController implements HttpController {
@@ -222,7 +222,7 @@ export class InventoryHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindInventoriesResponseOkBody>> {
     const { limit, page, bookId } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

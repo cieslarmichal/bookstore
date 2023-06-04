@@ -53,9 +53,9 @@ import { CreateAuthorCommandHandler } from '../../../application/commandHandlers
 import { CreateAuthorDraft } from '../../../application/commandHandlers/createAuthorCommandHandler/payloads/createAuthorDraft';
 import { DeleteAuthorCommandHandler } from '../../../application/commandHandlers/deleteAuthorCommandHandler/deleteAuthorCommandHandler';
 import { UpdateAuthorCommandHandler } from '../../../application/commandHandlers/updateAuthorCommandHandler/updateAuthorCommandHandler';
+import { AuthorNotFoundError } from '../../../application/errors/authorNotFoundError';
 import { FindAuthorQueryHandler } from '../../../application/queryHandlers/findAuthorQueryHandler/findAuthorQueryHandler';
 import { FindAuthorsQueryHandler } from '../../../application/queryHandlers/findAuthorsQueryHandler/findAuthorsQueryHandler';
-import { AuthorNotFoundError } from '../../../application/errors/authorNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class AuthorHttpController implements HttpController {
@@ -219,7 +219,7 @@ export class AuthorHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindAuthorsResponseOkBody>> {
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const filters = filter
       ? FilterDataParser.parse({

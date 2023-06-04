@@ -42,13 +42,13 @@ import { PaginationDataBuilder } from '../../../../../../common/paginationDataBu
 import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
-import { CustomerIdNotProvidedError } from '../../../../addressModule/infrastructure/errors/customerIdNotProvidedError';
+import { CustomerIdNotProvidedError } from '../../../../addressModule/application/errors/customerIdNotProvidedError';
 import { CreateCategoryCommandHandler } from '../../../application/commandHandlers/createCategoryCommandHandler/createCategoryCommandHandler';
 import { DeleteCategoryCommandHandler } from '../../../application/commandHandlers/deleteCategoryCommandHandler/deleteCategoryCommandHandler';
-import { FindCategoriesQueryHandler } from '../../../application/queryHandlers/findCategoriesQueryHandler/findCategoriesQueryHandler';
-import { FindCategoryQueryHandler } from '../../../application/queryHandlers/findCategoryQueryHandler/findCategoryQueryHandler';
 import { CategoryAlreadyExistsError } from '../../../application/errors/categoryAlreadyExistsError';
 import { CategoryNotFoundError } from '../../../application/errors/categoryNotFoundError';
+import { FindCategoriesQueryHandler } from '../../../application/queryHandlers/findCategoriesQueryHandler/findCategoriesQueryHandler';
+import { FindCategoryQueryHandler } from '../../../application/queryHandlers/findCategoryQueryHandler/findCategoryQueryHandler';
 import { symbols } from '../../../symbols';
 
 export class CategoryHttpController implements HttpController {
@@ -194,7 +194,7 @@ export class CategoryHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindCategoriesResponseOkBody>> {
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const filters = filter
       ? FilterDataParser.parse({

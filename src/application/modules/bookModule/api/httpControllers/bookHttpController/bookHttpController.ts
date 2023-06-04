@@ -53,10 +53,10 @@ import { CreateBookCommandHandler } from '../../../application/commandHandlers/c
 import { CreateBookDraft } from '../../../application/commandHandlers/createBookCommandHandler/payloads/createBookDraft';
 import { DeleteBookCommandHandler } from '../../../application/commandHandlers/deleteBookCommandHandler/deleteBookCommandHandler';
 import { UpdateBookCommandHandler } from '../../../application/commandHandlers/updateBookCommandHandler/updateBookCommandHandler';
+import { BookNotFoundError } from '../../../application/errors/bookNotFoundError';
 import { FindBookQueryHandler } from '../../../application/queryHandlers/findBookQueryHandler/findBookQueryHandler';
 import { FindBooksQueryHandler } from '../../../application/queryHandlers/findBooksQueryHandler/findBooksQueryHandler';
 import { UpdateBookDraft } from '../../../application/repositories/bookRepository/payloads/updateBookDraft';
-import { BookNotFoundError } from '../../../application/errors/bookNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class BookHttpController implements HttpController {
@@ -227,7 +227,7 @@ export class BookHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindBooksResponseOkBody>> {
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const filters = filter
       ? FilterDataParser.parse({

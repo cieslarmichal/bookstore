@@ -3,8 +3,8 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const findWhishlistEntriesQueryParametersSchema = Schema.object({
-  page: Schema.number().optional(),
-  limit: Schema.number().optional(),
+  page: Schema.string().optional(),
+  limit: Schema.string().optional(),
 });
 
 export type FindWhishlistEntriesQueryParameters = SchemaType<typeof findWhishlistEntriesQueryParametersSchema>;

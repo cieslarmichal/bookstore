@@ -72,11 +72,11 @@ import { CreateCartCommandHandler } from '../../../application/commandHandlers/c
 import { DeleteCartCommandHandler } from '../../../application/commandHandlers/deleteCartCommandHandler/deleteCartCommandHandler';
 import { RemoveLineItemCommandHandler } from '../../../application/commandHandlers/removeLineItemCommandHandler/removeLineItemCommandHandler';
 import { UpdateCartCommandHandler } from '../../../application/commandHandlers/updateCartCommandHandler/updateCartCommandHandler';
-import { FindCartQueryHandler } from '../../../application/queryHandlers/findCartQueryHandler/findCartQueryHandler';
-import { FindCartsQueryHandler } from '../../../application/queryHandlers/findCartsQueryHandler/findCartsQueryHandler';
 import { CartNotFoundError } from '../../../application/errors/cartNotFoundError';
 import { CustomerFromAccessTokenNotMatchingCustomerFromCartError } from '../../../application/errors/customerFromAccessTokenNotMatchingCustomerFromCartError';
 import { UserIsNotCustomerError } from '../../../application/errors/userIsNotCustomerError';
+import { FindCartQueryHandler } from '../../../application/queryHandlers/findCartQueryHandler/findCartQueryHandler';
+import { FindCartsQueryHandler } from '../../../application/queryHandlers/findCartsQueryHandler/findCartsQueryHandler';
 import { symbols } from '../../../symbols';
 
 export class CartHttpController implements HttpController {
@@ -348,7 +348,7 @@ export class CartHttpController implements HttpController {
 
     const { userId } = request.context;
 
-    const pagination = PaginationDataBuilder.build({ page: page ?? 0, limit: limit ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
