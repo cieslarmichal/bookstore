@@ -18,6 +18,14 @@ import {
   findCategoriesResponseOkBodySchema,
 } from './schemas/findCategoriesSchema';
 import {
+  FindCategoryBooksPathParameters,
+  FindCategoryBooksQueryParameters,
+  FindCategoryBooksResponseOkBody,
+  findCategoryBooksPathParametersSchema,
+  findCategoryBooksQueryParametersSchema,
+  findCategoryBooksResponseOkBodySchema,
+} from './schemas/findCategoryBooksSchema';
+import {
   FindCategoryPathParameters,
   FindCategoryResponseOkBody,
   findCategoryPathParametersSchema,
@@ -43,6 +51,8 @@ import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerIdNotProvidedError } from '../../../../addressModule/application/errors/customerIdNotProvidedError';
+import { FindBooksQueryHandler } from '../../../../bookModule/application/queryHandlers/findBooksQueryHandler/findBooksQueryHandler';
+import { bookSymbols } from '../../../../bookModule/symbols';
 import { CreateCategoryCommandHandler } from '../../../application/commandHandlers/createCategoryCommandHandler/createCategoryCommandHandler';
 import { DeleteCategoryCommandHandler } from '../../../application/commandHandlers/deleteCategoryCommandHandler/deleteCategoryCommandHandler';
 import { CategoryAlreadyExistsError } from '../../../application/errors/categoryAlreadyExistsError';
@@ -65,6 +75,8 @@ export class CategoryHttpController implements HttpController {
     private readonly findCategoriesQueryHandler: FindCategoriesQueryHandler,
     @Inject(symbols.findCategoryQueryHandler)
     private readonly findCategoryQueryHandler: FindCategoryQueryHandler,
+    @Inject(bookSymbols.findBooksQueryHandler)
+    private readonly findBooksQueryHandler: FindBooksQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -97,6 +109,23 @@ export class CategoryHttpController implements HttpController {
           response: {
             [HttpStatusCode.ok]: {
               schema: findCategoriesResponseOkBodySchema,
+            },
+          },
+        },
+        authorizationType: AuthorizationType.bearerToken,
+      }),
+      new HttpRoute({
+        method: HttpMethodName.get,
+        path: ':id/books',
+        handler: this.findCategoryBooks.bind(this),
+        schema: {
+          request: {
+            queryParams: findCategoryBooksQueryParametersSchema,
+            pathParams: findCategoryBooksPathParametersSchema,
+          },
+          response: {
+            [HttpStatusCode.ok]: {
+              schema: findCategoryBooksResponseOkBodySchema,
             },
           },
         },
@@ -214,6 +243,35 @@ export class CategoryHttpController implements HttpController {
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: categories } };
+  }
+
+  private async findCategoryBooks(
+    request: HttpRequest<undefined, FindCategoryBooksQueryParameters, FindCategoryBooksPathParameters>,
+  ): Promise<HttpOkResponse<FindCategoryBooksResponseOkBody>> {
+    const { id } = request.pathParams;
+
+    const { filter, limit, page } = request.queryParams;
+
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+
+    const filters = filter
+      ? FilterDataParser.parse({
+          jsonData: filter as string,
+          supportedFieldsFilters: findCategoriesFilters,
+        })
+      : [];
+
+    if (!filters.length) {
+      throw new CustomerIdNotProvidedError();
+    }
+
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
+    const { books } = await unitOfWork.runInTransaction(async () => {
+      return this.findBooksQueryHandler.execute({ unitOfWork, filters, pagination, categoryId: id });
+    });
+
+    return { statusCode: HttpStatusCode.ok, body: { data: books } };
   }
 
   private async deleteCategory(
