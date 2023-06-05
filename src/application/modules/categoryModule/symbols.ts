@@ -11,4 +11,5 @@ export const symbols = {
 export const categorySymbols = {
   categoryRepositoryFactory: symbols.categoryRepositoryFactory,
   categoryHttpController: symbols.categoryHttpController,
+  findCategoriesQueryHandler: symbols.findCategoriesQueryHandler,
 };

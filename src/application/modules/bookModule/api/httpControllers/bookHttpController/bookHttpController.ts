@@ -18,6 +18,13 @@ import {
   findBookAuthorsResponseOkBodySchema,
 } from './schemas/findBookAuthorsSchema';
 import {
+  FindBookCategoriesPathParameters,
+  FindBookCategoriesQueryParameters,
+  FindBookCategoriesResponseOkBody,
+  findBookCategoriesPathParametersSchema,
+  findBookCategoriesResponseOkBodySchema,
+} from './schemas/findBookCategoriesSchema';
+import {
   FindBookPathParameters,
   FindBookResponseOkBody,
   findBookPathParametersSchema,
@@ -58,6 +65,8 @@ import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/u
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { FindAuthorsByBookIdQueryHandler } from '../../../../authorModule/application/queryHandlers/findAuthorsByBookIdQueryHandler/findAuthorsByBookIdQueryHandler';
 import { authorSymbols } from '../../../../authorModule/symbols';
+import { FindCategoriesQueryHandler } from '../../../../categoryModule/application/queryHandlers/findCategoriesQueryHandler/findCategoriesQueryHandler';
+import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CreateBookCommandHandler } from '../../../application/commandHandlers/createBookCommandHandler/createBookCommandHandler';
 import { CreateBookDraft } from '../../../application/commandHandlers/createBookCommandHandler/payloads/createBookDraft';
 import { DeleteBookCommandHandler } from '../../../application/commandHandlers/deleteBookCommandHandler/deleteBookCommandHandler';
@@ -86,6 +95,8 @@ export class BookHttpController implements HttpController {
     private readonly findBooksQueryHandler: FindBooksQueryHandler,
     @Inject(authorSymbols.findAuthorsByBookIdQueryHandler)
     private readonly findAuthorsByBookIdQueryHandler: FindAuthorsByBookIdQueryHandler,
+    @Inject(categorySymbols.findCategoriesQueryHandler)
+    private readonly findCategoriesQueryHandler: FindCategoriesQueryHandler,
   ) {}
 
   public getHttpRoutes(): HttpRoute[] {
@@ -132,6 +143,23 @@ export class BookHttpController implements HttpController {
           response: {
             [HttpStatusCode.ok]: {
               schema: findBookAuthorsResponseOkBodySchema,
+            },
+          },
+        },
+        authorizationType: AuthorizationType.bearerToken,
+      }),
+      new HttpRoute({
+        method: HttpMethodName.get,
+        path: ':id/categories',
+        handler: this.findBookCategories.bind(this),
+        schema: {
+          request: {
+            queryParams: findBookCategoriesPathParametersSchema,
+            pathParams: findBookCategoriesPathParametersSchema,
+          },
+          response: {
+            [HttpStatusCode.ok]: {
+              schema: findBookCategoriesResponseOkBodySchema,
             },
           },
         },
@@ -296,6 +324,31 @@ export class BookHttpController implements HttpController {
     });
 
     return { statusCode: HttpStatusCode.ok, body: { data: authors } };
+  }
+
+  private async findBookCategories(
+    request: HttpRequest<undefined, FindBookCategoriesQueryParameters, FindBookCategoriesPathParameters>,
+  ): Promise<HttpOkResponse<FindBookCategoriesResponseOkBody>> {
+    const { id } = request.pathParams;
+
+    const { filter, limit, page } = request.queryParams;
+
+    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+
+    const filters = filter
+      ? FilterDataParser.parse({
+          jsonData: filter as string,
+          supportedFieldsFilters: findBooksFilters,
+        })
+      : [];
+
+    const unitOfWork = await this.unitOfWorkFactory.create();
+
+    const { categories } = await unitOfWork.runInTransaction(async () => {
+      return this.findCategoriesQueryHandler.execute({ unitOfWork, bookId: id, filters, pagination });
+    });
+
+    return { statusCode: HttpStatusCode.ok, body: { data: categories } };
   }
 
   private async updateBook(
