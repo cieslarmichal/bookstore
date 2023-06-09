@@ -12,9 +12,9 @@ import { CustomerEntityTestFactory } from '../../../../customerModule/tests/fact
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { userSymbols } from '../../../../userModule/symbols';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { AddressNotFoundError } from '../../../infrastructure/errors/addressNotFoundError';
 import { symbols } from '../../../symbols';
 import { AddressEntityTestFactory } from '../../../tests/factories/addressEntityTestFactory/addressEntityTestFactory';
+import { AddressNotFoundError } from '../../errors/addressNotFoundError';
 import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory';
 
 describe('DeleteAddressCommandHandler', () => {

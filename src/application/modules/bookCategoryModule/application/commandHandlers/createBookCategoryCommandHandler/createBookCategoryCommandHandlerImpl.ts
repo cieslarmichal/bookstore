@@ -12,14 +12,14 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { BookService } from '../../../../bookModule/application/services/bookService/bookService';
 import { BookNotFoundError } from '../../../../bookModule/application/errors/bookNotFoundError';
+import { FindBookQueryHandler } from '../../../../bookModule/application/queryHandlers/findBookQueryHandler/findBookQueryHandler';
 import { bookSymbols } from '../../../../bookModule/symbols';
-import { CategoryService } from '../../../../categoryModule/application/services/categoryService/categoryService';
-import { categorySymbols } from '../../../../categoryModule/symbols';
 import { CategoryNotFoundError } from '../../../../categoryModule/application/errors/categoryNotFoundError';
-import { BookCategoryAlreadyExistsError } from '../../errors/bookCategoryAlreadyExistsError';
+import { FindCategoryQueryHandler } from '../../../../categoryModule/application/queryHandlers/findCategoryQueryHandler/findCategoryQueryHandler';
+import { categorySymbols } from '../../../../categoryModule/symbols';
 import { bookCategorySymbols } from '../../../symbols';
+import { BookCategoryAlreadyExistsError } from '../../errors/bookCategoryAlreadyExistsError';
 import { BookCategoryRepositoryFactory } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 
 @Injectable()
@@ -27,10 +27,10 @@ export class CreateBookCategoryCommandHandlerImpl implements CreateBookCategoryC
   public constructor(
     @Inject(bookCategorySymbols.bookCategoryRepositoryFactory)
     private readonly bookCategoryRepositoryFactory: BookCategoryRepositoryFactory,
-    @Inject(categorySymbols.categoryService)
-    private readonly categoryService: CategoryService,
-    @Inject(bookSymbols.bookService)
-    private readonly bookService: BookService,
+    @Inject(categorySymbols.findCategoryQueryHandler)
+    private readonly findCategoryQueryHandler: FindCategoryQueryHandler,
+    @Inject(bookSymbols.findBookQueryHandler)
+    private readonly findBookQueryHandler: FindBookQueryHandler,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
@@ -45,13 +45,13 @@ export class CreateBookCategoryCommandHandlerImpl implements CreateBookCategoryC
 
     this.loggerService.debug({ message: 'Creating bookCategory...', context: { bookId, categoryId } });
 
-    const book = await this.bookService.findBook({ unitOfWork, bookId });
+    const { book } = await this.findBookQueryHandler.execute({ unitOfWork, bookId });
 
     if (!book) {
       throw new BookNotFoundError({ id: bookId });
     }
 
-    const category = await this.categoryService.findCategory({ unitOfWork, categoryId });
+    const { category } = await this.findCategoryQueryHandler.execute({ unitOfWork, categoryId });
 
     if (!category) {
       throw new CategoryNotFoundError({ id: categoryId });

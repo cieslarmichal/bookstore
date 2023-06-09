@@ -4,7 +4,7 @@ import { CartValidatorServiceImpl } from './cartValidatorServiceImpl';
 import { DummyFactory } from '../../../../../../common/tests/dummyFactory';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UnitOfWork } from '../../../../../../libs/unitOfWork/unitOfWork';
-import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
+import { FindInventoryQueryHandler } from '../../../../inventoryModule/application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { InventoryTestFactory } from '../../../../inventoryModule/tests/factories/inventoryTestFactory/inventoryTestFactory';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { BillingAddressNotProvidedError } from '../../../domain/errors/billingAddressNotProvidedError';
@@ -19,7 +19,7 @@ import { CartTestFactory } from '../../../tests/factories/cartTestFactory/cartTe
 import { LineItemTestFactory } from '../../../tests/factories/lineItemTestFactory/lineItemTestFactory';
 
 describe('CartValidatorServiceImpl', () => {
-  let inventoryService: InventoryService;
+  let findInventoryQueryHandler: FindInventoryQueryHandler;
   let loggerService: LoggerService;
   let unitOfWork: UnitOfWork;
   let cartValidatorServiceImpl: CartValidatorServiceImpl;
@@ -29,10 +29,10 @@ describe('CartValidatorServiceImpl', () => {
   const cartTestFactory = new CartTestFactory(lineItemTestFactory);
 
   beforeAll(async () => {
-    inventoryService = new DummyFactory().create();
+    findInventoryQueryHandler = new DummyFactory().create();
     loggerService = new DummyFactory().create();
     unitOfWork = new DummyFactory().create();
-    cartValidatorServiceImpl = new CartValidatorServiceImpl(inventoryService, loggerService);
+    cartValidatorServiceImpl = new CartValidatorServiceImpl(findInventoryQueryHandler, loggerService);
   });
 
   it('should throw an error when order creator id does not match customer id from cart', async () => {
@@ -131,8 +131,8 @@ describe('CartValidatorServiceImpl', () => {
 
     const inventory = inventoryTestFactory.create({ quantity: 3 });
 
-    jest.spyOn(inventoryService, 'findInventory').mockImplementation(async () => {
-      return inventory;
+    jest.spyOn(findInventoryQueryHandler, 'execute').mockImplementation(async () => {
+      return { inventory };
     });
 
     try {
@@ -152,8 +152,8 @@ describe('CartValidatorServiceImpl', () => {
 
     const inventory = inventoryTestFactory.create({ quantity: 6 });
 
-    jest.spyOn(inventoryService, 'findInventory').mockImplementation(async () => {
-      return inventory;
+    jest.spyOn(findInventoryQueryHandler, 'execute').mockImplementation(async () => {
+      return { inventory };
     });
 
     expect(async () => {

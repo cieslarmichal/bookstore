@@ -13,7 +13,6 @@ export class UserMapperImpl implements UserMapper {
       email: email || undefined,
       phoneNumber: phoneNumber || undefined,
       password,
-      role,
     });
   }
 }

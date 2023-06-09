@@ -1,10 +1,10 @@
 import { CartValidatorService } from './cartValidatorService';
 import { ValidatePayload, validatePayloadSchema } from './payloads/validatePayload';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
-import { loggerModuleSymbols } from '../../../../../libs/logger/loggerModuleSymbols';
-import { LoggerService } from '../../../../../libs/logger/services/loggerService/loggerService';
-import { InventoryService } from '../../../../inventoryModule/application/services/inventoryService/inventoryService';
+import { FindInventoryQueryHandler } from '../../../../inventoryModule/application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { BillingAddressNotProvidedError } from '../../../domain/errors/billingAddressNotProvidedError';
@@ -19,8 +19,8 @@ import { ShippingAddressNotProvidedError } from '../../../domain/errors/shipping
 @Injectable()
 export class CartValidatorServiceImpl implements CartValidatorService {
   public constructor(
-    @Inject(inventorySymbols.inventoryService)
-    private readonly inventoryService: InventoryService,
+    @Inject(inventorySymbols.findInventoryQueryHandler)
+    private readonly findInventoryQueryHandler: FindInventoryQueryHandler,
     @Inject(loggerModuleSymbols.loggerService)
     private readonly loggerService: LoggerService,
   ) {}
@@ -86,7 +86,7 @@ export class CartValidatorServiceImpl implements CartValidatorService {
 
     await Promise.all(
       lineItems.map(async (lineItem) => {
-        const inventory = await this.inventoryService.findInventory({ unitOfWork, bookId: lineItem.bookId });
+        const { inventory } = await this.findInventoryQueryHandler.execute({ unitOfWork, bookId: lineItem.bookId });
 
         if (inventory.quantity < lineItem.quantity) {
           throw new LineItemOutOfInventoryError({

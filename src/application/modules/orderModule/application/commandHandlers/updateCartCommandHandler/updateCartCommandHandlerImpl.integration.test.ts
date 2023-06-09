@@ -6,32 +6,24 @@ import { UpdateCartCommandHandler } from './updateCartCommandHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookSymbols } from '../../../../bookModule/symbols';
 import { CustomerRepositoryFactory } from '../../../../customerModule/application/repositories/customerRepository/customerRepositoryFactory';
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
-import { InventoryRepositoryFactory } from '../../../../inventoryModule/application/repositories/inventoryRepository/inventoryRepositoryFactory';
-import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
-import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
-import { LineItemRepositoryFactory } from '../../repositories/lineItemRepository/lineItemRepositoryFactory';
 
 describe('UpdateCartCommandHandler', () => {
   let updateCartCommandHandler: UpdateCartCommandHandler;
   let cartRepositoryFactory: CartRepositoryFactory;
   let userRepositoryFactory: UserRepositoryFactory;
   let customerRepositoryFactory: CustomerRepositoryFactory;
-  let bookRepositoryFactory: BookRepositoryFactory;
-  let inventoryRepositoryFactory: InventoryRepositoryFactory;
-  let lineItemRepositoryFactory: LineItemRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
   let dataSource: DataSource;
 
@@ -46,9 +38,6 @@ describe('UpdateCartCommandHandler', () => {
     cartRepositoryFactory = container.get<CartRepositoryFactory>(symbols.cartRepositoryFactory);
     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
     userRepositoryFactory = container.get<UserRepositoryFactory>(userSymbols.userRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
-    inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
-    lineItemRepositoryFactory = container.get<LineItemRepositoryFactory>(symbols.lineItemRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();

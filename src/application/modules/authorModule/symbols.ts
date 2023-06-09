@@ -14,4 +14,5 @@ export const authorSymbols = {
   authorHttpController: symbols.authorHttpController,
   authorRepositoryFactory: symbols.authorRepositoryFactory,
   findAuthorsByBookIdQueryHandler: symbols.findAuthorsByBookIdQueryHandler,
+  findAuthorQueryHandler: symbols.findAuthorQueryHandler,
 };

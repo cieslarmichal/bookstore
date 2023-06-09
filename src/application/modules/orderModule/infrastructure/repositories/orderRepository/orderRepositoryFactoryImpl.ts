@@ -1,16 +1,16 @@
 import { EntityManager } from 'typeorm';
 
 import { OrderMapper } from './orderMapper/orderMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { OrderRepository } from '../../../application/repositories/orderRepository/orderRepository';
 import { OrderRepositoryFactory } from '../../../application/repositories/orderRepository/orderRepositoryFactory';
 import { OrderRepositoryImpl } from '../../../infrastructure/repositories/orderRepository/orderRepositoryImpl';
-import { orderSymbols } from '../../../symbols';
+import { symbols } from '../../../symbols';
 
 @Injectable()
 export class OrderRepositoryFactoryImpl implements OrderRepositoryFactory {
   public constructor(
-    @Inject(orderSymbols.orderMapper)
+    @Inject(symbols.orderMapper)
     private readonly orderMapper: OrderMapper,
   ) {}
 

@@ -6,17 +6,14 @@ import { UpdateBookCommandHandler } from './updateBookCommandHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
-import { authorSymbols } from '../../../../authorModule/symbols';
-import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { symbols } from '../../../symbols';
 import { BookEntityTestFactory } from '../../../tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { BookRepositoryFactory } from '../../repositories/bookRepository/bookRepositoryFactory';
 
 describe('UpdateBookCommandHandler', () => {
   let updateBookCommandHandler: UpdateBookCommandHandler;
   let bookRepositoryFactory: BookRepositoryFactory;
-  let authorRepositoryFactory: AuthorRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
   let dataSource: DataSource;
 
@@ -27,7 +24,6 @@ describe('UpdateBookCommandHandler', () => {
 
     updateBookCommandHandler = container.get<UpdateBookCommandHandler>(symbols.updateBookCommandHandler);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(symbols.bookRepositoryFactory);
-    authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();

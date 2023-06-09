@@ -6,20 +6,14 @@ import { CreateCategoryCommandHandler } from './createCategoryCommandHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { BookCategoryRepositoryFactory } from '../../../../bookCategoryModule/application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
-import { bookCategorySymbols } from '../../../../bookCategoryModule/symbols';
-import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookSymbols } from '../../../../bookModule/symbols';
-import { CategoryAlreadyExistsError } from '../../errors/categoryAlreadyExistsError';
 import { symbols } from '../../../symbols';
 import { CategoryEntityTestFactory } from '../../../tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
+import { CategoryAlreadyExistsError } from '../../errors/categoryAlreadyExistsError';
 import { CategoryRepositoryFactory } from '../../repositories/categoryRepository/categoryRepositoryFactory';
 
 describe('CreateCategoryCommandHandler', () => {
   let createCategoryCommandHandler: CreateCategoryCommandHandler;
   let categoryRepositoryFactory: CategoryRepositoryFactory;
-  let bookRepositoryFactory: BookRepositoryFactory;
-  let bookCategoryRepositoryFactory: BookCategoryRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
   let dataSource: DataSource;
 
@@ -30,10 +24,6 @@ describe('CreateCategoryCommandHandler', () => {
 
     createCategoryCommandHandler = container.get<CreateCategoryCommandHandler>(symbols.createCategoryCommandHandler);
     categoryRepositoryFactory = container.get<CategoryRepositoryFactory>(symbols.categoryRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
-    bookCategoryRepositoryFactory = container.get<BookCategoryRepositoryFactory>(
-      bookCategorySymbols.bookCategoryRepositoryFactory,
-    );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();

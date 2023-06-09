@@ -9,10 +9,6 @@ import { FilterName } from '../../../../../../common/types/filterName';
 import { FilterSymbol } from '../../../../../../common/types/filterSymbol';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { AuthorBookRepositoryFactory } from '../../../../authorBookModule/application/repositories/authorBookRepository/authorBookRepositoryFactory';
-import { authorBookSymbols } from '../../../../authorBookModule/symbols';
-import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-import { bookSymbols } from '../../../../bookModule/symbols';
 import { symbols } from '../../../symbols';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { AuthorRepositoryFactory } from '../../repositories/authorRepository/authorRepositoryFactory';
@@ -20,8 +16,6 @@ import { AuthorRepositoryFactory } from '../../repositories/authorRepository/aut
 describe('FindAuthorsQueryHandler', () => {
   let findAuthorsQueryHandler: FindAuthorsQueryHandler;
   let authorRepositoryFactory: AuthorRepositoryFactory;
-  let bookRepositoryFactory: BookRepositoryFactory;
-  let authorBookRepositoryFactory: AuthorBookRepositoryFactory;
   let testTransactionRunner: TestTransactionInternalRunner;
   let dataSource: DataSource;
 
@@ -32,10 +26,6 @@ describe('FindAuthorsQueryHandler', () => {
 
     findAuthorsQueryHandler = container.get<FindAuthorsQueryHandler>(symbols.findAuthorsQueryHandler);
     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(symbols.authorRepositoryFactory);
-    bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
-    authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
-      authorBookSymbols.authorBookRepositoryFactory,
-    );
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 
     await dataSource.initialize();

@@ -4,6 +4,7 @@ import { AddressEntity } from './addressEntity/addressEntity';
 import { AddressMapper } from './addressMapper/addressMapper';
 import { AddressQueryBuilder } from './addressQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { AddressNotFoundError } from '../../../application/errors/addressNotFoundError';
 import { AddressRepository } from '../../../application/repositories/addressRepository/addressRepository';
 import {
   CreateAddressPayload,
@@ -26,7 +27,6 @@ import {
   updateAddressPayloadSchema,
 } from '../../../application/repositories/addressRepository/payloads/updateAddressPayload';
 import { Address } from '../../../domain/entities/address/address';
-import { AddressNotFoundError } from '../../errors/addressNotFoundError';
 
 export class AddressRepositoryImpl implements AddressRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly addressMapper: AddressMapper) {}
@@ -107,7 +107,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     const addressEntity = await this.findAddress({ id });
 
     if (!addressEntity) {
-      throw new AddressNotFoundError({ id });
+      throw new AddressNotFoundError({ addressId: id });
     }
 
     let addressEntityInput: Partial<AddressEntity> = {};
@@ -161,7 +161,7 @@ export class AddressRepositoryImpl implements AddressRepository {
     const addressEntity = await this.findAddress({ id });
 
     if (!addressEntity) {
-      throw new AddressNotFoundError({ id });
+      throw new AddressNotFoundError({ addressId: id });
     }
 
     await this.entityManager.delete(AddressEntity, { id });

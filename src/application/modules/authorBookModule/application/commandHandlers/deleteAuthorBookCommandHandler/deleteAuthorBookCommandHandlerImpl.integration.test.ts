@@ -7,14 +7,14 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
-import { authorModuleSymbols } from '../../../../authorModule/symbols';
+import { authorSymbols } from '../../../../authorModule/symbols';
 import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { AuthorBookNotFoundError } from '../../errors/authorBookNotFoundError';
 import { authorBookSymbols, symbols } from '../../../symbols';
 import { AuthorBookEntityTestFactory } from '../../../tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
+import { AuthorBookNotFoundError } from '../../errors/authorBookNotFoundError';
 import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
 
 describe('DeleteAuthorBookCommandHandler', () => {
@@ -38,7 +38,7 @@ describe('DeleteAuthorBookCommandHandler', () => {
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(
       authorBookSymbols.authorBookRepositoryFactory,
     );
-    authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
+    authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 

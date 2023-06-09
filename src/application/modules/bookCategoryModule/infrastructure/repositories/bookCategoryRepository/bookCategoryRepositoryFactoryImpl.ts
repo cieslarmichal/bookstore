@@ -1,16 +1,16 @@
 import { EntityManager } from 'typeorm';
 
 import { BookCategoryMapper } from './bookCategoryMapper/bookCategoryMapper';
-import { Injectable, Inject } from '../../../../../libs/dependencyInjection/decorators';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { BookCategoryRepository } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepository';
 import { BookCategoryRepositoryFactory } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
-import { bookCategorySymbols } from '../../../symbols';
+import { symbols } from '../../../symbols';
 import { BookCategoryRepositoryImpl } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryImpl';
 
 @Injectable()
 export class BookCategoryRepositoryFactoryImpl implements BookCategoryRepositoryFactory {
   public constructor(
-    @Inject(bookCategorySymbols.bookCategoryMapper)
+    @Inject(symbols.bookCategoryMapper)
     private readonly bookCategoryMapper: BookCategoryMapper,
   ) {}
 

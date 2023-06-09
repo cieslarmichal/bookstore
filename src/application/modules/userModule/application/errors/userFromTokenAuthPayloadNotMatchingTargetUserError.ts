@@ -1,5 +1,5 @@
 import { ApplicationError } from '../../../../../common/errors/applicationError';
-import { AccessTokenData } from '../../../../common/types/accessTokenData';
+import { AccessTokenData } from '../../../../httpRouter/authorizers/bearerTokenAuthorizer/bearerTokenAuthorizer';
 
 interface Context {
   readonly userId: string;

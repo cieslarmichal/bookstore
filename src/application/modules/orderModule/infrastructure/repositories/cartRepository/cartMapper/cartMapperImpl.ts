@@ -1,14 +1,14 @@
 import { CartMapper } from './cartMapper';
-import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { Injectable, Inject } from '../../../../../../../libs/dependencyInjection/decorators';
 import { Cart } from '../../../../../orderModule/domain/entities/cart/cart';
-import { orderSymbols } from '../../../../symbols';
+import { symbols } from '../../../../symbols';
 import { LineItemMapper } from '../../lineItemRepository/lineItemMapper/lineItemMapper';
 import { CartEntity } from '../cartEntity/cartEntity';
 
 @Injectable()
 export class CartMapperImpl implements CartMapper {
   public constructor(
-    @Inject(orderSymbols.lineItemMapper)
+    @Inject(symbols.lineItemMapper)
     private readonly lineItemMapper: LineItemMapper,
   ) {}
 

@@ -3,6 +3,7 @@ import { EntityManager } from 'typeorm';
 import { WhishlistEntryEntity } from './whishlistEntryEntity/whishlistEntryEntity';
 import { WhishlistEntryMapper } from './whishlistEntryMapper/whishlistEntryMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { WhishlistEntryNotFoundError } from '../../../application/errors/whishlistEntryNotFoundError';
 import {
   CreateWhishlistEntryPayload,
   createWhishlistEntryPayloadSchema,
@@ -21,7 +22,6 @@ import {
 } from '../../../application/repositories/whishlistEntryRepository/payloads/findWhishlistEntryPayload';
 import { WhishlistEntryRepository } from '../../../application/repositories/whishlistEntryRepository/whishlistEntryRepository';
 import { WhishlistEntry } from '../../../domain/entities/whishlistEntry/whishlistEntry';
-import { WhishlistEntryNotFoundError } from '../../../application/errors/whishlistEntryNotFoundError';
 
 export class WhishlistEntryRepositoryImpl implements WhishlistEntryRepository {
   public constructor(

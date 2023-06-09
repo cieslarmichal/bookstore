@@ -7,13 +7,13 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { AuthorRepositoryFactory } from '../../../../authorModule/application/repositories/authorRepository/authorRepositoryFactory';
-import { authorModuleSymbols } from '../../../../authorModule/symbols';
+import { authorSymbols } from '../../../../authorModule/symbols';
 import { AuthorEntityTestFactory } from '../../../../authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
 import { BookRepositoryFactory } from '../../../../bookModule/application/repositories/bookRepository/bookRepositoryFactory';
 import { bookSymbols } from '../../../../bookModule/symbols';
 import { BookEntityTestFactory } from '../../../../bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-import { AuthorBookAlreadyExistsError } from '../../errors/authorBookAlreadyExistsError';
 import { symbols } from '../../../symbols';
+import { AuthorBookAlreadyExistsError } from '../../errors/authorBookAlreadyExistsError';
 import { AuthorBookRepositoryFactory } from '../../repositories/authorBookRepository/authorBookRepositoryFactory';
 
 describe('CreateAuthorBookCommandHandler', () => {
@@ -34,7 +34,7 @@ describe('CreateAuthorBookCommandHandler', () => {
       symbols.createAuthorBookCommandHandler,
     );
     authorBookRepositoryFactory = container.get<AuthorBookRepositoryFactory>(symbols.authorBookRepositoryFactory);
-    authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
+    authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorSymbols.authorRepositoryFactory);
     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookSymbols.bookRepositoryFactory);
     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
 

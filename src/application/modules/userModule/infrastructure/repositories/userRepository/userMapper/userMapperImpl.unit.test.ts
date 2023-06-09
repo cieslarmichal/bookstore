@@ -24,7 +24,6 @@ describe('UserMapperImpl', () => {
       email: userEntity.email,
       phoneNumber: userEntity.phoneNumber,
       password: userEntity.password,
-      role: userEntity.role,
     });
   });
 });
