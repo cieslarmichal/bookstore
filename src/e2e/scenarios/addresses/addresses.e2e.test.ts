@@ -1,669 +1,468 @@
-// import 'reflect-metadata';
-
-// import request from 'supertest';
-// import { DataSource } from 'typeorm';
-
-// import { HttpStatusCode } from '../../../common/http/contracts/httpStatusCode';
-// import { TestTransactionExternalRunner } from '../../../common/tests/testTransactionExternalRunner';
-// import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-// import { LoggerModule } from '../../../libs/logger/loggerModule';
-// import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-// import { PostgresModule } from '../../../libs/postgres/postgresModule';
-// import { postgresModuleSymbols } from '../../../libs/postgres/postgresModuleSymbols';
-// import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-// import { UnitOfWorkModule } from '../../../libs/unitOfWork/unitOfWorkModule';
-// import { HttpServer } from '../../../server/httpServer';
-// import { HttpServerConfigTestFactory } from '../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-// import { Application } from '../../application';
-// import { AddressModule } from '../../domain/address/addressModule';
-// import { addressModuleSymbols } from '../../domain/address/addressModuleSymbols';
-// import { AddressEntity } from '../../domain/address/contracts/addressEntity';
-// import { AddressRepositoryFactory } from '../../domain/address/contracts/factories/addressRepositoryFactory/addressRepositoryFactory';
-// import { AddressEntityTestFactory } from '../../domain/address/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
-// import { AuthorModule } from '../../domain/author/authorModule';
-// import { AuthorEntity } from '../../domain/author/contracts/authorEntity';
-// import { AuthorBookModule } from '../../domain/authorBook/authorBookModule';
-// import { AuthorBookEntity } from '../../domain/authorBook/contracts/authorBookEntity';
-// import { BookModule } from '../../domain/book/bookModule';
-// import { BookEntity } from '../../domain/book/contracts/bookEntity';
-// import { BookCategoryModule } from '../../domain/bookCategory/bookCategoryModule';
-// import { BookCategoryEntity } from '../../domain/bookCategory/contracts/bookCategoryEntity';
-// import { CartModule } from '../../domain/cart/cartModule';
-// import { CartEntity } from '../../domain/cart/contracts/cartEntity';
-// import { CategoryModule } from '../../domain/category/categoryModule';
-// import { CategoryEntity } from '../../domain/category/contracts/categoryEntity';
-// import { CustomerEntity } from '../../domain/customer/contracts/customerEntity';
-// import { CustomerRepositoryFactory } from '../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
-// import { CustomerModule } from '../../domain/customer/customerModule';
-// import { customerSymbols } from '../../domain/customer/customerSymbols';
-// import { CustomerEntityTestFactory } from '../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
-// import { InventoryEntity } from '../../domain/inventory/contracts/inventoryEntity';
-// import { InventoryModule } from '../../domain/inventory/inventoryModule';
-// import { LineItemEntity } from '../../domain/lineItem/contracts/lineItemEntity';
-// import { LineItemModule } from '../../domain/lineItem/lineItemModule';
-// import { OrderEntity } from '../../domain/order/contracts/orderEntity';
-// import { OrderModule } from '../../domain/order/orderModule';
-// import { ReviewEntity } from '../../domain/review/contracts/reviewEntity';
-// import { ReviewModule } from '../../domain/review/reviewModule';
-// import { UserRepositoryFactory } from '../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-// import { TokenService } from '../../domain/user/contracts/services/tokenService/tokenService';
-// import { UserEntity } from '../../domain/user/contracts/userEntity';
-// import { UserEntityTestFactory } from '../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-// import { UserModuleConfigTestFactory } from '../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-// import { UserModule } from '../../domain/user/userModule';
-// import { userModuleSymbols } from '../../domain/user/userModuleSymbols';
-// import { WhishlistEntryEntity } from '../../domain/whishlist/contracts/whishlistEntryEntity';
-// import { WhishlistModule } from '../../domain/whishlist/whishlistModule';
-// import { IntegrationsModule } from '../../integrations/integrationsModule';
-
-// const baseUrl = '/addresses';
-
-// describe(`AddressController (${baseUrl})`, () => {
-//   describe('Create address', () => {
-//     it('returns bad request when not all required properties in body are provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({});
-
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
-
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-//           addressEntityTestFactory.create();
-
-//         const response = await request(server.instance).post(baseUrl).send({
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
+import 'reflect-metadata';
+
+import { FindAddressesResponseOkBody } from '../../../application/modules/addressModule/api/httpControllers/addressHttpController/schemas/findAddressesSchema';
+import { AddressEntityTestFactory } from '../../../application/modules/addressModule/tests/factories/addressEntityTestFactory/addressEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AddressService } from '../../services/addressService/addressService';
+import { AuthService } from '../../services/authService/authService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { UserService } from '../../services/userService/userService';
+
+const baseUrl = '/addresses';
+
+describe(`AddressController (${baseUrl})`, () => {
+  const userEntityTestFactory = new UserEntityTestFactory();
+  const addressEntityTestFactory = new AddressEntityTestFactory();
+
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
+
+  const userService = new UserService(httpService);
+  const customerService = new CustomerService(httpService);
+  const authService = new AuthService(httpService);
+  const addressService = new AddressService(httpService);
+
+  describe('Create address', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {},
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     it('accepts a request and returns created when all required body properties are provided', async () => {
-//       expect.assertions(1);
+      const { email, password } = userEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const { customer } = await customerService.createCustomer({ userId: user.id });
+
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
+
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        body: {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+    it('accepts a request and returns created when all required body properties are provided', async () => {
+      expect.assertions(1);
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const { customer } = await customerService.createCustomer({ userId: user.id });
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//         const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-//           addressEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+      });
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             firstName,
-//             lastName,
-//             phoneNumber,
-//             country,
-//             state,
-//             city,
-//             zipCode,
-//             streetAddress,
-//             customerId: customer.id,
-//           });
+      expect(response.statusCode).toBe(HttpStatusCode.created);
+    });
+  });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.created);
-//       });
-//     });
-//   });
+  describe('Find address', () => {
+    it('returns not found when address with given addressId does not exist', async () => {
+      expect.assertions(1);
 
-//   describe('Find address', () => {
-//     it('returns not found when address with given addressId does not exist', async () => {
-//       expect.assertions(1);
+      const { email, password } = userEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { id } = addressEntityTestFactory.create();
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const accessToken = tokenService.createToken({ userId });
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { id } = addressEntityTestFactory.create();
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      const { customer } = await customerService.createCustomer({ userId: user.id });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { address } = await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer.id,
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${address.id}`,
+        method: HttpMethodName.get,
+      });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+    it(`returns forbidden when user requests other customer's address`, async () => {
+      expect.assertions(1);
 
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
+      const { email: email1, password } = userEntityTestFactory.create();
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { email: email2 } = userEntityTestFactory.create();
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//         const {
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
+      const { user: user1 } = await userService.createUser({ email: email1 as string, password });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const { user: user2 } = await userService.createUser({ email: email2 as string, password });
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { customer: customer1 } = await customerService.createCustomer({ userId: user1.id });
 
-//         const address = await addressRepository.createOne({
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
+      await customerService.createCustomer({ userId: user2.id });
 
-//         const response = await request(server.instance).get(`${baseUrl}/${address.id}`);
+      const accessToken = await authService.getUserToken({ email: email2 as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { address } = await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer1.id,
+      });
 
-//     it(`returns forbidden when user requests other customer's address`, async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${address.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      expect(response.statusCode).toBe(HttpStatusCode.forbidden);
+    });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+    it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { customer } = await customerService.createCustomer({ userId: user.id });
 
-//         const { id: otherUserId } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { address } = await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer.id,
+      });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${address.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const {
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         const accessToken = tokenService.createToken({ userId: otherUserId });
+  describe('Find addresses', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+      });
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const address = await addressRepository.createOne({
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
+    it('returns addresses with filtering provided', async () => {
+      expect.assertions(2);
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${address.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { email: email1, password } = userEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.forbidden);
-//       });
-//     });
+      const { email: email2 } = userEntityTestFactory.create();
+
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
+
+      const { user: user1 } = await userService.createUser({ email: email1 as string, password });
+
+      const { user: user2 } = await userService.createUser({ email: email2 as string, password });
+
+      const { customer: customer1 } = await customerService.createCustomer({ userId: user1.id });
+
+      const { customer: customer2 } = await customerService.createCustomer({ userId: user2.id });
+
+      await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer1.id,
+      });
 
-//     it('accepts a request and returns ok when addressId is uuid and have corresponding address', async () => {
-//       expect.assertions(1);
+      await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer2.id,
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const accessToken = await authService.getUserToken({ email: email1 as string, password });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}?filter=["customerId||eq||${customer1.id}"]`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+      expect((response.body as FindAddressesResponseOkBody).data.length).toBe(1);
+    });
+  });
 
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
+  describe('Update address', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { id, streetAddress } = addressEntityTestFactory.create();
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.patch,
+        body: {
+          streetAddress,
+        },
+      });
 
-//         const {
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const accessToken = tokenService.createToken({ userId });
+    it('accepts a request and returns ok when all required body properties are provided', async () => {
+      expect.assertions(1);
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//         const address = await addressRepository.createOne({
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
+      const { streetAddress: updatedStreetAddress } = addressEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${address.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const { customer } = await customerService.createCustomer({ userId: user.id });
 
-//   describe('Find addresses', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const response = await request(server.instance).get(`${baseUrl}`);
+      const { address } = await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer.id,
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${address.id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          streetAddress: updatedStreetAddress,
+        },
+      });
 
-//     it('returns addresses with filtering provided', async () => {
-//       expect.assertions(2);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+  describe('Delete address', () => {
+    it('returns not found when address with given addressId does not exist', async () => {
+      expect.assertions(1);
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const { email, password } = userEntityTestFactory.create();
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { id: userId1, email: email1, password } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id: userId2, email: email2 } = userEntityTestFactory.create();
+      const { id } = addressEntityTestFactory.create();
 
-//         const { id: customerId1 } = customerEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const { id: customerId2 } = customerEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const {
-//           id: addressId1,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const { id: addressId2 } = addressEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId: userId1 });
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//         const user1 = await userRepository.createOne({ id: userId1, email: email1 as string, password });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const user2 = await userRepository.createOne({ id: userId2, email: email2 as string, password });
+      const { customer } = await customerService.createCustomer({ userId: user.id });
 
-//         const customer1 = await customerRepository.createOne({ id: customerId1, userId: user1.id });
+      const { address } = await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer.id,
+      });
 
-//         const customer2 = await customerRepository.createOne({ id: customerId2, userId: user2.id });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${address.id}`,
+        method: HttpMethodName.delete,
+      });
 
-//         await addressRepository.createOne({
-//           id: addressId1,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer1.id,
-//         });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         await addressRepository.createOne({
-//           id: addressId2,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer2.id,
-//         });
+    it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
+      expect.assertions(1);
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}?filter=["customerId||eq||${customer1.id}"]`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { email, password } = userEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//         expect(response.body.data.addresses.length).toBe(1);
-//       });
-//     });
-//   });
+      const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
+        addressEntityTestFactory.create();
 
-//   describe('Update address', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id, firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
-//           addressEntityTestFactory.create();
+      const { customer } = await customerService.createCustomer({ userId: user.id });
 
-//         const response = await request(server.instance).patch(`${baseUrl}/${id}`).send({
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { address } = await addressService.createAddress({
+        firstName,
+        lastName,
+        phoneNumber,
+        country,
+        state,
+        city,
+        zipCode,
+        streetAddress,
+        customerId: customer.id,
+      });
 
-//     it('accepts a request and returns ok when all required body properties are provided', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${address.id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const {
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
-
-//         const { streetAddress: updatedStreetAddress } = addressEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const address = await addressRepository.createOne({
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${address.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             streetAddress: updatedStreetAddress,
-//           });
-
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
-
-//   describe('Delete address', () => {
-//     it('returns not found when address with given addressId does not exist', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const { id } = addressEntityTestFactory.create();
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
-
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const {
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const address = await addressRepository.createOne({
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance).delete(`${baseUrl}/${address.id}`).send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts a request and returns no content when addressId is uuid and corresponds to existing address', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const addressRepository = addressRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const {
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//         } = addressEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const address = await addressRepository.createOne({
-//           id: addressId,
-//           firstName,
-//           lastName,
-//           phoneNumber,
-//           country,
-//           state,
-//           city,
-//           zipCode,
-//           streetAddress,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${address.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.noContent);
-//       });
-//     });
-//   });
-// });
+      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+    });
+  });
+});
