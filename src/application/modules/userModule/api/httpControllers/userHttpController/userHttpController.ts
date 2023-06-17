@@ -53,12 +53,12 @@ import { RegisterUserCommandHandler } from '../../../application/commandHandlers
 import { SetUserEmailCommandHandler } from '../../../application/commandHandlers/setUserEmailCommandHandler/setUserEmailCommandHandler';
 import { SetUserPasswordCommandHandler } from '../../../application/commandHandlers/setUserPasswordCommandHandler/setUserPasswordCommandHandler';
 import { SetUserPhoneNumberCommandHandler } from '../../../application/commandHandlers/setUserPhoneNumberCommandHandler/setUserPhoneNumberCommandHandler';
+import { UserAlreadyExistsError } from '../../../application/errors/userAlreadyExistsError';
+import { UserNotFoundError } from '../../../application/errors/userNotFoundError';
 import { FindUserQueryHandler } from '../../../application/queryHandlers/findUserQueryHandler/findUserQueryHandler';
 import { User } from '../../../domain/entities/user/user';
 import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetError';
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
-import { UserAlreadyExistsError } from '../../../application/errors/userAlreadyExistsError';
-import { UserNotFoundError } from '../../../application/errors/userNotFoundError';
 import { symbols } from '../../../symbols';
 
 export class UserHttpController implements HttpController {

@@ -16,7 +16,7 @@ export class HttpServiceImpl implements HttpService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  public async sendRequest(input: SendRequestPayload): Promise<HttpResponse> {
+  public async sendRequest<HttpResponseBody>(input: SendRequestPayload): Promise<HttpResponse<HttpResponseBody>> {
     const {
       endpoint,
       headers: requestHeaders,
@@ -56,7 +56,11 @@ export class HttpServiceImpl implements HttpService {
         context: { responseBody, statusCode: response.status },
       });
 
-      return { body: responseBody, statusCode: response.status };
+      if (!response.ok) {
+        return { body: responseBody, statusCode: response.status, isSuccess: false };
+      }
+
+      return { body: responseBody as HttpResponseBody, statusCode: response.status, isSuccess: true };
     } catch (error) {
       const { name, message } = error instanceof Error ? error : { name: '', message: JSON.stringify(error) };
 
