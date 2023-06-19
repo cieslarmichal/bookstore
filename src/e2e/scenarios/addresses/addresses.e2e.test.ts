@@ -38,7 +38,9 @@ describe(`Addresses e2e`, () => {
 
       const { email, password } = userEntityTestFactory.create();
 
-      await userService.createUser({ email: email as string, password });
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id });
 
       const accessToken = await authService.getUserToken({ email: email as string, password });
 

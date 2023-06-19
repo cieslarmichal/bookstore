@@ -1,461 +1,379 @@
-// import 'reflect-metadata';
-
-// import request from 'supertest';
-// import { DataSource } from 'typeorm';
-
-// import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
-// import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
-// import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-// import { LoggerModule } from '../../../../libs/logger/loggerModule';
-// import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-// import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-// import { postgresModuleSymbols } from '../../../../libs/postgres/postgresModuleSymbols';
-// import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-// import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
-// import { HttpServer } from '../../../../server/httpServer';
-// import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-// import { Application } from '../../../application';
-// import { AddressModule } from '../../modules/addressModule/addressModule';
-// import { AddressEntity } from '../../modules/addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-// import { AuthorBookModule } from '../../modules/authorBookModule/authorBookModule';
-// import { AuthorBookEntity } from '../../modules/authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
-// import { AuthorRepositoryFactory } from '../../modules/authorModule/application/repositories/authorRepository/authorRepositoryFactory';
-// import { AuthorModule } from '../../modules/authorModule/authorModule';
-// import { authorModuleSymbols } from '../../modules/authorModule/authorModuleSymbols';
-// import { AuthorEntity } from '../../modules/authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
-// import { AuthorEntityTestFactory } from '../../modules/authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
-// import { BookCategoryModule } from '../../modules/bookCategoryModule/bookCategoryModule';
-// import { BookCategoryEntity } from '../../modules/bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
-// import { BookModule } from '../../modules/bookModule/bookModule';
-// import { BookEntity } from '../../modules/bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-// import { CategoryModule } from '../../modules/categoryModule/categoryModule';
-// import { CategoryEntity } from '../../modules/categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
-// import { CustomerModule } from '../../modules/customerModule/customerModule';
-// import { CustomerEntity } from '../../modules/customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-// import { InventoryEntity } from '../../modules/inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
-// import { InventoryModule } from '../../modules/inventoryModule/inventoryModule';
-// import { CartEntity } from '../../modules/orderModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-// import { LineItemEntity } from '../../modules/orderModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-// import { OrderEntity } from '../../modules/orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
-// import { OrderModule } from '../../modules/orderModule/orderModule';
-// import { ReviewEntity } from '../../modules/reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-// import { ReviewModule } from '../../modules/reviewModule/reviewModule';
-// import { TokenService } from '../../modules/userModule/application/services/tokenService/tokenService';
-// import { UserEntity } from '../../modules/userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
-// import { UserEntityTestFactory } from '../../modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-// import { UserModuleConfigTestFactory } from '../../modules/userModule/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-// import { UserModule } from '../../modules/userModule/userModule';
-// import { userModuleSymbols } from '../../modules/userModule/userModuleSymbols';
-// import { WhishlistEntryEntity } from '../../modules/whishlistModule/infrastructure/repositories/whishlistEntryRepository/whishlistEntryEntity/whishlistEntryEntity';
-// import { WhishlistModule } from '../../modules/whishlistModule/whishlistModule';
-
-// const baseUrl = '/authors';
-
-// describe(`AuthorController (${baseUrl})`, () => {
-//   let authorRepositoryFactory: AuthorRepositoryFactory;
-//   let server: HttpServer;
-//   let tokenService: TokenService;
-//   let testTransactionRunner: TestTransactionExternalRunner;
-//   let dataSource: DataSource;
-
-//   const authorEntityTestFactory = new AuthorEntityTestFactory();
-//   const userEntityTestFactory = new UserEntityTestFactory();
-
-//   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-//   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
-//     entities: [
-//       BookEntity,
-//       AuthorEntity,
-//       UserEntity,
-//       CategoryEntity,
-//       AuthorBookEntity,
-//       BookCategoryEntity,
-//       AddressEntity,
-//       CustomerEntity,
-//       CartEntity,
-//       LineItemEntity,
-//       OrderEntity,
-//       InventoryEntity,
-//       ReviewEntity,
-//       WhishlistEntryEntity,
-//     ],
-//   });
-//   const userModuleConfig = new UserModuleConfigTestFactory().create();
-//   const httpServerConfig = new HttpServerConfigTestFactory().create();
-
-//   const createContainerFunction = DependencyInjectionContainerFactory.create;
-
-//   beforeEach(async () => {
-//     const container = DependencyInjectionContainerFactory.create({
-//       modules: [
-//         new PostgresModule(postgresModuleConfig),
-//         new CategoryModule(),
-//         new BookModule(),
-//         new AuthorModule(),
-//         new UserModule(userModuleConfig),
-//         new AuthorBookModule(),
-//         new LoggerModule(loggerModuleConfig),
-//         new BookCategoryModule(),
-//         new AddressModule(),
-//         new CustomerModule(),
-//         new UnitOfWorkModule(),
-//         new OrderModule(),
-//         new InventoryModule(),
-//         new ReviewModule(),
-//         new WhishlistModule(),
-//       ],
-//     });
+import 'reflect-metadata';
+
+import { FindAuthorsResponseOkBody } from '../../../application/modules/authorModule/api/httpControllers/authorHttpController/schemas/findAuthorsSchema';
+import { AuthorEntityTestFactory } from '../../../application/modules/authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AuthorService } from '../../services/authorService/authorService';
+import { AuthService } from '../../services/authService/authService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { UserService } from '../../services/userService/userService';
 
-//     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+const baseUrl = '/authors';
 
-//     authorRepositoryFactory = container.get<AuthorRepositoryFactory>(authorModuleSymbols.authorRepositoryFactory);
-//     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-//     tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
+describe(`Authors e2e`, () => {
+  const authorEntityTestFactory = new AuthorEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
 
-//     testTransactionRunner = new TestTransactionExternalRunner(container);
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
 
-//     const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+  const userService = new UserService(httpService);
+  const authService = new AuthService(httpService);
+  const customerService = new CustomerService(httpService);
+  const authorService = new AuthorService(httpService);
 
-//     await app.initialize();
+  describe('Create author', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
 
-//     server = new HttpServer(app.instance, httpServerConfig);
+      const { email, password } = userEntityTestFactory.create();
 
-//     await server.listen();
-//   });
+      const { firstName } = authorEntityTestFactory.create();
 
-//   afterEach(async () => {
-//     DependencyInjectionContainerFactory.create = createContainerFunction;
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     await server.close();
+      await customerService.createCustomer({ userId: user.id });
 
-//     await dataSource.destroy();
-//   });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//   describe('Create author', () => {
-//     it('returns bad request when not all required properties in body are provided', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          firstName,
+        },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
 
-//         const { firstName } = authorEntityTestFactory.create();
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { firstName, lastName } = authorEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             firstName,
-//           });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        body: {
+          firstName,
+          lastName,
+        },
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+    it('accepts a request and returns created when all required body properties are provided', async () => {
+      expect.assertions(1);
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { firstName, lastName } = authorEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const response = await request(server.instance).post(baseUrl).send({
-//           firstName,
-//           lastName,
-//         });
+      const { firstName, lastName } = authorEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     it('accepts a request and returns created when all required body properties are provided', async () => {
-//       expect.assertions(1);
+      await customerService.createCustomer({ userId: user.id });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { firstName, lastName } = authorEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          firstName,
+          lastName,
+        },
+      });
 
-//         const accessToken = tokenService.createToken({ userId });
+      expect(response.statusCode).toBe(HttpStatusCode.created);
+    });
+  });
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             firstName,
-//             lastName,
-//           });
+  describe('Find author', () => {
+    it('returns not found when author with given authorId does not exist', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.created);
-//       });
-//     });
-//   });
+      const { id: authorId } = authorEntityTestFactory.create();
 
-//   describe('Find author', () => {
-//     it('returns not found when author with given authorId does not exist', async () => {
-//       expect.assertions(1);
+      const { email, password } = userEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id } = authorEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${authorId}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.get,
+      });
 
-//         const author = await authorRepository.createOne({ id, firstName, lastName, about: about as string });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const response = await request(server.instance).get(`${baseUrl}/${author.id}`);
+    it('accepts a request and returns ok when authorId is uuid and have corresponding author', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { email, password } = userEntityTestFactory.create();
 
-//     it('accepts a request and returns ok when authorId is uuid and have corresponding author', async () => {
-//       expect.assertions(1);
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const author = await authorRepository.createOne({ id, firstName, lastName, about: about as string });
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${author.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+  describe('Find authors', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+      });
 
-//   describe('Find authors', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const response = await request(server.instance).get(`${baseUrl}`);
+    it('returns authors with filtering provided', async () => {
+      expect.assertions(2);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const authorEntity1 = authorEntityTestFactory.create();
 
-//     it('returns authors with filtering provided', async () => {
-//       expect.assertions(2);
+      const authorEntity2 = authorEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id: userId } = userEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const authorEntity1 = authorEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const authorEntity2 = authorEntityTestFactory.create();
+      await authorService.createAuthor({
+        firstName: authorEntity1.firstName,
+        lastName: authorEntity1.lastName,
+        about: authorEntity1.about as string,
+      });
 
-//         const accessToken = tokenService.createToken({ userId });
+      await authorService.createAuthor({
+        firstName: authorEntity2.firstName,
+        lastName: authorEntity2.lastName,
+        about: authorEntity2.about as string,
+      });
 
-//         await authorRepository.createOne({
-//           id: authorEntity1.id,
-//           firstName: authorEntity1.firstName,
-//           lastName: authorEntity1.lastName,
-//           about: authorEntity1.about as string,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}?filter=["firstName||eq||${authorEntity1.firstName}"]`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         await authorRepository.createOne({
-//           id: authorEntity2.id,
-//           firstName: authorEntity2.firstName,
-//           lastName: authorEntity2.lastName,
-//           about: authorEntity2.about as string,
-//         });
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+      expect((response.body as FindAuthorsResponseOkBody).data.length).toBe(1);
+    });
+  });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}?filter=["firstName||eq||${authorEntity1.firstName}"]`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+  describe('Update author', () => {
+    it('returns bad request when provided not allowed properties in body', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//         expect(response.body.data.authors.length).toBe(1);
-//       });
-//     });
-//   });
+      const { email, password } = userEntityTestFactory.create();
 
-//   describe('Update author', () => {
-//     it('returns bad request when provided not allowed properties in body', async () => {
-//       expect.assertions(1);
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id, firstName } = authorEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             firstName,
-//           });
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          firstName,
+        },
+      });
 
-//     it('returns not found when author with given authorId does not exist', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+    it('returns not found when author with given authorId does not exist', async () => {
+      expect.assertions(1);
 
-//         const { id, about } = authorEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { id: authorId, about } = authorEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             about,
-//           });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      await customerService.createCustomer({ userId: user.id });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${authorId}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          about,
+        },
+      });
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const author = await authorRepository.createOne({ id, firstName, lastName });
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//         const response = await request(server.instance).patch(`${baseUrl}/${author.id}`).send({
-//           about,
-//         });
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.patch,
+        body: {
+          about,
+        },
+      });
 
-//     it('accepts a request and returns ok when authorId is uuid and corresponds to existing author', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+    it('accepts a request and returns ok when authorId is uuid and corresponds to existing author', async () => {
+      expect.assertions(1);
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//         const { id, firstName, lastName, about } = authorEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const accessToken = tokenService.createToken({ userId });
+      await customerService.createCustomer({ userId: user.id });
 
-//         const author = await authorRepository.createOne({ id, firstName, lastName });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${author.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             about,
-//           });
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          about,
+        },
+      });
 
-//   describe('Delete author', () => {
-//     it('returns not found when author with given authorId does not exist', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+  describe('Delete author', () => {
+    it('returns not found when author with given authorId does not exist', async () => {
+      expect.assertions(1);
 
-//         const { id } = authorEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { id: authorId } = authorEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      await customerService.createCustomer({ userId: user.id });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${authorId}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const { id, firstName, lastName } = authorEntityTestFactory.create();
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const author = await authorRepository.createOne({ id, firstName, lastName });
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//         const response = await request(server.instance).delete(`${baseUrl}/${author.id}`).send();
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.delete,
+      });
 
-//     it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+    it('accepts a request and returns no content when authorId is uuid and corresponds to existing author', async () => {
+      expect.assertions(1);
 
-//         const authorRepository = authorRepositoryFactory.create(entityManager);
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-//         const { id, firstName, lastName } = authorEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const accessToken = tokenService.createToken({ userId });
+      await customerService.createCustomer({ userId: user.id });
 
-//         const author = await authorRepository.createOne({ id, firstName, lastName });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${author.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
+      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.noContent);
-//       });
-//     });
-//   });
-// });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${author.id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+    });
+  });
+});
