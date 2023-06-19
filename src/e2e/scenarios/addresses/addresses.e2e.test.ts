@@ -18,7 +18,7 @@ import { UserService } from '../../services/userService/userService';
 
 const baseUrl = '/addresses';
 
-describe(`AddressController (${baseUrl})`, () => {
+describe(`Addresses e2e`, () => {
   const userEntityTestFactory = new UserEntityTestFactory();
   const addressEntityTestFactory = new AddressEntityTestFactory();
 
