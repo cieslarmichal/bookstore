@@ -1,512 +1,412 @@
-// import 'reflect-metadata';
-
-// import request from 'supertest';
-// import { DataSource } from 'typeorm';
-
-// import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
-// import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
-// import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-// import { LoggerModule } from '../../../../libs/logger/loggerModule';
-// import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-// import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-// import { postgresModuleSymbols } from '../../../../libs/postgres/postgresModuleSymbols';
-// import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-// import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
-// import { HttpServer } from '../../../../server/httpServer';
-// import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-// import { Application } from '../../../application';
-// import { CartModule } from '../../../cartModule/cartModule';
-// import { CartEntity } from '../../../cartModule/infrastructure/repositories/cartRepository/cartEntity/cartEntity';
-// import { IntegrationsModule } from '../../../integrations/integrationsModule';
-// import { LineItemEntity } from '../../../lineItemModule/infrastructure/repositories/lineItemRepository/lineItemEntity/lineItemEntity';
-// import { LineItemModule } from '../../../lineItemModule/lineItemModule';
-// import { AddressModule } from '../../modules/addressModule/addressModule';
-// import { AddressEntity } from '../../modules/addressModule/infrastructure/repositories/addressRepository/addressEntity/addressEntity';
-// import { AuthorBookModule } from '../../modules/authorBookModule/authorBookModule';
-// import { AuthorBookEntity } from '../../modules/authorBookModule/infrastructure/repositories/authorBookRepository/authorBookEntity/authorBookEntity';
-// import { AuthorModule } from '../../modules/authorModule/authorModule';
-// import { AuthorEntity } from '../../modules/authorModule/infrastructure/repositories/authorRepository/authorEntity/authorEntity';
-// import { BookCategoryModule } from '../../modules/bookCategoryModule/bookCategoryModule';
-// import { BookCategoryEntity } from '../../modules/bookCategoryModule/infrastructure/repositories/bookCategoryRepository/bookCategoryEntity/bookCategoryEntity';
-// import { BookRepositoryFactory } from '../../modules/bookModule/application/repositories/bookRepository/bookRepositoryFactory';
-// import { BookModule } from '../../modules/bookModule/bookModule';
-// import { bookModuleSymbols } from '../../modules/bookModule/bookModuleSymbols';
-// import { BookEntity } from '../../modules/bookModule/infrastructure/repositories/bookRepository/bookEntity/bookEntity';
-// import { BookEntityTestFactory } from '../../modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-// import { CategoryModule } from '../../modules/categoryModule/categoryModule';
-// import { CategoryEntity } from '../../modules/categoryModule/infrastructure/repositories/categoryRepository/categoryEntity/categoryEntity';
-// import { CustomerModule } from '../../modules/customerModule/customerModule';
-// import { CustomerEntity } from '../../modules/customerModule/infrastructure/repositories/customerRepository/customerEntity/customerEntity';
-// import { InventoryEntity } from '../../modules/inventoryModule/infrastructure/repositories/inventoryRepository/inventoryEntity/inventoryEntity';
-// import { InventoryModule } from '../../modules/inventoryModule/inventoryModule';
-// import { OrderEntity } from '../../modules/orderModule/infrastructure/repositories/orderRepository/orderEntity/orderEntity';
-// import { OrderModule } from '../../modules/orderModule/orderModule';
-// import { ReviewEntity } from '../../modules/reviewModule/infrastructure/repositories/reviewRepository/reviewEntity/reviewEntity';
-// import { ReviewModule } from '../../modules/reviewModule/reviewModule';
-// import { TokenService } from '../../modules/userModule/application/services/tokenService/tokenService';
-// import { UserEntity } from '../../modules/userModule/infrastructure/repositories/userRepository/userEntity/userEntity';
-// import { UserEntityTestFactory } from '../../modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-// import { UserModuleConfigTestFactory } from '../../modules/userModule/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-// import { UserModule } from '../../modules/userModule/userModule';
-// import { userModuleSymbols } from '../../modules/userModule/userModuleSymbols';
-// import { WhishlistEntryEntity } from '../../modules/whishlistModule/infrastructure/repositories/whishlistEntryRepository/whishlistEntryEntity/whishlistEntryEntity';
-// import { WhishlistModule } from '../../modules/whishlistModule/whishlistModule';
-
-// const baseUrl = '/books';
-
-// describe(`BookController (${baseUrl})`, () => {
-//   let bookRepositoryFactory: BookRepositoryFactory;
-//   let server: HttpServer;
-//   let tokenService: TokenService;
-//   let testTransactionRunner: TestTransactionExternalRunner;
-//   let dataSource: DataSource;
-
-//   const bookEntityTestFactory = new BookEntityTestFactory();
-//   const userEntityTestFactory = new UserEntityTestFactory();
-
-//   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-//   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
-//     entities: [
-//       BookEntity,
-//       AuthorEntity,
-//       UserEntity,
-//       CategoryEntity,
-//       AuthorBookEntity,
-//       BookCategoryEntity,
-//       AddressEntity,
-//       CustomerEntity,
-//       CartEntity,
-//       LineItemEntity,
-//       OrderEntity,
-//       InventoryEntity,
-//       ReviewEntity,
-//       WhishlistEntryEntity,
-//     ],
-//   });
-//   const userModuleConfig = new UserModuleConfigTestFactory().create();
-//   const httpServerConfig = new HttpServerConfigTestFactory().create();
-
-//   const createContainerFunction = DependencyInjectionContainerFactory.create;
-
-//   beforeEach(async () => {
-//     const container = DependencyInjectionContainerFactory.create({
-//       modules: [
-//         new PostgresModule(postgresModuleConfig),
-//         new CategoryModule(),
-//         new BookModule(),
-//         new AuthorModule(),
-//         new UserModule(userModuleConfig),
-//         new IntegrationsModule(),
-//         new AuthorBookModule(),
-//         new LoggerModule(loggerModuleConfig),
-//         new BookCategoryModule(),
-//         new AddressModule(),
-//         new CustomerModule(),
-//         new UnitOfWorkModule(),
-//         new CartModule(),
-//         new LineItemModule(),
-//         new OrderModule(),
-//         new InventoryModule(),
-//         new ReviewModule(),
-//         new WhishlistModule(),
-//       ],
-//     });
-
-//     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+import 'reflect-metadata';
+
+import { FindBooksResponseOkBody } from '../../../application/modules/bookModule/api/httpControllers/bookHttpController/schemas/findBooksSchema';
+import { BookEntityTestFactory } from '../../../application/modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AuthService } from '../../services/authService/authService';
+import { BookService } from '../../services/bookService/bookService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { UserService } from '../../services/userService/userService';
+
+const baseUrl = '/books';
+
+describe(`Books e2e`, () => {
+  const bookEntityTestFactory = new BookEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
+
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
 
-//     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
-//     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-//     tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
+  const userService = new UserService(httpService);
+  const authService = new AuthService(httpService);
+  const customerService = new CustomerService(httpService);
+  const bookService = new BookService(httpService);
+
+  describe('Create book', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { title } = bookEntityTestFactory.create();
 
-//     testTransactionRunner = new TestTransactionExternalRunner(container);
+      const { email, password } = userEntityTestFactory.create();
 
-//     const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     await app.initialize();
+      await customerService.createCustomer({ userId: user.id });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          title,
+        },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     server = new HttpServer(app.instance, httpServerConfig);
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//     await server.listen();
-//   });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        body: {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+      });
 
-//   afterEach(async () => {
-//     DependencyInjectionContainerFactory.create = createContainerFunction;
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//     await dataSource.destroy();
+    it('accepts a request and returns created when all required body properties are provided and author with given id exists', async () => {
+      expect.assertions(1);
 
-//     await server.close();
-//   });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//   describe('Create book', () => {
-//     it('returns bad request when not all required properties in body are provided', async () => {
-//       expect.assertions(1);
+      const { email, password } = userEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { title } = bookEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             title,
-//           });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
+      expect(response.statusCode).toBe(HttpStatusCode.created);
+    });
+  });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+  describe('Find book', () => {
+    it('returns not found when book with given bookId does not exist', async () => {
+      expect.assertions(1);
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const { id } = bookEntityTestFactory.create();
 
-//         const response = await request(server.instance).post(baseUrl).send({
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const { email, password } = userEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     it('accepts a request and returns created when all required body properties are provided and author with given id exists', async () => {
-//       expect.assertions(1);
+      await customerService.createCustomer({ userId: user.id });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const accessToken = tokenService.createToken({ userId });
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             title,
-//             isbn,
-//             releaseYear,
-//             language,
-//             format,
-//             price,
-//           });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.created);
-//       });
-//     });
-//   });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//   describe('Find book', () => {
-//     it('returns not found when book with given bookId does not exist', async () => {
-//       expect.assertions(1);
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${book.id}`,
+        method: HttpMethodName.get,
+      });
 
-//         const { id } = bookEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const accessToken = tokenService.createToken({ userId });
+    it('accepts a request and returns ok when bookId is uuid and have corresponding book', async () => {
+      expect.assertions(1);
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { email, password } = userEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${book.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const response = await request(server.instance).get(`${baseUrl}/${book.id}`);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+  describe('Find books', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     it('accepts a request and returns ok when bookId is uuid and have corresponding book', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+    it('accepts request and returns books with filters', async () => {
+      expect.assertions(2);
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const bookEntity1 = bookEntityTestFactory.create();
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const bookEntity2 = bookEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${book.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      await customerService.createCustomer({ userId: user.id });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//   describe('Find books', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      await bookService.createBook({
+        format: bookEntity1.format,
+        language: bookEntity1.language,
+        price: bookEntity1.price,
+        title: bookEntity1.title,
+        isbn: bookEntity1.isbn,
+        releaseYear: bookEntity1.releaseYear,
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const response = await request(server.instance).get(`${baseUrl}`);
+      await bookService.createBook({
+        format: bookEntity2.format,
+        language: bookEntity2.language,
+        price: bookEntity2.price,
+        title: bookEntity2.title,
+        isbn: bookEntity2.isbn,
+        releaseYear: bookEntity2.releaseYear,
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}?filter=["title||eq||${bookEntity1.title}"]`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//     it('accepts request and returns books with filters', async () => {
-//       expect.assertions(2);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+      expect((response.body as FindBooksResponseOkBody).data.length).toBe(1);
+    });
+  });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+  describe('Update book', () => {
+    it('returns not found when book with given bookId does not exist', async () => {
+      expect.assertions(1);
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const { id, price } = bookEntityTestFactory.create();
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const bookEntity1 = bookEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const bookEntity2 = bookEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         await bookRepository.createOne({
-//           id: bookEntity1.id,
-//           format: bookEntity1.format,
-//           language: bookEntity1.language,
-//           price: bookEntity1.price,
-//           title: bookEntity1.title,
-//           isbn: bookEntity1.isbn,
-//           releaseYear: bookEntity1.releaseYear,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          price,
+        },
+      });
 
-//         await bookRepository.createOne({
-//           id: bookEntity2.id,
-//           format: bookEntity2.format,
-//           language: bookEntity2.language,
-//           price: bookEntity2.price,
-//           title: bookEntity2.title,
-//           isbn: bookEntity2.isbn,
-//           releaseYear: bookEntity2.releaseYear,
-//         });
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}?filter=["title||eq||${bookEntity1.title}"]`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//         expect(response.body.data.books.length).toBe(1);
-//       });
-//     });
-//   });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//   describe('Update book', () => {
-//     it('returns not found when book with given bookId does not exist', async () => {
-//       expect.assertions(1);
+      const { price: updatedPrice } = bookEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const { book } = await bookService.createBook({
+        format,
+        language,
+        price,
+        title,
+        isbn,
+        releaseYear,
+      });
 
-//         const { id, price } = bookEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${book.id}`,
+        method: HttpMethodName.patch,
+        body: {
+          price: updatedPrice,
+        },
+      });
 
-//         const accessToken = tokenService.createToken({ userId });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             price,
-//           });
+    it('accepts a request and returns ok when bookId is uuid and corresponds to existing book', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { price: updatedPrice } = bookEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { price: newPrice } = bookEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const { book } = await bookService.createBook({
+        format,
+        language,
+        price,
+        title,
+        isbn,
+        releaseYear,
+      });
 
-//         const response = await request(server.instance).patch(`${baseUrl}/${book.id}`).send({
-//           price: newPrice,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${book.id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          price: updatedPrice,
+        },
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//     it('accepts a request and returns ok when bookId is uuid and corresponds to existing book', async () => {
-//       expect.assertions(1);
+  describe('Delete book', () => {
+    it('returns not found when book with given bookId does not exist', async () => {
+      expect.assertions(1);
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { id } = bookEntityTestFactory.create();
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { price: newPrice } = bookEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${book.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             price: newPrice,
-//           });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//   describe('Delete book', () => {
-//     it('returns not found when book with given bookId does not exist', async () => {
-//       expect.assertions(1);
+      const { book } = await bookService.createBook({
+        format,
+        language,
+        price,
+        title,
+        isbn,
+        releaseYear,
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${book.id}`,
+        method: HttpMethodName.delete,
+      });
 
-//         const { id } = bookEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const accessToken = tokenService.createToken({ userId });
+    it('accepts a request and returns no content when bookId is uuid and corresponds to existing book', async () => {
+      expect.assertions(1);
 
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      const { email, password } = userEntityTestFactory.create();
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const { book } = await bookService.createBook({
+        format,
+        language,
+        price,
+        title,
+        isbn,
+        releaseYear,
+      });
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${book.id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const response = await request(server.instance).delete(`${baseUrl}/${book.id}`).send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts a request and returns no content when bookId is uuid and corresponds to existing book', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const { id: userId } = userEntityTestFactory.create();
-
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${book.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.noContent);
-//       });
-//     });
-//   });
-// });
+      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+    });
+  });
+});
