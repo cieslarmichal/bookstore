@@ -1,547 +1,398 @@
-// import 'reflect-metadata';
-
-// import request from 'supertest';
-// import { DataSource } from 'typeorm';
-
-// import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
-// import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
-// import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-// import { LoggerModule } from '../../../../libs/logger/loggerModule';
-// import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-// import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-// import { postgresModuleSymbols } from '../../../../libs/postgres/postgresModuleSymbols';
-// import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-// import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
-// import { HttpServer } from '../../../../server/httpServer';
-// import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-// import { Application } from '../../../application';
-// import { AddressModule } from '../../../domain/address/addressModule';
-// import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
-// import { AuthorModule } from '../../../domain/author/authorModule';
-// import { AuthorEntity } from '../../../domain/author/contracts/authorEntity';
-// import { AuthorBookModule } from '../../../domain/authorBook/authorBookModule';
-// import { AuthorBookEntity } from '../../../domain/authorBook/contracts/authorBookEntity';
-// import { BookModule } from '../../../domain/book/bookModule';
-// import { bookSymbols } from '../../../domain/book/bookSymbols';
-// import { BookEntity } from '../../../domain/book/contracts/bookEntity';
-// import { BookRepositoryFactory } from '../../../domain/book/contracts/factories/bookRepositoryFactory/bookRepositoryFactory';
-// import { BookEntityTestFactory } from '../../../domain/book/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
-// import { BookCategoryModule } from '../../../domain/bookCategory/bookCategoryModule';
-// import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookCategoryEntity';
-// import { CartModule } from '../../../domain/cart/cartModule';
-// import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
-// import { CategoryModule } from '../../../domain/category/categoryModule';
-// import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
-// import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
-// import { CustomerModule } from '../../../domain/customer/customerModule';
-// import { InventoryRepositoryFactory } from '../../../domain/inventory/contracts/factories/inventoryRepositoryFactory/inventoryRepositoryFactory';
-// import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
-// import { InventoryModule } from '../../../domain/inventory/inventoryModule';
-// import { inventorySymbols } from '../../../domain/inventory/inventorySymbols';
-// import { InventoryEntityTestFactory } from '../../../domain/inventory/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
-// import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
-// import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
-// import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
-// import { OrderModule } from '../../../domain/order/orderModule';
-// import { ReviewEntity } from '../../../domain/review/contracts/reviewEntity';
-// import { ReviewModule } from '../../../domain/review/reviewModule';
-// import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
-// import { UserEntity } from '../../../domain/user/contracts/userEntity';
-// import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-// import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-// import { UserModule } from '../../../domain/user/userModule';
-// import { userModuleSymbols } from '../../../domain/user/userModuleSymbols';
-// import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
-// import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
-// import { IntegrationsModule } from '../../../integrations/integrationsModule';
-
-// const baseUrl = '/inventories';
-
-// describe(`InventoryController (${baseUrl})`, () => {
-//   let bookRepositoryFactory: BookRepositoryFactory;
-//   let inventoryRepositoryFactory: InventoryRepositoryFactory;
-//   let server: HttpServer;
-//   let tokenService: TokenService;
-//   let testTransactionRunner: TestTransactionExternalRunner;
-//   let dataSource: DataSource;
-
-//   const bookEntityTestFactory = new BookEntityTestFactory();
-//   const userEntityTestFactory = new UserEntityTestFactory();
-//   const inventoryEntityTestFactory = new InventoryEntityTestFactory();
-
-//   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-//   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
-//     entities: [
-//       BookEntity,
-//       AuthorEntity,
-//       UserEntity,
-//       CategoryEntity,
-//       AuthorBookEntity,
-//       BookCategoryEntity,
-//       AddressEntity,
-//       CustomerEntity,
-//       CartEntity,
-//       LineItemEntity,
-//       OrderEntity,
-//       InventoryEntity,
-//       ReviewEntity,
-//       WhishlistEntryEntity,
-//     ],
-//   });
-//   const userModuleConfig = new UserModuleConfigTestFactory().create();
-//   const httpServerConfig = new HttpServerConfigTestFactory().create();
-
-//   const createContainerFunction = DependencyInjectionContainerFactory.create;
-
-//   beforeEach(async () => {
-//     const container = DependencyInjectionContainerFactory.create({
-//       modules: [
-//         new PostgresModule(postgresModuleConfig),
-//         new CategoryModule(),
-//         new BookModule(),
-//         new AuthorModule(),
-//         new UserModule(userModuleConfig),
-//         new IntegrationsModule(),
-//         new AuthorBookModule(),
-//         new LoggerModule(loggerModuleConfig),
-//         new BookCategoryModule(),
-//         new AddressModule(),
-//         new CustomerModule(),
-//         new UnitOfWorkModule(),
-//         new CartModule(),
-//         new LineItemModule(),
-//         new OrderModule(),
-//         new InventoryModule(),
-//         new ReviewModule(),
-//         new WhishlistModule(),
-//       ],
-//     });
+import 'reflect-metadata';
+
+import { BookEntityTestFactory } from '../../../application/modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { InventoryEntityTestFactory } from '../../../application/modules/inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AuthService } from '../../services/authService/authService';
+import { BookService } from '../../services/bookService/bookService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { InventoryService } from '../../services/inventoryService/inventoryService';
+import { UserService } from '../../services/userService/userService';
+
+const baseUrl = '/inventories';
+
+describe(`Inventories e2e`, () => {
+  const bookEntityTestFactory = new BookEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
+  const inventoryEntityTestFactory = new InventoryEntityTestFactory();
+
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
+
+  const userService = new UserService(httpService);
+  const authService = new AuthService(httpService);
+  const customerService = new CustomerService(httpService);
+  const inventoryService = new InventoryService(httpService);
+  const bookService = new BookService(httpService);
+
+  describe('Create inventory', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+      await customerService.createCustomer({ userId: user.id });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { bookId } = inventoryEntityTestFactory.create();
+
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          bookId,
+        },
+      });
 
-//     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
-//     inventoryRepositoryFactory = container.get<InventoryRepositoryFactory>(inventorySymbols.inventoryRepositoryFactory);
-//     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-//     tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
 
-//     testTransactionRunner = new TestTransactionExternalRunner(container);
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+      const { quantity } = inventoryEntityTestFactory.create();
 
-//     await app.initialize();
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//     server = new HttpServer(app.instance, httpServerConfig);
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//     await server.listen();
-//   });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        body: {
+          bookId: book.id,
+          quantity,
+        },
+      });
 
-//   afterEach(async () => {
-//     DependencyInjectionContainerFactory.create = createContainerFunction;
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//     await dataSource.destroy();
+    it('accepts a request and returns created when all required body properties are provided and book with given id exists', async () => {
+      expect.assertions(1);
 
-//     await server.close();
-//   });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//   describe('Create inventory', () => {
-//     it('returns bad request when not all required properties in body are provided', async () => {
-//       expect.assertions(1);
+      const { quantity } = inventoryEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { bookId } = inventoryEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const accessToken = tokenService.createToken({ userId });
+      await customerService.createCustomer({ userId: user.id });
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({ bookId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          bookId: book.id,
+          quantity,
+        },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { bookId, quantity } = inventoryEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.created);
+    });
+  });
 
-//         const response = await request(server.instance).post(baseUrl).send({ bookId, quantity });
+  describe('Find inventory', () => {
+    it('returns not found when book with given inventoryId does not exist', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { id } = inventoryEntityTestFactory.create();
 
-//     it('accepts a request and returns created when all required body properties are provided and book with given id exists', async () => {
-//       expect.assertions(1);
+      const { email, password } = userEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const { quantity } = inventoryEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const accessToken = tokenService.createToken({ userId });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const { id } = inventoryEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             bookId: book.id,
-//             quantity,
-//           });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.get,
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.created);
-//       });
-//     });
-//   });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//   describe('Find inventory', () => {
-//     it('returns not found when book with given inventoryId does not exist', async () => {
-//       expect.assertions(1);
+    it('accepts a request and returns ok when inventoryId is uuid and have corresponding inventory', async () => {
+      expect.assertions(1);
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//         const { id } = inventoryEntityTestFactory.create();
+      const { quantity } = inventoryEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      await customerService.createCustomer({ userId: user.id });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const { inventory } = await inventoryService.createInventory({
+        bookId: book.id,
+        quantity,
+      });
 
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${inventory.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
+  describe('Find inventories', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+      });
 
-//         const inventory = await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const response = await request(server.instance).get(`${baseUrl}/${inventory.id}`);
+    it('accepts request', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { email, password } = userEntityTestFactory.create();
 
-//     it('accepts a request and returns ok when inventoryId is uuid and have corresponding inventory', async () => {
-//       expect.assertions(1);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      await customerService.createCustomer({ userId: user.id });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const { id: userId } = userEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+  describe('Update inventory', () => {
+    it('returns not found when inventory with given id does not exist', async () => {
+      expect.assertions(1);
 
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
+      const { quantity } = inventoryEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const inventory = await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
+      await customerService.createCustomer({ userId: user.id });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${inventory.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const { id } = inventoryEntityTestFactory.create();
 
-//   describe('Find inventories', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          quantity: quantity + 1,
+        },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const response = await request(server.instance).get(`${baseUrl}`);
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     it('accepts request', async () => {
-//       expect.assertions(2);
+      const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${inventoryId}`,
+        method: HttpMethodName.patch,
+        body: {
+          quantity: quantity + 1,
+        },
+      });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+    it('accepts a request and returns ok when inventoryId corresponds to existing inventory', async () => {
+      expect.assertions(1);
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const { quantity } = inventoryEntityTestFactory.create();
 
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      await customerService.createCustomer({ userId: user.id });
 
-//         await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance).get(`${baseUrl}`).set('Authorization', `Bearer ${accessToken}`);
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//         expect(response.body.data.inventories.length).toBe(1);
-//       });
-//     });
-//   });
+      const { inventory } = await inventoryService.createInventory({
+        bookId: book.id,
+        quantity,
+      });
 
-//   describe('Update inventory', () => {
-//     it('returns not found when inventory with given id does not exist', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${inventory.id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          quantity: quantity + 1,
+        },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         const { id, quantity } = inventoryEntityTestFactory.create();
+  describe('Delete inventory', () => {
+    it('returns not found when inventory with given id does not exist', async () => {
+      expect.assertions(1);
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { id } = inventoryEntityTestFactory.create();
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             quantity,
-//           });
+      const { email, password } = userEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      await customerService.createCustomer({ userId: user.id });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
+      const { id } = inventoryEntityTestFactory.create();
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.delete,
+      });
 
-//         const inventory = await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${inventory.id}`)
-//           .send({
-//             quantity: quantity + 1,
-//           });
+    it('accepts a request and returns no content when inventoryId corresponds to existing inventory', async () => {
+      expect.assertions(1);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//     it('accepts a request and returns ok when inventoryId corresponds to existing inventory', async () => {
-//       expect.assertions(1);
+      const { quantity } = inventoryEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id });
 
-//         const { id: userId } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+      const { book } = await bookService.createBook({
+        title,
+        isbn,
+        releaseYear,
+        language,
+        format,
+        price,
+      });
 
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
+      const { inventory } = await inventoryService.createInventory({
+        bookId: book.id,
+        quantity,
+      });
 
-//         const accessToken = tokenService.createToken({ userId });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${inventory.id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
-
-//         const inventory = await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
-
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${inventory.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             quantity: quantity + 1,
-//           });
-
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
-
-//   describe('Delete inventory', () => {
-//     it('returns not found when inventory with given id does not exist', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
-
-//         const { id } = inventoryEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
-
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
-
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
-
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
-
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
-
-//         const inventory = await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
-
-//         const response = await request(server.instance).delete(`${baseUrl}/${inventory.id}`).send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts a request and returns no content when inventoryId corresponds to existing inventory', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const inventoryRepository = inventoryRepositoryFactory.create(entityManager);
-
-//         const { id: userId } = userEntityTestFactory.create();
-
-//         const { id, title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
-
-//         const { id: inventoryId, quantity } = inventoryEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const book = await bookRepository.createOne({
-//           id,
-//           title,
-//           isbn,
-//           releaseYear,
-//           language,
-//           format,
-//           price,
-//         });
-
-//         const inventory = await inventoryRepository.createOne({ id: inventoryId, bookId: book.id, quantity });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${inventory.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.noContent);
-//       });
-//     });
-//   });
-// });
+      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+    });
+  });
+});
