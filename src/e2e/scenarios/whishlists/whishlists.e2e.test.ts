@@ -1,413 +1,302 @@
-// import 'reflect-metadata';
-
-// import request from 'supertest';
-// import { DataSource } from 'typeorm';
-
-// import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
-// import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
-// import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-// import { LoggerModule } from '../../../../libs/logger/loggerModule';
-// import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-// import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-// import { postgresModuleSymbols } from '../../../../libs/postgres/postgresModuleSymbols';
-// import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-// import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
-// import { HttpServer } from '../../../../server/httpServer';
-// import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-// import { Application } from '../../../application';
-// import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
-// import { OrderModule } from '../../../domain/order/orderModule';
-// import { ReviewEntity } from '../../../domain/review/contracts/reviewEntity';
-// import { ReviewModule } from '../../../domain/review/reviewModule';
-// import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-// import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
-// import { UserEntity } from '../../../domain/user/contracts/userEntity';
-// import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-// import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-// import { UserModule } from '../../../domain/user/userModule';
-// import { userModuleSymbols } from '../../../domain/user/userModuleSymbols';
-// import { WhishlistEntryRepositoryFactory } from '../../../domain/whishlist/contracts/factories/whishlistEntryRepositoryFactory/whishlistEntryRepositoryFactory';
-// import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
-// import { WhishlistEntryEntityTestFactory } from '../../../domain/whishlist/tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
-// import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
-// import { whishlistSymbols } from '../../../domain/whishlist/whishlistSymbols';
-// import { IntegrationsModule } from '../../../integrations/integrationsModule';
-
-// const baseUrl = '/whishlist-entries';
-
-// describe(`WhishlistController (${baseUrl})`, () => {
-//   let whishlistEntryRepositoryFactory: WhishlistEntryRepositoryFactory;
-//   let customerRepositoryFactory: CustomerRepositoryFactory;
-//   let userRepositoryFactory: UserRepositoryFactory;
-//   let bookRepositoryFactory: BookRepositoryFactory;
-//   let server: HttpServer;
-//   let tokenService: TokenService;
-//   let testTransactionRunner: TestTransactionExternalRunner;
-//   let dataSource: DataSource;
-
-//   const whishlistEntryEntityTestFactory = new WhishlistEntryEntityTestFactory();
-//   const userEntityTestFactory = new UserEntityTestFactory();
-//   const customerEntityTestFactory = new CustomerEntityTestFactory();
-//   const bookEntityTestFactory = new BookEntityTestFactory();
-
-//   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-//   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
-//     entities: [
-//       BookEntity,
-//       AuthorEntity,
-//       UserEntity,
-//       CategoryEntity,
-//       AuthorBookEntity,
-//       BookCategoryEntity,
-//       AddressEntity,
-//       CustomerEntity,
-//       CartEntity,
-//       LineItemEntity,
-//       OrderEntity,
-//       InventoryEntity,
-//       ReviewEntity,
-//       WhishlistEntryEntity,
-//     ],
-//   });
-//   const userModuleConfig = new UserModuleConfigTestFactory().create();
-//   const httpServerConfig = new HttpServerConfigTestFactory().create();
-
-//   const createContainerFunction = DependencyInjectionContainerFactory.create;
-
-//   beforeEach(async () => {
-//     const container = DependencyInjectionContainerFactory.create({
-//       modules: [
-//         new PostgresModule(postgresModuleConfig),
-//         new CategoryModule(),
-//         new BookModule(),
-//         new AuthorModule(),
-//         new UserModule(userModuleConfig),
-//         new IntegrationsModule(),
-//         new AuthorBookModule(),
-//         new LoggerModule(loggerModuleConfig),
-//         new BookCategoryModule(),
-//         new AddressModule(),
-//         new CustomerModule(),
-//         new UnitOfWorkModule(),
-//         new CartModule(),
-//         new LineItemModule(),
-//         new OrderModule(),
-//         new InventoryModule(),
-//         new ReviewModule(),
-//         new WhishlistModule(),
-//       ],
-//     });
-
-//     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+import 'reflect-metadata';
+
+import { BookEntityTestFactory } from '../../../application/modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { FindWhishlistEntriesResponseOkBody } from '../../../application/modules/whishlistModule/api/httpControllers/whishlistHttpController/schemas/findWhishlistEntriesSchema';
+import { WhishlistEntryEntityTestFactory } from '../../../application/modules/whishlistModule/tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AuthService } from '../../services/authService/authService';
+import { BookService } from '../../services/bookService/bookService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { UserService } from '../../services/userService/userService';
+import { WhishlistService } from '../../services/whishlistService/whishlistService';
+
+const baseUrl = '/whishlist-entries';
+
+describe(`Whishlists e2e`, () => {
+  const whishlistEntryEntityTestFactory = new WhishlistEntryEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
+  const bookEntityTestFactory = new BookEntityTestFactory();
+
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
+
+  const userService = new UserService(httpService);
+  const authService = new AuthService(httpService);
+  const customerService = new CustomerService(httpService);
+  const bookService = new BookService(httpService);
+  const whishlistService = new WhishlistService(httpService);
+
+  describe('Create whishlist entry', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          customerId: customer.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
+
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        body: {
+          customerId: customer.id,
+          bookId: book.id,
+        },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
+
+    it('accepts a request and returns created when all required body properties are provided and book and customer with given id exist', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-//     whishlistEntryRepositoryFactory = container.get<WhishlistEntryRepositoryFactory>(
-//       whishlistSymbols.whishlistEntryRepositoryFactory,
-//     );
-//     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
-//     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-//     bookRepositoryFactory = container.get<BookRepositoryFactory>(bookModuleSymbols.bookRepositoryFactory);
-//     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-//     tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
 
-//     testTransactionRunner = new TestTransactionExternalRunner(container);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          customerId: customer.id,
+          bookId: book.id,
+        },
+      });
 
-//     const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+      expect(response.statusCode).toBe(HttpStatusCode.created);
+    });
+  });
 
-//     await app.initialize();
+  describe('Find whishlist entries', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     server = new HttpServer(app.instance, httpServerConfig);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+      });
 
-//     await server.listen();
-//   });
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
+
+    it('accepts request and returns whishlist entries', async () => {
+      expect.assertions(2);
 
-//   afterEach(async () => {
-//     DependencyInjectionContainerFactory.create = createContainerFunction;
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//     await dataSource.destroy();
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
 
-//     await server.close();
-//   });
+      const { whishlistEntry: createdWhishlistEntry } = await whishlistService.createWhishlist(
+        {
+          bookId: book.id,
+        },
+        accessToken,
+      );
 
-//   describe('Create whishlist entry', () => {
-//     it('returns bad request when not all required properties in body are provided', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
-
-//         const { customerId } = whishlistEntryEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             customerId,
-//           });
-
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
-
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { bookId, customerId } = whishlistEntryEntityTestFactory.create();
-
-//         const response = await request(server.instance).post(baseUrl).send({
-//           bookId,
-//           customerId,
-//         });
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts a request and returns created when all required body properties are provided and book and customer with given id exist', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const bookEntity = bookEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const book = await bookRepository.createOne({
-//           id: bookEntity.id,
-//           format: bookEntity.format,
-//           language: bookEntity.language,
-//           price: bookEntity.price,
-//           title: bookEntity.title,
-//           isbn: bookEntity.isbn,
-//           releaseYear: bookEntity.releaseYear,
-//         });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             bookId: book.id,
-//             customerId: customer.id,
-//           });
-
-//         expect(response.statusCode).toBe(HttpStatusCode.created);
-//       });
-//     });
-//   });
-
-//   describe('Find whishlist entries', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const response = await request(server.instance).get(`${baseUrl}`);
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts request and returns whishlist entries', async () => {
-//       expect.assertions(2);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const whishlistEntryRepository = whishlistEntryRepositoryFactory.create(entityManager);
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const { id: whishlistEntryId } = whishlistEntryEntityTestFactory.create();
-
-//         const bookEntity = bookEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const book = await bookRepository.createOne({
-//           id: bookEntity.id,
-//           format: bookEntity.format,
-//           language: bookEntity.language,
-//           price: bookEntity.price,
-//           title: bookEntity.title,
-//           isbn: bookEntity.isbn,
-//           releaseYear: bookEntity.releaseYear,
-//         });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         await whishlistEntryRepository.createOne({
-//           id: whishlistEntryId,
-//           bookId: book.id,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}?customerId=${customer.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
-
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//         expect(response.body.data.whishlistEntries.length).toBe(1);
-//       });
-//     });
-//   });
-
-//   describe('Delete whishlist entry', () => {
-//     it('returns not found when whishlist entry with given id does not exist', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const { id } = whishlistEntryEntityTestFactory.create();
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
-
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const whishlistEntryRepository = whishlistEntryRepositoryFactory.create(entityManager);
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const { id: whishlistEntryId } = whishlistEntryEntityTestFactory.create();
-
-//         const bookEntity = bookEntityTestFactory.create();
-
-//         const book = await bookRepository.createOne({
-//           id: bookEntity.id,
-//           format: bookEntity.format,
-//           language: bookEntity.language,
-//           price: bookEntity.price,
-//           title: bookEntity.title,
-//           isbn: bookEntity.isbn,
-//           releaseYear: bookEntity.releaseYear,
-//         });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const whishlistEntry = await whishlistEntryRepository.createOne({
-//           id: whishlistEntryId,
-//           bookId: book.id,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance).delete(`${baseUrl}/${whishlistEntry.id}`).send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts a request and returns no content id corresponds to existing whishlist entry', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const whishlistEntryRepository = whishlistEntryRepositoryFactory.create(entityManager);
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const bookRepository = bookRepositoryFactory.create(entityManager);
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const { id: whishlistEntryId } = whishlistEntryEntityTestFactory.create();
-
-//         const bookEntity = bookEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const book = await bookRepository.createOne({
-//           id: bookEntity.id,
-//           format: bookEntity.format,
-//           language: bookEntity.language,
-//           price: bookEntity.price,
-//           title: bookEntity.title,
-//           isbn: bookEntity.isbn,
-//           releaseYear: bookEntity.releaseYear,
-//         });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const whishlistEntry = await whishlistEntryRepository.createOne({
-//           id: whishlistEntryId,
-//           bookId: book.id,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${whishlistEntry.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.noContent);
-//       });
-//     });
-//   });
-// });
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+      expect(
+        (response.body as FindWhishlistEntriesResponseOkBody).data.find(
+          (whishlistEntry) => whishlistEntry.id === createdWhishlistEntry.id,
+        ),
+      ).toBeDefined();
+    });
+  });
+
+  describe('Delete whishlist entry', () => {
+    it('returns not found when whishlist entry with given id does not exist', async () => {
+      expect.assertions(1);
+
+      const { id } = whishlistEntryEntityTestFactory.create();
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
+
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
+
+      const { whishlistEntry } = await whishlistService.createWhishlist(
+        {
+          bookId: book.id,
+        },
+        accessToken,
+      );
+
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${whishlistEntry.id}`,
+        method: HttpMethodName.delete,
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
+
+    it('accepts a request and returns no content id corresponds to existing whishlist entry', async () => {
+      expect.assertions(1);
+
+      const { email, password } = userEntityTestFactory.create();
+
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
+
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
+
+      const { whishlistEntry } = await whishlistService.createWhishlist(
+        {
+          bookId: book.id,
+        },
+        accessToken,
+      );
+
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${whishlistEntry.id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
+
+      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+    });
+  });
+});

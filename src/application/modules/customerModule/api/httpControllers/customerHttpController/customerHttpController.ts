@@ -35,9 +35,9 @@ import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/u
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CreateCustomerCommandHandler } from '../../../application/commandHandlers/createCustomerCommandHandler/createCustomerCommandHandler';
 import { DeleteCustomerCommandHandler } from '../../../application/commandHandlers/deleteCustomerCommandHandler/deleteCustomerCommandHandler';
-import { FindCustomerQueryHandler } from '../../../application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { CustomerAlreadyExistsError } from '../../../application/errors/customerAlreadyExistsError';
 import { CustomerNotFoundError } from '../../../application/errors/customerNotFoundError';
+import { FindCustomerQueryHandler } from '../../../application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { symbols } from '../../../symbols';
 
 export class CustomerHttpController implements HttpController {
