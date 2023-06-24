@@ -1,10 +1,41 @@
 import 'reflect-metadata';
 
+import { AuthorBookEntityTestFactory } from '../../../application/modules/authorBookModule/tests/factories/authorBookEntityTestFactory/authorBookEntityTestFactory';
+import { AuthorEntityTestFactory } from '../../../application/modules/authorModule/tests/factories/authorEntityTestFactory/authorEntityTestFactory';
+import { BookEntityTestFactory } from '../../../application/modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AuthorBookService } from '../../services/authorBookService/authorBookService';
+import { AuthorService } from '../../services/authorService/authorService';
+import { AuthService } from '../../services/authService/authService';
+import { BookService } from '../../services/bookService/bookService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { UserService } from '../../services/userService/userService';
+
 describe(`Author books e2e`, () => {
   const authorBookEntityTestFactory = new AuthorBookEntityTestFactory();
   const authorEntityTestFactory = new AuthorEntityTestFactory();
   const bookEntityTestFactory = new BookEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
+
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
+
+  const userService = new UserService(httpService);
+  const authService = new AuthService(httpService);
+  const customerService = new CustomerService(httpService);
+  const authorService = new AuthorService(httpService);
+  const bookService = new BookService(httpService);
+  const authorBookService = new AuthorBookService(httpService);
 
   describe('Create authorBook', () => {
     it('returns unauthorized when access token is not provided', async () => {
@@ -12,7 +43,10 @@ describe(`Author books e2e`, () => {
 
       const { authorId, bookId } = authorBookEntityTestFactory.create();
 
-      const response = await request(server.instance).post(`${authorsUrl}/${authorId}/books/${bookId}`);
+      const response = await httpService.sendRequest({
+        endpoint: `authors/${authorId}/books/${bookId}`,
+        method: HttpMethodName.post,
+      });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
     });
@@ -20,15 +54,21 @@ describe(`Author books e2e`, () => {
     it('returns not found when author or book corresponding to authorId and bookId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId } = userEntityTestFactory.create();
-
       const { authorId, bookId } = authorBookEntityTestFactory.create();
 
-      const accessToken = tokenService.createToken({ userId });
+      const { email, password } = userEntityTestFactory.create();
 
-      const response = await request(server.instance)
-        .post(`${authorsUrl}/${authorId}/books/${bookId}`)
-        .set('Authorization', `Bearer ${accessToken}`);
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const response = await httpService.sendRequest({
+        endpoint: `authors/${authorId}/books/${bookId}`,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
     });
@@ -36,29 +76,37 @@ describe(`Author books e2e`, () => {
     it('returns created when all required params are provided', async () => {
       expect.assertions(1);
 
-      const { id: userId } = userEntityTestFactory.create();
+      const { isbn, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
 
-      const { id: bookId, isbn, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
+      const { firstName, lastName } = authorEntityTestFactory.create();
 
-      const { id: authorId, firstName, lastName } = authorEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-      const accessToken = tokenService.createToken({ userId });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-      const book = await bookRepository.createOne({
-        id: bookId,
-        format,
-        isbn,
-        language,
-        price,
-        releaseYear,
-        title,
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { book } = await bookService.createBook(
+        {
+          format,
+          isbn,
+          language,
+          price,
+          releaseYear,
+          title,
+        },
+        accessToken,
+      );
+
+      const { author } = await authorService.createAuthor({ firstName, lastName }, accessToken);
+
+      const response = await httpService.sendRequest({
+        endpoint: `authors/${author.id}/books/${book.id}`,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
-
-      const author = await authorRepository.createOne({ id: authorId, firstName, lastName });
-
-      const response = await request(server.instance)
-        .post(`${authorsUrl}/${author.id}/books/${book.id}`)
-        .set('Authorization', `Bearer ${accessToken}`);
 
       expect(response.statusCode).toBe(HttpStatusCode.created);
     });
@@ -68,16 +116,21 @@ describe(`Author books e2e`, () => {
     it('returns not found when authorBook with authorId and bookId does not exist', async () => {
       expect.assertions(1);
 
-      const { id: userId } = userEntityTestFactory.create();
-
       const { authorId, bookId } = authorBookEntityTestFactory.create();
 
-      const accessToken = tokenService.createToken({ userId });
+      const { email, password } = userEntityTestFactory.create();
 
-      const response = await request(server.instance)
-        .delete(`${authorsUrl}/${authorId}/books/${bookId}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
+      const { user } = await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const response = await httpService.sendRequest({
+        endpoint: `authors/${authorId}/books/${bookId}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
     });
@@ -85,31 +138,12 @@ describe(`Author books e2e`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
-      const bookEntity = bookEntityTestFactory.create();
+      const { authorId, bookId } = authorBookEntityTestFactory.create();
 
-      const authorEntity = authorEntityTestFactory.create();
-
-      const { id: authorBookId } = authorBookEntityTestFactory.create();
-
-      const book = await bookRepository.createOne({
-        id: bookEntity.id,
-        format: bookEntity.format,
-        language: bookEntity.language,
-        price: bookEntity.price,
-        title: bookEntity.title,
-        isbn: bookEntity.isbn,
-        releaseYear: bookEntity.releaseYear,
+      const response = await httpService.sendRequest({
+        endpoint: `authors/${authorId}/books/${bookId}`,
+        method: HttpMethodName.delete,
       });
-
-      const author = await authorRepository.createOne({
-        id: authorEntity.id,
-        firstName: authorEntity.firstName,
-        lastName: authorEntity.lastName,
-      });
-
-      await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
-
-      const response = await request(server.instance).delete(`${authorsUrl}/${author.id}/books/${book.id}`).send();
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
     });
@@ -117,38 +151,38 @@ describe(`Author books e2e`, () => {
     it('accepts a request and returns no content when authorBookId is uuid and corresponds to existing authorBook', async () => {
       expect.assertions(1);
 
-      const { id: userId } = userEntityTestFactory.create();
+      const { isbn, format, language, price, releaseYear, title } = bookEntityTestFactory.create();
 
-      const bookEntity = bookEntityTestFactory.create();
+      const { firstName, lastName } = authorEntityTestFactory.create();
 
-      const authorEntity = authorEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-      const { id: authorBookId } = authorBookEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-      const accessToken = tokenService.createToken({ userId });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const book = await bookRepository.createOne({
-        id: bookEntity.id,
-        format: bookEntity.format,
-        language: bookEntity.language,
-        price: bookEntity.price,
-        title: bookEntity.title,
-        isbn: bookEntity.isbn,
-        releaseYear: bookEntity.releaseYear,
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { book } = await bookService.createBook(
+        {
+          format,
+          isbn,
+          language,
+          price,
+          releaseYear,
+          title,
+        },
+        accessToken,
+      );
+
+      const { author } = await authorService.createAuthor({ firstName, lastName }, accessToken);
+
+      await authorBookService.createAuthorBook(author.id, book.id, accessToken);
+
+      const response = await httpService.sendRequest({
+        endpoint: `authors/${author.id}/books/${book.id}`,
+        method: HttpMethodName.delete,
       });
-
-      const author = await authorRepository.createOne({
-        id: authorEntity.id,
-        firstName: authorEntity.firstName,
-        lastName: authorEntity.lastName,
-      });
-
-      await authorBookRepository.createOne({ id: authorBookId, authorId: author.id, bookId: book.id });
-
-      const response = await request(server.instance)
-        .delete(`${authorsUrl}/${author.id}/books/${book.id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send();
 
       expect(response.statusCode).toBe(HttpStatusCode.noContent);
     });

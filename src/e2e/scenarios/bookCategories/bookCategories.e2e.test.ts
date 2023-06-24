@@ -13,6 +13,7 @@ import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerCl
 import { LogLevel } from '../../../libs/logger/logLevel';
 import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
 import { AuthService } from '../../services/authService/authService';
+import { BookCategoryService } from '../../services/bookCategoryService/bookCategoryService';
 import { BookService } from '../../services/bookService/bookService';
 import { CategoryService } from '../../services/categoryService/categoryService';
 import { CustomerService } from '../../services/customerService/customerService';
@@ -34,6 +35,7 @@ describe(`Book categories e2e`, () => {
   const customerService = new CustomerService(httpService);
   const bookService = new BookService(httpService);
   const categoryService = new CategoryService(httpService);
+  const bookCategoryService = new BookCategoryService(httpService);
 
   describe('Create bookCategory', () => {
     it('returns unauthorized when access token is not provided', async () => {
@@ -196,6 +198,8 @@ describe(`Book categories e2e`, () => {
       );
 
       const { category } = await categoryService.createCategory(categoryEntity, accessToken);
+
+      await bookCategoryService.createBookCategory(book.id, category.id, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `books/${book.id}/categories/${category.id}`,
