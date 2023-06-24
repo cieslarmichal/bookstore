@@ -15,7 +15,7 @@ export class WhishlistService {
   ): Promise<CreateWhishlistEntryResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateWhishlistEntryResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'books',
+      endpoint: 'whishlist-entries',
       body: createWhishlistBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

@@ -1,601 +1,429 @@
-// import 'reflect-metadata';
-
-// import request from 'supertest';
-// import { DataSource } from 'typeorm';
-
-// import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
-// import { TestTransactionExternalRunner } from '../../../../common/tests/testTransactionExternalRunner';
-// import { DependencyInjectionContainerFactory } from '../../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-// import { LoggerModule } from '../../../../libs/logger/loggerModule';
-// import { LoggerModuleConfigTestFactory } from '../../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-// import { PostgresModule } from '../../../../libs/postgres/postgresModule';
-// import { postgresModuleSymbols } from '../../../../libs/postgres/postgresModuleSymbols';
-// import { PostgresModuleConfigTestFactory } from '../../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-// import { UnitOfWorkModule } from '../../../../libs/unitOfWork/unitOfWorkModule';
-// import { HttpServer } from '../../../../server/httpServer';
-// import { HttpServerConfigTestFactory } from '../../../../server/tests/factories/httpServerConfigTestFactory/httpServerConfigTestFactory';
-// import { Application } from '../../../application';
-// import { AddressModule } from '../../../domain/address/addressModule';
-// import { AddressEntity } from '../../../domain/address/contracts/addressEntity';
-// import { AuthorModule } from '../../../domain/author/authorModule';
-// import { AuthorEntity } from '../../../domain/author/contracts/authorEntity';
-// import { AuthorBookModule } from '../../../domain/authorBook/authorBookModule';
-// import { AuthorBookEntity } from '../../../domain/authorBook/contracts/authorBookEntity';
-// import { BookModule } from '../../../domain/book/bookModule';
-// import { BookEntity } from '../../../domain/book/contracts/bookEntity';
-// import { BookCategoryModule } from '../../../domain/bookCategory/bookCategoryModule';
-// import { BookCategoryEntity } from '../../../domain/bookCategory/contracts/bookCategoryEntity';
-// import { CartModule } from '../../../domain/cart/cartModule';
-// import { CartEntity } from '../../../domain/cart/contracts/cartEntity';
-// import { CategoryModule } from '../../../domain/category/categoryModule';
-// import { CategoryEntity } from '../../../domain/category/contracts/categoryEntity';
-// import { CustomerEntity } from '../../../domain/customer/contracts/customerEntity';
-// import { CustomerRepositoryFactory } from '../../../domain/customer/contracts/factories/customerRepositoryFactory/customerRepositoryFactory';
-// import { CustomerModule } from '../../../domain/customer/customerModule';
-// import { customerSymbols } from '../../../domain/customer/customerSymbols';
-// import { CustomerEntityTestFactory } from '../../../domain/customer/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
-// import { InventoryEntity } from '../../../domain/inventory/contracts/inventoryEntity';
-// import { InventoryModule } from '../../../domain/inventory/inventoryModule';
-// import { LineItemEntity } from '../../../domain/lineItem/contracts/lineItemEntity';
-// import { LineItemModule } from '../../../domain/lineItem/lineItemModule';
-// import { OrderEntity } from '../../../domain/order/contracts/orderEntity';
-// import { OrderModule } from '../../../domain/order/orderModule';
-// import { ReviewRepositoryFactory } from '../../../domain/review/contracts/factories/reviewRepositoryFactory/reviewRepositoryFactory';
-// import { ReviewEntity } from '../../../domain/review/contracts/reviewEntity';
-// import { ReviewModule } from '../../../domain/review/reviewModule';
-// import { reviewSymbols } from '../../../domain/review/reviewSymbols';
-// import { ReviewEntityTestFactory } from '../../../domain/review/tests/factories/reviewEntityTestFactory/reviewEntityTestFactory';
-// import { UserRepositoryFactory } from '../../../domain/user/contracts/factories/userRepositoryFactory/userRepositoryFactory';
-// import { TokenService } from '../../../domain/user/contracts/services/tokenService/tokenService';
-// import { UserEntity } from '../../../domain/user/contracts/userEntity';
-// import { UserEntityTestFactory } from '../../../domain/user/tests/factories/userEntityTestFactory/userEntityTestFactory';
-// import { UserModuleConfigTestFactory } from '../../../domain/user/tests/factories/userModuleConfigTestFactory/userModuleConfigTestFactory';
-// import { UserModule } from '../../../domain/user/userModule';
-// import { userModuleSymbols } from '../../../domain/user/userModuleSymbols';
-// import { WhishlistEntryEntity } from '../../../domain/whishlist/contracts/whishlistEntryEntity';
-// import { WhishlistModule } from '../../../domain/whishlist/whishlistModule';
-// import { IntegrationsModule } from '../../../integrations/integrationsModule';
-
-// const baseUrl = '/reviews';
-
-// describe(`ReviewController (${baseUrl})`, () => {
-//   let reviewRepositoryFactory: ReviewRepositoryFactory;
-//   let customerRepositoryFactory: CustomerRepositoryFactory;
-//   let userRepositoryFactory: UserRepositoryFactory;
-//   let server: HttpServer;
-//   let tokenService: TokenService;
-//   let testTransactionRunner: TestTransactionExternalRunner;
-//   let dataSource: DataSource;
-
-//   const reviewEntityTestFactory = new ReviewEntityTestFactory();
-//   const userEntityTestFactory = new UserEntityTestFactory();
-//   const customerEntityTestFactory = new CustomerEntityTestFactory();
-
-//   const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-//   const postgresModuleConfig = new PostgresModuleConfigTestFactory().create({
-//     entities: [
-//       BookEntity,
-//       AuthorEntity,
-//       UserEntity,
-//       CategoryEntity,
-//       AuthorBookEntity,
-//       BookCategoryEntity,
-//       AddressEntity,
-//       CustomerEntity,
-//       CartEntity,
-//       LineItemEntity,
-//       OrderEntity,
-//       InventoryEntity,
-//       ReviewEntity,
-//       WhishlistEntryEntity,
-//     ],
-//   });
-//   const userModuleConfig = new UserModuleConfigTestFactory().create();
-//   const httpServerConfig = new HttpServerConfigTestFactory().create();
-
-//   const createContainerFunction = DependencyInjectionContainerFactory.create;
-
-//   beforeEach(async () => {
-//     const container = DependencyInjectionContainerFactory.create({
-//       modules: [
-//         new PostgresModule(postgresModuleConfig),
-//         new CategoryModule(),
-//         new BookModule(),
-//         new AuthorModule(),
-//         new UserModule(userModuleConfig),
-//         new IntegrationsModule(),
-//         new AuthorBookModule(),
-//         new LoggerModule(loggerModuleConfig),
-//         new BookCategoryModule(),
-//         new AddressModule(),
-//         new CustomerModule(),
-//         new UnitOfWorkModule(),
-//         new CartModule(),
-//         new LineItemModule(),
-//         new OrderModule(),
-//         new InventoryModule(),
-//         new ReviewModule(),
-//         new WhishlistModule(),
-//       ],
-//     });
+import 'reflect-metadata';
 
-//     DependencyInjectionContainerFactory.create = jest.fn().mockResolvedValue(container);
+import { FindReviewsResponseOkBody } from '../../../application/modules/reviewModule/api/httpControllers/reviewHttpController/schemas/findReviewsSchema';
+import { ReviewEntityTestFactory } from '../../../application/modules/reviewModule/tests/factories/reviewEntityTestFactory/reviewEntityTestFactory';
+import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMethodName } from '../../../common/http/httpMethodName';
+import { HttpStatusCode } from '../../../common/http/httpStatusCode';
+import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
+import { HttpServiceFactoryImpl } from '../../../libs/http/factories/httpServiceFactory/httpServiceFactoryImpl';
+import { LoggerClientFactoryImpl } from '../../../libs/logger/factories/loggerClientFactory/loggerClientFactoryImpl';
+import { LogLevel } from '../../../libs/logger/logLevel';
+import { LoggerServiceImpl } from '../../../libs/logger/services/loggerService/loggerServiceImpl';
+import { AuthService } from '../../services/authService/authService';
+import { CustomerService } from '../../services/customerService/customerService';
+import { ReviewService } from '../../services/reviewService/reviewService';
+import { UserService } from '../../services/userService/userService';
 
-//     reviewRepositoryFactory = container.get<ReviewRepositoryFactory>(reviewSymbols.reviewRepositoryFactory);
-//     userRepositoryFactory = container.get<UserRepositoryFactory>(userModuleSymbols.userRepositoryFactory);
-//     customerRepositoryFactory = container.get<CustomerRepositoryFactory>(customerSymbols.customerRepositoryFactory);
-//     dataSource = container.get<DataSource>(postgresModuleSymbols.dataSource);
-//     tokenService = container.get<TokenService>(userModuleSymbols.tokenService);
+const baseUrl = '/reviews';
 
-//     testTransactionRunner = new TestTransactionExternalRunner(container);
+describe(`ReviewController (${baseUrl})`, () => {
+  const reviewEntityTestFactory = new ReviewEntityTestFactory();
+  const userEntityTestFactory = new UserEntityTestFactory();
 
-//     const app = new Application({ ...postgresModuleConfig, ...userModuleConfig, ...loggerModuleConfig });
+  const httpService = new HttpServiceFactoryImpl(
+    new FetchClientImpl(),
+    new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
+  ).create({ baseUrl: '/' });
 
-//     await app.initialize();
+  const userService = new UserService(httpService);
+  const authService = new AuthService(httpService);
+  const customerService = new CustomerService(httpService);
+  const reviewService = new ReviewService(httpService);
 
-//     server = new HttpServer(app.instance, httpServerConfig);
+  describe('Create review', () => {
+    it('returns bad request when not all required properties in body are provided', async () => {
+      expect.assertions(1);
 
-//     await server.listen();
-//   });
+      const { isbn } = reviewEntityTestFactory.create();
 
-//   afterEach(async () => {
-//     DependencyInjectionContainerFactory.create = createContainerFunction;
+      const { email, password } = userEntityTestFactory.create();
 
-//     await dataSource.destroy();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//     await server.close();
-//   });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//   describe('Create review', () => {
-//     it('returns bad request when not all required properties in body are provided', async () => {
-//       expect.assertions(1);
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          isbn,
+        },
+      });
 
-//         const { isbn } = reviewEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.badRequest);
+    });
 
-//         const accessToken = tokenService.createToken({ userId });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             isbn,
-//           });
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-//       });
-//     });
+      const { email, password } = userEntityTestFactory.create();
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { isbn, rate, comment } = reviewEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance).post(baseUrl).send({
-//           isbn,
-//           rate,
-//           comment,
-//         });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        body: {
+          isbn,
+          rate,
+          comment,
+        },
+      });
 
-//     it('accepts a request and returns created when all required body properties are provided and author with given id exists', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+    it('accepts a request and returns created when all required body properties', async () => {
+      expect.assertions(1);
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { isbn, rate, comment } = reviewEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const accessToken = tokenService.createToken({ userId });
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.post,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          isbn,
+          rate,
+          comment,
+        },
+      });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      expect(response.statusCode).toBe(HttpStatusCode.created);
+    });
+  });
 
-//         await customerRepository.createOne({ id: customerId, userId: user.id });
+  describe('Find review', () => {
+    it('returns not found when review with given reviewId does not exist', async () => {
+      expect.assertions(1);
 
-//         const response = await request(server.instance)
-//           .post(baseUrl)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             isbn,
-//             rate,
-//             comment,
-//           });
+      const { id } = reviewEntityTestFactory.create();
 
-//         expect(response.statusCode).toBe(HttpStatusCode.created);
-//       });
-//     });
-//   });
+      const { email, password } = userEntityTestFactory.create();
 
-//   describe('Find review', () => {
-//     it('returns not found when review with given reviewId does not exist', async () => {
-//       expect.assertions(1);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const { id: userId } = userEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { id } = reviewEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const accessToken = tokenService.createToken({ userId });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${review.id}`,
+        method: HttpMethodName.get,
+      });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+    it('accepts a request and returns ok when reviewId is uuid and have corresponding review', async () => {
+      expect.assertions(1);
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const review = await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const response = await request(server.instance).get(`${baseUrl}/${review.id}`);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//     it('accepts a request and returns ok when reviewId is uuid and have corresponding review', async () => {
-//       expect.assertions(1);
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${review.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+  describe('Find reviews', () => {
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: baseUrl,
+        method: HttpMethodName.get,
+      });
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+    it('accepts request and returns reviews', async () => {
+      expect.assertions(2);
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const review = await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}/${review.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//   describe('Find reviews', () => {
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}?customerId=${customer.id}`,
+        method: HttpMethodName.get,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//       await testTransactionRunner.runInTestTransaction(async () => {
-//         const response = await request(server.instance).get(`${baseUrl}`);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+      expect(
+        (response.body as FindReviewsResponseOkBody).data.find((responseReview) => responseReview.id === review.id),
+      ).toBeDefined();
+    });
+  });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+  describe('Update review', () => {
+    it('returns not found when review with given reviewId does not exist', async () => {
+      expect.assertions(1);
 
-//     it('accepts request and returns reviews', async () => {
-//       expect.assertions(2);
+      const { id, rate } = reviewEntityTestFactory.create();
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          rate,
+        },
+      });
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const { rate: updatedRate } = reviewEntityTestFactory.create();
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { email, password } = userEntityTestFactory.create();
 
-//         await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const response = await request(server.instance)
-//           .get(`${baseUrl}?customerId=${customer.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`);
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//         expect(response.body.data.reviews.length).toBe(1);
-//       });
-//     });
-//   });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//   describe('Update review', () => {
-//     it('returns not found when review with given reviewId does not exist', async () => {
-//       expect.assertions(1);
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${review.id}`,
+        method: HttpMethodName.patch,
+        body: {
+          price: updatedRate,
+        },
+      });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+    it('accepts a request and returns ok when reviewId is uuid and corresponds to existing review', async () => {
+      expect.assertions(1);
 
-//         const { id, rate } = reviewEntityTestFactory.create();
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { rate: updatedRate } = reviewEntityTestFactory.create();
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const accessToken = tokenService.createToken({ userId });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         await customerRepository.createOne({ id: customerId, userId: user.id });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             rate,
-//           });
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${review.id}`,
+        method: HttpMethodName.patch,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        body: {
+          price: updatedRate,
+        },
+      });
 
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
+    });
+  });
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+  describe('Delete review', () => {
+    it('returns not found when review with given reviewId does not exist', async () => {
+      expect.assertions(1);
 
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
+      const { id } = reviewEntityTestFactory.create();
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      const { email, password } = userEntityTestFactory.create();
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const { rate: updatedRate } = reviewEntityTestFactory.create();
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      expect(response.statusCode).toBe(HttpStatusCode.notFound);
+    });
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+    it('returns unauthorized when access token is not provided', async () => {
+      expect.assertions(1);
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const review = await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
+      const { email, password } = userEntityTestFactory.create();
 
-//         const response = await request(server.instance).patch(`${baseUrl}/${review.id}`).send({
-//           price: updatedRate,
-//         });
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//     it('accepts a request and returns ok when reviewId is uuid and corresponds to existing review', async () => {
-//       expect.assertions(1);
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${review.id}`,
+        method: HttpMethodName.delete,
+      });
 
-//         const userRepository = userRepositoryFactory.create(entityManager);
+      expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
+    });
 
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
+    it('accepts a request and returns no content when reviewId is uuid and corresponds to existing review', async () => {
+      expect.assertions(1);
 
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
+      const { isbn, rate, comment } = reviewEntityTestFactory.create();
 
-//         const { rate: updatedRate } = reviewEntityTestFactory.create();
+      const { email, password } = userEntityTestFactory.create();
 
-//         const { id: userId, email, password } = userEntityTestFactory.create();
+      const { user } = await userService.createUser({ email: email as string, password });
 
-//         const { id: customerId } = customerEntityTestFactory.create();
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-//         const accessToken = tokenService.createToken({ userId });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
+      const { review } = await reviewService.createReview(
+        {
+          isbn,
+          rate,
+          comment: comment as string,
+        },
+        accessToken,
+      );
 
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
+      const response = await httpService.sendRequest({
+        endpoint: `${baseUrl}/${review.id}`,
+        method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      });
 
-//         const review = await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance)
-//           .patch(`${baseUrl}/${review.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send({
-//             rate: updatedRate,
-//           });
-
-//         expect(response.statusCode).toBe(HttpStatusCode.ok);
-//       });
-//     });
-//   });
-
-//   describe('Delete review', () => {
-//     it('returns not found when review with given reviewId does not exist', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const { id } = reviewEntityTestFactory.create();
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.notFound);
-//       });
-//     });
-
-//     it('returns unauthorized when access token is not provided', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const review = await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance).delete(`${baseUrl}/${review.id}`).send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
-//       });
-//     });
-
-//     it('accepts a request and returns no content when reviewId is uuid and corresponds to existing review', async () => {
-//       expect.assertions(1);
-
-//       await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
-//         const entityManager = unitOfWork.getEntityManager();
-
-//         const reviewRepository = reviewRepositoryFactory.create(entityManager);
-
-//         const userRepository = userRepositoryFactory.create(entityManager);
-
-//         const customerRepository = customerRepositoryFactory.create(entityManager);
-
-//         const { id, isbn, rate, comment } = reviewEntityTestFactory.create();
-
-//         const { id: userId, email, password } = userEntityTestFactory.create();
-
-//         const { id: customerId } = customerEntityTestFactory.create();
-
-//         const accessToken = tokenService.createToken({ userId });
-
-//         const user = await userRepository.createOne({ id: userId, email: email as string, password });
-
-//         const customer = await customerRepository.createOne({ id: customerId, userId: user.id });
-
-//         const review = await reviewRepository.createOne({
-//           id,
-//           isbn,
-//           rate,
-//           comment: comment as string,
-//           customerId: customer.id,
-//         });
-
-//         const response = await request(server.instance)
-//           .delete(`${baseUrl}/${review.id}`)
-//           .set('Authorization', `Bearer ${accessToken}`)
-//           .send();
-
-//         expect(response.statusCode).toBe(HttpStatusCode.noContent);
-//       });
-//     });
-//   });
-// });
+      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+    });
+  });
+});
