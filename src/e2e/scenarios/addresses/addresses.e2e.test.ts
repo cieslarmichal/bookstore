@@ -40,9 +40,9 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -61,7 +61,9 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressEntityTestFactory.create();
@@ -94,7 +96,7 @@ describe(`Addresses e2e`, () => {
 
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { firstName, lastName, phoneNumber, country, state, city, zipCode, streetAddress } =
         addressEntityTestFactory.create();
@@ -130,7 +132,7 @@ describe(`Addresses e2e`, () => {
 
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { id } = addressEntityTestFactory.create();
 
@@ -153,19 +155,24 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { address } = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { address } = await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
@@ -189,23 +196,26 @@ describe(`Addresses e2e`, () => {
 
       const { user: user2 } = await userService.createUser({ email: email2 as string, password });
 
-      const { customer: customer1 } = await customerService.createCustomer({ userId: user1.id });
-
-      await customerService.createCustomer({ userId: user2.id });
-
       const accessToken = await authService.getUserToken({ email: email2 as string, password });
 
-      const { address } = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer1.id,
-      });
+      const { customer: customer1 } = await customerService.createCustomer({ userId: user1.id }, accessToken);
+
+      await customerService.createCustomer({ userId: user2.id }, accessToken);
+
+      const { address } = await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer1.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
@@ -226,21 +236,24 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { address } = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { address } = await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
@@ -278,35 +291,41 @@ describe(`Addresses e2e`, () => {
 
       const { user: user2 } = await userService.createUser({ email: email2 as string, password });
 
-      const { customer: customer1 } = await customerService.createCustomer({ userId: user1.id });
-
-      const { customer: customer2 } = await customerService.createCustomer({ userId: user2.id });
-
-      await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer1.id,
-      });
-
-      await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer2.id,
-      });
-
       const accessToken = await authService.getUserToken({ email: email1 as string, password });
+
+      const { customer: customer1 } = await customerService.createCustomer({ userId: user1.id }, accessToken);
+
+      const { customer: customer2 } = await customerService.createCustomer({ userId: user2.id }, accessToken);
+
+      await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer1.id,
+        },
+        accessToken,
+      );
+
+      await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer2.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["customerId||eq||${customer1.id}"]`,
@@ -348,21 +367,24 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { address } = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { address } = await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
@@ -385,9 +407,9 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { id } = addressEntityTestFactory.create();
 
@@ -410,19 +432,24 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { address } = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { address } = await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
@@ -442,21 +469,24 @@ describe(`Addresses e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { address } = await addressService.createAddress({
-        firstName,
-        lastName,
-        phoneNumber,
-        country,
-        state,
-        city,
-        zipCode,
-        streetAddress,
-        customerId: customer.id,
-      });
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { address } = await addressService.createAddress(
+        {
+          firstName,
+          lastName,
+          phoneNumber,
+          country,
+          state,
+          city,
+          zipCode,
+          streetAddress,
+          customerId: customer.id,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,

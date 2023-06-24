@@ -42,9 +42,9 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -84,9 +84,9 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -112,9 +112,9 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${authorId}`,
@@ -130,7 +130,16 @@ describe(`Authors e2e`, () => {
 
       const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
@@ -149,11 +158,14 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
@@ -188,21 +200,27 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      await authorService.createAuthor({
-        firstName: authorEntity1.firstName,
-        lastName: authorEntity1.lastName,
-        about: authorEntity1.about as string,
-      });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      await authorService.createAuthor({
-        firstName: authorEntity2.firstName,
-        lastName: authorEntity2.lastName,
-        about: authorEntity2.about as string,
-      });
+      await authorService.createAuthor(
+        {
+          firstName: authorEntity1.firstName,
+          lastName: authorEntity1.lastName,
+          about: authorEntity1.about as string,
+        },
+        accessToken,
+      );
+
+      await authorService.createAuthor(
+        {
+          firstName: authorEntity2.firstName,
+          lastName: authorEntity2.lastName,
+          about: authorEntity2.about as string,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["firstName||eq||${authorEntity1.firstName}"]`,
@@ -225,11 +243,14 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
@@ -252,9 +273,9 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${authorId}`,
@@ -271,9 +292,18 @@ describe(`Authors e2e`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
       const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
@@ -295,11 +325,14 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
@@ -324,9 +357,9 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${authorId}`,
@@ -340,9 +373,18 @@ describe(`Authors e2e`, () => {
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
       const { firstName, lastName, about } = authorEntityTestFactory.create();
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
@@ -361,11 +403,14 @@ describe(`Authors e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { author } = await authorService.createAuthor({ firstName, lastName, about: about || undefined });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { author } = await authorService.createAuthor(
+        { firstName, lastName, about: about || undefined },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,

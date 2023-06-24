@@ -39,9 +39,9 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -78,9 +78,9 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -105,9 +105,9 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
@@ -123,7 +123,13 @@ describe(`Categories e2e`, () => {
 
       const { name } = categoryEntityTestFactory.create();
 
-      const { category } = await categoryService.createCategory({ name });
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { category } = await categoryService.createCategory({ name }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${category.id}`,
@@ -142,11 +148,11 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { category } = await categoryService.createCategory({ name });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { category } = await categoryService.createCategory({ name }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${category.id}`,
@@ -181,13 +187,13 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      await categoryService.createCategory(categoryEntity1);
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      await categoryService.createCategory(categoryEntity2);
+      await categoryService.createCategory(categoryEntity1, accessToken);
+
+      await categoryService.createCategory(categoryEntity2, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["name||eq||${categoryEntity1.name}"]`,
@@ -209,9 +215,9 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
@@ -227,7 +233,13 @@ describe(`Categories e2e`, () => {
 
       const { name } = categoryEntityTestFactory.create();
 
-      const { category } = await categoryService.createCategory({ name });
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { category } = await categoryService.createCategory({ name }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${category.id}`,
@@ -244,13 +256,13 @@ describe(`Categories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { name } = categoryEntityTestFactory.create();
 
-      const { category } = await categoryService.createCategory({ name });
+      const { category } = await categoryService.createCategory({ name }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${category.id}`,

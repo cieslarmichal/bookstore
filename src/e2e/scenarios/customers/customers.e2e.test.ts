@@ -117,7 +117,9 @@ describe(`Customers e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customer.id}`,
@@ -134,9 +136,9 @@ describe(`Customers e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customer.id}`,
@@ -176,7 +178,9 @@ describe(`Customers e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customer.id}`,
@@ -193,9 +197,9 @@ describe(`Customers e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      const { customer } = await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { customer } = await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customer.id}`,

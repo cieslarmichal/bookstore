@@ -43,9 +43,9 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { bookId } = inventoryEntityTestFactory.create();
 
@@ -68,14 +68,23 @@ describe(`Inventories e2e`, () => {
 
       const { title, isbn, releaseYear, language, format, price } = bookEntityTestFactory.create();
 
-      const { book } = await bookService.createBook({
-        title,
-        isbn,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+      const { email, password } = userEntityTestFactory.create();
+
+      await userService.createUser({ email: email as string, password });
+
+      const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -100,18 +109,21 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { book } = await bookService.createBook({
-        title,
-        isbn,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
+
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -137,9 +149,9 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
@@ -174,23 +186,29 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { book } = await bookService.createBook({
-        title,
-        isbn,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      const { inventory } = await inventoryService.createInventory({
-        bookId: book.id,
-        quantity,
-      });
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
+
+      const { inventory } = await inventoryService.createInventory(
+        {
+          bookId: book.id,
+          quantity,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${inventory.id}`,
@@ -221,9 +239,9 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
@@ -245,9 +263,9 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const { id } = inventoryEntityTestFactory.create();
 
@@ -290,23 +308,29 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { book } = await bookService.createBook({
-        title,
-        isbn,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      const { inventory } = await inventoryService.createInventory({
-        bookId: book.id,
-        quantity,
-      });
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
+
+      const { inventory } = await inventoryService.createInventory(
+        {
+          bookId: book.id,
+          quantity,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${inventory.id}`,
@@ -331,9 +355,9 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
+
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
@@ -368,23 +392,29 @@ describe(`Inventories e2e`, () => {
 
       const { user } = await userService.createUser({ email: email as string, password });
 
-      await customerService.createCustomer({ userId: user.id });
-
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
-      const { book } = await bookService.createBook({
-        title,
-        isbn,
-        releaseYear,
-        language,
-        format,
-        price,
-      });
+      await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      const { inventory } = await inventoryService.createInventory({
-        bookId: book.id,
-        quantity,
-      });
+      const { book } = await bookService.createBook(
+        {
+          title,
+          isbn,
+          releaseYear,
+          language,
+          format,
+          price,
+        },
+        accessToken,
+      );
+
+      const { inventory } = await inventoryService.createInventory(
+        {
+          bookId: book.id,
+          quantity,
+        },
+        accessToken,
+      );
 
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${inventory.id}`,
