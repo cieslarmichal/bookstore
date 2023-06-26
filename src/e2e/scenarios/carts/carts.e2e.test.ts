@@ -25,7 +25,7 @@ import { UserService } from '../../services/userService/userService';
 
 const baseUrl = '/carts';
 
-describe(`CartController (${baseUrl})`, () => {
+describe(`Carts e2e`, () => {
   const cartEntityTestFactory = new CartEntityTestFactory();
   const userEntityTestFactory = new UserEntityTestFactory();
   const bookEntityTestFactory = new BookEntityTestFactory();
@@ -402,17 +402,13 @@ describe(`CartController (${baseUrl})`, () => {
         accessToken,
       );
 
-      const addLineItemResponse = await httpService.sendRequest<AddLineItemResponseOkBody>({
-        endpoint: `${baseUrl}/${cart.id}/add-line-item`,
-        method: HttpMethodName.post,
-        body: {
-          quantity: 1,
-          bookId: book.id,
-        },
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
-      });
+      const { cart: responseCart } = await cartService.addLineItem(
+        cart.id,
+        { bookId: book.id, quantity: 1 },
+        accessToken,
+      );
 
-      const lineItemId = (addLineItemResponse.body as AddLineItemResponseOkBody).cart.lineItems?.[0]?.id;
+      const lineItemId = responseCart.lineItems?.[0]?.id;
 
       const removeLineItemResponse = await httpService.sendRequest<AddLineItemResponseOkBody>({
         endpoint: `${baseUrl}/${cart.id}/remove-line-item`,
