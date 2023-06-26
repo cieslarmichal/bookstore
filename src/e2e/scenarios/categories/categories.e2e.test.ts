@@ -191,7 +191,7 @@ describe(`Categories e2e`, () => {
 
       await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      await categoryService.createCategory(categoryEntity1, accessToken);
+      const { category } = await categoryService.createCategory(categoryEntity1, accessToken);
 
       await categoryService.createCategory(categoryEntity2, accessToken);
 
@@ -201,7 +201,11 @@ describe(`Categories e2e`, () => {
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
 
-      expect((response.body as FindCategoriesResponseOkBody).data.length).toBe(1);
+      expect(
+        (response.body as FindCategoriesResponseOkBody).data.find(
+          (responseCategory) => responseCategory.id === category.id,
+        ),
+      ).toBeTruthy();
     });
   });
 

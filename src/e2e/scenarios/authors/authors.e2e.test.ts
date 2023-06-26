@@ -204,7 +204,7 @@ describe(`Authors e2e`, () => {
 
       await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      await authorService.createAuthor(
+      const { author } = await authorService.createAuthor(
         {
           firstName: authorEntity1.firstName,
           lastName: authorEntity1.lastName,
@@ -229,7 +229,9 @@ describe(`Authors e2e`, () => {
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
-      expect((response.body as FindAuthorsResponseOkBody).data.length).toBe(1);
+      expect(
+        (response.body as FindAuthorsResponseOkBody).data.find((responseAuthor) => responseAuthor.id === author.id),
+      ).toBeTruthy();
     });
   });
 

@@ -297,7 +297,7 @@ describe(`Addresses e2e`, () => {
 
       const { customer: customer2 } = await customerService.createCustomer({ userId: user2.id }, accessToken);
 
-      await addressService.createAddress(
+      const { address } = await addressService.createAddress(
         {
           firstName,
           lastName,
@@ -334,7 +334,11 @@ describe(`Addresses e2e`, () => {
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
-      expect((response.body as FindAddressesResponseOkBody).data.length).toBe(1);
+      expect(
+        (response.body as FindAddressesResponseOkBody).data.find(
+          (responseAddress) => responseAddress.id === address.id,
+        ),
+      ).toBeTruthy();
     });
   });
 

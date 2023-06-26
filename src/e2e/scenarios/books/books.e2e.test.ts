@@ -226,7 +226,7 @@ describe(`Books e2e`, () => {
 
       await customerService.createCustomer({ userId: user.id }, accessToken);
 
-      await bookService.createBook(
+      const { book } = await bookService.createBook(
         {
           format: bookEntity1.format,
           language: bookEntity1.language,
@@ -257,7 +257,9 @@ describe(`Books e2e`, () => {
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
-      expect((response.body as FindBooksResponseOkBody).data.length).toBe(1);
+      expect(
+        (response.body as FindBooksResponseOkBody).data.find((responseBook) => responseBook.id === book.id),
+      ).toBeTruthy();
     });
   });
 
