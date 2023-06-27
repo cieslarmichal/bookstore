@@ -1,14 +1,14 @@
-import { DeleteAddressCommandHandler } from './deleteAddressCommandHandler.js';
+import { DeleteAddressCommandHandler } from './deleteAddressCommandHandler';
 import {
   DeleteAddressCommandHandlerPayload,
   deleteAddressCommandHandlerPayloadSchema,
-} from './payloads/deleteAddressCommandHandlerPayload.js';
-import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators.js';
-import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols.js';
-import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService.js';
-import { Validator } from '../../../../../../libs/validator/validator.js';
-import { symbols } from '../../../symbols.js';
-import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory.js';
+} from './payloads/deleteAddressCommandHandlerPayload';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
+import { Validator } from '../../../../../../libs/validator/validator';
+import { symbols } from '../../../symbols';
+import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory';
 
 @Injectable()
 export class DeleteAddressCommandHandlerImpl implements DeleteAddressCommandHandler {

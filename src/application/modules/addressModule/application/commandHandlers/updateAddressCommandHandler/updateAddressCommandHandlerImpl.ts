@@ -1,18 +1,18 @@
 import {
   UpdateAddressCommandHandlerPayload,
   updateAddressCommandHandlerPayloadSchema,
-} from './payloads/updateAddressCommandHandlerPayload.js';
+} from './payloads/updateAddressCommandHandlerPayload';
 import {
   UpdateAddressCommandHandlerResult,
   updateAddressCommandHandlerResultSchema,
-} from './payloads/updateAddressCommandHandlerResult.js';
-import { UpdateAddressCommandHandler } from './updateAddressCommandHandler.js';
-import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators.js';
-import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols.js';
-import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService.js';
-import { Validator } from '../../../../../../libs/validator/validator.js';
-import { symbols } from '../../../symbols.js';
-import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory.js';
+} from './payloads/updateAddressCommandHandlerResult';
+import { UpdateAddressCommandHandler } from './updateAddressCommandHandler';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
+import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
+import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
+import { Validator } from '../../../../../../libs/validator/validator';
+import { symbols } from '../../../symbols';
+import { AddressRepositoryFactory } from '../../repositories/addressRepository/addressRepositoryFactory';
 
 @Injectable()
 export class UpdateAddressCommandHandlerImpl implements UpdateAddressCommandHandler {

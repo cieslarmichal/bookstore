@@ -4,7 +4,7 @@
   "author": "Michal Cieslar",
   "private": true,
   "scripts": {
-    "start": "nodemon src/main.ts",
+    "start": "ts-node src/index.ts",
     "build:clean": "rimraf dist",
     "build": "tsc --build tsconfig.build.json",
     "build:dev": "tsc --build tsconfig.json",

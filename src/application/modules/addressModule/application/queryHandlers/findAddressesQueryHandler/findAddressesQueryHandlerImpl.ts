@@ -7,7 +7,7 @@ import {
   FindAddressesQueryHandlerResult,
   findAddressesQueryHandlerResultSchema,
 } from './payloads/findAddressesQueryHandlerResult';
-import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators.js';
+import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
