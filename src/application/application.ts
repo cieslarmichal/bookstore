@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 
+import 'dotenv/config';
+
 import { fastify } from 'fastify';
 import { DataSource } from 'typeorm';
 
