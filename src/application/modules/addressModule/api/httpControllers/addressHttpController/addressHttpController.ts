@@ -49,7 +49,7 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
 import { Filter } from '../../../../../../common/types/filter';
 import { FilterName } from '../../../../../../common/types/filterName';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { FindCustomerQueryHandler } from '../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
@@ -67,6 +67,7 @@ import { FindAddressesQueryHandler } from '../../../application/queryHandlers/fi
 import { FindAddressQueryHandler } from '../../../application/queryHandlers/findAddressQueryHandler/findAddressQueryHandler';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class AddressHttpController implements HttpController {
   public readonly basePath = 'addresses';
 

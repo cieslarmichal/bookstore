@@ -30,7 +30,7 @@ import {
 import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CreateCustomerCommandHandler } from '../../../application/commandHandlers/createCustomerCommandHandler/createCustomerCommandHandler';
@@ -40,6 +40,7 @@ import { CustomerNotFoundError } from '../../../application/errors/customerNotFo
 import { FindCustomerQueryHandler } from '../../../application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class CustomerHttpController implements HttpController {
   public readonly basePath = 'customers';
 

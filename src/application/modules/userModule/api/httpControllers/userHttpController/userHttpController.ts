@@ -44,7 +44,7 @@ import {
 import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { DeleteUserCommandHandler } from '../../../application/commandHandlers/deleteUserCommandHandler/deleteUserCommandHandler';
@@ -61,6 +61,7 @@ import { EmailAlreadySetError } from '../../../domain/errors/emailAlreadySetErro
 import { PhoneNumberAlreadySetError } from '../../../domain/errors/phoneNumberAlreadySetError';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class UserHttpController implements HttpController {
   public readonly basePath = 'users';
 

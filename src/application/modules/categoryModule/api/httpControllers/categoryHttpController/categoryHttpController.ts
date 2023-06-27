@@ -47,7 +47,7 @@ import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CustomerIdNotProvidedError } from '../../../../addressModule/application/errors/customerIdNotProvidedError';
@@ -61,6 +61,7 @@ import { FindCategoriesQueryHandler } from '../../../application/queryHandlers/f
 import { FindCategoryQueryHandler } from '../../../application/queryHandlers/findCategoryQueryHandler/findCategoryQueryHandler';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class CategoryHttpController implements HttpController {
   public readonly basePath = 'categories';
 

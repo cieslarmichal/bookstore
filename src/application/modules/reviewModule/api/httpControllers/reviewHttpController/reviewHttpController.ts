@@ -45,7 +45,7 @@ import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { FindCustomerQueryHandler } from '../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
@@ -63,6 +63,7 @@ import { FindReviewsQueryHandler } from '../../../application/queryHandlers/find
 import { UpdateReviewDraft } from '../../../application/repositories/reviewRepository/payloads/updateReviewDraft';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class ReviewHttpController implements HttpController {
   public readonly basePath = 'reviews';
 

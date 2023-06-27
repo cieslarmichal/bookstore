@@ -60,7 +60,7 @@ import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { FindAuthorsByBookIdQueryHandler } from '../../../../authorModule/application/queryHandlers/findAuthorsByBookIdQueryHandler/findAuthorsByBookIdQueryHandler';
@@ -77,6 +77,7 @@ import { FindBooksQueryHandler } from '../../../application/queryHandlers/findBo
 import { UpdateBookDraft } from '../../../application/repositories/bookRepository/payloads/updateBookDraft';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class BookHttpController implements HttpController {
   public readonly basePath = 'books';
 

@@ -45,7 +45,7 @@ import { HttpRoute } from '../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../common/http/httpStatusCode';
 import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { Inject } from '../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { CreateInventoryCommandHandler } from '../../../application/commandHandlers/createInventoryCommandHandler/createInventoryCommandHandler';
@@ -57,6 +57,7 @@ import { FindInventoriesQueryHandler } from '../../../application/queryHandlers/
 import { FindInventoryQueryHandler } from '../../../application/queryHandlers/findInventoryQueryHandler/findInventoryQueryHandler';
 import { symbols } from '../../../symbols';
 
+@Injectable()
 export class InventoryHttpController implements HttpController {
   public readonly basePath = 'inventories';
 

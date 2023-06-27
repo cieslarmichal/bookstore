@@ -23,7 +23,7 @@ import { HttpRoute } from '../../../../../../../common/http/httpRoute';
 import { HttpStatusCode } from '../../../../../../../common/http/httpStatusCode';
 import { responseErrorBodySchema, ResponseErrorBody } from '../../../../../../../common/http/responseErrorBodySchema';
 import { PaginationDataBuilder } from '../../../../../../../common/paginationDataBuilder/paginationDataBuilder';
-import { Inject } from '../../../../../../../libs/dependencyInjection/decorators';
+import { Inject, Injectable } from '../../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
 import { FindCustomerQueryHandler } from '../../../../../customerModule/application/queryHandlers/findCustomerQueryHandler/findCustomerQueryHandler';
@@ -34,6 +34,7 @@ import { UserIsNotCustomerError } from '../../../../application/errors/userIsNot
 import { FindOrdersQueryHandler } from '../../../../application/queryHandlers/findOrdersQueryHandler/findOrdersQueryHandler';
 import { symbols } from '../../../../symbols';
 
+@Injectable()
 export class OrderHttpController implements HttpController {
   public readonly basePath = 'orders';
 
