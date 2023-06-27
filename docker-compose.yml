@@ -2,12 +2,12 @@ version: "3.9"
 
 services:
   book-store-postgres:
-    image: postgres:14
+    image: postgres:15
     container_name: book-store-postgres
     environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bookstore
     ports:
     - 5432:5432
     volumes:
