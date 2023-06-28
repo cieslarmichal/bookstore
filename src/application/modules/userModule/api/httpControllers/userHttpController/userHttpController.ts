@@ -234,8 +234,6 @@ export class UserHttpController implements HttpController {
         if ('email' in request.body) {
           const { email, password } = request.body;
 
-          console.log({ email, password });
-
           return this.registerUserCommandHandler.execute({ unitOfWork, draft: { email, password } });
         } else {
           const { phoneNumber, password } = request.body;

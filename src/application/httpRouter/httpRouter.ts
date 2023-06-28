@@ -261,6 +261,9 @@ export class HttpRouter {
           this.loggerService.error({
             message: 'Caught an unknown error in the HTTP router.',
             context: {
+              path: fastifyRequest.url,
+              method,
+              statusCode: fastifyReply.statusCode,
               error,
             },
           });
