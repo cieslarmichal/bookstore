@@ -49,7 +49,7 @@ export class HttpServiceImpl implements HttpService {
         },
       });
 
-      const responseBody = await responseon();
+      const responseBody = await response.json();
 
       this.loggerService.debug({
         message: 'Http request sent.',
