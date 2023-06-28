@@ -3,6 +3,7 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const setUserEmailBodySchema = Schema.object({
+  userId: Schema.string(),
   email: Schema.string(),
 });
 

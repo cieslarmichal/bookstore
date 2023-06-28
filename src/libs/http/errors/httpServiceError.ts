@@ -7,6 +7,6 @@ interface Context {
 
 export class HttpServiceError extends ApplicationError<Context> {
   public constructor(context: Context) {
-    super('HttpServiceError', 'Http service error.', context);
+    super('HttpServiceError', JSON.stringify(context), context);
   }
 }

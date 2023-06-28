@@ -5,7 +5,7 @@ import { userSymbols } from '../../../modules/userModule/symbols';
 import { BearerTokenAuthorizationError } from '../errors/bearerTokenAuthorizationError';
 
 export interface AccessTokenData {
-  readonly userId: string;
+  readonly id: string;
 }
 
 @Injectable()

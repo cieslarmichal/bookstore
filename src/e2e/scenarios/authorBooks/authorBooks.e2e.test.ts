@@ -5,6 +5,7 @@ import { AuthorEntityTestFactory } from '../../../application/modules/authorModu
 import { BookEntityTestFactory } from '../../../application/modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
@@ -28,7 +29,7 @@ describe(`Author books e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: 'http://127.0.0.1:3000' });
+  ).create({ baseUrl: 'http://127.0.0.1:3000', headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson } });
 
   const userService = new UserService(httpService);
   const authService = new AuthService(httpService);

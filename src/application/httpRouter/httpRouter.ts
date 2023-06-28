@@ -139,7 +139,7 @@ export class HttpRouter {
     routes.map(({ path, method, handler, schema, authorizationType }) => {
       const fastifyHandler = async (fastifyRequest: FastifyRequest, fastifyReply: FastifyReply): Promise<void> => {
         try {
-          let requestBody = JSON.parse(fastifyRequest.body as string) || {};
+          let requestBody = fastifyRequest.body || {};
 
           let pathParams = (fastifyRequest.params || {}) as Record<string, string>;
 
@@ -157,12 +157,14 @@ export class HttpRouter {
             queryParams = Validator.validate(schema.request.queryParams, queryParams);
           }
 
-          let context: RequestContext = {};
+          const context: RequestContext = {};
 
           if (authorizationType === AuthorizationType.bearerToken) {
-            context = this.bearerTokenAuthorizer.extractAuthorizationContextFromAuthorizationHeader(
+            const accessTokenData = this.bearerTokenAuthorizer.extractAuthorizationContextFromAuthorizationHeader(
               fastifyRequest.headers.authorization,
             );
+
+            context.userId = accessTokenData.id;
           }
 
           this.loggerService.debug({
@@ -263,8 +265,7 @@ export class HttpRouter {
             context: {
               path: fastifyRequest.url,
               method,
-              statusCode: fastifyReply.statusCode,
-              error,
+              error: error instanceof Error ? { errorName: error.name, errorMessage: error.message } : undefined,
             },
           });
 

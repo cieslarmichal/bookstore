@@ -3,6 +3,7 @@ import { Schema } from '../../../../../../../libs/validator/schema';
 import { SchemaType } from '../../../../../../../libs/validator/schemaType';
 
 export const setUserPasswordBodySchema = Schema.object({
+  userId: Schema.string(),
   password: Schema.string(),
 });
 

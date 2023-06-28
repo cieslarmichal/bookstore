@@ -1,5 +1,15 @@
-import { DeleteUserResponseNoContentBody, deleteUserResponseNoContentBodySchema } from './schemas/deleteUserSchema';
-import { FindUserResponseOkBody, findUserResponseOkBodySchema } from './schemas/findUserSchema';
+import {
+  DeleteUserPathParameters,
+  DeleteUserResponseNoContentBody,
+  deleteUserPathParametersSchema,
+  deleteUserResponseNoContentBodySchema,
+} from './schemas/deleteUserSchema';
+import {
+  FindUserPathParameters,
+  FindUserResponseOkBody,
+  findUserPathParametersSchema,
+  findUserResponseOkBodySchema,
+} from './schemas/findUserSchema';
 import {
   LoginUserBody,
   LoginUserResponseOkBody,
@@ -36,6 +46,7 @@ import { HttpMethodName } from '../../../../../../common/http/httpMethodName';
 import { HttpRequest } from '../../../../../../common/http/httpRequest';
 import {
   HttpCreatedResponse,
+  HttpForbiddenResponse,
   HttpNoContentResponse,
   HttpNotFoundResponse,
   HttpOkResponse,
@@ -190,7 +201,9 @@ export class UserHttpController implements HttpController {
         path: ':id',
         handler: this.findUser.bind(this),
         schema: {
-          request: {},
+          request: {
+            pathParams: findUserPathParametersSchema,
+          },
           response: {
             [HttpStatusCode.ok]: {
               schema: findUserResponseOkBodySchema,
@@ -207,7 +220,9 @@ export class UserHttpController implements HttpController {
         path: ':id',
         handler: this.deleteUser.bind(this),
         schema: {
-          request: {},
+          request: {
+            pathParams: deleteUserPathParametersSchema,
+          },
           response: {
             [HttpStatusCode.noContent]: {
               schema: deleteUserResponseNoContentBodySchema,
@@ -285,10 +300,18 @@ export class UserHttpController implements HttpController {
 
   private async setUserPassword(
     request: HttpRequest<SetUserPasswordBody, undefined, undefined>,
-  ): Promise<HttpOkResponse<SetUserPasswordResponseOkBody> | HttpNotFoundResponse<ResponseErrorBody>> {
-    const { userId } = request.context;
+  ): Promise<
+    | HttpOkResponse<SetUserPasswordResponseOkBody>
+    | HttpNotFoundResponse<ResponseErrorBody>
+    | HttpForbiddenResponse<ResponseErrorBody>
+  > {
+    const { userId, password } = request.body;
 
-    const { password } = request.body;
+    const { userId: tokenUserId } = request.context;
+
+    if (userId !== tokenUserId) {
+      return { statusCode: HttpStatusCode.forbidden, body: { error: { name: '', message: '' } } };
+    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -313,10 +336,15 @@ export class UserHttpController implements HttpController {
     | HttpOkResponse<SetUserEmailResponseOkBody>
     | HttpNotFoundResponse<ResponseErrorBody>
     | HttpUnprocessableEntityResponse<ResponseErrorBody>
+    | HttpForbiddenResponse<ResponseErrorBody>
   > {
-    const { userId } = request.context;
+    const { userId, email } = request.body;
 
-    const { email } = request.body;
+    const { userId: tokenUserId } = request.context;
+
+    if (userId !== tokenUserId) {
+      return { statusCode: HttpStatusCode.forbidden, body: { error: { name: '', message: '' } } };
+    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -335,6 +363,10 @@ export class UserHttpController implements HttpController {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
       }
 
+      if (error instanceof UserAlreadyExistsError) {
+        return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
+      }
+
       throw error;
     }
   }
@@ -345,10 +377,15 @@ export class UserHttpController implements HttpController {
     | HttpOkResponse<SetUserPhoneNumberResponseOkBody>
     | HttpNotFoundResponse<ResponseErrorBody>
     | HttpUnprocessableEntityResponse<ResponseErrorBody>
+    | HttpForbiddenResponse<ResponseErrorBody>
   > {
-    const { userId } = request.context;
+    const { userId, phoneNumber } = request.body;
 
-    const { phoneNumber } = request.body;
+    const { userId: tokenUserId } = request.context;
+
+    if (userId !== tokenUserId) {
+      return { statusCode: HttpStatusCode.forbidden, body: { error: { name: '', message: '' } } };
+    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
@@ -367,20 +404,34 @@ export class UserHttpController implements HttpController {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
       }
 
+      if (error instanceof UserAlreadyExistsError) {
+        return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
+      }
+
       throw error;
     }
   }
 
   private async findUser(
-    request: HttpRequest<undefined, undefined, undefined>,
-  ): Promise<HttpOkResponse<FindUserResponseOkBody> | HttpNotFoundResponse<ResponseErrorBody>> {
+    request: HttpRequest<undefined, undefined, FindUserPathParameters>,
+  ): Promise<
+    | HttpOkResponse<FindUserResponseOkBody>
+    | HttpNotFoundResponse<ResponseErrorBody>
+    | HttpForbiddenResponse<ResponseErrorBody>
+  > {
+    const { id } = request.pathParams;
+
     const { userId } = request.context;
+
+    if (userId !== id) {
+      return { statusCode: HttpStatusCode.forbidden, body: { error: { name: '', message: '' } } };
+    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     try {
       const { user } = await unitOfWork.runInTransaction(async () => {
-        return this.findUserQueryHandler.execute({ unitOfWork, userId: userId as string });
+        return this.findUserQueryHandler.execute({ unitOfWork, userId: id as string });
       });
 
       return { statusCode: HttpStatusCode.ok, body: { user: user as User } };
@@ -394,15 +445,25 @@ export class UserHttpController implements HttpController {
   }
 
   private async deleteUser(
-    request: HttpRequest<undefined, undefined, undefined>,
-  ): Promise<HttpNoContentResponse<DeleteUserResponseNoContentBody> | HttpNotFoundResponse<ResponseErrorBody>> {
+    request: HttpRequest<undefined, undefined, DeleteUserPathParameters>,
+  ): Promise<
+    | HttpNoContentResponse<DeleteUserResponseNoContentBody>
+    | HttpNotFoundResponse<ResponseErrorBody>
+    | HttpForbiddenResponse<ResponseErrorBody>
+  > {
+    const { id } = request.pathParams;
+
     const { userId } = request.context;
+
+    if (userId !== id) {
+      return { statusCode: HttpStatusCode.forbidden, body: { error: { name: '', message: '' } } };
+    }
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
     try {
       await unitOfWork.runInTransaction(async () => {
-        await this.deleteUserCommandHandler.execute({ unitOfWork, userId: userId as string });
+        await this.deleteUserCommandHandler.execute({ unitOfWork, userId: id as string });
       });
     } catch (error) {
       if (error instanceof UserNotFoundError) {

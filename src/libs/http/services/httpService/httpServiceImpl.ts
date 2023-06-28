@@ -3,6 +3,7 @@ import { stringify } from 'querystring';
 import { HttpService } from './httpService';
 import { HttpServiceConfig } from './httpServiceConfig';
 import { SendRequestPayload, sendRequestPayloadSchema } from './payloads/sendRequestPayload';
+import { HttpStatusCode } from '../../../../common/http/httpStatusCode';
 import { LoggerService } from '../../../logger/services/loggerService/loggerService';
 import { Validator } from '../../../validator/validator';
 import { FetchClient } from '../../clients/fetchClient/fetchClient';
@@ -48,6 +49,10 @@ export class HttpServiceImpl implements HttpService {
           body,
         },
       });
+
+      if (response.ok && response.status === HttpStatusCode.noContent) {
+        return { body: null as HttpResponseBody, isSuccess: true, statusCode: HttpStatusCode.noContent };
+      }
 
       const responseBody = await response.json();
 

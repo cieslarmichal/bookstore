@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
@@ -25,7 +26,10 @@ describe(`Users e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: 'http://127.0.0.1:3000' });
+  ).create({
+    baseUrl: 'http://127.0.0.1:3000',
+    headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson },
+  });
 
   const userService = new UserService(httpService);
   const authService = new AuthService(httpService);
@@ -266,28 +270,6 @@ describe(`Users e2e`, () => {
       expect(response.statusCode).toBe(HttpStatusCode.badRequest);
     });
 
-    it('returns not found when user with given id does not exist', async () => {
-      expect.assertions(1);
-
-      const { id: userId, email, password } = userEntityTestFactory.create();
-
-      await userService.createUser({ email: email as string, password });
-
-      const accessToken = await authService.getUserToken({ email: email as string, password });
-
-      const response = await httpService.sendRequest({
-        endpoint: setPasswordUrl,
-        method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
-        body: {
-          userId,
-          password,
-        },
-      });
-
-      expect(response.statusCode).toBe(HttpStatusCode.notFound);
-    });
-
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
@@ -331,7 +313,7 @@ describe(`Users e2e`, () => {
       expect(response.statusCode).toBe(HttpStatusCode.forbidden);
     });
 
-    it('returns no content when all required fields are provided and user with given id exists', async () => {
+    it('returns ok when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
       const { email, password } = userEntityTestFactory.create();
@@ -352,7 +334,7 @@ describe(`Users e2e`, () => {
         },
       });
 
-      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
     });
   });
 
@@ -376,28 +358,6 @@ describe(`Users e2e`, () => {
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-    });
-
-    it('returns not found when user with given id does not exist', async () => {
-      expect.assertions(1);
-
-      const { id: userId, phoneNumber, password, email } = userEntityTestFactory.create();
-
-      await userService.createUser({ phoneNumber: phoneNumber as string, password });
-
-      const accessToken = await authService.getUserToken({ phoneNumber: phoneNumber as string, password });
-
-      const response = await httpService.sendRequest({
-        endpoint: setEmailUrl,
-        method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
-        body: {
-          userId,
-          email,
-        },
-      });
-
-      expect(response.statusCode).toBe(HttpStatusCode.notFound);
     });
 
     it('returns unauthorized when access token is not provided', async () => {
@@ -467,7 +427,7 @@ describe(`Users e2e`, () => {
       expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
     });
 
-    it('returns no content when all required fields are provided and user with given id exists', async () => {
+    it('returns ok when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
       const { email, password, phoneNumber } = userEntityTestFactory.create();
@@ -488,7 +448,7 @@ describe(`Users e2e`, () => {
         },
       });
 
-      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
     });
   });
 
@@ -512,28 +472,6 @@ describe(`Users e2e`, () => {
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.badRequest);
-    });
-
-    it('returns not found when user with given id does not exist', async () => {
-      expect.assertions(1);
-
-      const { id: userId, email, password, phoneNumber } = userEntityTestFactory.create();
-
-      await userService.createUser({ email: email as string, password });
-
-      const accessToken = await authService.getUserToken({ email: email as string, password });
-
-      const response = await httpService.sendRequest({
-        endpoint: setPhoneNumberUrl,
-        method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
-        body: {
-          userId,
-          phoneNumber,
-        },
-      });
-
-      expect(response.statusCode).toBe(HttpStatusCode.notFound);
     });
 
     it('returns unauthorized when access token is not provided', async () => {
@@ -603,7 +541,7 @@ describe(`Users e2e`, () => {
       expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
     });
 
-    it('returns no content when all required fields are provided and user with given id exists', async () => {
+    it('returns ok when all required fields are provided and user with given id exists', async () => {
       expect.assertions(1);
 
       const { email, phoneNumber, password } = userEntityTestFactory.create();
@@ -622,31 +560,11 @@ describe(`Users e2e`, () => {
         },
       });
 
-      expect(response.statusCode).toBe(HttpStatusCode.noContent);
+      expect(response.statusCode).toBe(HttpStatusCode.ok);
     });
   });
 
   describe('Find user', () => {
-    it('returns not found when user with given userId does not exist', async () => {
-      expect.assertions(1);
-
-      const { id: userId } = userEntityTestFactory.create();
-
-      const { email, password } = userEntityTestFactory.create();
-
-      await userService.createUser({ email: email as string, password });
-
-      const accessToken = await authService.getUserToken({ email: email as string, password });
-
-      const response = await httpService.sendRequest({
-        endpoint: `${baseUrl}/${userId}`,
-        method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
-      });
-
-      expect(response.statusCode).toBe(HttpStatusCode.notFound);
-    });
-
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
@@ -704,26 +622,6 @@ describe(`Users e2e`, () => {
   });
 
   describe('Delete user', () => {
-    it('returns not found when user with given userId does not exist', async () => {
-      expect.assertions(1);
-
-      const { id: userId } = userEntityTestFactory.create();
-
-      const { email, password } = userEntityTestFactory.create();
-
-      await userService.createUser({ email: email as string, password });
-
-      const accessToken = await authService.getUserToken({ email: email as string, password });
-
-      const response = await httpService.sendRequest({
-        endpoint: `${baseUrl}/${userId}`,
-        method: HttpMethodName.delete,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
-      });
-
-      expect(response.statusCode).toBe(HttpStatusCode.notFound);
-    });
-
     it('returns unauthorized when access token is not provided', async () => {
       expect.assertions(1);
 
