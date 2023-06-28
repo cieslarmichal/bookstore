@@ -1,4 +1,4 @@
-import fetch, { Response } from 'node-fetch';
+import fetch, { Response } from 'node-fetch-commonjs';
 
 import { FetchClient } from './fetchClient';
 import { FetchPayload, fetchPayloadSchema } from './payloads/fetchPayload';

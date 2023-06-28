@@ -35,6 +35,7 @@ import { WhishlistEntryEntity } from './modules/whishlistModule/infrastructure/r
 import { WhishlistModule } from './modules/whishlistModule/whishlistModule';
 import { DependencyInjectionContainer } from '../libs/dependencyInjection/dependencyInjectionContainer';
 import { DependencyInjectionContainerFactory } from '../libs/dependencyInjection/dependencyInjectionContainerFactory';
+import { HttpModule } from '../libs/http/httpModule';
 import { LoggerModule } from '../libs/logger/loggerModule';
 import { loggerModuleSymbols } from '../libs/logger/loggerModuleSymbols';
 import { LogLevel } from '../libs/logger/logLevel';
@@ -89,6 +90,7 @@ export class Application {
         new InventoryModule(),
         new ReviewModule(),
         new WhishlistModule(),
+        new HttpModule(),
       ],
     });
 

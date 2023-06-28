@@ -1,21 +1,16 @@
 import 'reflect-metadata';
+
 import { DataSource, EntityManager } from 'typeorm';
 
-import { PostgresModule } from './postgresModule';
 import { postgresModuleSymbols } from './postgresModuleSymbols';
-import { PostgresModuleConfigTestFactory } from './tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { Application } from '../../application/application';
 import { DependencyInjectionContainer } from '../dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../dependencyInjection/dependencyInjectionContainerFactory';
 
 describe('PostgresModule', () => {
   let container: DependencyInjectionContainer;
 
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
-
   beforeAll(async () => {
-    container = DependencyInjectionContainerFactory.create({
-      modules: [new PostgresModule(postgresModuleConfig)],
-    });
+    container = Application.createContainer();
   });
 
   it('declares bindings', async () => {

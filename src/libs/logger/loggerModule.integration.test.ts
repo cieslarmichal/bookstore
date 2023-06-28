@@ -1,22 +1,16 @@
 import 'reflect-metadata';
 
-import { LoggerModule } from './loggerModule';
 import { loggerModuleSymbols } from './loggerModuleSymbols';
 import { LoggerService } from './services/loggerService/loggerService';
 import { LoggerServiceImpl } from './services/loggerService/loggerServiceImpl';
-import { LoggerModuleConfigTestFactory } from './tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
+import { Application } from '../../application/application';
 import { DependencyInjectionContainer } from '../dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../dependencyInjection/dependencyInjectionContainerFactory';
 
 describe('LoggerModule', () => {
   let container: DependencyInjectionContainer;
 
-  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-
   beforeAll(async () => {
-    container = DependencyInjectionContainerFactory.create({
-      modules: [new LoggerModule(loggerModuleConfig)],
-    });
+    container = Application.createContainer();
   });
 
   it('declares bindings', async () => {

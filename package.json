@@ -24,6 +24,7 @@
     "inversify": "^6.0.1",
     "jsonwebtoken": "^9.0.0",
     "node-fetch": "^2.6.11",
+    "node-fetch-commonjs": "^3.3.1",
     "pg": "^8.9.0",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.5.0",
@@ -37,7 +38,7 @@
     "@types/bunyan": "^1.8.8",
     "@types/jest": "^29.4.0",
     "@types/jsonwebtoken": "^9.0.1",
-    "@types/node": "^16.10.0",
+    "@types/node": "^20.3.1",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
@@ -60,6 +61,10 @@
     "typescript": "^4.9.5"
   },
   "volta": {
-    "node": "16.10.0"
+    "node": "18.15.0"
+  },
+  "engines": {
+    "node": ">=18 <19",
+    "npm": ">8.0.0"
   }
 }

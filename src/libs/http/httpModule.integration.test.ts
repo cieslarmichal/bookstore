@@ -2,18 +2,15 @@ import 'reflect-metadata';
 
 import { HttpServiceFactory } from './factories/httpServiceFactory/httpServiceFactory';
 import { HttpServiceFactoryImpl } from './factories/httpServiceFactory/httpServiceFactoryImpl';
-import { HttpModule } from './httpModule';
 import { httpModuleSymbols } from './httpModuleSymbols';
+import { Application } from '../../application/application';
 import { DependencyInjectionContainer } from '../dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../dependencyInjection/dependencyInjectionContainerFactory';
 
 describe('HttpModule', () => {
   let container: DependencyInjectionContainer;
 
   beforeAll(async () => {
-    container = DependencyInjectionContainerFactory.create({
-      modules: [new HttpModule()],
-    });
+    container = Application.createContainer();
   });
 
   it('declares bindings', async () => {
