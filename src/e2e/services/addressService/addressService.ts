@@ -15,7 +15,7 @@ export class AddressService {
   ): Promise<CreateAddressResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateAddressResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'addresses',
+      endpoint: '/addresses',
       body: createAddressBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

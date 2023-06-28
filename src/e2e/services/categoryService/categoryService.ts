@@ -15,7 +15,7 @@ export class CategoryService {
   ): Promise<CreateCategoryResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateCategoryResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'categories',
+      endpoint: '/categories',
       body: createCategoryBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

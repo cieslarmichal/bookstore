@@ -12,7 +12,7 @@ export class BookService {
   public async createBook(createBookBody: CreateBookBody, accessToken: string): Promise<CreateBookResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateBookResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'books',
+      endpoint: '/books',
       body: createBookBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

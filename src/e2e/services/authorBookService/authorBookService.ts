@@ -13,7 +13,7 @@ export class AuthorBookService {
   ): Promise<CreateAuthorBookResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateAuthorBookResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: `authors/${authorId}/books/${bookId}`,
+      endpoint: `/authors/${authorId}/books/${bookId}`,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });
 

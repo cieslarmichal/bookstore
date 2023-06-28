@@ -139,33 +139,22 @@ export class HttpRouter {
     routes.map(({ path, method, handler, schema, authorizationType }) => {
       const fastifyHandler = async (fastifyRequest: FastifyRequest, fastifyReply: FastifyReply): Promise<void> => {
         try {
-          const requestBody = fastifyRequest.body || {};
+          let requestBody = JSON.parse(fastifyRequest.body as string) || {};
 
-          const pathParams = (fastifyRequest.params || {}) as Record<string, string>;
+          let pathParams = (fastifyRequest.params || {}) as Record<string, string>;
 
-          const queryParams = (fastifyRequest.query || {}) as Record<string, string | number>;
-
-          this.loggerService.debug({
-            message: 'Received an HTTP request.',
-            context: {
-              path,
-              method,
-              body: requestBody,
-              pathParams,
-              queryParams,
-            },
-          });
+          let queryParams = (fastifyRequest.query || {}) as Record<string, string | number>;
 
           if (schema.request.body) {
-            Validator.validate(schema.request.body, requestBody);
+            requestBody = Validator.validate(schema.request.body, requestBody);
           }
 
           if (schema.request.pathParams) {
-            Validator.validate(schema.request.pathParams, pathParams);
+            pathParams = Validator.validate(schema.request.pathParams, pathParams);
           }
 
           if (schema.request.queryParams) {
-            Validator.validate(schema.request.queryParams, queryParams);
+            queryParams = Validator.validate(schema.request.queryParams, queryParams);
           }
 
           let context: RequestContext = {};
@@ -175,6 +164,18 @@ export class HttpRouter {
               fastifyRequest.headers.authorization,
             );
           }
+
+          this.loggerService.debug({
+            message: 'Received an HTTP request.',
+            context: {
+              path,
+              method,
+              requestBody,
+              pathParams,
+              queryParams,
+              context,
+            },
+          });
 
           const { statusCode, body: responseBody } = await handler({
             body: requestBody,

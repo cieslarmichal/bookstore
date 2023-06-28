@@ -15,7 +15,7 @@ export class AuthorService {
   ): Promise<CreateAuthorResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateAuthorResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'authors',
+      endpoint: '/authors',
       body: createAuthorBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

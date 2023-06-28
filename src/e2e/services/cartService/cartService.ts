@@ -20,7 +20,7 @@ export class CartService {
   public async createCart(createCartBody: CreateCartBody, accessToken: string): Promise<CreateCartResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateCartResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'carts',
+      endpoint: '/carts',
       body: createCartBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });
@@ -39,7 +39,7 @@ export class CartService {
   ): Promise<UpdateCartResponseOkBody> {
     const response = await this.httpService.sendRequest<UpdateCartResponseOkBody>({
       method: HttpMethodName.post,
-      endpoint: `carts/${cartId}`,
+      endpoint: `/carts/${cartId}`,
       body: updateCartBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });
@@ -57,7 +57,7 @@ export class CartService {
     accessToken: string,
   ): Promise<AddLineItemResponseOkBody> {
     const response = await this.httpService.sendRequest<AddLineItemResponseOkBody>({
-      endpoint: `carts/${cartId}/add-line-item`,
+      endpoint: `/carts/${cartId}/add-line-item`,
       method: HttpMethodName.post,
       body: addLineItemBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },

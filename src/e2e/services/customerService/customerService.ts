@@ -15,7 +15,7 @@ export class CustomerService {
   ): Promise<CreateCustomerResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateCustomerResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'customers',
+      endpoint: '/customers',
       body: createCustomerBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

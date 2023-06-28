@@ -15,7 +15,7 @@ export class ReviewService {
   ): Promise<CreateReviewResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateReviewResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'reviews',
+      endpoint: '/reviews',
       body: createReviewBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });

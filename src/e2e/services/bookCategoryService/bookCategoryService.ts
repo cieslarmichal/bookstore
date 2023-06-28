@@ -13,7 +13,7 @@ export class BookCategoryService {
   ): Promise<CreateBookCategoryResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateBookCategoryResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: `books/${bookId}/categories/${categoryId}`,
+      endpoint: `/books/${bookId}/categories/${categoryId}`,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });
 

@@ -28,7 +28,7 @@ describe(`Whishlists e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: '127.0.0.1:3000/' });
+  ).create({ baseUrl: 'http://127.0.0.1:3000' });
 
   const userService = new UserService(httpService);
   const authService = new AuthService(httpService);

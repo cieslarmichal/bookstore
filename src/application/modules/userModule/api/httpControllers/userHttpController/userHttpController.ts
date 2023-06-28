@@ -103,7 +103,6 @@ export class UserHttpController implements HttpController {
             },
           },
         },
-        authorizationType: AuthorizationType.bearerToken,
       }),
       new HttpRoute({
         method: HttpMethodName.post,
@@ -122,7 +121,6 @@ export class UserHttpController implements HttpController {
             },
           },
         },
-        authorizationType: AuthorizationType.bearerToken,
       }),
       new HttpRoute({
         method: HttpMethodName.post,
@@ -235,6 +233,8 @@ export class UserHttpController implements HttpController {
       const { user } = await unitOfWork.runInTransaction(async () => {
         if ('email' in request.body) {
           const { email, password } = request.body;
+
+          console.log({ email, password });
 
           return this.registerUserCommandHandler.execute({ unitOfWork, draft: { email, password } });
         } else {

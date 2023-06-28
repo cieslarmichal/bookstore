@@ -11,7 +11,7 @@ export class UserService {
   public async createUser(createUserBody: RegisterUserBody): Promise<RegisterUserResponseCreatedBody> {
     const response = await this.httpService.sendRequest<RegisterUserResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'users/register',
+      endpoint: '/users/register',
       body: createUserBody,
     });
 

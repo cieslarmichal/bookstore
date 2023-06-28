@@ -11,7 +11,7 @@ export class AuthService {
   public async getUserToken(loginUserBody: LoginUserBody): Promise<string> {
     const response = await this.httpService.sendRequest<LoginUserResponseOkBody>({
       method: HttpMethodName.post,
-      endpoint: 'users/login',
+      endpoint: '/users/login',
       body: loginUserBody,
     });
 

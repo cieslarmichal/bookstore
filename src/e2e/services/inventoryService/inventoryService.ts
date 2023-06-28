@@ -15,7 +15,7 @@ export class InventoryService {
   ): Promise<CreateInventoryResponseCreatedBody> {
     const response = await this.httpService.sendRequest<CreateInventoryResponseCreatedBody>({
       method: HttpMethodName.post,
-      endpoint: 'inventories',
+      endpoint: '/inventories',
       body: createInventoryBody,
       headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
     });
