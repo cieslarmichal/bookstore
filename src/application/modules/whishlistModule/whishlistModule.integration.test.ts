@@ -4,24 +4,14 @@ import { WhishlistHttpController } from './api/httpControllers/whishlistHttpCont
 import { WhishlistEntryRepositoryFactory } from './application/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 import { WhishlistEntryRepositoryFactoryImpl } from './infrastructure/repositories/whishlistEntryRepository/whishlistEntryRepositoryFactoryImpl';
 import { whishlistSymbols } from './symbols';
-import { WhishlistModule } from './whishlistModule';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { Application } from '../../application';
 
 describe('WhishlistModule', () => {
   let container: DependencyInjectionContainer;
 
-  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
-
   beforeAll(async () => {
-    container = DependencyInjectionContainerFactory.create({
-      modules: [new PostgresModule(postgresModuleConfig), new LoggerModule(loggerModuleConfig), new WhishlistModule()],
-    });
+    container = Application.createContainer();
   });
 
   it('declares bindings', async () => {

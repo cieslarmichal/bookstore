@@ -2,26 +2,16 @@ import 'reflect-metadata';
 
 import { CustomerHttpController } from './api/httpControllers/customerHttpController/customerHttpController';
 import { CustomerRepositoryFactory } from './application/repositories/customerRepository/customerRepositoryFactory';
-import { CustomerModule } from './customerModule';
 import { CustomerRepositoryFactoryImpl } from './infrastructure/repositories/customerRepository/customerRepositoryFactoryImpl';
 import { customerSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
+import { Application } from '../../application';
 
 describe('CustomerModule', () => {
   let container: DependencyInjectionContainer;
 
-  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
-
   beforeAll(async () => {
-    container = DependencyInjectionContainerFactory.create({
-      modules: [new PostgresModule(postgresModuleConfig), new LoggerModule(loggerModuleConfig), new CustomerModule()],
-    });
+    container = Application.createContainer();
   });
 
   it('declares bindings', async () => {

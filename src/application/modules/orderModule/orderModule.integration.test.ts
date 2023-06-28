@@ -8,35 +8,15 @@ import { OrderRepositoryFactory } from './application/repositories/orderReposito
 import { CartRepositoryFactoryImpl } from './infrastructure/repositories/cartRepository/cartRepositoryFactoryImpl';
 import { LineItemRepositoryFactoryImpl } from './infrastructure/repositories/lineItemRepository/lineItemRepositoryFactoryImpl';
 import { OrderRepositoryFactoryImpl } from './infrastructure/repositories/orderRepository/orderRepositoryFactoryImpl';
-import { OrderModule } from './orderModule';
 import { orderSymbols } from './symbols';
 import { DependencyInjectionContainer } from '../../../libs/dependencyInjection/dependencyInjectionContainer';
-import { DependencyInjectionContainerFactory } from '../../../libs/dependencyInjection/dependencyInjectionContainerFactory';
-import { LoggerModule } from '../../../libs/logger/loggerModule';
-import { LoggerModuleConfigTestFactory } from '../../../libs/logger/tests/factories/loggerModuleConfigTestFactory/loggerModuleConfigTestFactory';
-import { PostgresModule } from '../../../libs/postgres/postgresModule';
-import { PostgresModuleConfigTestFactory } from '../../../libs/postgres/tests/factories/postgresModuleConfigTestFactory/postgresModuleConfigTestFactory';
-import { AddressModule } from '../addressModule/addressModule';
-import { BookModule } from '../bookModule/bookModule';
-import { InventoryModule } from '../inventoryModule/inventoryModule';
+import { Application } from '../../application';
 
 describe('OrderModule', () => {
   let container: DependencyInjectionContainer;
 
-  const loggerModuleConfig = new LoggerModuleConfigTestFactory().create();
-  const postgresModuleConfig = new PostgresModuleConfigTestFactory().create();
-
   beforeAll(async () => {
-    container = DependencyInjectionContainerFactory.create({
-      modules: [
-        new PostgresModule(postgresModuleConfig),
-        new LoggerModule(loggerModuleConfig),
-        new OrderModule(),
-        new BookModule(),
-        new InventoryModule(),
-        new AddressModule(),
-      ],
-    });
+    container = Application.createContainer();
   });
 
   it('declares bindings', async () => {
