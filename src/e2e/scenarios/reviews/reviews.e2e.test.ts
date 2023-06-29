@@ -50,7 +50,10 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           isbn,
         },
@@ -80,6 +83,9 @@ describe(`ReviewController (${baseUrl})`, () => {
           rate,
           comment,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -101,7 +107,10 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           isbn,
           rate,
@@ -130,7 +139,10 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -161,6 +173,9 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${review.id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -191,7 +206,10 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${review.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -205,6 +223,9 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -235,7 +256,10 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?customerId=${customer.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -262,7 +286,10 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           rate,
         },
@@ -300,6 +327,9 @@ describe(`ReviewController (${baseUrl})`, () => {
         method: HttpMethodName.patch,
         body: {
           price: updatedRate,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -333,9 +363,12 @@ describe(`ReviewController (${baseUrl})`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${review.id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
-          price: updatedRate,
+          rate: updatedRate,
         },
       });
 
