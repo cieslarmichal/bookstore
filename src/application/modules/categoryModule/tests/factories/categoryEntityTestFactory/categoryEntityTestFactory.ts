@@ -6,7 +6,7 @@ export class CategoryEntityTestFactory {
   public create(input: Partial<CategoryEntity> = {}): CategoryEntity {
     return {
       id: faker.datatype.uuid(),
-      name: faker.lorem.word(),
+      name: faker.datatype.uuid(),
       ...input,
     };
   }

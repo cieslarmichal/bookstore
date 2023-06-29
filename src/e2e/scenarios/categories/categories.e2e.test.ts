@@ -47,7 +47,10 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {},
       });
 
@@ -64,6 +67,9 @@ describe(`Categories e2e`, () => {
         method: HttpMethodName.post,
         body: {
           name,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -86,7 +92,10 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           name,
         },
@@ -113,7 +122,10 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -135,6 +147,9 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${category.id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -158,7 +173,10 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${category.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -172,13 +190,16 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
     });
 
     it('returns categories with filtering provided', async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       const categoryEntity1 = categoryEntityTestFactory.create();
 
@@ -199,7 +220,10 @@ describe(`Categories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["name||eq||${categoryEntity1.name}"]`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(

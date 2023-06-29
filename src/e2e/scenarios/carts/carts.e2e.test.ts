@@ -62,7 +62,10 @@ describe(`Carts e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {},
       });
 
@@ -86,6 +89,9 @@ describe(`Carts e2e`, () => {
         body: {
           customerId: customer.id,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -105,7 +111,10 @@ describe(`Carts e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           customerId: customer.id,
         },
@@ -132,7 +141,10 @@ describe(`Carts e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -146,6 +158,9 @@ describe(`Carts e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -172,7 +187,10 @@ describe(`Carts e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${cart.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -191,6 +209,9 @@ describe(`Carts e2e`, () => {
         body: {
           billingAddressId,
           shippingAddressId,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -256,7 +277,10 @@ describe(`Carts e2e`, () => {
           billingAddressId: address1.id,
           shippingAddressId: address2.id,
         },
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -277,6 +301,9 @@ describe(`Carts e2e`, () => {
         body: {
           quantity,
           bookId,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -334,7 +361,10 @@ describe(`Carts e2e`, () => {
           quantity,
           bookId: book.id,
         },
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -355,6 +385,9 @@ describe(`Carts e2e`, () => {
         body: {
           quantity,
           lineItemId,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -418,7 +451,10 @@ describe(`Carts e2e`, () => {
           quantity: 1,
           lineItemId: lineItemId,
         },
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(removeLineItemResponse.statusCode).toBe(HttpStatusCode.ok);
