@@ -3,6 +3,7 @@ import { EntityManager } from 'typeorm';
 import { UserEntity } from './userEntity/userEntity';
 import { UserMapper } from './userMapper/userMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { UserNotFoundError } from '../../../application/errors/userNotFoundError';
 import {
   CreateUserPayload,
   createUserPayloadSchema,
@@ -21,7 +22,6 @@ import {
 } from '../../../application/repositories/userRepository/payloads/updateUserPayload';
 import { UserRepository } from '../../../application/repositories/userRepository/userRepository';
 import { User } from '../../../domain/entities/user/user';
-import { UserNotFoundError } from '../../../application/errors/userNotFoundError';
 
 export class UserRepositoryImpl implements UserRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly userMapper: UserMapper) {}

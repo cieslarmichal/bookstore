@@ -12,8 +12,8 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CategoryAlreadyExistsError } from '../../errors/categoryAlreadyExistsError';
 import { categorySymbols } from '../../../symbols';
+import { CategoryAlreadyExistsError } from '../../errors/categoryAlreadyExistsError';
 import { CategoryRepositoryFactory } from '../../repositories/categoryRepository/categoryRepositoryFactory';
 
 @Injectable()

@@ -9,9 +9,9 @@ import { Application } from '../../../../../application';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
 import { userSymbols } from '../../../../userModule/symbols';
 import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
-import { CustomerAlreadyExistsError } from '../../errors/customerAlreadyExistsError';
 import { symbols } from '../../../symbols';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { CustomerAlreadyExistsError } from '../../errors/customerAlreadyExistsError';
 import { CustomerRepositoryFactory } from '../../repositories/customerRepository/customerRepositoryFactory';
 
 describe('CreateCustomerCommandHandler', () => {

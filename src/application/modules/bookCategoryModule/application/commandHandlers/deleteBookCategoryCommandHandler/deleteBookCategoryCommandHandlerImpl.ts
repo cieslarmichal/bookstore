@@ -7,8 +7,8 @@ import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/d
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
 import { bookCategorySymbols } from '../../../symbols';
+import { BookCategoryNotFoundError } from '../../errors/bookCategoryNotFoundError';
 import { BookCategoryRepositoryFactory } from '../../repositories/bookCategoryRepository/bookCategoryRepositoryFactory';
 
 @Injectable()

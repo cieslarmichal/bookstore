@@ -12,8 +12,8 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { InventoryAlreadyExistsError } from '../../errors/inventoryAlreadyExistsError';
 import { inventorySymbols } from '../../../symbols';
+import { InventoryAlreadyExistsError } from '../../errors/inventoryAlreadyExistsError';
 import { InventoryRepositoryFactory } from '../../repositories/inventoryRepository/inventoryRepositoryFactory';
 
 @Injectable()

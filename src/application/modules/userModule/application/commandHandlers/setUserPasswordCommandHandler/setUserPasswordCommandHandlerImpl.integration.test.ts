@@ -7,9 +7,9 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { User } from '../../../domain/entities/user/user';
-import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { symbols, userSymbols } from '../../../symbols';
 import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';
 import { HashService } from '../../services/hashService/hashService';
 

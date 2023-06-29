@@ -12,8 +12,8 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CustomerAlreadyExistsError } from '../../errors/customerAlreadyExistsError';
 import { customerSymbols } from '../../../symbols';
+import { CustomerAlreadyExistsError } from '../../errors/customerAlreadyExistsError';
 import { CustomerRepositoryFactory } from '../../repositories/customerRepository/customerRepositoryFactory';
 
 @Injectable()

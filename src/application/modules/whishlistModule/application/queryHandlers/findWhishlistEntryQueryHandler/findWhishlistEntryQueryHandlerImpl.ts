@@ -9,8 +9,8 @@ import {
 } from './payloads/findWhishlistEntryQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { WhishlistEntryNotFoundError } from '../../errors/whishlistEntryNotFoundError';
 import { whishlistSymbols } from '../../../symbols';
+import { WhishlistEntryNotFoundError } from '../../errors/whishlistEntryNotFoundError';
 import { WhishlistEntryRepositoryFactory } from '../../repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 
 @Injectable()

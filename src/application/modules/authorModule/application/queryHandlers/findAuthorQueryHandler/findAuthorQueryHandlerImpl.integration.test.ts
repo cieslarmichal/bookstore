@@ -6,9 +6,9 @@ import { FindAuthorQueryHandler } from './findAuthorQueryHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { AuthorNotFoundError } from '../../errors/authorNotFoundError';
 import { symbols } from '../../../symbols';
 import { AuthorEntityTestFactory } from '../../../tests/factories/authorEntityTestFactory/authorEntityTestFactory';
+import { AuthorNotFoundError } from '../../errors/authorNotFoundError';
 import { AuthorRepositoryFactory } from '../../repositories/authorRepository/authorRepositoryFactory';
 
 describe('FindAuthorQueryHandler', () => {

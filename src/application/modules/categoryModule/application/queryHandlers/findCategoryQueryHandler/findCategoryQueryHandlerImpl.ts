@@ -9,8 +9,8 @@ import {
 } from './payloads/findCategoryQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CategoryNotFoundError } from '../../errors/categoryNotFoundError';
 import { categorySymbols } from '../../../symbols';
+import { CategoryNotFoundError } from '../../errors/categoryNotFoundError';
 import { CategoryRepositoryFactory } from '../../repositories/categoryRepository/categoryRepositoryFactory';
 
 @Injectable()

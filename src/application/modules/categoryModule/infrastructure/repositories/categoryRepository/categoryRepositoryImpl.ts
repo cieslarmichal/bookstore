@@ -4,6 +4,7 @@ import { CategoryEntity } from './categoryEntity/categoryEntity';
 import { CategoryMapper } from './categoryMapper/categoryMapper';
 import { CategoryQueryBuilder } from './categoryQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { CategoryNotFoundError } from '../../../application/errors/categoryNotFoundError';
 import { CategoryRepository } from '../../../application/repositories/categoryRepository/categoryRepository';
 import {
   CreateCategoryPayload,
@@ -22,7 +23,6 @@ import {
   findCategoryPayloadSchema,
 } from '../../../application/repositories/categoryRepository/payloads/findCategoryPayload';
 import { Category } from '../../../domain/entities/category/category';
-import { CategoryNotFoundError } from '../../../application/errors/categoryNotFoundError';
 
 export class CategoryRepositoryImpl implements CategoryRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly categoryMapper: CategoryMapper) {}

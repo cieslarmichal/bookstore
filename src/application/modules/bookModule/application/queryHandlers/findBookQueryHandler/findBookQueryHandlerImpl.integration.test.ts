@@ -6,9 +6,9 @@ import { FindBookQueryHandler } from './findBookQueryHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { symbols } from '../../../symbols';
 import { BookEntityTestFactory } from '../../../tests/factories/bookEntityTestFactory/bookEntityTestFactory';
+import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { BookRepositoryFactory } from '../../repositories/bookRepository/bookRepositoryFactory';
 
 describe('FindBookQueryHandler', () => {

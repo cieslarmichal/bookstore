@@ -16,13 +16,13 @@ import { InventoryRepositoryFactory } from '../../../../inventoryModule/applicat
 import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { LineItem } from '../../../domain/entities/lineItem/lineItem';
-import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
 
 describe('AddLineItemCommandHandler', () => {

@@ -12,8 +12,8 @@ import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleS
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { UuidGenerator } from '../../../../../../libs/uuid/uuidGenerator';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { UserAlreadyExistsError } from '../../errors/userAlreadyExistsError';
 import { symbols } from '../../../symbols';
+import { UserAlreadyExistsError } from '../../errors/userAlreadyExistsError';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';
 import { HashService } from '../../services/hashService/hashService';
 

@@ -3,8 +3,8 @@ import { FindBookQueryHandlerPayload, findBookQueryHandlerPayloadSchema } from '
 import { FindBookQueryHandlerResult, findBookQueryHandlerResultSchema } from './payloads/findBookQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { bookSymbols } from '../../../symbols';
+import { BookNotFoundError } from '../../errors/bookNotFoundError';
 import { BookRepositoryFactory } from '../../repositories/bookRepository/bookRepositoryFactory';
 
 @Injectable()

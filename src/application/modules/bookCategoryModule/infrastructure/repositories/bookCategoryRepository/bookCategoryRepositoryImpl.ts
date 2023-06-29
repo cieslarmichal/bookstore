@@ -3,6 +3,7 @@ import { EntityManager } from 'typeorm';
 import { BookCategoryEntity } from './bookCategoryEntity/bookCategoryEntity';
 import { BookCategoryMapper } from './bookCategoryMapper/bookCategoryMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { BookCategoryNotFoundError } from '../../../application/errors/bookCategoryNotFoundError';
 import { BookCategoryRepository } from '../../../application/repositories/bookCategoryRepository/bookCategoryRepository';
 import {
   CreateBookCategoryPayload,
@@ -17,7 +18,6 @@ import {
   findBookCategoryPayloadSchema,
 } from '../../../application/repositories/bookCategoryRepository/payloads/findBookCategoryPayload';
 import { BookCategory } from '../../../domain/entities/bookCategory/bookCategory';
-import { BookCategoryNotFoundError } from '../../../application/errors/bookCategoryNotFoundError';
 
 export class BookCategoryRepositoryImpl implements BookCategoryRepository {
   public constructor(

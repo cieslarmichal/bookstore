@@ -7,11 +7,11 @@ import { TestTransactionInternalRunner } from '../../../../../../common/tests/te
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { CustomerNotFoundError } from '../../errors/customerNotFoundError';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { symbols } from '../../../symbols';
 import { CustomerEntityTestFactory } from '../../../tests/factories/customerEntityTestFactory/customerEntityTestFactory';
+import { CustomerNotFoundError } from '../../errors/customerNotFoundError';
 import { CustomerRepositoryFactory } from '../../repositories/customerRepository/customerRepositoryFactory';
 
 describe('DeleteCustomerCommandHandler', () => {

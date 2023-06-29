@@ -16,15 +16,15 @@ import { InventoryRepositoryFactory } from '../../../../inventoryModule/applicat
 import { inventorySymbols } from '../../../../inventoryModule/symbols';
 import { InventoryEntityTestFactory } from '../../../../inventoryModule/tests/factories/inventoryEntityTestFactory/inventoryEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { PaymentMethod } from '../../../domain/entities/order/paymentMethod';
-import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
 import { LineItemEntityTestFactory } from '../../../tests/factories/lineItemEntityTestFactory/lineItemEntityTestFactory';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
 import { LineItemRepositoryFactory } from '../../repositories/lineItemRepository/lineItemRepositoryFactory';
 import { OrderRepositoryFactory } from '../../repositories/orderRepository/orderRepositoryFactory';

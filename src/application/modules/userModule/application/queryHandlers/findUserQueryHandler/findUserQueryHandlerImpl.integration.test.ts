@@ -6,9 +6,9 @@ import { FindUserQueryHandler } from './findUserQueryHandler';
 import { TestTransactionInternalRunner } from '../../../../../../common/tests/testTransactionInternalRunner';
 import { postgresModuleSymbols } from '../../../../../../libs/postgres/postgresModuleSymbols';
 import { Application } from '../../../../../application';
-import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { symbols, userSymbols } from '../../../symbols';
 import { UserEntityTestFactory } from '../../../tests/factories/userEntityTestFactory/userEntityTestFactory';
+import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';
 
 describe('FindUserQueryHandler', () => {

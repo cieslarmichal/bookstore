@@ -4,6 +4,7 @@ import { AuthorEntity } from './authorEntity/authorEntity';
 import { AuthorMapper } from './authorMapper/authorMapper';
 import { AuthorQueryBuilder } from './authorQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { AuthorNotFoundError } from '../../../application/errors/authorNotFoundError';
 import { AuthorRepository } from '../../../application/repositories/authorRepository/authorRepository';
 import {
   CreateAuthorPayload,
@@ -26,7 +27,6 @@ import {
   updateAuthorPayloadSchema,
 } from '../../../application/repositories/authorRepository/payloads/updateAuthorPayload';
 import { Author } from '../../../domain/entities/author/author';
-import { AuthorNotFoundError } from '../../../application/errors/authorNotFoundError';
 
 export class AuthorRepositoryImpl implements AuthorRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly authorMapper: AuthorMapper) {}

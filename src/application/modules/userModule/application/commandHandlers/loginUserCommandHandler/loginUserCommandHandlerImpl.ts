@@ -11,8 +11,8 @@ import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/d
 import { loggerModuleSymbols } from '../../../../../../libs/logger/loggerModuleSymbols';
 import { LoggerService } from '../../../../../../libs/logger/services/loggerService/loggerService';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { symbols } from '../../../symbols';
+import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';
 import { HashService } from '../../services/hashService/hashService';
 import { TokenService } from '../../services/tokenService/tokenService';

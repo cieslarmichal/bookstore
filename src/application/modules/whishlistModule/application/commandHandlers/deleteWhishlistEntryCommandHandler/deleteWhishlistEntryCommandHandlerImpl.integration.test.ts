@@ -13,11 +13,11 @@ import { CustomerRepositoryFactory } from '../../../../customerModule/applicatio
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { WhishlistEntryNotFoundError } from '../../errors/whishlistEntryNotFoundError';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { symbols } from '../../../symbols';
 import { WhishlistEntryEntityTestFactory } from '../../../tests/factories/whishlistEntryEntityTestFactory/whishlistEntryEntityTestFactory';
+import { WhishlistEntryNotFoundError } from '../../errors/whishlistEntryNotFoundError';
 import { WhishlistEntryRepositoryFactory } from '../../repositories/whishlistEntryRepository/whishlistEntryRepositoryFactory';
 
 describe('DeleteWhishlistEntryCommandHandler', () => {

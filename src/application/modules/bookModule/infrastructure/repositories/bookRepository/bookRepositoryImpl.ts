@@ -4,6 +4,7 @@ import { BookEntity } from './bookEntity/bookEntity';
 import { BookMapper } from './bookMapper/bookMapper';
 import { BookQueryBuilder } from './bookQueryBuilder';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { BookNotFoundError } from '../../../application/errors/bookNotFoundError';
 import { BookRepository } from '../../../application/repositories/bookRepository/bookRepository';
 import {
   CreateBookPayload,
@@ -14,19 +15,18 @@ import {
   deleteBookPayloadSchema,
 } from '../../../application/repositories/bookRepository/payloads/deleteBookPayload';
 import {
-  FindBooksPayload,
-  findBooksPayloadSchema,
-} from '../../../application/repositories/bookRepository/payloads/findBooksPayload';
-import {
   FindBookPayload,
   findBookPayloadSchema,
 } from '../../../application/repositories/bookRepository/payloads/findBookPayload';
+import {
+  FindBooksPayload,
+  findBooksPayloadSchema,
+} from '../../../application/repositories/bookRepository/payloads/findBooksPayload';
 import {
   UpdateBookPayload,
   updateBookPayloadSchema,
 } from '../../../application/repositories/bookRepository/payloads/updateBookPayload';
 import { Book } from '../../../domain/entities/book/book';
-import { BookNotFoundError } from '../../../application/errors/bookNotFoundError';
 
 export class BookRepositoryImpl implements BookRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly bookMapper: BookMapper) {}

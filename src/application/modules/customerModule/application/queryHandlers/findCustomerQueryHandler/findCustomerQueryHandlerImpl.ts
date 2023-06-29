@@ -9,8 +9,8 @@ import {
 } from './payloads/findCustomerQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { CustomerNotFoundError } from '../../errors/customerNotFoundError';
 import { customerSymbols } from '../../../symbols';
+import { CustomerNotFoundError } from '../../errors/customerNotFoundError';
 import { CustomerRepositoryFactory } from '../../repositories/customerRepository/customerRepositoryFactory';
 
 @Injectable()

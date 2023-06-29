@@ -3,6 +3,7 @@ import { EntityManager } from 'typeorm';
 import { CustomerEntity } from './customerEntity/customerEntity';
 import { CustomerMapper } from './customerMapper/customerMapper';
 import { Validator } from '../../../../../../libs/validator/validator';
+import { CustomerNotFoundError } from '../../../application/errors/customerNotFoundError';
 import { CustomerRepository } from '../../../application/repositories/customerRepository/customerRepository';
 import {
   CreateCustomerPayload,
@@ -17,7 +18,6 @@ import {
   findCustomerPayloadSchema,
 } from '../../../application/repositories/customerRepository/payloads/findCustomerPayload';
 import { Customer } from '../../../domain/entities/customer/customer';
-import { CustomerNotFoundError } from '../../../application/errors/customerNotFoundError';
 
 export class CustomerRepositoryImpl implements CustomerRepository {
   public constructor(private readonly entityManager: EntityManager, private readonly customerMapper: CustomerMapper) {}

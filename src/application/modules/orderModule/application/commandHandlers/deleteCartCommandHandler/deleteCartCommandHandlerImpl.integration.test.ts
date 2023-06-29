@@ -10,11 +10,11 @@ import { CustomerRepositoryFactory } from '../../../../customerModule/applicatio
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
-import { CartNotFoundError } from '../../errors/cartNotFoundError';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { symbols } from '../../../symbols';
 import { CartEntityTestFactory } from '../../../tests/factories/cartEntityTestFactory/cartEntityTestFactory';
+import { CartNotFoundError } from '../../errors/cartNotFoundError';
 import { CartRepositoryFactory } from '../../repositories/cartRepository/cartRepositoryFactory';
 
 describe('DeleteCartCommandHandler', () => {

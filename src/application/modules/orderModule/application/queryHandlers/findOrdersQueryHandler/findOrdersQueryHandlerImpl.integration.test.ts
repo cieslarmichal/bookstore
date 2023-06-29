@@ -13,8 +13,8 @@ import { CustomerRepositoryFactory } from '../../../../customerModule/applicatio
 import { customerSymbols } from '../../../../customerModule/symbols';
 import { CustomerEntityTestFactory } from '../../../../customerModule/tests/factories/customerEntityTestFactory/customerEntityTestFactory';
 import { UserRepositoryFactory } from '../../../../userModule/application/repositories/userRepository/userRepositoryFactory';
-import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { userSymbols } from '../../../../userModule/symbols';
+import { UserEntityTestFactory } from '../../../../userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { CartStatus } from '../../../domain/entities/cart/cartStatus';
 import { DeliveryMethod } from '../../../domain/entities/cart/deliveryMethod';
 import { symbols } from '../../../symbols';

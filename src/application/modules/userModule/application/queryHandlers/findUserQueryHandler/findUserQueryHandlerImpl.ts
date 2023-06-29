@@ -3,8 +3,8 @@ import { FindUserQueryHandlerPayload, findUserQueryHandlerPayloadSchema } from '
 import { FindUserQueryHandlerResult, findUserQueryHandlerResultSchema } from './payloads/findUserQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { symbols } from '../../../symbols';
+import { UserNotFoundError } from '../../errors/userNotFoundError';
 import { UserRepositoryFactory } from '../../repositories/userRepository/userRepositoryFactory';
 
 @Injectable()
