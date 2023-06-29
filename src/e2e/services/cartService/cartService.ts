@@ -42,7 +42,7 @@ export class CartService {
     accessToken: string,
   ): Promise<UpdateCartResponseOkBody> {
     const response = await this.httpService.sendRequest<UpdateCartResponseOkBody>({
-      method: HttpMethodName.post,
+      method: HttpMethodName.patch,
       endpoint: `/carts/${cartId}`,
       body: updateCartBody,
       headers: {
