@@ -284,7 +284,7 @@ export class BookHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindBooksResponseOkBody>> {
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const filters = filter
       ? FilterDataParser.parse({
@@ -309,7 +309,7 @@ export class BookHttpController implements HttpController {
 
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const filters = filter
       ? FilterDataParser.parse({
@@ -334,7 +334,7 @@ export class BookHttpController implements HttpController {
 
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const filters = filter
       ? FilterDataParser.parse({

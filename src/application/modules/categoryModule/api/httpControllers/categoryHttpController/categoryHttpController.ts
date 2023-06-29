@@ -224,7 +224,7 @@ export class CategoryHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindCategoriesResponseOkBody>> {
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const filters = filter
       ? FilterDataParser.parse({
@@ -253,7 +253,7 @@ export class CategoryHttpController implements HttpController {
 
     const { filter, limit, page } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const filters = filter
       ? FilterDataParser.parse({

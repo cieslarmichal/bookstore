@@ -295,7 +295,7 @@ export class ReviewHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindReviewsResponseOkBody> | HttpForbiddenResponse<ResponseErrorBody>> {
     const { limit, page, customerId, isbn } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 

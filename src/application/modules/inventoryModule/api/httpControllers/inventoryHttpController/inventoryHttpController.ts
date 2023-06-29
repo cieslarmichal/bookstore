@@ -223,7 +223,7 @@ export class InventoryHttpController implements HttpController {
   ): Promise<HttpOkResponse<FindInventoriesResponseOkBody>> {
     const { limit, page, bookId } = request.queryParams;
 
-    const pagination = PaginationDataBuilder.build({ page: Number(page) ?? 0, limit: Number(limit) ?? 0 });
+    const pagination = PaginationDataBuilder.build({ page: Number(page) || 0, limit: Number(limit) || 0 });
 
     const unitOfWork = await this.unitOfWorkFactory.create();
 
