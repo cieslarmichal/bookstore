@@ -56,7 +56,7 @@ export class InventoryRepositoryImpl implements InventoryRepository {
       findOneInput = { ...findOneInput, bookId };
     }
 
-    const inventoryEntity = await this.entityManager.findOne(InventoryEntity, { where: { ...findOneInput } });
+    const inventoryEntity = await this.entityManager.findOne(InventoryEntity, { where: findOneInput });
 
     if (!inventoryEntity) {
       return null;

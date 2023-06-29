@@ -9,9 +9,10 @@ import {
 } from './payloads/findInventoryQueryHandlerResult';
 import { Injectable, Inject } from '../../../../../../libs/dependencyInjection/decorators';
 import { Validator } from '../../../../../../libs/validator/validator';
-import { InventoryNotFoundError } from '../../errors/inventoryNotFoundError';
 import { inventorySymbols } from '../../../symbols';
+import { InventoryNotFoundError } from '../../errors/inventoryNotFoundError';
 import { InventoryRepositoryFactory } from '../../repositories/inventoryRepository/inventoryRepositoryFactory';
+import { FindInventoryPayload } from '../../repositories/inventoryRepository/payloads/findInventoryPayload';
 
 @Injectable()
 export class FindInventoryQueryHandlerImpl implements FindInventoryQueryHandler {
@@ -27,10 +28,10 @@ export class FindInventoryQueryHandlerImpl implements FindInventoryQueryHandler 
 
     const inventoryRepository = this.inventoryRepositoryFactory.create(entityManager);
 
-    let findInventoryInput = {};
+    let findInventoryInput: FindInventoryPayload = {};
 
     if (inventoryId) {
-      findInventoryInput = { ...findInventoryInput, inventoryId };
+      findInventoryInput = { ...findInventoryInput, id: inventoryId };
     }
 
     if (bookId) {
@@ -40,7 +41,7 @@ export class FindInventoryQueryHandlerImpl implements FindInventoryQueryHandler 
     const inventory = await inventoryRepository.findInventory(findInventoryInput);
 
     if (!inventory) {
-      throw new InventoryNotFoundError(findInventoryInput);
+      throw new InventoryNotFoundError({ bookId: findInventoryInput.bookId, inventoryId: findInventoryInput.id });
     }
 
     return Validator.validate(findInventoryQueryHandlerResultSchema, { inventory });

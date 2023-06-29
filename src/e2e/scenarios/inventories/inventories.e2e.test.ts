@@ -53,7 +53,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           bookId,
         },
@@ -94,6 +97,9 @@ describe(`Inventories e2e`, () => {
           bookId: book.id,
           quantity,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -129,7 +135,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           bookId: book.id,
           quantity,
@@ -141,7 +150,7 @@ describe(`Inventories e2e`, () => {
   });
 
   describe('Find inventory', () => {
-    it('returns not found when book with given inventoryId does not exist', async () => {
+    it('returns not found when inventory with given inventoryId does not exist', async () => {
       expect.assertions(1);
 
       const { id } = inventoryEntityTestFactory.create();
@@ -157,7 +166,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -171,6 +183,9 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -214,7 +229,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${inventory.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -228,6 +246,9 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -247,7 +268,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -273,7 +297,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           quantity: quantity + 1,
         },
@@ -292,6 +319,9 @@ describe(`Inventories e2e`, () => {
         method: HttpMethodName.patch,
         body: {
           quantity: quantity + 1,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -336,7 +366,10 @@ describe(`Inventories e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${inventory.id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           quantity: quantity + 1,
         },
