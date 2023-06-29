@@ -5,7 +5,6 @@ import { AuthorEntityTestFactory } from '../../../application/modules/authorModu
 import { BookEntityTestFactory } from '../../../application/modules/bookModule/tests/factories/bookEntityTestFactory/bookEntityTestFactory';
 import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { HttpHeader } from '../../../common/http/httpHeader';
-import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
@@ -29,7 +28,7 @@ describe(`Author books e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: 'http://127.0.0.1:3000', headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson } });
+  ).create({ baseUrl: 'http://127.0.0.1:3000' });
 
   const userService = new UserService(httpService);
   const authService = new AuthService(httpService);
@@ -45,7 +44,7 @@ describe(`Author books e2e`, () => {
       const { authorId, bookId } = authorBookEntityTestFactory.create();
 
       const response = await httpService.sendRequest({
-        endpoint: `authors/${authorId}/books/${bookId}`,
+        endpoint: `/authors/${authorId}/books/${bookId}`,
         method: HttpMethodName.post,
       });
 
@@ -66,7 +65,7 @@ describe(`Author books e2e`, () => {
       await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `authors/${authorId}/books/${bookId}`,
+        endpoint: `/authors/${authorId}/books/${bookId}`,
         method: HttpMethodName.post,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
@@ -104,7 +103,7 @@ describe(`Author books e2e`, () => {
       const { author } = await authorService.createAuthor({ firstName, lastName }, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `authors/${author.id}/books/${book.id}`,
+        endpoint: `/authors/${author.id}/books/${book.id}`,
         method: HttpMethodName.post,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
@@ -128,7 +127,7 @@ describe(`Author books e2e`, () => {
       await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `authors/${authorId}/books/${bookId}`,
+        endpoint: `/authors/${authorId}/books/${bookId}`,
         method: HttpMethodName.delete,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
@@ -142,7 +141,7 @@ describe(`Author books e2e`, () => {
       const { authorId, bookId } = authorBookEntityTestFactory.create();
 
       const response = await httpService.sendRequest({
-        endpoint: `authors/${authorId}/books/${bookId}`,
+        endpoint: `/authors/${authorId}/books/${bookId}`,
         method: HttpMethodName.delete,
       });
 
@@ -181,8 +180,9 @@ describe(`Author books e2e`, () => {
       await authorBookService.createAuthorBook(author.id, book.id, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `authors/${author.id}/books/${book.id}`,
+        endpoint: `/authors/${author.id}/books/${book.id}`,
         method: HttpMethodName.delete,
+        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.noContent);

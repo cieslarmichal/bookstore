@@ -29,7 +29,7 @@ describe(`Book categories e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: 'http://127.0.0.1:3000', headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson } });
+  ).create({ baseUrl: 'http://127.0.0.1:3000' });
 
   const userService = new UserService(httpService);
   const authService = new AuthService(httpService);
@@ -45,7 +45,7 @@ describe(`Book categories e2e`, () => {
       const { categoryId, bookId } = bookCategoryEntityTestFactory.create();
 
       const response = await httpService.sendRequest({
-        endpoint: `books/${bookId}/categories/${categoryId}`,
+        endpoint: `/books/${bookId}/categories/${categoryId}`,
         method: HttpMethodName.post,
       });
 
@@ -66,7 +66,7 @@ describe(`Book categories e2e`, () => {
       await customerService.createCustomer({ userId: user.id }, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `books/${bookId}/categories/${categoryId}`,
+        endpoint: `/books/${bookId}/categories/${categoryId}`,
         method: HttpMethodName.post,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
@@ -104,7 +104,7 @@ describe(`Book categories e2e`, () => {
       const { category } = await categoryService.createCategory(categoryEntity, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `books/${book.id}/categories/${category.id}`,
+        endpoint: `/books/${book.id}/categories/${category.id}`,
         method: HttpMethodName.post,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
@@ -126,7 +126,7 @@ describe(`Book categories e2e`, () => {
       const accessToken = await authService.getUserToken({ email: email as string, password });
 
       const response = await httpService.sendRequest({
-        endpoint: `books/${bookId}/categories/${categoryId}`,
+        endpoint: `/books/${bookId}/categories/${categoryId}`,
         method: HttpMethodName.delete,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });
@@ -164,7 +164,7 @@ describe(`Book categories e2e`, () => {
       const { category } = await categoryService.createCategory(categoryEntity, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `books/${book.id}/categories/${category.id}`,
+        endpoint: `/books/${book.id}/categories/${category.id}`,
         method: HttpMethodName.delete,
       });
 
@@ -203,7 +203,7 @@ describe(`Book categories e2e`, () => {
       await bookCategoryService.createBookCategory(book.id, category.id, accessToken);
 
       const response = await httpService.sendRequest({
-        endpoint: `books/${book.id}/categories/${category.id}`,
+        endpoint: `/books/${book.id}/categories/${category.id}`,
         method: HttpMethodName.delete,
         headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
       });

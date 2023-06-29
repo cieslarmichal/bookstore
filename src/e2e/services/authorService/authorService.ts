@@ -3,6 +3,7 @@ import {
   CreateAuthorResponseCreatedBody,
 } from '../../../application/modules/authorModule/api/httpControllers/authorHttpController/schemas/createAuthorSchema';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpService } from '../../../libs/http/services/httpService/httpService';
 
@@ -17,7 +18,10 @@ export class AuthorService {
       method: HttpMethodName.post,
       endpoint: '/authors',
       body: createAuthorBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {

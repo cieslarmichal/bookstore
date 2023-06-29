@@ -11,6 +11,7 @@ import {
   UpdateCartResponseOkBody,
 } from '../../../application/modules/orderModule/api/httpControllers/cartHttpController/schemas/updateCartSchema';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpService } from '../../../libs/http/services/httpService/httpService';
 
@@ -60,7 +61,10 @@ export class CartService {
       endpoint: `/carts/${cartId}/add-line-item`,
       method: HttpMethodName.post,
       body: addLineItemBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {

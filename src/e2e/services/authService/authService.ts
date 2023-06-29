@@ -2,6 +2,8 @@ import {
   LoginUserBody,
   LoginUserResponseOkBody,
 } from '../../../application/modules/userModule/api/httpControllers/userHttpController/schemas/loginUserSchema';
+import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpService } from '../../../libs/http/services/httpService/httpService';
 
@@ -13,6 +15,9 @@ export class AuthService {
       method: HttpMethodName.post,
       endpoint: '/users/login',
       body: loginUserBody,
+      headers: {
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {

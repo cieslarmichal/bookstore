@@ -26,7 +26,7 @@ describe(`Books e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: 'http://127.0.0.1:3000', headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson } });
+  ).create({ baseUrl: 'http://127.0.0.1:3000' });
 
   const userService = new UserService(httpService);
   const authService = new AuthService(httpService);
@@ -50,7 +50,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           title,
         },
@@ -75,6 +78,9 @@ describe(`Books e2e`, () => {
           format,
           price,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -96,7 +102,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           title,
           isbn,
@@ -128,7 +137,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -160,6 +172,9 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${book.id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -193,7 +208,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${book.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -207,6 +225,9 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -254,7 +275,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["title||eq||${bookEntity1.title}"]`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -281,7 +305,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           price,
         },
@@ -321,6 +348,9 @@ describe(`Books e2e`, () => {
         body: {
           price: updatedPrice,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -356,7 +386,10 @@ describe(`Books e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${book.id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           price: updatedPrice,
         },

@@ -3,6 +3,7 @@ import {
   CreateReviewResponseCreatedBody,
 } from '../../../application/modules/reviewModule/api/httpControllers/reviewHttpController/schemas/createReviewSchema';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpService } from '../../../libs/http/services/httpService/httpService';
 
@@ -17,7 +18,10 @@ export class ReviewService {
       method: HttpMethodName.post,
       endpoint: '/reviews',
       body: createReviewBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {

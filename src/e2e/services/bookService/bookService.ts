@@ -3,6 +3,7 @@ import {
   CreateBookResponseCreatedBody,
 } from '../../../application/modules/bookModule/api/httpControllers/bookHttpController/schemas/createBookSchema';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpService } from '../../../libs/http/services/httpService/httpService';
 
@@ -14,7 +15,10 @@ export class BookService {
       method: HttpMethodName.post,
       endpoint: '/books',
       body: createBookBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {

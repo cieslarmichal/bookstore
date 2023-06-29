@@ -26,7 +26,7 @@ describe(`Addresses e2e`, () => {
   const httpService = new HttpServiceFactoryImpl(
     new FetchClientImpl(),
     new LoggerServiceImpl(new LoggerClientFactoryImpl({ logLevel: LogLevel.error }).create()),
-  ).create({ baseUrl: 'http://127.0.0.1:3000', headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson } });
+  ).create({ baseUrl: 'http://127.0.0.1:3000' });
 
   const userService = new UserService(httpService);
   const customerService = new CustomerService(httpService);
@@ -48,7 +48,10 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {},
       });
 
@@ -83,6 +86,7 @@ describe(`Addresses e2e`, () => {
           streetAddress,
           customerId: customer.id,
         },
+        headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -105,7 +109,10 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           firstName,
           lastName,
@@ -178,6 +185,7 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
         method: HttpMethodName.get,
+        headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -221,7 +229,10 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.forbidden);
@@ -259,7 +270,10 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -273,6 +287,7 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
+        headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -331,7 +346,10 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["customerId||eq||${customer1.id}"]`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -355,6 +373,7 @@ describe(`Addresses e2e`, () => {
         body: {
           streetAddress,
         },
+        headers: { [HttpHeader.contentType]: HttpMediaType.applicationJson },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -394,7 +413,10 @@ describe(`Addresses e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${address.id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           streetAddress: updatedStreetAddress,
         },

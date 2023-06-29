@@ -26,6 +26,8 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
+import { AuthorNotFoundError } from '../../../../authorModule/application/errors/authorNotFoundError';
+import { BookNotFoundError } from '../../../../bookModule/application/errors/bookNotFoundError';
 import { CreateAuthorBookCommandHandler } from '../../../application/commandHandlers/createAuthorBookCommandHandler/createAuthorBookCommandHandler';
 import { DeleteAuthorBookCommandHandler } from '../../../application/commandHandlers/deleteAuthorBookCommandHandler/deleteAuthorBookCommandHandler';
 import { AuthorBookAlreadyExistsError } from '../../../application/errors/authorBookAlreadyExistsError';
@@ -89,7 +91,9 @@ export class AuthorBookHttpController implements HttpController {
   private async createAuthorBook(
     request: HttpRequest<undefined, undefined, CreateAuthorBookPathParameters>,
   ): Promise<
-    HttpCreatedResponse<CreateAuthorBookResponseCreatedBody> | HttpUnprocessableEntityResponse<ResponseErrorBody>
+    | HttpCreatedResponse<CreateAuthorBookResponseCreatedBody>
+    | HttpUnprocessableEntityResponse<ResponseErrorBody>
+    | HttpNotFoundResponse<ResponseErrorBody>
   > {
     const { authorId, bookId } = request.pathParams;
 
@@ -109,6 +113,14 @@ export class AuthorBookHttpController implements HttpController {
     } catch (error) {
       if (error instanceof AuthorBookAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
+      }
+
+      if (error instanceof AuthorNotFoundError) {
+        return { statusCode: HttpStatusCode.notFound, body: { error } };
+      }
+
+      if (error instanceof BookNotFoundError) {
+        return { statusCode: HttpStatusCode.notFound, body: { error } };
       }
 
       throw error;

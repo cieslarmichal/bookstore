@@ -3,6 +3,7 @@ import {
   CreateCategoryResponseCreatedBody,
 } from '../../../application/modules/categoryModule/api/httpControllers/categoryHttpController/schemas/createCategorySchema';
 import { HttpHeader } from '../../../common/http/httpHeader';
+import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpService } from '../../../libs/http/services/httpService/httpService';
 
@@ -17,7 +18,10 @@ export class CategoryService {
       method: HttpMethodName.post,
       endpoint: '/categories',
       body: createCategoryBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {
