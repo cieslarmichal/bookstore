@@ -243,8 +243,6 @@ describe(`Orders e2e`, () => {
         },
       });
 
-      console.log(response.body);
-
       expect(response.statusCode).toBe(HttpStatusCode.ok);
     });
   });
