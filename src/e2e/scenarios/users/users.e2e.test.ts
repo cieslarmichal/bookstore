@@ -44,6 +44,9 @@ describe(`Users e2e`, () => {
         endpoint: registerUrl,
         method: HttpMethodName.post,
         body: { email },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.badRequest);
@@ -63,6 +66,9 @@ describe(`Users e2e`, () => {
           email,
           password,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
@@ -79,6 +85,9 @@ describe(`Users e2e`, () => {
         body: {
           email,
           password,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -97,6 +106,9 @@ describe(`Users e2e`, () => {
         method: HttpMethodName.post,
         body: {
           phoneNumber,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -117,6 +129,9 @@ describe(`Users e2e`, () => {
           phoneNumber,
           password,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unprocessableEntity);
@@ -133,6 +148,9 @@ describe(`Users e2e`, () => {
         body: {
           phoneNumber,
           password,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -152,6 +170,9 @@ describe(`Users e2e`, () => {
         body: {
           email,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.badRequest);
@@ -168,6 +189,9 @@ describe(`Users e2e`, () => {
         body: {
           email,
           password,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -188,6 +212,9 @@ describe(`Users e2e`, () => {
           email,
           password,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -206,6 +233,9 @@ describe(`Users e2e`, () => {
         body: {
           phoneNumber,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.badRequest);
@@ -222,6 +252,9 @@ describe(`Users e2e`, () => {
         body: {
           phoneNumber,
           password,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -242,6 +275,9 @@ describe(`Users e2e`, () => {
           phoneNumber,
           password,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -261,7 +297,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPasswordUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           password,
         },
@@ -280,6 +319,9 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPasswordUrl,
         method: HttpMethodName.post,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId,
           password,
@@ -303,7 +345,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPasswordUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId: targetUserId,
           password,
@@ -327,7 +372,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPasswordUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId,
           password,
@@ -351,7 +399,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setEmailUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           email,
         },
@@ -368,6 +419,9 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setEmailUrl,
         method: HttpMethodName.post,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId,
           email,
@@ -391,7 +445,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setEmailUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId: targetUserId,
           email,
@@ -417,7 +474,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setEmailUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId,
           email,
@@ -441,7 +501,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setEmailUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId,
           email,
@@ -465,7 +528,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPhoneNumberUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           phoneNumber,
         },
@@ -486,6 +552,9 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPhoneNumberUrl,
         method: HttpMethodName.post,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId,
           phoneNumber,
@@ -507,7 +576,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPhoneNumberUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId: targetUserId,
           phoneNumber,
@@ -531,7 +603,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPhoneNumberUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId: user.id,
           phoneNumber,
@@ -553,7 +628,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: setPhoneNumberUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId: user.id,
           phoneNumber,
@@ -577,6 +655,9 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${userId}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -596,7 +677,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${userId}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.forbidden);
@@ -614,7 +698,10 @@ describe(`Users e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${user.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
