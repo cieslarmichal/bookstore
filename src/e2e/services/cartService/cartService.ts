@@ -23,11 +23,14 @@ export class CartService {
       method: HttpMethodName.post,
       endpoint: '/carts',
       body: createCartBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {
-      throw new Error();
+      throw new Error(JSON.stringify(response.body));
     }
 
     return response.body;
@@ -42,11 +45,14 @@ export class CartService {
       method: HttpMethodName.post,
       endpoint: `/carts/${cartId}`,
       body: updateCartBody,
-      headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+      headers: {
+        [HttpHeader.authorization]: `Bearer ${accessToken}`,
+        [HttpHeader.contentType]: HttpMediaType.applicationJson,
+      },
     });
 
     if (!response.isSuccess) {
-      throw new Error();
+      throw new Error(JSON.stringify(response.body));
     }
 
     return response.body;
@@ -68,7 +74,7 @@ export class CartService {
     });
 
     if (!response.isSuccess) {
-      throw new Error();
+      throw new Error(JSON.stringify(response.body));
     }
 
     return response.body;

@@ -25,7 +25,7 @@ export class InventoryService {
     });
 
     if (!response.isSuccess) {
-      throw new Error();
+      throw new Error(JSON.stringify(response.body));
     }
 
     return response.body;
