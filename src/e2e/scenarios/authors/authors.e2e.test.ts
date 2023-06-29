@@ -50,7 +50,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           firstName,
         },
@@ -70,6 +73,9 @@ describe(`Authors e2e`, () => {
         body: {
           firstName,
           lastName,
+        },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
         },
       });
 
@@ -92,7 +98,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           firstName,
           lastName,
@@ -120,7 +129,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${authorId}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -145,6 +157,9 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -171,7 +186,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -185,6 +203,9 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -226,7 +247,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}?filter=["firstName||eq||${authorEntity1.firstName}"]`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
@@ -258,7 +282,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           firstName,
         },
@@ -283,7 +310,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${authorId}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           about,
         },
@@ -311,6 +341,9 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
         method: HttpMethodName.patch,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           about,
         },
@@ -340,7 +373,10 @@ describe(`Authors e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${author.id}`,
         method: HttpMethodName.patch,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           about,
         },
