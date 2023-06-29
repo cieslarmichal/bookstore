@@ -26,6 +26,8 @@ import { ResponseErrorBody, responseErrorBodySchema } from '../../../../../../co
 import { Inject, Injectable } from '../../../../../../libs/dependencyInjection/decorators';
 import { UnitOfWorkFactory } from '../../../../../../libs/unitOfWork/factories/unitOfWorkFactory/unitOfWorkFactory';
 import { unitOfWorkModuleSymbols } from '../../../../../../libs/unitOfWork/unitOfWorkModuleSymbols';
+import { BookNotFoundError } from '../../../../bookModule/application/errors/bookNotFoundError';
+import { CategoryNotFoundError } from '../../../../categoryModule/application/errors/categoryNotFoundError';
 import { CreateBookCategoryCommandHandler } from '../../../application/commandHandlers/createBookCategoryCommandHandler/createBookCategoryCommandHandler';
 import { DeleteBookCategoryCommandHandler } from '../../../application/commandHandlers/deleteBookCategoryCommandHandler/deleteBookCategoryCommandHandler';
 import { BookCategoryAlreadyExistsError } from '../../../application/errors/bookCategoryAlreadyExistsError';
@@ -90,7 +92,9 @@ export class BookCategoryHttpController implements HttpController {
   private async createBookCategory(
     request: HttpRequest<undefined, undefined, CreateBookCategoryPathParameters>,
   ): Promise<
-    HttpCreatedResponse<CreateBookCategoryResponseCreatedBody> | HttpUnprocessableEntityResponse<ResponseErrorBody>
+    | HttpCreatedResponse<CreateBookCategoryResponseCreatedBody>
+    | HttpUnprocessableEntityResponse<ResponseErrorBody>
+    | HttpNotFoundResponse<ResponseErrorBody>
   > {
     const { bookId, categoryId } = request.pathParams;
 
@@ -113,6 +117,14 @@ export class BookCategoryHttpController implements HttpController {
     } catch (error) {
       if (error instanceof BookCategoryAlreadyExistsError) {
         return { statusCode: HttpStatusCode.unprocessableEntity, body: { error } };
+      }
+
+      if (error instanceof CategoryNotFoundError) {
+        return { statusCode: HttpStatusCode.notFound, body: { error } };
+      }
+
+      if (error instanceof BookNotFoundError) {
+        return { statusCode: HttpStatusCode.notFound, body: { error } };
       }
 
       throw error;

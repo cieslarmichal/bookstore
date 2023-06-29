@@ -5,7 +5,6 @@ import { BookEntityTestFactory } from '../../../application/modules/bookModule/t
 import { CategoryEntityTestFactory } from '../../../application/modules/categoryModule/tests/factories/categoryEntityTestFactory/categoryEntityTestFactory';
 import { UserEntityTestFactory } from '../../../application/modules/userModule/tests/factories/userEntityTestFactory/userEntityTestFactory';
 import { HttpHeader } from '../../../common/http/httpHeader';
-import { HttpMediaType } from '../../../common/http/httpMediaType';
 import { HttpMethodName } from '../../../common/http/httpMethodName';
 import { HttpStatusCode } from '../../../common/http/httpStatusCode';
 import { FetchClientImpl } from '../../../libs/http/clients/fetchClient/fetchClientImpl';
