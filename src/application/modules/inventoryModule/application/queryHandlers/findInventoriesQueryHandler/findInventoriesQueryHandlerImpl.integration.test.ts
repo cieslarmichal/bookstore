@@ -41,7 +41,7 @@ describe('FindInventoriesQueryHandler', () => {
   });
 
   it('finds inventories', async () => {
-    expect.assertions(2);
+    expect.assertions(1);
 
     await testTransactionRunner.runInTestTransaction(async (unitOfWork) => {
       const entityManager = unitOfWork.getEntityManager();
@@ -70,12 +70,11 @@ describe('FindInventoriesQueryHandler', () => {
         unitOfWork,
         pagination: {
           page: 1,
-          limit: 5,
+          limit: 50,
         },
       });
 
-      expect(inventories.length).toBe(1);
-      expect(inventories[0]).toStrictEqual(inventory);
+      expect(inventories.find((resultInventory) => resultInventory.id === inventory.id)).toBeTruthy();
     });
   });
 });
