@@ -43,7 +43,10 @@ describe(`Customers e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {},
       });
 
@@ -63,6 +66,9 @@ describe(`Customers e2e`, () => {
         body: {
           userId: user.id,
         },
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -80,7 +86,10 @@ describe(`Customers e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: baseUrl,
         method: HttpMethodName.post,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
         body: {
           userId: user.id,
         },
@@ -105,7 +114,10 @@ describe(`Customers e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customerId}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.notFound);
@@ -125,6 +137,9 @@ describe(`Customers e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customer.id}`,
         method: HttpMethodName.get,
+        headers: {
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.unauthorized);
@@ -144,7 +159,10 @@ describe(`Customers e2e`, () => {
       const response = await httpService.sendRequest({
         endpoint: `${baseUrl}/${customer.id}`,
         method: HttpMethodName.get,
-        headers: { [HttpHeader.authorization]: `Bearer ${accessToken}` },
+        headers: {
+          [HttpHeader.authorization]: `Bearer ${accessToken}`,
+          [HttpHeader.contentType]: HttpMediaType.applicationJson,
+        },
       });
 
       expect(response.statusCode).toBe(HttpStatusCode.ok);
